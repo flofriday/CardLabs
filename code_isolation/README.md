@@ -9,3 +9,9 @@ and then run the main program
 ```
 go run main.go
 ```
+
+
+testing
+```
+./wasm2wat user.wasm -o user.wat
+```
