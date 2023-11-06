@@ -1,9 +1,9 @@
 package main
 
 func main() {
-    sum(3,4)
+	Sum(3, 4)
 }
 
-func sum(a, b int) int {
-    return a + b
+func Sum(a, b int) int {
+	return a + b
 }

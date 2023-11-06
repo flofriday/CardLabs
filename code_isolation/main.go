@@ -2,29 +2,72 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	wasmer "github.com/wasmerio/wasmer-go/wasmer"
+	"log"
+	"os"
+
+	"github.com/bytecodealliance/wasmtime-go"
 )
 
 func main() {
-    wasmBytes, _ := ioutil.ReadFile("user.wasm")
+	store := wasmtime.NewStore(wasmtime.NewEngine())
+	/*wasm, err := wasmtime.Wat2Wasm(`
+	(module
+	  (func $gcd (param i32 i32) (result i32)
+	    (local i32)
+	    block  ;; label = @1
+	      block  ;; label = @2
+	        local.get 0
+	        br_if 0 (;@2;)
+	        local.get 1
+	        local.set 2
+	        br 1 (;@1;)
+	      end
+	      loop  ;; label = @2
+	        local.get 1
+	        local.get 0
+	        local.tee 2
+	        i32.rem_u
+	        local.set 0
+	        local.get 2
+	        local.set 1
+	        local.get 0
+	        br_if 0 (;@2;)
+	      end
+	    end
+	    local.get 2
+	  )
+	  (export "gcd" (func $gcd))
+	)
+	`)
+	*/
 
-    engine := wasmer.NewEngine()
-    store := wasmer.NewStore(engine)
+	wasm, err := os.ReadFile("user.wasm")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Loaded")
+	log.Printf("%v", len(wasm))
 
-    // Compiles the module
-    module, _ := wasmer.NewModule(store, wasmBytes)
-
-    // Instantiates the module
-    importObject := wasmer.NewImportObject()
-    instance, _ := wasmer.NewInstance(module, importObject)
-
-    // Gets the `sum` exported function from the WebAssembly instance.
-    sum, _ := instance.Exports.GetFunction("sum")
-
-    // Calls that exported function with Go standard values. The WebAssembly
-    // types are inferred and values are casted automatically.
-    result, _ := sum(5, 37)
-
-    fmt.Println(result) // 42!
+	err = wasmtime.ModuleValidate(store.Engine, wasm)
+	if err != nil {
+		log.Println("INVALID:")
+		log.Fatal(err)
+	}
+	module, err := wasmtime.NewModule(store.Engine, wasm)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Moduled")
+	log.Println("%v", len(module.Exports()))
+	instance, err := wasmtime.NewInstance(store, module, []wasmtime.AsExtern{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Instanced")
+	run := instance.GetFunc(store, "gcd")
+	result, err := run.Call(store, 6, 18)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("gcd(6, 18) = %d\n", result.(int32))
 }
