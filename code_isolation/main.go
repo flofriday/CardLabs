@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-
 	"github.com/bytecodealliance/wasmtime-go"
 )
 
@@ -64,10 +63,10 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Println("Instanced")
-	run := instance.GetFunc(store, "gcd")
+	run := instance.GetFunc(store, "sum")
 	result, err := run.Call(store, 6, 18)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("gcd(6, 18) = %d\n", result.(int32))
+	fmt.Printf("sum(6, 18) = %d\n", result.(int32))
 }

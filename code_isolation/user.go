@@ -1,9 +1,16 @@
 package main
 
-func main() {
-	Sum(3, 4)
+import "syscall/js"
+
+func sum(this js.Value, args []js.Value) any {
+	//return a + b
+
+    return 7
 }
 
-func Sum(a, b int) int {
-	return a + b
+
+func main() {
+    js.Global().Set("sum", js.FuncOf(sum))
+    <-make(chan bool)
+
 }
