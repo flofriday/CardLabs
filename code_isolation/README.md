@@ -15,3 +15,9 @@ testing
 ```
 ./wasm2wat user.wasm -o user.wat
 ```
+
+
+start http server
+```
+python -m http.server
+```
