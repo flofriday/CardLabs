@@ -16,7 +16,7 @@ func check(e error) {
 func main() {
 	store := wasmtime.NewStore(wasmtime.NewEngine())
 
-	wasm, err := os.ReadFile("user.wasm")
+	wasm, err := os.ReadFile("./pkg/code_isolation_bg.wasm")
 	check(err)
 
 	//err = wasmtime.ModuleValidate(store.Engine, wasm)
