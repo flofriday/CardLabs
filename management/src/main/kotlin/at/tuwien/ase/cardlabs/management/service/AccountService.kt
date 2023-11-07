@@ -23,7 +23,10 @@ class AccountService(private val accountRepository: AccountRepository) {
             throw AccountExistsException("the account with the username %s already exists".format(oAuthId))
         }
 
-        return accountRepository.save(Account())
+        val account = Account()
+        account.oauthId = oAuthId
+        account.username = OAuthHelper().getUsername(user, oAuthProvider).toString()
+        return accountRepository.save(account)
     }
 
     fun getById(id: Long): Optional<Account?> {
