@@ -1,7 +1,7 @@
-Compile `user.go` to `user.wasm`
+Compile the Rust library to wasm
 
 ```
-GOOS=js GOARCH=wasm go build -o user.wasm user.go
+wasm-pack build --target web
 ```
 
 and then run the main program
@@ -11,13 +11,7 @@ go run main.go
 ```
 
 
-testing
+To look at the WAT code
 ```
-./wasm2wat user.wasm -o user.wat
-```
-
-
-start http server
-```
-python -m http.server
+./wasm2wat hello_wasm_bg.wasm -o temp.wat 
 ```

@@ -25,15 +25,7 @@ func main() {
 	module, err := wasmtime.NewModule(store.Engine, wasm)
 	check(err)
 
-	/*item := wasmtime.WrapFunc(store, func() {
-        fmt.Println("Hello from Go!")
-    })*/
-
-	item1 := wasmtime.WrapFunc(store, func(i int32) {
-    })
-
-
-	instance, err := wasmtime.NewInstance(store, module, []wasmtime.AsExtern{item1,item1,item1,item1,item1,item1,item1,item1,item1,item1,item1,item1,item1,item1,item1,item1,item1,item1,item1})
+	instance, err := wasmtime.NewInstance(store, module, []wasmtime.AsExtern{})
 	check(err)
 
 	run := instance.GetFunc(store, "sum")
