@@ -7,7 +7,7 @@ export default function NavBar() {
   return (
     <div className="w-screen h-20 bg-primary flow-root">
       <div className="h-full flex items-center space-x-6 w-fit float-left">
-        <Link href="/" className="mx-3 tracking-[.3em] font-bold text-[2em]">
+        <Link href="/" className="mx-3 tracking-[.3em] font-bold text-[2em] ">
           Card Labs
         </Link>
         <Link href="/" className="text-xl  hover:text-accent">
