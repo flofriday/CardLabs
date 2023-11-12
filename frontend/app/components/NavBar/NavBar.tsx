@@ -5,21 +5,21 @@ import { isAuthenticated } from "../../services/AuthenticationService";
 
 export default function NavBar() {
   return (
-    <div className="w-screen h-20 bg-primary flow-root">
+    <div className="w-screen h-14 bg-primary flow-root">
       <div className="h-full flex items-center space-x-6 w-fit float-left">
-        <Link href="/" className="mx-3 tracking-[.3em] font-bold text-[2em] ">
+        <Link href="/" className="mx-3 tracking-[.3em] font-bold text-[1.6em] ">
           Card Labs
         </Link>
-        <Link href="/" className="text-xl  hover:text-accent">
+        <Link href="/" className="text-base  hover:text-accent">
           Home
         </Link>
-        <Link href="/" className="text-xl  hover:text-accent">
+        <Link href="/" className="text-base  hover:text-accent">
           Leaderboard
         </Link>
-        <Link href="/" className="text-xl  hover:text-accent">
+        <Link href="/" className="text-base  hover:text-accent">
           Help
         </Link>
-        <Link href="/" className="text-xl  hover:text-accent">
+        <Link href="/" className="text-base  hover:text-accent">
           Rules
         </Link>
       </div>
