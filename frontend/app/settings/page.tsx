@@ -1,6 +1,5 @@
-import { HiPlus } from "react-icons/hi";
 import SettingsForm from "./settingsForm";
-
+import ProfilePicture from "./profilePicture";
 export default function Settings() {
   return (
     <div className="h-full grid gridcols-3 gap-4">
@@ -11,16 +10,7 @@ export default function Settings() {
         <div className="bg-secondary w-5/12 rounded-xl mt-48">
           <div className="w-full relative">
             <div className="w-40 h-40 absolute -right-40 -top-32">
-              <div className="h-full">
-                <img
-                  src="https://www.creative-tim.com/learning-lab/tailwind-starter-kit/img/team-2-800x800.jpg"
-                  alt="Profile Image"
-                  className="shadow rounded-full max-w-full h-auto align-middle border-none"
-                />
-              </div>
-              <div className="bottom-0 right-0 absolute bg-primary w-11 h-11 rounded-full flex items-center justify-center">
-                <HiPlus size={25} style={{ fill: "#FEF9EC" }} />
-              </div>
+              <ProfilePicture />
             </div>
           </div>
           <SettingsForm />
