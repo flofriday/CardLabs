@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NavBar />
-        <div className="h-[calc(100%_-_3.5rem)]">{children}</div>
+        <div className="h-full pt-14">{children}</div>
       </body>
     </html>
   );
