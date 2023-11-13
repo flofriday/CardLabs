@@ -19,9 +19,9 @@ export default function RootLayout({
   // children
   return (
     <html lang="en">
-      <body className="{inter.className}">
+      <body className={inter.className}>
         <NavBar />
-        <div className="h-[calc(100%_-_5rem)]">{children}</div>
+        <div className="h-[calc(100%_-_3.5rem)]">{children}</div>
       </body>
     </html>
   );
