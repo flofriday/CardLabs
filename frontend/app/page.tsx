@@ -10,7 +10,13 @@ export default function Home() {
         strategies
       </div>
       <div className="w-5/12 pt-[5vh]">
-        <img src="/landingPageImg.svg" className="w-full" />
+        <Image
+          src="/landingPageImg.svg"
+          className="w-full"
+          alt="Landing page image"
+          width={500}
+          height={500}
+        />
       </div>
     </main>
   );
