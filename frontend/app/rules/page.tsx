@@ -1,11 +1,22 @@
 import LeftPageHeader from "../components/leftPageHeader";
 import TextItem from "../components/textItem";
+import Card, { CardColor, CardValue } from "../components/card";
 export default function Rules() {
   return (
     <div>
       <LeftPageHeader title="Rules" />
       <div className="flex h-full flex-col justify-center items-center pt-52 space-y-6">
-        <TextItem title="Place a Card">
+        <TextItem
+          title="Place a Card"
+          customImgElement={
+            <Card
+              value={CardValue.FOUR}
+              color={CardColor.PURPLE}
+              className="h-48 w-fit"
+            />
+          }
+          center
+        >
           A card can be placed if it's the players turn and any of on the
           following rules match:
           <ul className="list-disc ml-10">
@@ -19,14 +30,34 @@ export default function Rules() {
             </li>
           </ul>
         </TextItem>
-        <TextItem title="Switch Card">
+        <TextItem
+          title="Switch Card"
+          customImgElement={
+            <Card
+              value={CardValue.SWITCH}
+              color={CardColor.GREEN}
+              className="h-48 w-fit"
+            />
+          }
+          center
+        >
           If a reverse card is played then the direction of the game switchs. If
           it was clockwise beforehand it is counter-clockwise afterwards. That
           means the previous player is next in turn. The direction stays this
           way until another reverse card is played. If this next card is played
           the direction switches back to clockwise.
         </TextItem>
-        <TextItem title="Draw 2 Card">
+        <TextItem
+          title="Draw 2 Card"
+          customImgElement={
+            <Card
+              value={CardValue.DRAW_TWO}
+              color={CardColor.ORANGE}
+              className="h-48 w-fit"
+            />
+          }
+          center
+        >
           If a player plays a "Draw 2" card then the next player needs to draw
           two cards from the draw pile if they don't play a "Draw 2" ontop of
           the already played card. If the play a "Draw 2" then the next player
@@ -34,25 +65,47 @@ export default function Rules() {
           play another "Draw 2" card. This player then needs to draw the
           accumulated value of cards form the draw pile.
         </TextItem>
-        <TextItem title="Skip Card">
+        <TextItem
+          title="Skip Card"
+          customImgElement={
+            <Card
+              value={CardValue.SKIP}
+              color={CardColor.CYAN}
+              className="h-48 w-fit"
+            />
+          }
+          center
+        >
           If a player plays the skip card then the next players turn will be
           skipped.
         </TextItem>
-        <TextItem title="Choose Color Card">
+        <TextItem
+          title="Choose Color Card"
+          customImgElement={
+            <Card
+              value={CardValue.CHOOSE_COLOR}
+              color={CardColor.GRAY}
+              className="h-48 w-fit"
+            />
+          }
+          center
+        >
           This card allows the player to choose one of the four colors. The next
           player then needs to play a card of this choosen color. It is also
           possible to play another "Choose Color" card or a "Choose and Draw"
           card
         </TextItem>
-        <TextItem title="Win the Game">
-          The game is won if the player has no more cards on their hand. The
-          finishing order of all the players will define the placement in the
-          game.
-          <br />
-          e.g. Player that finishes first gets first place. Player that finishes
-          second gets seconds place and so forth.
-        </TextItem>
-        <TextItem title="Choose and Draw Card">
+        <TextItem
+          title="Choose and Draw Card"
+          customImgElement={
+            <Card
+              value={CardValue.CHOOSE_COLOR_4}
+              color={CardColor.GRAY}
+              className="h-48 w-fit"
+            />
+          }
+          center
+        >
           This card works the same as the "Choose Color" card, but also has the
           effect that the next player needs to draw 4 cards. The player the
           needs to draw the 4 cards can also play another "Choose and Draw"
@@ -67,6 +120,14 @@ export default function Rules() {
           card then the player needs to draw the accumulated number of cards due
           to the "Choose and Draw" cards from the discard pile. The next player
           then needs to draw 2 cards due to the "Draw 2" card.
+        </TextItem>
+        <TextItem title="Win the Game">
+          The game is won if the player has no more cards on their hand. The
+          finishing order of all the players will define the placement in the
+          game.
+          <br />
+          e.g. Player that finishes first gets first place. Player that finishes
+          second gets seconds place and so forth.
         </TextItem>
         <TextItem title="Wrong Card Played">
           If a player tries to play an invalid card, then the player needs to

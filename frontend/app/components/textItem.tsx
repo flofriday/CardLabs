@@ -10,6 +10,7 @@ interface Props {
   height?: number; //will not effect the size but the resolution
   width?: number; //will not effect the size but the resolution
   imgClassName?: string; //use this to change the size of the image
+  customImgElement?: React.ReactNode;
 }
 
 export default function TextItem({
@@ -22,48 +23,55 @@ export default function TextItem({
   height = 200,
   width = 200,
   imgClassName,
+  customImgElement,
 }: Props) {
   return (
     <div
       className={`bg-secondary w-6/12 p-6 rounded-xl text-xl flex
         ${imgAtEnd === true ? " justify-between" : ""}`}
     >
-      {src && alt && !imgAtEnd && (
+      {((src && alt) || customImgElement) && !imgAtEnd && (
         <div
           className={
             imgClassName +
             ` mr-5 relative flex ${center ? "items-center" : "items-start"}`
           }
         >
-          <Image
-            src={src}
-            alt={alt}
-            className="shadow align-middle border-none"
-            width={width}
-            height={height}
-            objectFit="contain"
-          />
+          {src && alt && (
+            <Image
+              src={src}
+              alt={alt}
+              className="shadow align-middle border-none"
+              width={width}
+              height={height}
+              objectFit="contain"
+            />
+          )}
+          {customImgElement}
         </div>
       )}
       <div>
         <h1 className="text-4xl mb-6">{title}</h1>
         {children}
       </div>
-      {src && alt && imgAtEnd === true && (
+      {((src && alt) || customImgElement) && imgAtEnd === true && (
         <div
           className={
             imgClassName +
-            ` mr-5 relative flex ${center ? "items-center" : "items-start"}`
+            ` ml-5 relative flex ${center ? "items-center" : "items-start"}`
           }
         >
-          <Image
-            src={src}
-            alt={alt}
-            className="shadow align-middle border-none ml-5"
-            width={width}
-            height={height}
-            objectFit="contain"
-          />
+          {src && alt && (
+            <Image
+              src={src}
+              alt={alt}
+              className="shadow align-middle border-none"
+              width={width}
+              height={height}
+              objectFit="contain"
+            />
+          )}
+          {customImgElement}
         </div>
       )}
     </div>
