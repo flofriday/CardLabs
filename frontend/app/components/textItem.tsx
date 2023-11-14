@@ -4,39 +4,67 @@ interface Props {
   title: string;
   src?: string;
   alt?: string;
-  pictureAtEnd?: boolean;
+  center?: boolean; //centers the image
+  imgAtEnd?: boolean; //places the image at the end of the textbox
   children: React.ReactNode;
+  height?: number; //will not effect the size but the resolution
+  width?: number; //will not effect the size but the resolution
+  imgClassName?: string; //use this to change the size of the image
 }
 
-export default function TextItem(props: Props) {
+export default function TextItem({
+  title,
+  src,
+  alt,
+  imgAtEnd = false,
+  children,
+  center = false,
+  height = 200,
+  width = 200,
+  imgClassName,
+}: Props) {
   return (
     <div
-      className={
-        "bg-secondary w-6/12 p-6 rounded-xl text-xl flex " +
-        (props.pictureAtEnd === true && "justify-between")
-      }
+      className={`bg-secondary w-6/12 p-6 rounded-xl text-xl flex
+        ${imgAtEnd === true ? " justify-between" : ""}`}
     >
-      {props.src && props.alt && !props.pictureAtEnd && (
-        <Image
-          src={props.src}
-          alt={props.alt}
-          className="shadow align-middle border-none mr-5"
-          width={100}
-          height={100}
-        />
+      {src && alt && !imgAtEnd && (
+        <div
+          className={
+            imgClassName +
+            ` mr-5 relative flex ${center ? "items-center" : "items-start"}`
+          }
+        >
+          <Image
+            src={src}
+            alt={alt}
+            className="shadow align-middle border-none"
+            width={width}
+            height={height}
+            objectFit="contain"
+          />
+        </div>
       )}
       <div>
-        <h1 className="text-4xl mb-6">{props.title}</h1>
-        {props.children}
+        <h1 className="text-4xl mb-6">{title}</h1>
+        {children}
       </div>
-      {props.src && props.alt && props.pictureAtEnd === true && (
-        <Image
-          src={props.src}
-          alt={props.alt}
-          className="shadow align-middle border-none ml-5"
-          width={100}
-          height={100}
-        />
+      {src && alt && imgAtEnd === true && (
+        <div
+          className={
+            imgClassName +
+            ` mr-5 relative flex ${center ? "items-center" : "items-start"}`
+          }
+        >
+          <Image
+            src={src}
+            alt={alt}
+            className="shadow align-middle border-none ml-5"
+            width={width}
+            height={height}
+            objectFit="contain"
+          />
+        </div>
       )}
     </div>
   );
