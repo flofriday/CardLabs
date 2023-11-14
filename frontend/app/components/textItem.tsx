@@ -2,8 +2,8 @@ import Image from "next/image";
 
 interface Props {
   title: string;
-  picturePath?: string;
-  altText?: string;
+  src?: string;
+  alt?: string;
   pictureAtEnd?: boolean;
   children: React.ReactNode;
 }
@@ -16,10 +16,10 @@ export default function TextItem(props: Props) {
         (props.pictureAtEnd === true && "justify-between")
       }
     >
-      {props.picturePath && props.altText && !props.pictureAtEnd && (
+      {props.src && props.alt && !props.pictureAtEnd && (
         <Image
-          src={props.picturePath}
-          alt={props.altText}
+          src={props.src}
+          alt={props.alt}
           className="shadow align-middle border-none mr-5"
           width={100}
           height={100}
@@ -29,10 +29,10 @@ export default function TextItem(props: Props) {
         <h1 className="text-4xl mb-6">{props.title}</h1>
         {props.children}
       </div>
-      {props.picturePath && props.altText && props.pictureAtEnd === true && (
+      {props.src && props.alt && props.pictureAtEnd === true && (
         <Image
-          src={props.picturePath}
-          alt={props.altText}
+          src={props.src}
+          alt={props.alt}
           className="shadow align-middle border-none ml-5"
           width={100}
           height={100}
