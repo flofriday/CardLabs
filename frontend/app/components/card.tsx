@@ -186,34 +186,34 @@ export default function Card({ value, color, className }: Props) {
         <path
           fill="#3a4142"
           stroke="#eee"
-          stroke-width="2"
+          strokeWidth="2"
           d="m174.57 180.032-21.001 21h15.484a5.504 5.504 0 0 0 5.516-5.516z"
         />
         <path
           fill={color}
           stroke="#eee"
-          stroke-width="2"
+          strokeWidth="2"
           d="m174.57 165.032-36.001 36h15l21-21z"
         />
         <path
           fill="#3a4142"
           stroke="#eee"
-          stroke-width="2"
+          strokeWidth="2"
           d="m152.704 112.032-34.135 34.135v49.349a5.504 5.504 0 0 0 5.516 5.515h14.484l36-36v-47.483a5.504 5.504 0 0 0-5.516-5.516zM137.569 112.032h-13.484a5.504 5.504 0 0 0-5.516 5.516v13.484z"
         />
         <path
           fill={color}
           stroke="#eee"
-          stroke-width="2"
+          strokeWidth="2"
           d="m137.569 112.032-19 19v15l34-34z"
         />
         <text
           xmlSpace="preserve"
           fill="#eee"
-          stroke-width="7.559"
-          font-family="Bahnschrift"
-          font-size={value.fontSize}
-          font-weight="700"
+          strokeWidth="7.559"
+          fontFamily="Bahnschrift"
+          fontSize={value.fontSize}
+          fontWeight="700"
           transform="matrix(.26458 0 0 .26458 47.191 6.435)"
         >
           <tspan x={280 + value.x1Offset} y={430 + value.y1Offset}>
@@ -223,10 +223,10 @@ export default function Card({ value, color, className }: Props) {
         <text
           xmlSpace="preserve"
           fill="#eee"
-          stroke-width="7.559"
-          font-family="Bahnschrift"
-          font-size={value.fontSize}
-          font-weight="700"
+          strokeWidth="7.559"
+          fontFamily="Bahnschrift"
+          fontSize={value.fontSize}
+          fontWeight="700"
           transform="matrix(.26458 0 0 .26458 92.39 82.63)"
         >
           <tspan x={280 + value.x2Offset} y={430 + value.y2Offset}>
@@ -238,7 +238,7 @@ export default function Card({ value, color, className }: Props) {
           cy="49.64"
           fill="#eee"
           stroke="#eee"
-          stroke-width="2.014"
+          strokeWidth="2.014"
           rx="14.419"
           ry="29.162"
           transform="matrix(.83529 .54981 -.57222 .8201 0 0)"
@@ -246,10 +246,10 @@ export default function Card({ value, color, className }: Props) {
         <text
           xmlSpace="preserve"
           fill="#3a4142"
-          stroke-width="7.559"
-          font-family="Bahnschrift"
-          font-size={value.fontSize}
-          font-weight="700"
+          strokeWidth="7.559"
+          fontFamily="Bahnschrift"
+          fontSize={value.fontSize}
+          fontWeight="700"
           transform="matrix(.9191 0 0 .9191 -119.728 -233.293)"
         >
           <tspan x={280 + value.x3Offset} y={430 + value.y3Offset}>
