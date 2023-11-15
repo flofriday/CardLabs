@@ -19,7 +19,10 @@ export default function NavBar() {
         <Link href="/" className="text-base  hover:text-accent max-sm:hidden">
           Help
         </Link>
-        <Link href="/" className="text-base  hover:text-accent max-sm:hidden">
+        <Link
+          href="/rules"
+          className="text-base  hover:text-accent max-sm:hidden"
+        >
           Rules
         </Link>
       </div>
