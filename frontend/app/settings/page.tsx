@@ -1,6 +1,9 @@
+"use client";
+
 import SettingsForm from "./settingsForm";
 import ProfilePicture from "./profilePicture";
 import LeftPageHeader from "../components/leftPageHeader";
+
 export default function Settings() {
   return (
     <div className="h-full">
