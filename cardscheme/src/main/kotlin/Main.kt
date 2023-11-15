@@ -7,13 +7,24 @@ fun main(args: Array<String>) {
     val gamestate = magicfunction_tocreategamestate()
     val selected_card = interpreter.call(turnfunc, gamestate)
     */
-    val program = "(+ 1 (- 7 5))"
+
+
+    println("The CardLabs Scheme Interpreter")
+    println("Made with ❤️ by CardLabs")
     var interpreter = SchemeInterpreter()
-    val obj = interpreter.run(program)
-    println(obj)
+    while (true) {
+        print(">>> ")
+        var program = readln()
 
+        var tokens = Tokenizer().tokenize(program)
+        while (tokens.filter { t -> t is LParenToken }.size > tokens.filter { t -> t is RParenToken }.size) {
+            print("... ")
+            val newLine = readln()
+            program += "\n" + newLine
+            tokens = Tokenizer().tokenize(program)
+        }
 
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
+        val obj = interpreter.run(program)
+        println(obj)
+    }
 }

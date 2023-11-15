@@ -1,9 +1,9 @@
 abstract class SchemeValue {
-    abstract fun display(): String
+    abstract override fun toString(): String
 }
 
-class IntValue(val value: Int): SchemeValue() {
-    override fun display(): String {
+class IntValue(val value: Int) : SchemeValue() {
+    override fun toString(): String {
         return value.toString()
     }
 }

@@ -90,10 +90,12 @@ class Tokenizer() {
     }
 
     private fun peek(): Char {
+        if (index >= program.length) return ' '
         return program[index]
     }
 
     private fun consume(): Char {
+        if (index >= program.length) return ' '
         col++
         index++
         return program[index - 1]
