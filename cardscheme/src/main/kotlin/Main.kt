@@ -7,7 +7,7 @@ fun main(args: Array<String>) {
     val gamestate = magicfunction_tocreategamestate()
     val selected_card = interpreter.call(turnfunc, gamestate)
     */
-    val program = "(+ 1 2)"
+    val program = "(+ 1 (- 7 5))"
     var interpreter = SchemeInterpreter()
     val obj = interpreter.run(program)
     println(obj)

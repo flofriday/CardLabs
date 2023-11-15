@@ -4,8 +4,11 @@ class SchemeInterpreter {
 
     fun run(program: String): SchemeValue {
         val tokens = Tokenizer().tokenize(program)
-        print(tokens)
-        //val ast = parse(tokens)
+        println("Tokens:")
+        println(tokens)
+        val ast = Parser().parse(tokens)
+        println("AST: ")
+        print(ast.dump())
         //return execute(ast, env)
         return IntValue(42)
     }
