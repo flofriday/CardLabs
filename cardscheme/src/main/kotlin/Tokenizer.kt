@@ -31,7 +31,12 @@ class Tokenizer() {
             } else if (c.isWhitespace()) {
                 consume()
             } else {
-                throw Exception("Unknown character: '${peek()}'")
+                throw SchemeError(
+                    "Parsing Error",
+                    "I got confused during parsing, with an unexpected character",
+                    Location(line, line, col, col),
+                    null
+                )
             }
         }
 

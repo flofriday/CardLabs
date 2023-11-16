@@ -16,15 +16,19 @@ fun main(args: Array<String>) {
         print(">>> ")
         var program = readln()
 
-        var tokens = Tokenizer().tokenize(program)
-        while (tokens.filter { t -> t is LParenToken }.size > tokens.filter { t -> t is RParenToken }.size) {
-            print("... ")
-            val newLine = readln()
-            program += "\n" + newLine
-            tokens = Tokenizer().tokenize(program)
-        }
+        try {
+            var tokens = Tokenizer().tokenize(program)
+            while (tokens.filter { t -> t is LParenToken }.size > tokens.filter { t -> t is RParenToken }.size) {
+                print("... ")
+                val newLine = readln()
+                program += "\n" + newLine
+                tokens = Tokenizer().tokenize(program)
+            }
 
-        val obj = interpreter.run(program)
-        println(obj)
+            val obj = interpreter.run(program)
+            println(obj)
+        } catch (e: SchemeError) {
+            e.display(program)
+        }
     }
 }

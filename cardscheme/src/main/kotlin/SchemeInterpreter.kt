@@ -1,6 +1,10 @@
-class SchemeInterpreter {
+class SchemeInterpreter() {
 
-    private var env = Environment()
+    private var env = Environment(null, HashMap())
+
+    init {
+        injectBuiltin(env)
+    }
 
     fun run(program: String): SchemeValue {
         val tokens = Tokenizer().tokenize(program)
