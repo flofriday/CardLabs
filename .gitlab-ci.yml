@@ -1,0 +1,76 @@
+stages:
+  - analysis
+  - build
+  - test
+  - deploy
+
+variables:
+  FRONTEND_DIR: "frontend"
+  MANAGEMENT_DIR: "management"
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+    - ${MANAGEMENT_DIR}/build
+
+
+#########################
+### Frontend pipeline ###
+#########################
+analysis:frontend:
+  image: node:20.9.0
+  stage: analysis
+  script:
+    - apt-get update -qq && apt-get install -y nodejs
+    - cd ${FRONTEND_DIR}
+    - npm install
+    - npm run lint
+  allow_failure: false
+
+build:frontend:
+  image: node:20.9.0
+  stage: build
+  script:
+    - apt-get update -qq && apt-get install -y nodejs
+    - cd ${FRONTEND_DIR}
+    - npm install
+    - npm run build
+  dependencies:
+    - analysis:frontend
+  allow_failure: false
+# TODO: deploy stage
+
+###########################
+### Management pipeline ###
+###########################
+analysis:management:
+  image: gradle:jdk21
+  stage: analysis
+  script:
+    - cd ${MANAGEMENT_DIR}
+    - gradle checkstyleMain
+    - gradle checkstyleTest
+    - gradle ktlintCheck
+  allow_failure: false
+
+build:management:
+  image: gradle:jdk21
+  stage: build
+  script:
+    - cd ${MANAGEMENT_DIR}
+    - gradle assemble
+  dependencies:
+    - analysis:management
+  allow_failure: false
+
+test:management:
+  image: gradle:jdk21
+  stage: test
+  script:
+    - cd ${MANAGEMENT_DIR}
+    - gradle test
+  dependencies:
+    - build:management
+  allow_failure: false
+  # TODO: deploy stage
