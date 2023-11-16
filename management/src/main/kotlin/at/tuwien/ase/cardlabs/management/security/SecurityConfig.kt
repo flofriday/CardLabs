@@ -8,6 +8,7 @@ import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -29,6 +30,10 @@ class SecurityConfig(private val accountService: AccountService) {
                     .requestMatchers("/authentication/login").permitAll()
                     .requestMatchers("/account/create").permitAll()
                     .anyRequest().authenticated()
+                    .and().sessionManagement { sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    }
+//                    .addFilter(JwtAuthenticationFilter())
             }
         return http.build()
     }
