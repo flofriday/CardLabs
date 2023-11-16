@@ -7,16 +7,16 @@ import jakarta.persistence.Id
 
 
 @Entity
-class Account : AuditedEntity() {
+class AccountDAO : AuditedEntity() {
 
     @Id
     @GeneratedValue
     var id: Long? = null
 
-    @Column(unique = true)
-    var oauthId: String? = null
-
     @Column(unique = true, nullable = false)
     lateinit var username: String
+
+    @Column(nullable = true)
+    lateinit var password: String
 
 }

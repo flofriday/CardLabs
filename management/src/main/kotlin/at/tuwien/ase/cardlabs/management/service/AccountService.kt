@@ -1,44 +1,47 @@
 package at.tuwien.ase.cardlabs.management.service
 
-import at.tuwien.ase.cardlabs.management.security.OAuthHelper
-import at.tuwien.ase.cardlabs.management.database.model.Account
+import at.tuwien.ase.cardlabs.management.Helper
+import at.tuwien.ase.cardlabs.management.controller.model.Account
+import at.tuwien.ase.cardlabs.management.database.model.AccountDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
-import at.tuwien.ase.cardlabs.management.security.OAuth
-import org.springframework.security.oauth2.core.user.OAuth2User
+import at.tuwien.ase.cardlabs.management.mapper.AccountMapper
+import org.springframework.context.annotation.Lazy
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
-class AccountService(private val accountRepository: AccountRepository) {
+class AccountService(
+    private val accountRepository: AccountRepository,
+    private val accountMapper: AccountMapper,
+    @Lazy private val passwordEncoder: PasswordEncoder
+) {
 
     @Transactional
-    fun create(user: OAuth2User, oAuthProvider: OAuth): Account {
-        val oAuthId = OAuthHelper().generateOAuthId(user, oAuthProvider)
-        if (getByOAuthId(oAuthId).isPresent) {
-            throw AccountExistsException("the account with the OAuth id %s already exists".format(oAuthId))
-        }
-        if (OAuthHelper().getUsername(user, oAuthProvider)?.let { getByUsername(it).isPresent } == true) {
-            throw AccountExistsException("the account with the username %s already exists".format(oAuthId))
+    fun create(account: Account): Account {
+        Helper.requireNull(account.id, "Can't create the account ${account.username} as it already contains an id")
+        Helper.requireNonNull(account.password, "The password must be set")
+        if (findByUsername(account.username) != null) {
+            throw AccountExistsException("An account with the username ${account.username} already exists")
         }
 
-        val account = Account()
-        account.oauthId = oAuthId
-        account.username = OAuthHelper().getUsername(user, oAuthProvider).toString()
-        return accountRepository.save(account)
+        val acc = AccountDAO()
+        acc.username = account.username
+        acc.password = passwordEncoder.encode(account.password)
+        return accountMapper.map(accountRepository.save(acc))
     }
 
-    fun getById(id: Long): Optional<Account?> {
+    fun findById(id: Long): Optional<AccountDAO?> {
         return accountRepository.findById(id)
     }
 
-    fun getByOAuthId(id: String): Optional<Account?> {
-        return accountRepository.findByOauthId(id)
-    }
-
-    fun getByUsername(username: String): Optional<Account?> {
-        return accountRepository.findByUsername(username);
+    fun findByUsername(username: String?): AccountDAO? {
+        if (username == null) {
+            return null;
+        }
+        return accountRepository.findByUsername(username)
     }
 
 }
