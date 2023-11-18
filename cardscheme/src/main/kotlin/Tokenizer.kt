@@ -20,6 +20,9 @@ class Tokenizer() {
             } else if (c == ')') {
                 tokens.addLast(RParenToken(Location(line, line, col, col)))
                 consume()
+            } else if (c == '\'') {
+                tokens.add(SingleQuoteToken(Location(line, line, col, col)))
+                consume()
             } else if (c == '\n') {
                 col = 1
                 line++
@@ -28,6 +31,8 @@ class Tokenizer() {
                 tokens.addLast(scanNumber())
             } else if (consumeMatch("define")) {
                 tokens.add(DefineToken(Location(line, line, col-1-6, col-1)))
+            } else if (consumeMatch("quote")) {
+                tokens.add(QuoteToken(Location(line, line, col-1-5, col-1)))
             } else if (isIdentifierInitial(c)) {
                 tokens.addLast(scanIdentifier())
             } else if (c.isWhitespace()) {

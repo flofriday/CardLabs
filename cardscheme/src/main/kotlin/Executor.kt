@@ -23,7 +23,7 @@ class Executor() : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         }
     }
 
-    override fun visited_by(node: IntNode): SchemeValue {
+    override fun visited_by(node: IntNode): IntValue {
         return IntValue(node.value)
     }
 
@@ -34,6 +34,10 @@ class Executor() : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
             throw SchemeError("Variable not found", "No variable with the name ${node.identifier} exists.", node.location, null)
         }
         return res
+    }
+
+    override fun visited_by(node: ListNode) : ListValue {
+        return ListValue(node.expressions.map { e -> e.visit(this) })
     }
 
     override fun visited_by(node: DefineNode) {

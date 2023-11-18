@@ -17,6 +17,14 @@ class DefineToken(location: Location) : Token(location) {
 
 }
 
+class SingleQuoteToken(location: Location) : Token(location) {
+
+}
+
+class QuoteToken(location: Location) : Token(location) {
+
+}
+
 class LParenToken(location: Location) : Token(location) {
 }
 

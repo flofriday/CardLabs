@@ -1,4 +1,6 @@
+import java.util.StringJoiner
 import javax.swing.plaf.nimbus.State
+import kotlin.math.exp
 
 class Ast(val forms: List<AstNode>) {
     fun dump(): String {
@@ -68,6 +70,16 @@ class IdentifierNode(val identifier: String, location: Location) : ExpressionNod
     }
 }
 
+class ListNode(val expressions: List<ExpressionNode>, location: Location) : ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) + "List: \n" + expressions.joinToString(", ") { e -> e.dump(indent + 1) }
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visited_by(this);
+    }
+}
+
 class IntNode(val value: Int, location: Location) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) + "Int: $value \n"
@@ -79,9 +91,10 @@ class IntNode(val value: Int, location: Location) : ExpressionNode(location) {
 }
 
 interface ExpressionVisitor<T> {
-    abstract fun visited_by(node: IntNode): T
-    abstract fun visited_by(node: IdentifierNode): T
-    abstract fun visited_by(node: ApplicationNode): T
+    fun visited_by(node: IntNode): T
+    fun visited_by(node: IdentifierNode): T
+    fun visited_by(node: ApplicationNode): T
+    fun visited_by(node: ListNode): T
 }
 
 interface StatementVisitor<T> {
