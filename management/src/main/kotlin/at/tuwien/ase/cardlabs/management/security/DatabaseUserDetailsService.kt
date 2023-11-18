@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 
-
 class DatabaseUserDetailsService(private val accountService: AccountService) : UserDetailsService {
 
     override fun loadUserByUsername(username: String?): UserDetails {
@@ -16,5 +15,4 @@ class DatabaseUserDetailsService(private val accountService: AccountService) : U
             ?: throw UsernameNotFoundException("No user with the username $username exists")
         return User(accountDAO.username, accountDAO.password, listOf(SimpleGrantedAuthority("ROLE_USER")))
     }
-
 }

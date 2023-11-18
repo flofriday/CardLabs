@@ -35,5 +35,4 @@ class JwtAuthenticationFilter(private val userDetailsService: UserDetailsService
             bearerToken.substring(7)
         } else null
     }
-
 }

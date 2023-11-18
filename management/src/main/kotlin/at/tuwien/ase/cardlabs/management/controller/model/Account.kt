@@ -7,5 +7,4 @@ class Account {
     lateinit var username: String
 
     var password: String? = null
-
 }

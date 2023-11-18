@@ -25,5 +25,4 @@ class AccountMapper {
         // account.password = accountDAO.password
         return account
     }
-
 }

@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -66,5 +65,4 @@ class SecurityConfig(private val accountService: AccountService) {
         // when changing the password encoder to something different, it will break all passwords stored in the database
         return BCryptPasswordEncoder()
     }
-
 }

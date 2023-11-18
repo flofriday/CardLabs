@@ -15,7 +15,7 @@ class AccountController(val accountService: AccountService) {
     @PostMapping("/account/create")
     fun create(@RequestBody account: Account): ResponseEntity<Account> {
         return try {
-            val result = accountService.create(account);
+            val result = accountService.create(account)
             ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(result)
@@ -29,5 +29,4 @@ class AccountController(val accountService: AccountService) {
                 .build()
         }
     }
-
 }

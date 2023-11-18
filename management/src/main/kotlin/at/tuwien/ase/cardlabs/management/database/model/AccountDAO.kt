@@ -5,7 +5,6 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 
-
 @Entity
 class AccountDAO : AuditedEntity() {
 
@@ -18,5 +17,4 @@ class AccountDAO : AuditedEntity() {
 
     @Column(nullable = true)
     lateinit var password: String
-
 }

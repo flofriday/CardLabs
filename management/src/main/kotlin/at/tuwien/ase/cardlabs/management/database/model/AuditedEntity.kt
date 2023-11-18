@@ -6,7 +6,6 @@ import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.Instant
 
-
 @MappedSuperclass
 open class AuditedEntity {
 
@@ -18,6 +17,4 @@ open class AuditedEntity {
     var updated: Instant? = null
 
     var deleted: Instant? = null
-
 }
-

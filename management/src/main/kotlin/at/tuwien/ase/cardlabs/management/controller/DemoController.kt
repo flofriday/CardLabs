@@ -30,5 +30,4 @@ class DemoController {
     fun testAdmin(@AuthenticationPrincipal user: UserDetails): String {
         return "test_admin"
     }
-
 }

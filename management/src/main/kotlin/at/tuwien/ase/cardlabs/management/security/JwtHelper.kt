@@ -4,8 +4,7 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.security.core.Authentication
-import java.util.*
-
+import java.util.Date
 
 class JwtHelper {
 
@@ -51,7 +50,5 @@ class JwtHelper {
             val expiration: Date = claims.expiration
             return expiration.before(Date())
         }
-
     }
-
 }

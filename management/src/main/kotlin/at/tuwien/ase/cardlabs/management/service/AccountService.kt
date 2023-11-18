@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
+import java.util.Optional
 
 @Service
 class AccountService(
@@ -39,9 +39,8 @@ class AccountService(
 
     fun findByUsername(username: String?): AccountDAO? {
         if (username == null) {
-            return null;
+            return null
         }
         return accountRepository.findByUsername(username)
     }
-
 }

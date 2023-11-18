@@ -15,7 +15,5 @@ class Helper {
                 throw IllegalArgumentException(message)
             }
         }
-
     }
-
 }

@@ -24,5 +24,4 @@ class AuthenticationController(val authenticationManager: AuthenticationManager)
         val jwt = JwtHelper.generateToken(authentication)
         return JwtAuthenticationResponse(loginRequest.username, jwt)
     }
-
 }
