@@ -26,6 +26,8 @@ class Tokenizer() {
                 index++
             } else if (c.isDigit()) {
                 tokens.addLast(scanNumber())
+            } else if (consumeMatch("define")) {
+                tokens.add(DefineToken(Location(line, line, col-1-6, col-1)))
             } else if (isIdentifierInitial(c)) {
                 tokens.addLast(scanIdentifier())
             } else if (c.isWhitespace()) {
@@ -92,6 +94,21 @@ class Tokenizer() {
         }
 
         return FloatToken(literal.toFloat(), Location(line, line, col - 1 - literal.length, col - 1))
+    }
+
+    private fun consumeMatch(expected: String): Boolean {
+        if (expected.length + index > program.length) {
+            return false
+        }
+
+        for (i in 0..<expected.length) {
+            if (expected[i] != program[index + i]) return false
+        }
+
+        col += expected.length
+        index += expected.length
+
+        return true
     }
 
     private fun peek(): Char {

@@ -12,6 +12,11 @@ class Parser {
     }
 
     private fun parseForm(): AstNode {
+        if (peek() is LParenToken) {
+            if (peekn(2) is DefineToken) {
+                return parseDefine()
+            }
+        }
         return parseExpression()
     }
 
@@ -23,21 +28,46 @@ class Parser {
             val token = consume() as IdentifierToken
             return IdentifierNode(token.value, token.location)
         } else if (peek() is LParenToken) {
-            val lparen = consume()
-            val expressions: List<ExpressionNode> = mutableListOf()
-
-            while (peek() !is RParenToken) {
-                expressions.addLast(parseExpression())
-            }
-
-            if (peek() !is RParenToken) {
-                throw Exception("Expected a right parent here")
-            }
-
-            val rparen = consume()
-            return ApplicationNode(expressions, Location.merge(lparen.location, rparen.location))
+            return parseApplication()
         }
         throw Exception("Unexpected token ${tokens[index]} at index $index")
+    }
+
+    //    (define x (+3 7) ) (+ 8 7)
+    //                       ^
+    private fun parseDefine() : DefineNode{
+        val lparen = consume()
+        consume()
+
+        if (peek() !is IdentifierToken) {
+            throw Exception("Expected a identifier here")
+        }
+        val variableName = consume() as IdentifierToken
+
+        val body = parseExpression()
+
+        if (peek() !is RParenToken) {
+            throw Exception("Expected a right parent here")
+        }
+        val rparen = consume()
+
+        return DefineNode(listOf(IdentifierNode(variableName.value, variableName.location)), listOf(body), Location.merge(lparen.location,rparen.location))
+    }
+
+    private fun parseApplication(): ApplicationNode {
+        val lparen = consume()
+        val expressions: List<ExpressionNode> = mutableListOf()
+
+        while (peek() !is RParenToken) {
+            expressions.addLast(parseExpression())
+        }
+
+        if (peek() !is RParenToken) {
+            throw Exception("Expected a right parent here")
+        }
+
+        val rparen = consume()
+        return ApplicationNode(expressions, Location.merge(lparen.location, rparen.location))
     }
 
     private fun peek(): Token {

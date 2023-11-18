@@ -6,7 +6,7 @@ class SchemeInterpreter() {
         injectBuiltin(env)
     }
 
-    fun run(program: String): SchemeValue {
+    fun run(program: String): SchemeValue? {
         val tokens = Tokenizer().tokenize(program)
         //println("Tokens:")
         //println(tokens)

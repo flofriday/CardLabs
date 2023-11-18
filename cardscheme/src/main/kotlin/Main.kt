@@ -26,7 +26,8 @@ fun main(args: Array<String>) {
             }
 
             val obj = interpreter.run(program)
-            println(obj)
+            if (obj != null)
+                println(obj)
         } catch (e: SchemeError) {
             e.display(program)
         }

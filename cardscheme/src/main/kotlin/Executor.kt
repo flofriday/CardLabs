@@ -1,15 +1,26 @@
-class Executor() : AstVisitor<SchemeValue>() {
+class Executor() : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
 
     private var environment = Environment(null, hashMapOf())
 
-    fun execute(ast: Ast, env: Environment): SchemeValue {
+    fun execute(ast: Ast, env: Environment): SchemeValue? {
         // FIXME: Replace by empty list
         this.environment = env
-        var result: SchemeValue = IntValue(-1)
-        for (form in ast.forms) {
-            result = form.visit(this)
+        for (form in ast.forms.dropLast(1)) {
+            when (form) {
+                is ExpressionNode -> form.visit(this)
+                is StatementNode -> form.visit(this)
+                else -> throw Exception("Forms in AST must either be ExpressionNodes or StatementNodes")
+            }
         }
-        return result
+
+        return when (val last = ast.forms.last()) {
+            is ExpressionNode -> (last).visit(this)
+            is StatementNode -> {
+                last.visit(this)
+                null
+            }
+            else -> throw Exception("Forms in AST must either be ExpressionNodes or StatementNodes")
+        }
     }
 
     override fun visited_by(node: IntNode): SchemeValue {
@@ -18,7 +29,19 @@ class Executor() : AstVisitor<SchemeValue>() {
 
     override fun visited_by(node: IdentifierNode): SchemeValue {
         // FIXME: Crash with better error
-        return environment.get(node.identifier)!!
+        val res = environment.get(node.identifier)
+        if (res == null) {
+            throw SchemeError("Variable not found", "No variable with the name ${node.identifier} exists.", node.location, null)
+        }
+        return res
+    }
+
+    override fun visited_by(node: DefineNode) {
+        val values = node.bodies.map { b -> b.visit(this) }
+
+        for ((name, value) in node.names.zip(values)){
+            environment.getGlobal().put(name.identifier, value)
+        }
     }
 
     override fun visited_by(node: ApplicationNode): SchemeValue {

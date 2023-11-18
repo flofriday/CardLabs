@@ -13,6 +13,10 @@ class IdentifierToken(val value: String, location: Location) : Token(location) {
 
 }
 
+class DefineToken(location: Location) : Token(location) {
+
+}
+
 class LParenToken(location: Location) : Token(location) {
 }
 
