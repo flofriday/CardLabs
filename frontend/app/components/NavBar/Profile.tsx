@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function Profile() {
+export default function Profile(): JSX.Element {
   return (
     <div className="w-11">
       <Image
