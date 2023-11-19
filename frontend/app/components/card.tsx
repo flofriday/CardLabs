@@ -159,15 +159,15 @@ export const CardValue = {
   },
 } as const;
 
-type CardValue = (typeof CardValue)[keyof typeof CardValue];
+type CardValue_ = (typeof CardValue)[keyof typeof CardValue];
 
 interface Props {
-  value: CardValue;
+  value: CardValue_;
   color: CardColor;
   className?: string;
 }
 
-export default function Card({ value, color, className }: Props) {
+export default function Card({ value, color, className }: Props): JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

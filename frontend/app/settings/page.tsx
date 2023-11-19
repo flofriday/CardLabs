@@ -1,7 +1,7 @@
 import SettingsForm from "./settingsForm";
 import ProfilePicture from "./profilePicture";
 import LeftPageHeader from "../components/leftPageHeader";
-export default function Settings() {
+export default function Settings(): JSX.Element {
   return (
     <div className="h-full">
       <LeftPageHeader title="Settings" />

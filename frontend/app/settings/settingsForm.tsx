@@ -1,4 +1,4 @@
-export default function SettingsForm() {
+export default function SettingsForm(): JSX.Element {
   return (
     <form className="m-12 text-2xl xl:text-4xl font-regular">
       <div className="flex justify-between">
