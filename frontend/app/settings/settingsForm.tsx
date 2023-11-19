@@ -1,8 +1,7 @@
 import { useState } from "react";
 import DeleteAccountModal from "./deleteAccountModal";
-interface Props {}
 
-export default function SettingsForm() {
+export default function SettingsForm(): JSX.Element {
   const [deleteAccountModalVisiblity, setDeleteAccountModalVisiblity] =
     useState(false);
 
@@ -10,7 +9,9 @@ export default function SettingsForm() {
     <>
       {deleteAccountModalVisiblity && (
         <DeleteAccountModal
-          onClose={() => setDeleteAccountModalVisiblity(false)}
+          onClose={() => {
+            setDeleteAccountModalVisiblity(false);
+          }}
         />
       )}
 
@@ -71,7 +72,9 @@ export default function SettingsForm() {
         <div className="flex justify-around pt-4">
           <button
             className="btn bg-accent text-text py-2 w-48 rounded-lg shadow-md text-lg"
-            onClick={() => setDeleteAccountModalVisiblity(true)}
+            onClick={() => {
+              setDeleteAccountModalVisiblity(true);
+            }}
             type="button"
           >
             Delete Account

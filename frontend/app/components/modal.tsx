@@ -1,7 +1,7 @@
 "use client";
 import { IoClose } from "react-icons/io5";
-import { useRef } from "react";
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
+
 interface Props {
   children: React.ReactNode;
   title: string;
@@ -14,17 +14,17 @@ export default function Modal({
   onClose,
   title,
   modalClassName,
-}: Props) {
-  var parentDiv = useRef(null);
+}: Props): JSX.Element {
+  const parentDiv = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const animation = "transition-opacity ease-in-out duration-200";
   useEffect(() => {
     setShowModal(true);
     console.log("test");
-  });
+  }, []);
 
-  function handleParentClick(e: React.MouseEvent<HTMLInputElement>) {
-    if (e.target == parentDiv.current) {
+  function handleParentClick(e: React.MouseEvent<HTMLInputElement>): void {
+    if (e.target === parentDiv.current) {
       onClose();
     }
   }
