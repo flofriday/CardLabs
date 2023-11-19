@@ -1,4 +1,4 @@
-import LeftPageHeader from "../components/NavBar/leftPageHeader";
+import LeftPageHeader from "../components/leftPageHeader";
 import LoginForm from "./loginForm";
 export default function Login(): JSX.Element {
   return (
