@@ -5,7 +5,11 @@ import { isAuthenticated } from "../../services/AuthenticationService";
 
 export default function NavBar(): JSX.Element {
   return (
+<<<<<<< HEAD
     <div className="w-full h-14 bg-primary flow-root fixed z-50">
+=======
+    <div className="w-full h-14 bg-primary flow-root fixed z-30">
+>>>>>>> feature/user-account-settings
       <div className="h-full flex items-center space-x-6 w-fit float-left">
         <Link href="/" className="mx-3 tracking-[.3em] font-bold text-[1.6em]">
           Card Labs
