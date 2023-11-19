@@ -4,7 +4,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function DeleteAccountModal({ onClose }: Props) {
+export default function DeleteAccountModal({ onClose }: Props): JSX.Element {
   return (
     <Modal title="Delete Account" modalClassName="w-3/12" onClose={onClose}>
       <div>
