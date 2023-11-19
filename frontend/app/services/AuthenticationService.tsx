@@ -25,10 +25,3 @@ export async function validToken(token: string): Promise<boolean> {
   }
   return true;
 }
-
-export async function login(
-  username: string,
-  password: string
-): Promise<boolean> {
-  return true;
-}
