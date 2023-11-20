@@ -1,16 +1,17 @@
 "use client";
 
-import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { login } from "../services/UserService";
 
-function loginSuccess(jwt: string, router: any): void {
-  setCookie("auth_token", jwt);
+function loginSuccess(router: any): void {
   console.log("redirect?");
   router.refresh();
   router.replace("/"); // change this to /dashboard
+  toast.success("Login was successful");
 }
 
-function login(e: React.SyntheticEvent, router: any): void {
+function loginHandler(e: React.SyntheticEvent, router: any): void {
   e.preventDefault();
   const target = e.target as typeof e.target & {
     username: { value: string };
@@ -19,18 +20,11 @@ function login(e: React.SyntheticEvent, router: any): void {
   const username = target.username.value;
   const password = target.password.value;
 
-  fetch("api/authentication/login", {
-    mode: "cors",
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password }),
-  })
-    .then(async (response) => await response.json())
-    .then((json) => {
-      loginSuccess(json.jwt, router);
+  login(username, password)
+    .then((success) => {
+      if (success) {
+        loginSuccess(router);
+      }
     })
     .catch(() => {});
 }
@@ -43,7 +37,7 @@ export default function LoginForm(): JSX.Element {
       <form
         className="m-12 text-2xl xl:text-4xl font-regular"
         onSubmit={(e) => {
-          login(e, router);
+          loginHandler(e, router);
         }}
       >
         <div className="flex justify-between">
