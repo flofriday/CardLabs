@@ -4,8 +4,10 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
+import jakarta.persistence.Table
 
 @Entity
+@Table(name = "account")
 class AccountDAO : AuditedEntity() {
 
     @Id
@@ -14,6 +16,9 @@ class AccountDAO : AuditedEntity() {
 
     @Column(unique = true, nullable = false)
     lateinit var username: String
+
+    @Column(unique = true, nullable = false)
+    lateinit var email: String
 
     @Column(nullable = true)
     lateinit var password: String
