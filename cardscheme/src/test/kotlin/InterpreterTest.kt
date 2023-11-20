@@ -42,4 +42,26 @@ class InterpreterTest {
         assert(result is IntValue)
         assertEquals(42, (result as IntValue).value)
     }
+
+    @Test
+    fun simpleLambda() {
+        val program = "((lambda a (+ a a)) 4)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntValue)
+        assertEquals(8, (result as IntValue).value)
+    }
+
+    @Test
+    fun simpleNestedLambda() {
+        val program = """
+            (define f 
+                (lambda a
+                    (lambda x (+ a x))))
+                    
+            ((f 1) 41)
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntValue)
+        assertEquals(42, (result as IntValue).value)
+    }
 }

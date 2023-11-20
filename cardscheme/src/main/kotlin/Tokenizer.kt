@@ -30,9 +30,11 @@ class Tokenizer() {
             } else if (c.isDigit()) {
                 tokens.addLast(scanNumber())
             } else if (consumeMatch("define")) {
-                tokens.add(DefineToken(Location(line, line, col-1-6, col-1)))
+                tokens.add(DefineToken(Location(line, line, col - 1 - "define".length, col - 1)))
             } else if (consumeMatch("quote")) {
-                tokens.add(QuoteToken(Location(line, line, col-1-5, col-1)))
+                tokens.add(QuoteToken(Location(line, line, col - 1 - "quote".length, col - 1)))
+            } else if (consumeMatch("lambda")) {
+                tokens.add(LambdaToken(Location(line, line, col - 1 - "lambda".length, col - 1)))
             } else if (isIdentifierInitial(c)) {
                 tokens.addLast(scanIdentifier())
             } else if (c.isWhitespace()) {

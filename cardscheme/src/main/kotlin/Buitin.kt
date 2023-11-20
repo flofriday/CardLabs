@@ -1,7 +1,7 @@
 fun injectBuiltin(environment: Environment) {
-    environment.put("+", NativeFunc("+", ::builtinPlus))
-    environment.put("-", NativeFunc("-", ::builtinMinus))
-    environment.put("cool", NativeFunc("cool", ::builtinCool))
+    environment.put("+", NativeFuncValue("+", ::builtinPlus))
+    environment.put("-", NativeFuncValue("-", ::builtinMinus))
+    environment.put("cool", NativeFuncValue("cool", ::builtinCool))
 }
 
 fun builtinPlus(args: List<SchemeValue>, env: Environment): SchemeValue {

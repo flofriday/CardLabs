@@ -17,6 +17,10 @@ class DefineToken(location: Location) : Token(location) {
 
 }
 
+class LambdaToken(location: Location) : Token(location) {
+
+}
+
 class SingleQuoteToken(location: Location) : Token(location) {
 
 }

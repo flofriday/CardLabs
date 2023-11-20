@@ -1,7 +1,3 @@
-import java.util.StringJoiner
-import javax.swing.plaf.nimbus.State
-import kotlin.math.exp
-
 class Ast(val forms: List<AstNode>) {
     fun dump(): String {
         var out = "AST\n"
@@ -43,9 +39,10 @@ class ApplicationNode(val expressions: List<ExpressionNode>, location: Location)
     }
 }
 
-class DefineNode(val names: List<IdentifierNode>, val bodies : List<ExpressionNode>, location: Location) : StatementNode(location) {
+class DefineNode(val names: List<IdentifierNode>, val bodies: List<ExpressionNode>, location: Location) :
+    StatementNode(location) {
     override fun dump(indent: Int): String {
-        var out = getIndentation(indent) + "DefineNode\n"
+        var out = getIndentation(indent) + "DefineNode:\n"
         for (child in names) {
             out += child.dump(indent + 1)
         }
@@ -63,6 +60,18 @@ class DefineNode(val names: List<IdentifierNode>, val bodies : List<ExpressionNo
 class IdentifierNode(val identifier: String, location: Location) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) + "Identifier: '$identifier'\n"
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visited_by(this);
+    }
+}
+
+class LambdaNode(val args: List<IdentifierNode>, val body: List<ExpressionNode>, location: Location) :
+    ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) + "Lambda: '${args.joinToString(", ") { a -> a.identifier }}'\n" +
+                body.joinToString { c -> c.dump(indent + 1) + "\n" }
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
@@ -95,6 +104,7 @@ interface ExpressionVisitor<T> {
     fun visited_by(node: IdentifierNode): T
     fun visited_by(node: ApplicationNode): T
     fun visited_by(node: ListNode): T
+    fun visited_by(node: LambdaNode): T
 }
 
 interface StatementVisitor<T> {

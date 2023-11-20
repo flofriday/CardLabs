@@ -30,23 +30,47 @@ class Parser {
             val token = consume() as IdentifierToken
             return IdentifierNode(token.value, token.location)
         } else if (peek() is LParenToken) {
-            if (peekn(2) is QuoteToken){
+            if (peekn(2) is QuoteToken) {
                 return parseQuote()
+            } else if (peekn(2) is LambdaToken) {
+                return parseLambda()
             }
             return parseApplication()
         }
         throw SchemeError("Unexpected character", "I got confused whith this character", peek().location, null)
     }
 
-    private fun parseExpressions() : List<ExpressionNode> {
+    private fun parseExpressions(): List<ExpressionNode> {
         val expressionNodes = mutableListOf<ExpressionNode>()
-        while (peek() !is RParenToken){
+        while (peek() !is RParenToken) {
             expressionNodes.addLast(parseExpression())
         }
         return expressionNodes
     }
 
-    private fun parseSingleQuote() : ListNode{
+    // (lambda () (display 42))
+    // (lambda a 42)
+    //           ^
+    // (lambda (a b) (display (+ a b)))
+    private fun parseLambda(): LambdaNode {
+        val lparen = consume()
+        consume()
+
+        val args = mutableListOf<IdentifierNode>()
+
+        if (peek() is IdentifierToken) {
+            val token = consume() as IdentifierToken
+            args.addLast(IdentifierNode(token.value, token.location))
+        }
+
+        val body = parseExpressions()
+        val rparen = consume()
+
+        return LambdaNode(args, body, Location.merge(lparen.location, rparen.location))
+    }
+
+
+    private fun parseSingleQuote(): ListNode {
         val token = consume() as SingleQuoteToken
         must(LParenToken::class.java, "Quoted List must be followed my left parenthesis")
         val expressionNodes = parseExpressions()
@@ -54,7 +78,7 @@ class Parser {
         return ListNode(expressionNodes, Location.merge(token.location, rparen.location))
     }
 
-    private fun parseQuote() : ListNode{
+    private fun parseQuote(): ListNode {
         val lparen = consume()
         consume()
         must(LParenToken::class.java, "Quoted List must be followed my left parenthesis")
@@ -64,7 +88,7 @@ class Parser {
         return ListNode(expressionNodes, Location.merge(lparen.location, rparen.location))
     }
 
-    private fun parseDefine() : DefineNode{
+    private fun parseDefine(): DefineNode {
         val lparen = consume()
         consume()
 
@@ -72,7 +96,11 @@ class Parser {
         val body = parseExpression()
         val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
 
-        return DefineNode(listOf(IdentifierNode(variableName.value, variableName.location)), listOf(body), Location.merge(lparen.location,rparen.location))
+        return DefineNode(
+            listOf(IdentifierNode(variableName.value, variableName.location)),
+            listOf(body),
+            Location.merge(lparen.location, rparen.location)
+        )
     }
 
     private fun parseApplication(): ApplicationNode {
@@ -88,7 +116,7 @@ class Parser {
     }
 
     private fun must(classs: Class<*>, error: String): Token {
-        if(classs != peek()::class.java) {
+        if (classs != peek()::class.java) {
             throw SchemeError("Unexpected symbol", error, peek().location, null)
         }
         return consume()
