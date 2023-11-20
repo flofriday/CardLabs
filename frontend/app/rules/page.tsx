@@ -1,11 +1,14 @@
 import LeftPageHeader from "../components/leftPageHeader";
 import TextItem from "../components/textItem";
 import Card, { CardColor, CardValue } from "../components/card";
+import Robot, { RobotType } from "../components/robot";
 export default function Rules(): JSX.Element {
   return (
     <div>
       <LeftPageHeader title="Rules" />
-      <div className="flex h-full flex-col justify-center items-center pt-52 space-y-6">
+
+      <Robot type={RobotType.RULER} />
+      <div className="flex h-full flex-col justify-center items-center pt-52 space-y-6 pb-11">
         <TextItem title="Game description">
           The goal of the game is to play all the cards a player is given at the
           beginning as fast as possible. In order to play a card the players
