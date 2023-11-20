@@ -16,7 +16,7 @@ export default function NavBar(): JSX.Element {
         <Link href="/" className="text-base  hover:text-accent max-sm:hidden">
           Leaderboard
         </Link>
-        <Link href="/" className="text-base  hover:text-accent max-sm:hidden">
+        <Link href="/help" className="text-base  hover:text-accent max-sm:hidden">
           Help
         </Link>
         <Link
