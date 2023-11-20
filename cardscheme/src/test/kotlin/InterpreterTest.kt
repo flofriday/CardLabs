@@ -4,6 +4,32 @@ import kotlin.test.assertEquals
 class InterpreterTest {
 
     @Test
+    fun simpleTrueBoolean() {
+        var program = "#t"
+        var result = SchemeInterpreter().run(program)
+        assert(result is BoolValue)
+        assertEquals(true, (result as BoolValue).value)
+
+        program = "#T"
+        result = SchemeInterpreter().run(program)
+        assert(result is BoolValue)
+        assertEquals(true, (result as BoolValue).value)
+    }
+
+    @Test
+    fun simpleFalseBoolean() {
+        var program = "#f"
+        var result = SchemeInterpreter().run(program)
+        assert(result is BoolValue)
+        assertEquals(false, (result as BoolValue).value)
+
+        program = "#F"
+        result = SchemeInterpreter().run(program)
+        assert(result is BoolValue)
+        assertEquals(false, (result as BoolValue).value)
+    }
+
+    @Test
     fun simpleAddition() {
         val program = "(+ 2 3)"
         val result = SchemeInterpreter().run(program)
@@ -64,4 +90,36 @@ class InterpreterTest {
         assert(result is IntValue)
         assertEquals(42, (result as IntValue).value)
     }
+
+    @Test
+    fun simpleConditionWithOneExpression() {
+        val program = "(if #T (+ 1 2))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntValue)
+        assertEquals(3, (result as IntValue).value)
+    }
+
+    @Test
+    fun simpleConditionWithOneExpressionFalse() {
+        val program = "(if #F (+ 1 2))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is VoidValue)
+    }
+
+    @Test
+    fun simpleConditionWithTwoExpressionTrue() {
+        val program = "(if #t (+ 3 2) (+ 5 8))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntValue)
+        assertEquals(5, (result as IntValue).value)
+    }
+
+    @Test
+    fun simpleConditionWithTwoExpressionFalse() {
+        val program = "(if #f (+ 3 2) (+ 5 8))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntValue)
+        assertEquals(13, (result as IntValue).value)
+    }
+
 }

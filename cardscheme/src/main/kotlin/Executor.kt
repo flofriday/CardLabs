@@ -24,6 +24,10 @@ class Executor() : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         }
     }
 
+    override fun visited_by(node: BoolNode): SchemeValue {
+        return BoolValue(node.value)
+    }
+
     override fun visited_by(node: IntNode): IntValue {
         return IntValue(node.value)
     }
@@ -56,6 +60,23 @@ class Executor() : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
 
     override fun visited_by(node: LambdaNode): FuncValue {
         return FuncValue(node.args.map { a -> a.identifier }, node.body, environment)
+    }
+
+    override fun visited_by(node: IfNode): SchemeValue {
+        val condition = node.condition.visit(this)
+        if (condition !is BoolValue){
+            throw SchemeError("Expected boolean", "Expected Condition inside if to evaluate to a boolean value", node.location, null)
+        }
+
+        if(condition.value){
+            return node.thenExpression.visit(this)
+        }
+
+        if (node.elseExpression != null){
+            return node.elseExpression.visit(this)
+        }
+
+        return VoidValue()
     }
 
     override fun visited_by(node: ApplicationNode): SchemeValue {

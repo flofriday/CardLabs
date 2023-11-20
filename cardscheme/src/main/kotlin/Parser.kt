@@ -23,6 +23,9 @@ class Parser {
     private fun parseExpression(): ExpressionNode {
         if (peek() is SingleQuoteToken) {
             return parseSingleQuote()
+        } else if (peek() is BooleanToken) {
+            val token = consume() as BooleanToken
+            return BoolNode(token.value, token.location)
         } else if (peek() is IntegerToken) {
             val token = consume() as IntegerToken
             return IntNode(token.value, token.location)
@@ -34,6 +37,8 @@ class Parser {
                 return parseQuote()
             } else if (peekn(2) is LambdaToken) {
                 return parseLambda()
+            } else if (peekn(2) is IfToken) {
+                return parseIf()
             }
             return parseApplication()
         }
@@ -67,6 +72,29 @@ class Parser {
         val rparen = consume()
 
         return LambdaNode(args, body, Location.merge(lparen.location, rparen.location))
+    }
+
+    /*
+    (if #T
+	    (display "x is greater than 5"))
+     */
+    private fun parseIf(): IfNode {
+        val lparen = consume()
+        consume()
+
+        val condition = parseExpression()
+        val thenExpression = parseExpression()
+
+
+        if (peek() is RParenToken) {
+            //TODO: how to implement empty expression
+            val rparen = consume()
+            return IfNode(condition, thenExpression, null, Location.merge(lparen.location, rparen.location))
+        }
+
+        val elseExpression = parseExpression()
+        val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
+        return IfNode(condition, thenExpression, elseExpression, Location.merge(lparen.location, rparen.location))
     }
 
 

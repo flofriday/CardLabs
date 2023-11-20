@@ -2,6 +2,18 @@ abstract class SchemeValue {
     abstract override fun toString(): String
 }
 
+class VoidValue() : SchemeValue() {
+    override fun toString(): String {
+        return "<#void>"
+    }
+}
+
+data class BoolValue(val value: Boolean) : SchemeValue() {
+    override fun toString(): String {
+        return value.toString()
+    }
+}
+
 data class IntValue(val value: Int) : SchemeValue() {
     override fun toString(): String {
         return value.toString()

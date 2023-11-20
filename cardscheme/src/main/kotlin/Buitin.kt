@@ -27,7 +27,6 @@ fun builtinMinus(args: List<SchemeValue>, env: Environment): SchemeValue {
 }
 
 fun builtinCool(args: List<SchemeValue>, env: Environment): SchemeValue {
-    // FIXME: Return something better than -1
     println("cool")
-    return IntValue(-1)
+    return VoidValue()
 }
