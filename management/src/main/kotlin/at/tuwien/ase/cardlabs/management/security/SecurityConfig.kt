@@ -30,7 +30,7 @@ class SecurityConfig(private val accountService: AccountService) {
             .authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers("/authentication/login").permitAll()
-                    .requestMatchers("/account/create").permitAll()
+                    .requestMatchers("/account").permitAll()
                     .anyRequest().authenticated()
                     .and().sessionManagement { sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

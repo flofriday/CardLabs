@@ -40,7 +40,7 @@ function register(e: React.SyntheticEvent, router: any): void {
   const username = target.username.value;
   const password = target.password.value;
 
-  fetch("api/account/create", {
+  fetch("api/account", {
     mode: "cors",
     method: "POST",
     headers: {

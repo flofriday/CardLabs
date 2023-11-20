@@ -1,10 +1,15 @@
 package at.tuwien.ase.cardlabs.management.controller
 
 import at.tuwien.ase.cardlabs.management.controller.model.Account
+import at.tuwien.ase.cardlabs.management.database.model.AccountDAO
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -12,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class AccountController(val accountService: AccountService) {
 
-    @PostMapping("/account/create")
+    @PostMapping("/account")
     fun create(@RequestBody account: Account): ResponseEntity<Account> {
         return try {
             val result = accountService.create(account)
@@ -28,5 +33,16 @@ class AccountController(val accountService: AccountService) {
                 .status(HttpStatus.BAD_REQUEST)
                 .build()
         }
+    }
+
+    @DeleteMapping("/account/{id}")
+    fun delete(
+        @AuthenticationPrincipal user: UserDetails,
+        @PathVariable id: Long
+    ): ResponseEntity<AccountDAO?> {
+        val result = accountService.delete(id)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(result)
     }
 }

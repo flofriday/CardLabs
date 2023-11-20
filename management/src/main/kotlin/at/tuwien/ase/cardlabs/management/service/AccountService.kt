@@ -6,7 +6,9 @@ import at.tuwien.ase.cardlabs.management.database.model.AccountDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
 import at.tuwien.ase.cardlabs.management.mapper.AccountMapper
+import at.tuwien.ase.cardlabs.management.security.SecurityHelper
 import org.springframework.context.annotation.Lazy
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -31,6 +33,19 @@ class AccountService(
         acc.username = account.username
         acc.password = passwordEncoder.encode(account.password)
         return accountMapper.map(accountRepository.save(acc))
+    }
+
+    fun delete(id: Long): AccountDAO? {
+        val identity = SecurityHelper.getIdentity() as User
+        val account = findByUsername(identity.username)
+        if (account != null) {
+            if (account.id == id) {
+                return accountRepository.deleteById(id) as AccountDAO
+            }
+            // The user cannot delete another user, maybe add admin permission at some point
+            // Throw exception?
+        }
+        return null
     }
 
     fun findById(id: Long): Optional<AccountDAO?> {
