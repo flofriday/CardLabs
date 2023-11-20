@@ -18,10 +18,11 @@ const config: Config = {
         background: '#2D2E3A',
         text: '#FEF9EC',
         primary: '#214E73',
+        primary_highlight: '#2C7AE9',
         secondary: '#3C5366',
         accent: '#87153A',
         yellow: '#E3EF56',
-        green: '5CBC8E'
+        green: '5CBC8E',
     }
   },
   plugins: [],
