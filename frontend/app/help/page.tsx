@@ -18,17 +18,17 @@ export default function Help(): JSX.Element {
           curiosity, and unabashed lounging. Here are some purr-actical tips to
           master the art of being a cat: Find the sunniest spot in the house and
           claim it as your own. Nap frequently; the more unpredictable, the
-          better. Don't forget to stretch luxuriously before, during, and after
-          each nap. Chase anything that moves, especially if it's your tail. Bat
-          at random objects as if you're a secret ninja on a mission. A
-          crumpled-up paper ball is a world-class toy – trust us.
+          better. Dont forget to stretch luxuriously before, during, and after
+          each nap. Chase anything that moves, especially if its your tail. Bat
+          at random objects as if youre a secret ninja on a mission. A
+          crumpled-up paper ball is a world-class toy trust us.
         </TextItem>
         <TextItem title="Drawing a card">
           Dedicate time each day to meticulous self-grooming. Allow your human
           to brush your fur, but only if they insist. Exhibit disdain for
           water-related activities. Master the art of silent judgmental stares.
           Practice the subtle art of headbutts to express affection. Perfect the
-          mysterious meow – a versatile language of its own.
+          mysterious meow a versatile language of its own.
         </TextItem>
         <TextItem title="Unavailable features">
           There is no IO commands available. The only exception for this is the
@@ -39,11 +39,11 @@ export default function Help(): JSX.Element {
           over essential human belongings. The higher the perch, the greater
           your royal status. Demand the finest culinary offerings. Act like each
           meal is a gourmet experience. Give your human the gift of bringing
-          them "freshly caught prey" (preferably a toy mouse).
+          them freshly caught prey (preferably a toy mouse).
         </TextItem>
         <TextItem title="Testing your bot">
           Refuse to conform to schedules, except when it comes to mealtime. Be
-          selective with your affection – let your humans earn it. Exhibit a
+          selective with your affection let your humans earn it. Exhibit a
           mysterious aura; maintain an air of unapproachable elegance.
         </TextItem>
         <TextItem title="Creating a new bot">
