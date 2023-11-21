@@ -79,7 +79,7 @@ test:management:
 ### CardScheme pipeline ###
 ###########################
 analysis:cardscheme:
-  image: maven:3.8.4-openjdk-18
+  image: maven:3.8.7-openjdk-18
   stage: analysis
   script:
     - cd ${CARDSCHEME_DIR}
@@ -88,7 +88,7 @@ analysis:cardscheme:
   allow_failure: false
 
 test:cardscheme:
-  image: maven:3.8.4-openjdk-18
+  image: maven:3.8.7-openjdk-18
   stage: test
   script:
     - cd ${CARDSCHEME_DIR}
