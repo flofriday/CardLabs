@@ -23,9 +23,9 @@ class CompoundTests {
         val program =
             """
             (begin
-	            (display 1)
-	            (display 2)
-	            (display (+ 1 2)))
+                (display 1)
+                (display 2)
+                (display (+ 1 2)))
             """.trimIndent()
         SchemeInterpreter().run(program)
         Assert.assertEquals("123", outputStreamCapture.toString().trim())

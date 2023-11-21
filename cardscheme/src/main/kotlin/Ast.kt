@@ -34,7 +34,7 @@ class ApplicationNode(val expressions: List<ExpressionNode>, location: Location)
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this)
+        return visitor.visitedBy(this)
     }
 }
 
@@ -52,7 +52,7 @@ class DefineNode(val names: List<IdentifierNode>, val bodies: List<ExpressionNod
     }
 
     override fun <T> visit(visitor: StatementVisitor<T>): T {
-        return visitor.visited_by(this)
+        return visitor.visitedBy(this)
     }
 }
 
@@ -62,7 +62,7 @@ class IdentifierNode(val identifier: String, location: Location) : ExpressionNod
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this)
+        return visitor.visitedBy(this)
     }
 }
 
@@ -80,7 +80,7 @@ class BodyNode(val definitions: List<StatementNode>, val expressions: List<Expre
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this)
+        return visitor.visitedBy(this)
     }
 }
 
@@ -92,7 +92,7 @@ class LambdaNode(val args: List<IdentifierNode>, val body: BodyNode, location: L
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this)
+        return visitor.visitedBy(this)
     }
 }
 
@@ -102,7 +102,7 @@ class ListNode(val expressions: List<ExpressionNode>, location: Location) : Expr
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this)
+        return visitor.visitedBy(this)
     }
 }
 
@@ -112,7 +112,7 @@ class BoolNode(val value: Boolean, location: Location) : ExpressionNode(location
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this)
+        return visitor.visitedBy(this)
     }
 }
 
@@ -122,7 +122,7 @@ class IntNode(val value: Int, location: Location) : ExpressionNode(location) {
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this)
+        return visitor.visitedBy(this)
     }
 }
 
@@ -132,7 +132,7 @@ class FloatNode(val value: Float, location: Location) : ExpressionNode(location)
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this)
+        return visitor.visitedBy(this)
     }
 }
 
@@ -151,30 +151,30 @@ class IfNode(
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this)
+        return visitor.visitedBy(this)
     }
 }
 
 interface ExpressionVisitor<T> {
-    fun visited_by(node: BoolNode): T
+    fun visitedBy(node: BoolNode): T
 
-    fun visited_by(node: IntNode): T
+    fun visitedBy(node: IntNode): T
 
-    fun visited_by(node: FloatNode): T
+    fun visitedBy(node: FloatNode): T
 
-    fun visited_by(node: IdentifierNode): T
+    fun visitedBy(node: IdentifierNode): T
 
-    fun visited_by(node: ApplicationNode): T
+    fun visitedBy(node: ApplicationNode): T
 
-    fun visited_by(node: ListNode): T
+    fun visitedBy(node: ListNode): T
 
-    fun visited_by(node: BodyNode): T
+    fun visitedBy(node: BodyNode): T
 
-    fun visited_by(node: LambdaNode): T
+    fun visitedBy(node: LambdaNode): T
 
-    fun visited_by(node: IfNode): T
+    fun visitedBy(node: IfNode): T
 }
 
 interface StatementVisitor<T> {
-    abstract fun visited_by(node: DefineNode): T
+    abstract fun visitedBy(node: DefineNode): T
 }

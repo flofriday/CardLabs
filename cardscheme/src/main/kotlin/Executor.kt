@@ -26,19 +26,19 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         }
     }
 
-    override fun visited_by(node: BoolNode): SchemeValue {
+    override fun visitedBy(node: BoolNode): SchemeValue {
         return BooleanValue(node.value)
     }
 
-    override fun visited_by(node: IntNode): IntegerValue {
+    override fun visitedBy(node: IntNode): IntegerValue {
         return IntegerValue(node.value)
     }
 
-    override fun visited_by(node: FloatNode): SchemeValue {
+    override fun visitedBy(node: FloatNode): SchemeValue {
         return FloatValue(node.value)
     }
 
-    override fun visited_by(node: IdentifierNode): SchemeValue {
+    override fun visitedBy(node: IdentifierNode): SchemeValue {
         val res = environment.get(node.identifier)
         if (res == null) {
             throw SchemeError(
@@ -51,11 +51,11 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         return res
     }
 
-    override fun visited_by(node: ListNode): ListValue {
+    override fun visitedBy(node: ListNode): ListValue {
         return ListValue(node.expressions.map { e -> e.visit(this) })
     }
 
-    override fun visited_by(node: DefineNode) {
+    override fun visitedBy(node: DefineNode) {
         val values = node.bodies.map { b -> b.visit(this) }
 
         for ((name, value) in node.names.zip(values)) {
@@ -63,11 +63,11 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         }
     }
 
-    override fun visited_by(node: LambdaNode): FuncValue {
+    override fun visitedBy(node: LambdaNode): FuncValue {
         return FuncValue(node.args.map { a -> a.identifier }, node.body, environment)
     }
 
-    override fun visited_by(node: IfNode): SchemeValue {
+    override fun visitedBy(node: IfNode): SchemeValue {
         val condition = node.condition.visit(this)
         if (condition !is BooleanValue) {
             throw SchemeError(
@@ -89,14 +89,14 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         return VoidValue()
     }
 
-    override fun visited_by(node: BodyNode): SchemeValue {
+    override fun visitedBy(node: BodyNode): SchemeValue {
         for (d in node.definitions) {
             d.visit(this)
         }
         return node.expressions.map { e -> e.visit(this) }.last()
     }
 
-    override fun visited_by(node: ApplicationNode): SchemeValue {
+    override fun visitedBy(node: ApplicationNode): SchemeValue {
         // FIXME: Replace by proper function loading from the environment
         val func = node.expressions.first().visit(this)
 

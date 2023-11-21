@@ -60,7 +60,8 @@ class Tokenizer() {
 
     private fun isIdentifierInitial(c: Char): Boolean {
         // FIXME: add ... support
-        return c == '+' || c == '-' || c.isLetter() || c == '!' || c == '$' || c == '%' || c == '&' || c == '*' || c == '/' || c == ':' || c == '<' || c == '=' || c == '>' || c == '?' || c == '~' || c == '_' || c == '^'
+        return c == '+' || c == '-' || c.isLetter() || c == '!' || c == '$' || c == '%' || c == '&' || c == '*' ||
+            c == '/' || c == ':' || c == '<' || c == '=' || c == '>' || c == '?' || c == '~' || c == '_' || c == '^'
     }
 
     // <initial> | <digit> | . | + | -
