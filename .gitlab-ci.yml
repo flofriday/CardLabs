@@ -7,13 +7,13 @@ stages:
 variables:
   FRONTEND_DIR: "frontend"
   MANAGEMENT_DIR: "management"
+  CARDSCHEME_DIR: "cardscheme"
 
 cache:
   paths:
     - .gradle/wrapper
     - .gradle/caches
     - ${MANAGEMENT_DIR}/build
-
 
 #########################
 ### Frontend pipeline ###
@@ -74,3 +74,25 @@ test:management:
     - build:management
   allow_failure: false
   # TODO: deploy stage
+
+###########################
+### CardScheme pipeline ###
+###########################
+analysis:cardscheme:
+  image: maven:3.8.4-openjdk-18
+  stage: analysis
+  script:
+    - cd ${CARDSCHEME_DIR}
+    - mvn clean install
+    - mvn ktlint:check
+  allow_failure: false
+
+test:cardscheme:
+  image: maven:3.8.4-openjdk-18
+  stage: test
+  script:
+    - cd ${CARDSCHEME_DIR}
+    - mvn clean test
+  dependencies:
+    - analysis:backend
+  allow_failure: false

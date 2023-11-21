@@ -5,17 +5,18 @@ class Environment(val enclosing: Environment?, val values: HashMap<String, Schem
     }
 
     fun getGlobal(): Environment {
-        if(enclosing == null)
+        if (enclosing == null) {
             return this
+        }
         return enclosing.getGlobal()
     }
 
     fun update(name: String, value: SchemeValue) {
-        if(values.contains(name)) {
+        if (values.contains(name)) {
             values.put(name, value)
             return
         }
-        if(enclosing == null){
+        if (enclosing == null) {
             throw SchemeError("Variable not found", "I couldn't find any variable with the name '$name'", null, null)
         }
         enclosing.update(name, value)
@@ -27,21 +28,25 @@ class Environment(val enclosing: Environment?, val values: HashMap<String, Schem
     }
 
     fun get(name: String): SchemeValue? {
-        if (values.contains(name))
+        if (values.contains(name)) {
             return values[name]
+        }
 
-        if (enclosing == null)
+        if (enclosing == null) {
             return null
+        }
 
         return enclosing.get(name)
     }
 
     fun has(name: String): Boolean {
-        if (values.contains(name))
+        if (values.contains(name)) {
             return true
+        }
 
-        if (enclosing == null)
+        if (enclosing == null) {
             return false
+        }
 
         return enclosing.has(name)
     }

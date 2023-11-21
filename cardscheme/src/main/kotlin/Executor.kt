@@ -43,7 +43,7 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
                 "Variable not found",
                 "No variable with the name ${node.identifier} exists.",
                 node.location,
-                null
+                null,
             )
         }
         return res
@@ -72,7 +72,7 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
                 "Expected boolean",
                 "Expected Condition inside if to evaluate to a boolean value",
                 node.location,
-                null
+                null,
             )
         }
 
@@ -98,7 +98,6 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         // FIXME: Replace by proper function loading from the environment
         val func = node.expressions.first().visit(this)
 
-
         if (func is NativeFuncValue) {
             val args = node.expressions.drop(1).map { e ->
                 NativeFuncArg(e.visit(this), e.location)
@@ -108,7 +107,6 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
             } catch (e: SchemeError) {
                 throw SchemeError(e.header, e.reason, e.location ?: node.location, e.tip)
             }
-
         } else if (func is FuncValue) {
             val args = node.expressions.drop(1).map { e ->
                 e.visit(this)

@@ -50,7 +50,7 @@ class Tokenizer() {
                     "Parsing Error",
                     "I got confused during parsing, with an unexpected character",
                     Location(line, line, col, col),
-                    null
+                    null,
                 )
             }
         }
@@ -63,7 +63,7 @@ class Tokenizer() {
         return c == '+' || c == '-' || c.isLetter() || c == '!' || c == '$' || c == '%' || c == '&' || c == '*' || c == '/' || c == ':' || c == '<' || c == '=' || c == '>' || c == '?' || c == '~' || c == '_' || c == '^'
     }
 
-    //<initial> | <digit> | . | + | -
+    // <initial> | <digit> | . | + | -
     private fun isIdentifierSubsequent(c: Char): Boolean {
         return isIdentifierInitial(c) || c == '.' || c.isDigit()
     }

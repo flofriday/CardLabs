@@ -1,10 +1,6 @@
-import org.junit.After
+
 import org.junit.Assert
-import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 
 class FunctionTests {
 
@@ -24,12 +20,9 @@ class FunctionTests {
                     (lambda x (+ a x))))
                     
             ((f 1) 41)
-            """.trimIndent()
+        """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
         Assert.assertEquals(42, (result as IntegerValue).value)
     }
-
-
-
 }

@@ -118,9 +118,7 @@ data class FuncValue(val args: List<String>, val body: BodyNode, val env: Enviro
     }
 }
 
-data class NativeFuncArg(val value: SchemeValue, val location: Location) {
-
-}
+data class NativeFuncArg(val value: SchemeValue, val location: Location)
 
 data class NativeFuncValue(val name: String, val func: (List<NativeFuncArg>, Environment) -> SchemeValue) :
     SchemeValue() {

@@ -2,7 +2,6 @@ import java.io.File
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
-
     /*
     var interpreter = SchemeInterpreter()
     interpreter.run(program)
@@ -44,8 +43,9 @@ fun main(args: Array<String>) {
             }
 
             val obj = interpreter.run(program)
-            if (obj != null && obj !is VoidValue)
+            if (obj != null && obj !is VoidValue) {
                 println(obj)
+            }
         } catch (e: SchemeError) {
             e.display(program)
         }

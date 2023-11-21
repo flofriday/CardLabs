@@ -9,33 +9,39 @@ fun injectBuiltin(environment: Environment) {
 fun builtinPlus(args: List<NativeFuncArg>, env: Environment): NumberValue {
     var sum: NumberValue = IntegerValue(0)
     for ((arg, loc) in args) {
-        if (arg !is NumberValue) throw SchemeError(
-            "Unsupported Type",
-            "Only numbers can be added but one of the arguments was a ${arg.typeName()}",
-            loc,
-            null
-        )
+        if (arg !is NumberValue) {
+            throw SchemeError(
+                "Unsupported Type",
+                "Only numbers can be added but one of the arguments was a ${arg.typeName()}",
+                loc,
+                null,
+            )
+        }
         sum = sum.add(arg)
     }
     return sum
 }
 
 fun builtinMinus(args: List<NativeFuncArg>, env: Environment): SchemeValue {
-    if (args.first().value !is NumberValue) throw SchemeError(
-        "Unsuported Type",
-        "Only numbers can be added but one of the arguments was a ${args.first().value.typeName()}",
-        args.first().location,
-        null
-    )
+    if (args.first().value !is NumberValue) {
+        throw SchemeError(
+            "Unsuported Type",
+            "Only numbers can be added but one of the arguments was a ${args.first().value.typeName()}",
+            args.first().location,
+            null,
+        )
+    }
     var res = (args.first().value as NumberValue)
 
     for ((arg, loc) in args.drop(1)) {
-        if (arg !is NumberValue) throw throw SchemeError(
-            "Unsuported Type",
-            "Only numbers can be added but one of the arguments was a ${arg.typeName()}",
-            loc,
-            null
-        )
+        if (arg !is NumberValue) {
+            throw throw SchemeError(
+                "Unsuported Type",
+                "Only numbers can be added but one of the arguments was a ${arg.typeName()}",
+                loc,
+                null,
+            )
+        }
         res = res.sub(arg)
     }
     return res

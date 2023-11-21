@@ -80,7 +80,7 @@ class Parser {
         return LambdaNode(
             args,
             BodyNode(listOf(), expressions, Location.merge(expressions.first().location, expressions.last().location)),
-            Location.merge(lparen.location, rparen.location)
+            Location.merge(lparen.location, rparen.location),
         )
     }
 
@@ -95,9 +95,8 @@ class Parser {
         val condition = parseExpression()
         val thenExpression = parseExpression()
 
-
         if (peek() is RParenToken) {
-            //TODO: how to implement empty expression
+            // TODO: how to implement empty expression
             val rparen = consume()
             return IfNode(condition, thenExpression, null, Location.merge(lparen.location, rparen.location))
         }
@@ -106,7 +105,6 @@ class Parser {
         val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
         return IfNode(condition, thenExpression, elseExpression, Location.merge(lparen.location, rparen.location))
     }
-
 
     private fun parseSingleQuote(): ListNode {
         val token = consume() as SingleQuoteToken
@@ -136,7 +134,7 @@ class Parser {
         return BodyNode(
             listOf(),
             expressions,
-            Location.merge(lparen.location, rparen.location)
+            Location.merge(lparen.location, rparen.location),
         )
     }
 
@@ -151,7 +149,7 @@ class Parser {
         return DefineNode(
             listOf(IdentifierNode(variableName.value, variableName.location)),
             listOf(body),
-            Location.merge(lparen.location, rparen.location)
+            Location.merge(lparen.location, rparen.location),
         )
     }
 
@@ -181,7 +179,6 @@ class Parser {
     private fun peekn(n: Int): Token {
         return tokens[index + n - 1]
     }
-
 
     private fun consume(): Token {
         index++

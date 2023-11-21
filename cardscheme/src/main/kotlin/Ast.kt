@@ -16,7 +16,6 @@ abstract class AstNode(val location: Location) {
     }
 }
 
-
 abstract class ExpressionNode(location: Location) : AstNode(location) {
     abstract fun <T> visit(visitor: ExpressionVisitor<T>): T
 }
@@ -35,7 +34,7 @@ class ApplicationNode(val expressions: List<ExpressionNode>, location: Location)
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this);
+        return visitor.visited_by(this)
     }
 }
 
@@ -53,7 +52,7 @@ class DefineNode(val names: List<IdentifierNode>, val bodies: List<ExpressionNod
     }
 
     override fun <T> visit(visitor: StatementVisitor<T>): T {
-        return visitor.visited_by(this);
+        return visitor.visited_by(this)
     }
 }
 
@@ -63,7 +62,7 @@ class IdentifierNode(val identifier: String, location: Location) : ExpressionNod
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this);
+        return visitor.visited_by(this)
     }
 }
 
@@ -81,7 +80,7 @@ class BodyNode(val definitions: List<StatementNode>, val expressions: List<Expre
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this);
+        return visitor.visited_by(this)
     }
 }
 
@@ -90,11 +89,11 @@ class LambdaNode(val args: List<IdentifierNode>, val body: BodyNode, location: L
 
     override fun dump(indent: Int): String {
         return getIndentation(indent) + "Lambda: '${args.joinToString(", ") { a -> a.identifier }}'\n" +
-                body.dump(indent + 1)
+            body.dump(indent + 1)
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this);
+        return visitor.visited_by(this)
     }
 }
 
@@ -104,7 +103,7 @@ class ListNode(val expressions: List<ExpressionNode>, location: Location) : Expr
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this);
+        return visitor.visited_by(this)
     }
 }
 
@@ -114,7 +113,7 @@ class BoolNode(val value: Boolean, location: Location) : ExpressionNode(location
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this);
+        return visitor.visited_by(this)
     }
 }
 
@@ -124,7 +123,7 @@ class IntNode(val value: Int, location: Location) : ExpressionNode(location) {
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this);
+        return visitor.visited_by(this)
     }
 }
 
@@ -134,7 +133,7 @@ class FloatNode(val value: Float, location: Location) : ExpressionNode(location)
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this);
+        return visitor.visited_by(this)
     }
 }
 
@@ -142,18 +141,18 @@ class IfNode(
     val condition: ExpressionNode,
     val thenExpression: ExpressionNode,
     val elseExpression: ExpressionNode?,
-    location: Location
+    location: Location,
 ) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) + "If: ${condition.dump(indent)} \n ${thenExpression.dump(indent + 1)} \n ${
             elseExpression?.dump(
-                indent + 1
+                indent + 1,
             )
         }"
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visited_by(this);
+        return visitor.visited_by(this)
     }
 }
 
