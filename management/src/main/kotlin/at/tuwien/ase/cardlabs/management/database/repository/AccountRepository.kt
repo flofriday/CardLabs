@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository
 interface AccountRepository : CrudRepository<AccountDAO?, Long?> {
 
     fun findByUsername(username: String): AccountDAO?
+
+    fun findByEmail(email: String): AccountDAO?
 }

@@ -20,6 +20,6 @@ class AccountDAO : AuditedEntity() {
     @Column(unique = true, nullable = false)
     lateinit var email: String
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     lateinit var password: String
 }

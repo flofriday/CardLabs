@@ -24,13 +24,19 @@ class AccountService(
     @Transactional
     fun create(account: Account): Account {
         Helper.requireNull(account.id, "Can't create the account ${account.username} as it already contains an id")
+        Helper.requireNonNull(account.username, "The username must be set")
+        Helper.requireNonNull(account.email, "The email must be set")
         Helper.requireNonNull(account.password, "The password must be set")
         if (findByUsername(account.username) != null) {
             throw AccountExistsException("An account with the username ${account.username} already exists")
         }
+        if (findByEmail(account.email) != null) {
+            throw AccountExistsException("An account with the email ${account.email} already exists")
+        }
 
         val acc = AccountDAO()
         acc.username = account.username
+        acc.email = account.email
         acc.password = passwordEncoder.encode(account.password)
         return accountMapper.map(accountRepository.save(acc))
     }
@@ -57,5 +63,12 @@ class AccountService(
             return null
         }
         return accountRepository.findByUsername(username)
+    }
+
+    fun findByEmail(email: String?): AccountDAO? {
+        if (email == null) {
+            return null
+        }
+        return accountRepository.findByEmail(email)
     }
 }
