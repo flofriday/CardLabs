@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.it
 
+import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.controller.model.Account
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.service.AccountService
@@ -35,7 +36,7 @@ class AuthenticationIntegrationTests {
     fun whenLogin_expectSuccess() {
         createAccount("test", "test@test.com", "password")
 
-        val body = createAccountLoginJSON("test", "test@test.com", "password")
+        val body = TestHelper.createAccountLoginJSON("test", "password")
         mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -48,7 +49,7 @@ class AuthenticationIntegrationTests {
     fun whenLogin_expectBadCredentialsError() {
         createAccount("test", "test@test.com", "password")
 
-        val body = createAccountLoginJSON("test", "test@test.com", "password2")
+        val body = TestHelper.createAccountLoginJSON("test", "password2")
         mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -57,23 +58,7 @@ class AuthenticationIntegrationTests {
             .andExpect(status().isBadRequest)
     }
 
-    private fun createAccountLoginJSON(username: String, email: String, password: String): String {
-        return """
-            {
-                "username": "$username",
-                "email": "$email",
-                "password": "$password"
-            }
-        """.trimIndent()
-    }
-
     private fun createAccount(username: String, email: String, password: String): Account {
-        val account = Account(
-            id = null,
-            username = username,
-            email = email,
-            password = password
-        )
-        return accountService.create(account)
+        return TestHelper.createAccount(accountService, username, email, password)
     }
 }

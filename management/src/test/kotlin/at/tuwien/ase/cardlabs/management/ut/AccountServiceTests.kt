@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.ut
 
+import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.controller.model.Account
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
@@ -14,9 +15,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetails
 
 @SpringBootTest
 internal class AccountServiceTests {
@@ -107,7 +105,7 @@ internal class AccountServiceTests {
     @Test
     fun whenAccountDelete_expectSuccess() {
         val account = createAccount("test", "test@test.com", "password")
-        val userDetailsAccount = createUserDetails(account.username, account.password)
+        val userDetailsAccount = TestHelper.createUserDetails(account.username, account.password)
 
         assertDoesNotThrow {
             accountService.delete(userDetailsAccount, account.id!!)
@@ -118,7 +116,7 @@ internal class AccountServiceTests {
     fun whenAccountDelete_expectUnauthorizedError() {
         val account1 = createAccount("test", "test@test.com", "password")
         val account2 = createAccount("test2", "test2@test.com", "password")
-        val userDetailsAccount1 = createUserDetails(account1.username, account1.password)
+        val userDetailsAccount1 = TestHelper.createUserDetails(account1.username, account1.password)
 
         val exception = assertThrows<UnauthorizedException> {
             accountService.delete(userDetailsAccount1, account2.id!!)
@@ -127,16 +125,6 @@ internal class AccountServiceTests {
     }
 
     private fun createAccount(username: String, email: String, password: String): Account {
-        val account = Account(
-            id = null,
-            username = username,
-            email = email,
-            password = password
-        )
-        return accountService.create(account)
-    }
-
-    private fun createUserDetails(username: String, password: String): UserDetails {
-        return User(username, password, listOf(SimpleGrantedAuthority("ROLE_USER")))
+        return TestHelper.createAccount(accountService, username, email, password)
     }
 }
