@@ -38,7 +38,7 @@ export default function MiniLeaderBoard({ heading }: Props): JSX.Element {
   const [selectedTab, setSelectedTab] = useState("tabs-global");
 
   return (
-    <div className="bg-secondary rounded-lg">
+    <div className="bg-secondary rounded-lg w-full">
       <ul
         className="mb-5 flex list-none flex-row flex-wrap border-b-0 pl-0"
         role="tablist"
