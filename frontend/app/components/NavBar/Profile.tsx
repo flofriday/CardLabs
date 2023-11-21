@@ -53,7 +53,13 @@ export default function Profile(): JSX.Element {
         }`}
         ref={dropDownMenu}
       >
-        {dropdownVisability && <DropDown />}
+        {dropdownVisability && (
+          <DropDown
+            close={() => {
+              setDropdownVisability(false);
+            }}
+          />
+        )}
       </div>
     </>
   );
