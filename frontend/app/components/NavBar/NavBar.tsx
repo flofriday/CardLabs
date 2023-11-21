@@ -3,7 +3,7 @@ import SignInUp from "./SignInUp";
 import Profile from "./Profile";
 import { isAuthenticated } from "../../services/AuthenticationService";
 
-export default function NavBar(): JSX.Element {
+export default async function NavBar(): Promise<JSX.Element> {
   return (
     <div className="w-full h-14 bg-primary flow-root fixed z-30">
       <div className="h-full flex items-center space-x-6 w-fit float-left">
@@ -24,7 +24,7 @@ export default function NavBar(): JSX.Element {
         </Link>
       </div>
       <div className="w-fit flex h-full float-right items-center mr-5">
-        {isAuthenticated() ? <Profile /> : <SignInUp />}
+        {(await isAuthenticated()) ? <Profile /> : <SignInUp />}
       </div>
     </div>
   );
