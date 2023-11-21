@@ -1,6 +1,9 @@
 data class Location(val startline: Int, val endline: Int, val startcol: Int, val endcol: Int) {
     companion object {
-        fun merge(begin: Location, end: Location): Location {
+        fun merge(
+            begin: Location,
+            end: Location,
+        ): Location {
             val startline = minOf(begin.startline, end.startline)
             var endline = maxOf(begin.endline, end.endline)
 

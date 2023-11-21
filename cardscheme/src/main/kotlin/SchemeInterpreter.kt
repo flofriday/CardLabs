@@ -1,5 +1,4 @@
 class SchemeInterpreter() {
-
     private var env = Environment(null, HashMap())
 
     init {

@@ -78,10 +78,21 @@ test:management:
 ###########################
 ### CardScheme pipeline ###
 ###########################
+analysis:cardscheme:
+  image: amazoncorretto:21-alpine
+  stage: analysis
+  script:
+    - cd ${CARDSCHEME_DIR}
+    - ./mvnw clean install
+    - ./mvnw ktlint:check
+  allow_failure: false
+
 test:cardscheme:
   image: amazoncorretto:21-alpine
   stage: test
   script:
     - cd ${CARDSCHEME_DIR}
     - ./mvnw clean test
+  dependencies:
+    - analysis:cardscheme
   allow_failure: false

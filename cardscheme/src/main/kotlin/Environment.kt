@@ -1,5 +1,4 @@
 class Environment(val enclosing: Environment?, val values: HashMap<String, SchemeValue>) {
-
     fun isGlobal(): Boolean {
         return enclosing == null
     }
@@ -11,7 +10,10 @@ class Environment(val enclosing: Environment?, val values: HashMap<String, Schem
         return enclosing.getGlobal()
     }
 
-    fun update(name: String, value: SchemeValue) {
+    fun update(
+        name: String,
+        value: SchemeValue,
+    ) {
         if (values.contains(name)) {
             values.put(name, value)
             return
@@ -22,7 +24,10 @@ class Environment(val enclosing: Environment?, val values: HashMap<String, Schem
         enclosing.update(name, value)
     }
 
-    fun put(name: String, value: SchemeValue) {
+    fun put(
+        name: String,
+        value: SchemeValue,
+    ) {
         // FIXME: Research if shadowing must be prevented
         values.put(name, value)
     }

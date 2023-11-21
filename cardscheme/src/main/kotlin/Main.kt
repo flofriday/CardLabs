@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
     val turnfunc = interpreter.getglobal("turn")
     val gamestate = magicfunction_tocreategamestate()
     val selected_card = interpreter.call(turnfunc, gamestate)
-    */
+     */
 
     if (args.size > 1) {
         println("usage: cardscheme [FILE]")

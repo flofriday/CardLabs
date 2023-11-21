@@ -165,7 +165,10 @@ class Parser {
         return ApplicationNode(expressions, Location.merge(lparen.location, rparen.location))
     }
 
-    private fun must(classs: Class<*>, error: String): Token {
+    private fun must(
+        classs: Class<*>,
+        error: String,
+    ): Token {
         if (classs != peek()::class.java) {
             throw SchemeError("Unexpected symbol", error, peek().location, null)
         }

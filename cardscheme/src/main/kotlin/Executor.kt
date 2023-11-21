@@ -1,8 +1,10 @@
 class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
-
     private var environment = Environment(null, hashMapOf())
 
-    fun execute(ast: Ast, env: Environment): SchemeValue? {
+    fun execute(
+        ast: Ast,
+        env: Environment,
+    ): SchemeValue? {
         // FIXME: Replace by empty list
         this.environment = env
         for (form in ast.forms.dropLast(1)) {
@@ -99,18 +101,20 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         val func = node.expressions.first().visit(this)
 
         if (func is NativeFuncValue) {
-            val args = node.expressions.drop(1).map { e ->
-                NativeFuncArg(e.visit(this), e.location)
-            }
+            val args =
+                node.expressions.drop(1).map { e ->
+                    NativeFuncArg(e.visit(this), e.location)
+                }
             try {
                 return func.func(args, environment)
             } catch (e: SchemeError) {
                 throw SchemeError(e.header, e.reason, e.location ?: node.location, e.tip)
             }
         } else if (func is FuncValue) {
-            val args = node.expressions.drop(1).map { e ->
-                e.visit(this)
-            }
+            val args =
+                node.expressions.drop(1).map { e ->
+                    e.visit(this)
+                }
 
             val old = environment
             // environment for the lambda function

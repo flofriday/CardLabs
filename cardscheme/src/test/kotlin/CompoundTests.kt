@@ -20,7 +20,8 @@ class CompoundTests {
 
     @Test
     fun beginAndDisplayTest() {
-        val program = """
+        val program =
+            """
             (begin
 	            (display 1)
 	            (display 2)

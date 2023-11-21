@@ -6,7 +6,10 @@ fun injectBuiltin(environment: Environment) {
     environment.put("cool", NativeFuncValue("cool", ::builtinCool))
 }
 
-fun builtinPlus(args: List<NativeFuncArg>, env: Environment): NumberValue {
+fun builtinPlus(
+    args: List<NativeFuncArg>,
+    env: Environment,
+): NumberValue {
     var sum: NumberValue = IntegerValue(0)
     for ((arg, loc) in args) {
         if (arg !is NumberValue) {
@@ -22,7 +25,10 @@ fun builtinPlus(args: List<NativeFuncArg>, env: Environment): NumberValue {
     return sum
 }
 
-fun builtinMinus(args: List<NativeFuncArg>, env: Environment): SchemeValue {
+fun builtinMinus(
+    args: List<NativeFuncArg>,
+    env: Environment,
+): SchemeValue {
     if (args.first().value !is NumberValue) {
         throw SchemeError(
             "Unsuported Type",
@@ -47,7 +53,10 @@ fun builtinMinus(args: List<NativeFuncArg>, env: Environment): SchemeValue {
     return res
 }
 
-fun builtinDisplay(args: List<NativeFuncArg>, env: Environment): SchemeValue {
+fun builtinDisplay(
+    args: List<NativeFuncArg>,
+    env: Environment,
+): SchemeValue {
     if (args.size > 1) {
         throw SchemeError("Too many arguments", "The display function takes exactly one argument", null, null)
     }
@@ -55,7 +64,10 @@ fun builtinDisplay(args: List<NativeFuncArg>, env: Environment): SchemeValue {
     return VoidValue()
 }
 
-fun builtinSmaller(args: List<NativeFuncArg>, env: Environment): SchemeValue {
+fun builtinSmaller(
+    args: List<NativeFuncArg>,
+    env: Environment,
+): SchemeValue {
     for ((value, loc) in args) {
         if (value !is NumberValue) {
             throw SchemeError("Expected number", "You can only compare numbers.", loc, null)
@@ -66,7 +78,10 @@ fun builtinSmaller(args: List<NativeFuncArg>, env: Environment): SchemeValue {
     return BooleanValue(result)
 }
 
-fun builtinCool(args: List<NativeFuncArg>, env: Environment): SchemeValue {
+fun builtinCool(
+    args: List<NativeFuncArg>,
+    env: Environment,
+): SchemeValue {
     println("cool")
     return VoidValue()
 }

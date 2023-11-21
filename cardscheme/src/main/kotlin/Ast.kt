@@ -86,7 +86,6 @@ class BodyNode(val definitions: List<StatementNode>, val expressions: List<Expre
 
 class LambdaNode(val args: List<IdentifierNode>, val body: BodyNode, location: Location) :
     ExpressionNode(location) {
-
     override fun dump(indent: Int): String {
         return getIndentation(indent) + "Lambda: '${args.joinToString(", ") { a -> a.identifier }}'\n" +
             body.dump(indent + 1)
@@ -158,13 +157,21 @@ class IfNode(
 
 interface ExpressionVisitor<T> {
     fun visited_by(node: BoolNode): T
+
     fun visited_by(node: IntNode): T
+
     fun visited_by(node: FloatNode): T
+
     fun visited_by(node: IdentifierNode): T
+
     fun visited_by(node: ApplicationNode): T
+
     fun visited_by(node: ListNode): T
+
     fun visited_by(node: BodyNode): T
+
     fun visited_by(node: LambdaNode): T
+
     fun visited_by(node: IfNode): T
 }
 

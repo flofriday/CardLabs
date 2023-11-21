@@ -1,5 +1,6 @@
 abstract class SchemeValue {
     abstract override fun toString(): String
+
     abstract fun typeName(): String
 }
 
@@ -25,7 +26,9 @@ data class BooleanValue(val value: Boolean) : SchemeValue() {
 
 abstract class NumberValue() : SchemeValue() {
     abstract fun add(other: NumberValue): NumberValue
+
     abstract fun sub(other: NumberValue): NumberValue
+
     abstract fun smallerThan(other: NumberValue): BooleanValue
 }
 

@@ -2,7 +2,6 @@ import org.junit.Assert
 import org.junit.Test
 
 class ComparisonTests {
-
     @Test
     fun smallerThanWithInts1() {
         val program = "(< 1 2)"
