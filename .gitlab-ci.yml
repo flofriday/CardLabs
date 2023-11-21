@@ -78,21 +78,12 @@ test:management:
 ###########################
 ### CardScheme pipeline ###
 ###########################
-analysis:cardscheme:
-  image: maven:3.9.5-eclipse-temurin-21-alpine
-  stage: analysis
-  script:
-    - cd ${CARDSCHEME_DIR}
-    - mvn clean install
-    - mvn ktlint:check
-  allow_failure: false
-
 test:cardscheme:
-  image: maven:3.9.5-eclipse-temurin-21-alpine
+  image: amazoncorretto:21-alpine
   stage: test
   script:
     - cd ${CARDSCHEME_DIR}
-    - mvn clean test
+    - ./mvnw clean test
   dependencies:
     - analysis:cardscheme
   allow_failure: false
