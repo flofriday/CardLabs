@@ -24,7 +24,7 @@ export default function Dashboard(): JSX.Element {
         </button>
       </div>
 
-      <div className="absolute right-0 flex-col h-full w-1/4">
+      <div className="absolute top-0 right-0 space-y-5 flex flex-col justify-center items-center h-full w-1/4 mr-12">
         <MiniLeaderBoard heading="My Bots" />
         <MiniLeaderBoard heading="Global Ranking" />
       </div>
