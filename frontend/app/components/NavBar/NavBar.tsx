@@ -13,7 +13,10 @@ export default function NavBar() {
         <Link href="/" className="text-base  hover:text-accent max-sm:hidden">
           Home
         </Link>
-        <Link href="/" className="text-base  hover:text-accent max-sm:hidden">
+        <Link
+          href="/leaderboard"
+          className="text-base  hover:text-accent max-sm:hidden"
+        >
           Leaderboard
         </Link>
         <Link href="/" className="text-base  hover:text-accent max-sm:hidden">
