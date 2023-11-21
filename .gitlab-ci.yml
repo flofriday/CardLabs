@@ -94,5 +94,5 @@ test:cardscheme:
     - cd ${CARDSCHEME_DIR}
     - mvn clean test
   dependencies:
-    - analysis:backend
+    - analysis:cardscheme
   allow_failure: false
