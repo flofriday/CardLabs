@@ -1,3 +1,6 @@
+import java.io.File
+import kotlin.system.exitProcess
+
 fun main(args: Array<String>) {
 
     /*
@@ -8,6 +11,21 @@ fun main(args: Array<String>) {
     val selected_card = interpreter.call(turnfunc, gamestate)
     */
 
+    if (args.size > 1) {
+        println("usage: cardscheme [FILE]")
+        exitProcess(1)
+    }
+
+    if (args.size == 1) {
+        val program = File(args.get(0)).readText()
+        try {
+            SchemeInterpreter().run(program)
+            exitProcess(0)
+        } catch (e: SchemeError) {
+            e.display(program)
+            exitProcess(1)
+        }
+    }
 
     println("The CardLabs Scheme Interpreter")
     println("Made with ❤️ by CardLabs")
@@ -26,7 +44,7 @@ fun main(args: Array<String>) {
             }
 
             val obj = interpreter.run(program)
-            if (obj != null)
+            if (obj != null && obj !is VoidValue)
                 println(obj)
         } catch (e: SchemeError) {
             e.display(program)

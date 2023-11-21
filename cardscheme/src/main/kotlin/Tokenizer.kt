@@ -1,5 +1,3 @@
-import java.lang.Exception
-
 // Tokens are defined here:
 // https://www.scheme.com/tspl2d/grammar.html
 class Tokenizer() {
@@ -34,13 +32,15 @@ class Tokenizer() {
             } else if (c.isDigit()) {
                 tokens.addLast(scanNumber())
             } else if (consumeMatch("define")) {
-                tokens.add(DefineToken(Location(line, line, col - 1 - "define".length, col - 1)))
+                tokens.add(DefineToken(Location(line, line, col - "define".length, col - 1)))
             } else if (consumeMatch("quote")) {
-                tokens.add(QuoteToken(Location(line, line, col - 1 - "quote".length, col - 1)))
+                tokens.add(QuoteToken(Location(line, line, col - "quote".length, col - 1)))
             } else if (consumeMatch("lambda")) {
-                tokens.add(LambdaToken(Location(line, line, col - 1 - "lambda".length, col - 1)))
+                tokens.add(LambdaToken(Location(line, line, col - "lambda".length, col - 1)))
             } else if (consumeMatch("if")) {
-                tokens.add(IfToken(Location(line, line, col - 1 - "if".length, col - 1)))
+                tokens.add(IfToken(Location(line, line, col - "if".length, col - 1)))
+            } else if (consumeMatch("begin")) {
+                tokens.add(BeginToken(Location(line, line, col - "begin".length, col - 1)))
             } else if (isIdentifierInitial(c)) {
                 tokens.addLast(scanIdentifier())
             } else if (c.isWhitespace()) {
@@ -111,11 +111,10 @@ class Tokenizer() {
 
     private fun scanPoundSign(): BooleanToken {
         consume()
-        if (peek().equals('t', ignoreCase = true)){
+        if (peek().equals('t', ignoreCase = true)) {
             consume()
             return BooleanToken(true, Location(line, line, col - 1, col - 1))
-        }
-        else if (peek().equals('f', ignoreCase = true)){
+        } else if (peek().equals('f', ignoreCase = true)) {
             consume()
             return BooleanToken(false, Location(line, line, col - 1, col - 1))
         }

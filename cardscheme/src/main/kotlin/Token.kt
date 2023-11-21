@@ -4,6 +4,7 @@ abstract class Token(val location: Location) {
 class BooleanToken(val value: Boolean, location: Location) : Token(location) {
 
 }
+
 class IntegerToken(val value: Int, location: Location) : Token(location) {
 
 }
@@ -25,6 +26,10 @@ class LambdaToken(location: Location) : Token(location) {
 }
 
 class IfToken(location: Location) : Token(location) {
+
+}
+
+class BeginToken(location: Location) : Token(location) {
 
 }
 

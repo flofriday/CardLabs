@@ -67,11 +67,30 @@ class IdentifierNode(val identifier: String, location: Location) : ExpressionNod
     }
 }
 
-class LambdaNode(val args: List<IdentifierNode>, val body: List<ExpressionNode>, location: Location) :
+class BodyNode(val definitions: List<StatementNode>, val expressions: List<ExpressionNode>, location: Location) :
     ExpressionNode(location) {
     override fun dump(indent: Int): String {
+        var out = getIndentation(indent) + "Body:\n"
+        for (d in definitions) {
+            out += d.dump(indent + 1)
+        }
+        for (e in expressions) {
+            out += e.dump(indent + 1)
+        }
+        return out
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visited_by(this);
+    }
+}
+
+class LambdaNode(val args: List<IdentifierNode>, val body: BodyNode, location: Location) :
+    ExpressionNode(location) {
+
+    override fun dump(indent: Int): String {
         return getIndentation(indent) + "Lambda: '${args.joinToString(", ") { a -> a.identifier }}'\n" +
-                body.joinToString { c -> c.dump(indent + 1) + "\n" }
+                body.dump(indent + 1)
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
@@ -109,9 +128,28 @@ class IntNode(val value: Int, location: Location) : ExpressionNode(location) {
     }
 }
 
-class IfNode(val condition: ExpressionNode, val thenExpression : ExpressionNode, val elseExpression : ExpressionNode?, location: Location) : ExpressionNode(location) {
+class FloatNode(val value: Float, location: Location) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
-        return getIndentation(indent) + "If: ${condition.dump(indent)} \n ${thenExpression.dump(indent + 1)} \n ${elseExpression?.dump(indent + 1)}"
+        return getIndentation(indent) + "Float: $value \n"
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visited_by(this);
+    }
+}
+
+class IfNode(
+    val condition: ExpressionNode,
+    val thenExpression: ExpressionNode,
+    val elseExpression: ExpressionNode?,
+    location: Location
+) : ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) + "If: ${condition.dump(indent)} \n ${thenExpression.dump(indent + 1)} \n ${
+            elseExpression?.dump(
+                indent + 1
+            )
+        }"
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
@@ -122,9 +160,11 @@ class IfNode(val condition: ExpressionNode, val thenExpression : ExpressionNode,
 interface ExpressionVisitor<T> {
     fun visited_by(node: BoolNode): T
     fun visited_by(node: IntNode): T
+    fun visited_by(node: FloatNode): T
     fun visited_by(node: IdentifierNode): T
     fun visited_by(node: ApplicationNode): T
     fun visited_by(node: ListNode): T
+    fun visited_by(node: BodyNode): T
     fun visited_by(node: LambdaNode): T
     fun visited_by(node: IfNode): T
 }

@@ -29,6 +29,9 @@ class Parser {
         } else if (peek() is IntegerToken) {
             val token = consume() as IntegerToken
             return IntNode(token.value, token.location)
+        } else if (peek() is FloatToken) {
+            val token = consume() as FloatToken
+            return FloatNode(token.value, token.location)
         } else if (peek() is IdentifierToken) {
             val token = consume() as IdentifierToken
             return IdentifierNode(token.value, token.location)
@@ -39,10 +42,12 @@ class Parser {
                 return parseLambda()
             } else if (peekn(2) is IfToken) {
                 return parseIf()
+            } else if (peekn(2) is BeginToken) {
+                return parseBegin()
             }
             return parseApplication()
         }
-        throw SchemeError("Unexpected character", "I got confused whith this character", peek().location, null)
+        throw SchemeError("Unexpected token", "I got confused with ${peek()} token", peek().location, null)
     }
 
     private fun parseExpressions(): List<ExpressionNode> {
@@ -68,10 +73,15 @@ class Parser {
             args.addLast(IdentifierNode(token.value, token.location))
         }
 
-        val body = parseExpressions()
+        // FIXME: A body could also have some definitions at the beginning
+        val expressions = parseExpressions()
         val rparen = consume()
 
-        return LambdaNode(args, body, Location.merge(lparen.location, rparen.location))
+        return LambdaNode(
+            args,
+            BodyNode(listOf(), expressions, Location.merge(expressions.first().location, expressions.last().location)),
+            Location.merge(lparen.location, rparen.location)
+        )
     }
 
     /*
@@ -114,6 +124,20 @@ class Parser {
         consume()
         val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
         return ListNode(expressionNodes, Location.merge(lparen.location, rparen.location))
+    }
+
+    private fun parseBegin(): BodyNode {
+        val lparen = consume()
+        consume()
+
+        val expressions = parseExpressions()
+        val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
+
+        return BodyNode(
+            listOf(),
+            expressions,
+            Location.merge(lparen.location, rparen.location)
+        )
     }
 
     private fun parseDefine(): DefineNode {
