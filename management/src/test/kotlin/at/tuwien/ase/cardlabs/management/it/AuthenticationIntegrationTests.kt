@@ -55,7 +55,7 @@ class AuthenticationIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body)
         )
-            .andExpect(status().isBadRequest)
+            .andExpect(status().isUnauthorized)
     }
 
     private fun createAccount(username: String, email: String, password: String): Account {

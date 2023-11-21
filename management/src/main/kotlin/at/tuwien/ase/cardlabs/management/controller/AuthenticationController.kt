@@ -30,7 +30,7 @@ class AuthenticationController(val authenticationManager: AuthenticationManager)
                 .body(JwtAuthenticationResponse(loginRequest.username, jwt))
         } catch (exception: BadCredentialsException) {
             ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.UNAUTHORIZED)
                 .build()
         }
     }

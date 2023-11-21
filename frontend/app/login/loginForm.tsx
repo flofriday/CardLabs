@@ -1,14 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import { login } from "../services/UserService";
 
 function loginSuccess(router: any): void {
   console.log("redirect?");
   router.refresh();
   router.replace("/"); // change this to /dashboard
-  toast.success("Login was successful");
 }
 
 function loginHandler(e: React.SyntheticEvent, router: any): void {
@@ -50,12 +48,14 @@ export default function LoginForm(): JSX.Element {
               id="username"
               name="username"
               type="text"
+              required
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
             <input
               id="password"
               name="password"
               type="password"
+              required
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
           </div>

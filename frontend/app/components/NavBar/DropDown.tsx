@@ -1,6 +1,5 @@
 import { deleteCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
-
 interface Props {
   className?: string;
 }

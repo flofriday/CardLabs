@@ -55,17 +55,20 @@ export default function RegisterForm(): JSX.Element {
               id="username"
               name="username"
               type="text"
+              required
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
             <input
               id="email"
               name="email"
               type="email"
+              required
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
             <input
               id="password"
               name="password"
+              required
               type="password"
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />

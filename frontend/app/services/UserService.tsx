@@ -19,6 +19,9 @@ export async function login(
   if (response.status === 401) {
     toast.error("Wrong username or password");
     return false;
+  } else if (response.status === 500) {
+    toast.error("Login is currently not possible! We are working on it");
+    return false;
   } else if (response.status !== 200) {
     toast.error("Other error: " + response.status);
     return false;
@@ -46,6 +49,12 @@ export async function register(
 
   if (response.status === 201) {
     return true;
+  } else if (response.status === 409) {
+    toast.error("User account with this username or email exists already");
+    return false;
+  } else if (response.status === 500) {
+    toast.error("Registration is currently not possible! We are working on it");
+    return false;
   } else {
     toast.error("Invalid response on register: " + response.status);
     return false;
