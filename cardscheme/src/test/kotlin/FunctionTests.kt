@@ -1,7 +1,13 @@
+import org.junit.After
 import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 class FunctionTests {
+
     @Test
     fun simpleLambda() {
         val program = "((lambda a (+ a a)) 4)"
@@ -23,5 +29,7 @@ class FunctionTests {
         assert(result is IntegerValue)
         Assert.assertEquals(42, (result as IntegerValue).value)
     }
+
+
 
 }
