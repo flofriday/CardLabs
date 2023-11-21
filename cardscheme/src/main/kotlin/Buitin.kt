@@ -3,6 +3,7 @@ fun injectBuiltin(environment: Environment) {
     environment.put("-", NativeFuncValue("-", ::builtinMinus))
     environment.put("<", NativeFuncValue("<", ::builtinSmaller))
     environment.put("display", NativeFuncValue("display", ::builtinDisplay))
+    environment.put("newline", NativeFuncValue("newline", ::builtinNewline))
     environment.put("cool", NativeFuncValue("cool", ::builtinCool))
 }
 
@@ -61,6 +62,17 @@ fun builtinDisplay(
         throw SchemeError("Too many arguments", "The display function takes exactly one argument", null, null)
     }
     print(args[0].value)
+    return VoidValue()
+}
+
+fun builtinNewline(
+    args: List<NativeFuncArg>,
+    env: Environment,
+): SchemeValue {
+    if (args.size > 0) {
+        throw SchemeError("Too many arguments", "The display function takes exactly one argument", null, null)
+    }
+    println()
     return VoidValue()
 }
 
