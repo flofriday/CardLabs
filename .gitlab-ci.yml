@@ -84,6 +84,4 @@ test:cardscheme:
   script:
     - cd ${CARDSCHEME_DIR}
     - ./mvnw clean test
-  dependencies:
-    - analysis:cardscheme
   allow_failure: false
