@@ -1,8 +1,8 @@
 package at.tuwien.ase.cardlabs.management.controller
 
 import at.tuwien.ase.cardlabs.management.controller.model.Account
-import at.tuwien.ase.cardlabs.management.database.model.AccountDAO
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
+import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -39,10 +39,20 @@ class AccountController(val accountService: AccountService) {
     fun delete(
         @AuthenticationPrincipal user: UserDetails,
         @PathVariable id: Long
-    ): ResponseEntity<AccountDAO?> {
-        val result = accountService.delete(id)
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .body(result)
+    ): ResponseEntity<Unit> {
+        return try {
+            accountService.delete(user, id)
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .build()
+        } catch (exception: UnauthorizedException) {
+            ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .build()
+        } catch (exception: IllegalArgumentException) {
+            ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .build()
+        }
     }
 }

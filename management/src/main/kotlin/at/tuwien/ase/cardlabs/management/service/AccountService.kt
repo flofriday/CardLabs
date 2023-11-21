@@ -5,10 +5,10 @@ import at.tuwien.ase.cardlabs.management.controller.model.Account
 import at.tuwien.ase.cardlabs.management.database.model.AccountDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
+import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.mapper.AccountMapper
-import at.tuwien.ase.cardlabs.management.security.SecurityHelper
 import org.springframework.context.annotation.Lazy
-import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -41,17 +41,15 @@ class AccountService(
         return accountMapper.map(accountRepository.save(acc))
     }
 
-    fun delete(id: Long): AccountDAO? {
-        val identity = SecurityHelper.getIdentity() as User
-        val account = findByUsername(identity.username)
-        if (account != null) {
-            if (account.id == id) {
-                return accountRepository.deleteById(id) as AccountDAO
-            }
-            // The user cannot delete another user, maybe add admin permission at some point
-            // Throw exception?
+    fun delete(user: UserDetails, id: Long) {
+        Helper.requireNonNull(user, "No authentication provided")
+        Helper.requireNonNull(id, "Cannot delete an account with the id null")
+        val account = findByUsername(user.username)
+            ?: throw IllegalArgumentException("No account with the username ${user.username}")
+        if (account.id != id) {
+            throw UnauthorizedException("Can't delete an account other than yourself")
         }
-        return null
+        accountRepository.deleteById(id)
     }
 
     fun findById(id: Long): Optional<AccountDAO?> {
