@@ -23,7 +23,7 @@ class AccountService(
 
     @Transactional
     fun create(account: Account): Account {
-        Helper.requireNull(account.id, "Can't create the account ${account.username} as it already contains an id")
+        Helper.requireNull(account.id, "The id must not be set")
         Helper.requireNonNull(account.username, "The username must be set")
         Helper.requireNonNull(account.email, "The email must be set")
         Helper.requireNonNull(account.password, "The password must be set")
