@@ -22,4 +22,16 @@ class AccountDAO : AuditedEntity() {
 
     @Column(nullable = false)
     lateinit var password: String
+
+    @Column(nullable = true)
+    var location: String? = null
+
+    @Column(nullable = false)
+    var sendScoreUpdates: Boolean = false
+
+    @Column(nullable = false)
+    var sendChangeUpdates: Boolean = false
+
+    @Column(nullable = false)
+    var sendNewsletter: Boolean = false
 }

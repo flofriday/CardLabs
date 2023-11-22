@@ -35,7 +35,11 @@ export async function login(
 export async function register(
   username: string,
   email: string,
-  password: string
+  password: string,
+  location: string | null,
+  sendScoreUpdates: boolean,
+  sendChangeUpdates: boolean,
+  sendNewsletter: boolean
 ): Promise<boolean> {
   const response = await fetch("api/account", {
     mode: "cors",
@@ -44,7 +48,15 @@ export async function register(
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ username, email, password }),
+    body: JSON.stringify({
+      username,
+      email,
+      password,
+      location,
+      sendScoreUpdates,
+      sendChangeUpdates,
+      sendNewsletter,
+    }),
   });
 
   if (response.status === 201) {

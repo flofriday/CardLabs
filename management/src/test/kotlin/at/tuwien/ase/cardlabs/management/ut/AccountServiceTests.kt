@@ -36,7 +36,11 @@ internal class AccountServiceTests {
             id = 1L,
             username = "test",
             email = "test@test.com",
-            password = "password"
+            password = "password",
+            location = null,
+            sendScoreUpdates = true,
+            sendNewsletter = true,
+            sendChangeUpdates = true,
         )
 
         val exception = assertThrows<IllegalArgumentException> {
@@ -51,7 +55,11 @@ internal class AccountServiceTests {
             id = null,
             username = "test",
             email = "test@test.com",
-            password = "password"
+            password = "password",
+            location = "Austria",
+            sendScoreUpdates = true,
+            sendNewsletter = true,
+            sendChangeUpdates = true,
         )
 
         val created = assertDoesNotThrow {
@@ -62,6 +70,10 @@ internal class AccountServiceTests {
         assertEquals("test", created.username)
         assertEquals("test@test.com", created.email)
         assertEquals("REDACTED", created.password)
+        assertEquals("Austria", created.location)
+        assertEquals(true, created.sendScoreUpdates)
+        assertEquals(true, created.sendNewsletter)
+        assertEquals(true, created.sendChangeUpdates)
 
         val found = accountRepository.findByUsername(created.username)
         assertNotNull(found)
@@ -70,13 +82,17 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountCreate_expectAccountExistUsernameError() {
-        createAccount("test", "test@test.com", "password")
+        createAccount("test", "test@test.com", "password", null, true, true, true)
 
         val account = Account(
             id = null,
             username = "test",
             email = "test@test.com",
-            password = "password"
+            password = "password",
+            location = "Austria",
+            sendScoreUpdates = true,
+            sendNewsletter = true,
+            sendChangeUpdates = true,
         )
 
         val exception = assertThrows<AccountExistsException> {
@@ -87,13 +103,17 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountCreate_expectAccountExistEmailError() {
-        createAccount("test", "test@test.com", "password")
+        createAccount("test", "test@test.com", "password", null, true, true, true)
 
         val account = Account(
             id = null,
             username = "test2",
             email = "test@test.com",
-            password = "password"
+            password = "password",
+            location = "Austria",
+            sendScoreUpdates = true,
+            sendNewsletter = true,
+            sendChangeUpdates = true,
         )
 
         val exception = assertThrows<AccountExistsException> {
@@ -104,7 +124,7 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountDelete_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "password")
+        val account = createAccount("test", "test@test.com", "password", null, true, true, true)
         val userDetailsAccount = TestHelper.createUserDetails(account.username, account.password)
 
         assertDoesNotThrow {
@@ -114,8 +134,8 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountDelete_expectUnauthorizedError() {
-        val account1 = createAccount("test", "test@test.com", "password")
-        val account2 = createAccount("test2", "test2@test.com", "password")
+        val account1 = createAccount("test", "test@test.com", "password", null, true, true, true)
+        val account2 = createAccount("test2", "test2@test.com", "password", null, true, true, true)
         val userDetailsAccount1 = TestHelper.createUserDetails(account1.username, account1.password)
 
         val exception = assertThrows<UnauthorizedException> {
@@ -124,7 +144,7 @@ internal class AccountServiceTests {
         assertEquals("Can't delete an account other than yourself", exception.message)
     }
 
-    private fun createAccount(username: String, email: String, password: String): Account {
-        return TestHelper.createAccount(accountService, username, email, password)
+    private fun createAccount(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): Account {
+        return TestHelper.createAccount(accountService, username, email, password, location, sendScoreUpdates, sendChangeUpdates, sendNewsletter)
     }
 }

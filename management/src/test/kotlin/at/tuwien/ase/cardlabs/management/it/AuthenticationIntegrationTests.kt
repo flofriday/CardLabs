@@ -34,31 +34,31 @@ class AuthenticationIntegrationTests {
 
     @Test
     fun whenLogin_expectSuccess() {
-        createAccount("test", "test@test.com", "password")
+        createAccount("test", "test@test.com", "password", null, true, true, true)
 
         val body = TestHelper.createAccountLoginJSON("test", "password")
         mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isOk)
     }
 
     @Test
     fun whenLogin_expectBadCredentialsError() {
-        createAccount("test", "test@test.com", "password")
+        createAccount("test", "test@test.com", "password", null, true, true, true)
 
         val body = TestHelper.createAccountLoginJSON("test", "password2")
         mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isUnauthorized)
     }
 
-    private fun createAccount(username: String, email: String, password: String): Account {
-        return TestHelper.createAccount(accountService, username, email, password)
+    private fun createAccount(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): Account {
+        return TestHelper.createAccount(accountService, username, email, password, location, sendScoreUpdates, sendChangeUpdates, sendNewsletter)
     }
 }

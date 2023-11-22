@@ -7,6 +7,7 @@ interface Props {
   values: string[];
   className?: string;
   defaultValue?: string;
+  onChange?: (value: string) => void;
 }
 
 function useClickOutside(ref: any, onClickOutside: () => void): void {
@@ -33,6 +34,7 @@ export default function DropDown({
   values = [],
   className = "w-fit",
   defaultValue = "",
+  onChange = () => {},
 }: Props): JSX.Element {
   const [dropDownVisability, setDropDownVisability] = useState(false);
   const dropDownMenuButton = useRef(null);
@@ -106,6 +108,7 @@ export default function DropDown({
             className="block hover:underline px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md"
             onClick={() => {
               setValue(item);
+              onChange(item);
               setDropDownVisability(false);
             }}
           >

@@ -14,22 +14,30 @@ class TestHelper {
             return User(username, password, listOf(SimpleGrantedAuthority("ROLE_USER")))
         }
 
-        fun createAccount(accountService: AccountService, username: String, email: String, password: String): Account {
+        fun createAccount(accountService: AccountService, username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): Account {
             val account = Account(
                 id = null,
                 username = username,
                 email = email,
-                password = password
+                password = password,
+                location = location,
+                sendScoreUpdates = sendScoreUpdates,
+                sendChangeUpdates = sendChangeUpdates,
+                sendNewsletter = sendNewsletter,
             )
             return accountService.create(account)
         }
 
-        fun createAccountCreateJSON(username: String, email: String, password: String): String {
+        fun createAccountCreateJSON(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): String {
             return """
                 {
                     "username": "$username",
                     "email": "$email",
-                    "password": "$password"
+                    "password": "$password",
+                    "location": "$location",
+                    "sendScoreUpdates": "$sendScoreUpdates",
+                    "sendChangeUpdates": "$sendChangeUpdates",
+                    "sendNewsletter": "$sendNewsletter"
                 }
             """.trimIndent()
         }

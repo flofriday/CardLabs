@@ -40,11 +40,11 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_expectSuccess() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password")
+        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password", null, true, true, true)
         val result = mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isCreated)
             .andReturn()
@@ -59,40 +59,40 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_expectAccountExistError() {
-        createAccount("test", "test@test.com", "password")
+        createAccount("test", "test@test.com", "password", "Austria", true, true, true)
 
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password")
+        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password", null, true, true, true)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isConflict)
     }
 
     @Test
     fun whenAccountDelete_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "password")
+        val account = createAccount("test", "test@test.com", "password", null, true, true, true)
         val authenticationToken = getAuthenticationToken("test", "password")
 
         mockMvc.perform(
             delete("/account/${account.id}")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $authenticationToken")
+                .header("Authorization", "Bearer $authenticationToken"),
         )
             .andExpect(status().isOk)
     }
 
     @Test
     fun whenAccountDelete_expectUnauthorizedError() {
-        val account1 = createAccount("test", "test@test.com", "password")
-        val account2 = createAccount("test2", "test2@test.com", "password")
+        val account1 = createAccount("test", "test@test.com", "password", null, true, true, true)
+        val account2 = createAccount("test2", "test2@test.com", "password", null, true, true, true)
         val authenticationToken = getAuthenticationToken("test", "password")
 
         mockMvc.perform(
             delete("/account/${account2.id}")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $authenticationToken")
+                .header("Authorization", "Bearer $authenticationToken"),
         )
             .andExpect(status().isUnauthorized)
     }
@@ -108,7 +108,7 @@ class AccountIntegrationTests {
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isBadRequest)
     }
@@ -118,7 +118,7 @@ class AccountIntegrationTests {
         val result = mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -127,7 +127,7 @@ class AccountIntegrationTests {
         return response.jwt
     }
 
-    private fun createAccount(username: String, email: String, password: String): Account {
-        return TestHelper.createAccount(accountService, username, email, password)
+    private fun createAccount(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): Account {
+        return TestHelper.createAccount(accountService, username, email, password, location, sendScoreUpdates, sendChangeUpdates, sendNewsletter)
     }
 }

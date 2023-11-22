@@ -28,6 +28,9 @@ class AccountService(
         Helper.requireNonNull(account.username, "The username must be set")
         Helper.requireNonNull(account.email, "The email must be set")
         Helper.requireNonNull(account.password, "The password must be set")
+        Helper.requireNonNull(account.sendChangeUpdates, "The SendChangeUpdates option must be set")
+        Helper.requireNonNull(account.sendScoreUpdates, "The SendScoreUpdates option must be set")
+        Helper.requireNonNull(account.sendNewsletter, "The SendNewsletter option must be set")
         if (findByUsername(account.username) != null) {
             throw AccountExistsException("An account with the username ${account.username} already exists")
         }
@@ -39,6 +42,10 @@ class AccountService(
         acc.username = account.username
         acc.email = account.email
         acc.password = passwordEncoder.encode(account.password)
+        acc.location = account.location
+        acc.sendChangeUpdates = account.sendChangeUpdates
+        acc.sendScoreUpdates = account.sendScoreUpdates
+        acc.sendNewsletter = account.sendNewsletter
         return accountMapper.map(accountRepository.save(acc))
     }
 

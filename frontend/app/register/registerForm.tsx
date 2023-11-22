@@ -16,16 +16,32 @@ function loginSuccess(router: any): void {
 
 function registerHandler(e: React.SyntheticEvent, router: any): void {
   e.preventDefault();
+
   const target = e.target as typeof e.target & {
     username: { value: string };
     password: { value: string };
     email: { value: string };
+    sendScoreUpdate: { checked: boolean };
+    sendWebsiteUpdate: { checked: boolean };
+    sendNewsletter: { checked: boolean };
   };
+
   const username = target.username.value;
   const password = target.password.value;
   const email = target.email.value;
+  const sendScoreUpdate = target.sendScoreUpdate.checked;
+  const sendWebsiteUpdate = target.sendWebsiteUpdate.checked;
+  const sendNewsletter = target.sendNewsletter.checked;
 
-  register(username, email, password)
+  register(
+    username,
+    email,
+    password,
+    location,
+    sendScoreUpdate,
+    sendWebsiteUpdate,
+    sendNewsletter
+  )
     .then(async (status: boolean) => {
       if (status) {
         if (await login(username, password)) {
@@ -36,6 +52,16 @@ function registerHandler(e: React.SyntheticEvent, router: any): void {
     .catch(() => {});
 }
 
+let location: string | null = null;
+const locationNotSet = "Unkown / Not set";
+function setLocation(loc: string): void {
+  if (loc === locationNotSet) {
+    location = null;
+  } else {
+    location = loc;
+  }
+}
+
 export default function RegisterForm(): JSX.Element {
   const router = useRouter();
 
@@ -43,7 +69,7 @@ export default function RegisterForm(): JSX.Element {
   useEffect(() => {
     getLocations()
       .then((l) => {
-        l.unshift("Unkown / Not set");
+        l.unshift(locationNotSet);
         setLocations(l);
       })
       .catch(() => {});
@@ -83,6 +109,7 @@ export default function RegisterForm(): JSX.Element {
               values={locations}
               className="w-full"
               defaultValue="Choose location"
+              onChange={setLocation}
             />
             <input
               id="password"
