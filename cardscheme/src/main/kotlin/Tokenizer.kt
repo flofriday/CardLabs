@@ -27,6 +27,11 @@ class Tokenizer() {
                 col = 1
                 line++
                 index++
+            } else if (c == ';') {
+                col = 1
+                line++
+                while (index < program.length && program[index++] != '\n') {
+                }
             } else if (c == '#') {
                 tokens.addLast(scanPoundSign())
             } else if (c.isDigit()) {
