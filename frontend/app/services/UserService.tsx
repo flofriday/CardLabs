@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { setCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 
 // this function returns the jwt on success and null on failure
 export async function login(
@@ -59,4 +59,28 @@ export async function register(
     toast.error("Invalid response on register: " + response.status);
     return false;
   }
+}
+
+export interface User {
+  id: number;
+  username: string;
+  password: string;
+  email: string;
+}
+
+export async function getUserInfo(): Promise<User> {
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch("api/account", {
+    mode: "cors",
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+    },
+  });
+
+  const user = (await response.json()) as User;
+
+  return user;
 }

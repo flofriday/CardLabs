@@ -1,9 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteAccountModal from "./deleteAccountModal";
+import { type User, getUserInfo } from "../services/UserService";
 
 export default function SettingsForm(): JSX.Element {
   const [deleteAccountModalVisiblity, setDeleteAccountModalVisiblity] =
     useState(false);
+  const [user, setUser] = useState<User>({
+    id: -1,
+    username: "",
+    password: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    getUserInfo()
+      .then((u) => {
+        setUser(u);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <>
@@ -27,12 +42,16 @@ export default function SettingsForm(): JSX.Element {
               id="username"
               name="username"
               type="text"
+              value={user.username}
+              onChange={() => {}}
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
             <input
               id="e-mail"
               name="e-mail"
               type="text"
+              value={user.email}
+              onChange={() => {}}
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
             <input
