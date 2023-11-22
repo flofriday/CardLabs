@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import DeleteAccountModal from "./deleteAccountModal";
 import { type User, getUserInfo } from "../services/UserService";
+import DropDown from "../components/DropDown";
 
 export default function SettingsForm(): JSX.Element {
   const [deleteAccountModalVisiblity, setDeleteAccountModalVisiblity] =
@@ -54,11 +55,10 @@ export default function SettingsForm(): JSX.Element {
               onChange={() => {}}
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
-            <input
-              id="location"
-              name="location"
-              type="text"
-              className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
+            <DropDown
+              values={["sdf", "test"]}
+              className="w-full"
+              defaultValue="Dropdown"
             />
           </div>
         </div>

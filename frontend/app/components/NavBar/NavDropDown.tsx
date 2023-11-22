@@ -11,7 +11,7 @@ function onLogout(router: any): void {
   router.replace("/");
 }
 
-export default function DropDown({
+export default function NavDropDown({
   className = "",
   close = () => {},
 }: Props): JSX.Element {

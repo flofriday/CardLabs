@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
-import DropDown from "./DropDown";
+import NavDropDown from "./NavDropDown";
 
 function useClickOutside(ref: any, onClickOutside: () => void): void {
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function Profile(): JSX.Element {
         ref={dropDownMenu}
       >
         {dropdownVisability && (
-          <DropDown
+          <NavDropDown
             close={() => {
               setDropdownVisability(false);
             }}
