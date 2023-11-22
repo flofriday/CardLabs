@@ -16,7 +16,7 @@ class VoidValue() : SchemeValue() {
 
 data class BooleanValue(val value: Boolean) : SchemeValue() {
     override fun toString(): String {
-        return value.toString()
+        return if (value) "#t" else "#f"
     }
 
     override fun typeName(): String {

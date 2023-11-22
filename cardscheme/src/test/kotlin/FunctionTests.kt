@@ -12,6 +12,17 @@ class FunctionTests {
     }
 
     @Test
+    fun twoArgumentLambda() {
+        val program = """
+            (define f (lambda (a b) (+ a b)))
+            (f 1 2)
+        """.trimMargin()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(3, (result as IntegerValue).value)
+    }
+
+    @Test
     fun simpleNestedLambda() {
         val program =
             """

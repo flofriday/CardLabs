@@ -71,6 +71,13 @@ class Parser {
         if (peek() is IdentifierToken) {
             val token = consume() as IdentifierToken
             args.addLast(IdentifierNode(token.value, token.location))
+        } else if (peek() is LParenToken) {
+            consume()
+            while (peek() !is RParenToken) {
+                val token = must(IdentifierToken::class.java, "I expected an identifier here") as IdentifierToken
+                args.addLast(IdentifierNode(token.value, token.location))
+            }
+            consume()
         }
 
         // FIXME: A body could also have some definitions at the beginning

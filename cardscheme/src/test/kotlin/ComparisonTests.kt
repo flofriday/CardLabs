@@ -97,4 +97,108 @@ class ComparisonTests {
         assert(result is BooleanValue)
         Assert.assertEquals(false, (result as BooleanValue).value)
     }
+
+    @Test
+    fun equalWithManyInts1() {
+        val program = "(= 5 5 5 5 5 5 5)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun equalWithManyInts2() {
+        val program = "(= 1 1)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun equalWithManyInts3() {
+        val program = "(= 1 2)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun equalWithManyInts4() {
+        val program = "(= 2 1)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun equalWithManyFloats1() {
+        val program = "(= 5.1 5.1)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun equalWithManyFloats2() {
+        val program = "(= 5.1 5.11)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun smallerEqualWithManyInts1() {
+        val program = "(<= 1 2 3 4 5 6 7 8 9 10 11 12 13 14 14)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun smallerEqualWithManyInts2() {
+        val program = "(<= 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun smallerEqualWithManyInts3() {
+        val program = "(<= 1 2 3 4 5 6 7 10 9 10 11 12 13 14 15)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun greaterWithManyInts1() {
+        val program = "(> 5 4 3 2 1 1)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun greaterWithManyInts2() {
+        val program = "(> 5 4 3 2 1)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun greaterEqualWithManyInts1() {
+        val program = "(>= 5 4 3 2 1 1)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun greaterEqualWithInts1() {
+        val program = "(>= 2 2)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
 }
