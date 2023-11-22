@@ -22,6 +22,7 @@ export default function SettingsForm(): JSX.Element {
       .catch(() => {});
     getLocations()
       .then((l) => {
+        l.unshift("Unkown / Not set");
         setLocations(l);
       })
       .catch(() => {});
