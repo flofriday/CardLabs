@@ -1,4 +1,4 @@
-package at.tuwien.ase.cardlabs.management.security
+package at.tuwien.ase.cardlabs.management.security.jwt
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -10,9 +10,7 @@ class JwtHelper {
 
     companion object {
 
-        //        @Value("\${jwt.secret}")
-        private val secretKey =
-            "2e0377d9c56d8a51ed8cfc10a68bda5b3cdc7453a6c7b6ac4728d93e052618051bba4534b146e3cff10bed31224793cb46f78a628b8d6dc08b1b5496a05cf488"
+        lateinit var secretKey: String
 
         fun generateToken(authentication: Authentication): String {
             val now = Date()
@@ -23,7 +21,6 @@ class JwtHelper {
                 .setSubject(authentication.name)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                // TODO: add account_Id
                 .claim("account_username", authentication.name)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact()

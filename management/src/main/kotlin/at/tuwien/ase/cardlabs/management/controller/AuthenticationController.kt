@@ -1,6 +1,6 @@
 package at.tuwien.ase.cardlabs.management.controller
 
-import at.tuwien.ase.cardlabs.management.security.JwtHelper
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtHelper
 import at.tuwien.ase.cardlabs.management.security.authentication.JwtAuthenticationResponse
 import at.tuwien.ase.cardlabs.management.security.authentication.LoginRequest
 import org.springframework.http.HttpStatus

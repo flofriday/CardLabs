@@ -1,6 +1,9 @@
-package at.tuwien.ase.cardlabs.management.security
+package at.tuwien.ase.cardlabs.management.security.config
 
+import at.tuwien.ase.cardlabs.management.security.DatabaseUserDetailsService
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtAuthenticationFilter
 import at.tuwien.ase.cardlabs.management.service.AccountService
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -16,12 +19,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@Profile("!local")
-class SecurityConfig(private val accountService: AccountService) {
+@Profile("local")
+class LocalSecurityConfig(private val accountService: AccountService) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -29,10 +33,16 @@ class SecurityConfig(private val accountService: AccountService) {
             .csrf { csrf ->
                 csrf.disable()
             }
+            .headers { h ->
+                h.frameOptions { fo ->
+                    fo.sameOrigin()
+                }
+            }
             .authorizeHttpRequests { authorize ->
                 authorize
-                    .requestMatchers("/authentication/login").permitAll()
-                    .requestMatchers("/account").permitAll()
+                    .requestMatchers(PathRequest.toH2Console()).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/account", "POST")).permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement { sessionManagement ->

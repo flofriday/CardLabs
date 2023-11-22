@@ -1,4 +1,4 @@
-package at.tuwien.ase.cardlabs.management.security
+package at.tuwien.ase.cardlabs.management.security.jwt
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
