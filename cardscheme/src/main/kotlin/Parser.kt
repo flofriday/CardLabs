@@ -188,15 +188,38 @@ class Parser {
         val lparen = consume()
         consume()
 
-        val variableName = must(IdentifierToken::class.java, "Expected an identifier here") as IdentifierToken
-        val body = parseExpression()
-        val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
+        if (peek() is IdentifierToken) {
+            val variableName = consume() as IdentifierToken
+            val body = parseExpression()
+            val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
 
-        return DefineNode(
-            listOf(IdentifierNode(variableName.value, variableName.location)),
-            listOf(body),
-            Location.merge(lparen.location, rparen.location),
-        )
+            return DefineNode(
+                IdentifierNode(variableName.value, variableName.location),
+                body,
+                Location.merge(lparen.location, rparen.location),
+            )
+        } else if (peek() is LParenToken) {
+            consume()
+            val functionName = must(IdentifierToken::class.java, "Expected an identifier here") as IdentifierToken
+
+            var args = mutableListOf<IdentifierNode>()
+            while (peek() !is RParenToken) {
+                val arg = must(IdentifierToken::class.java, "Expected an identifier here") as IdentifierToken
+                args.addLast(IdentifierNode(arg.value, arg.location))
+            }
+            consume()
+
+            val body = parseBody()
+            val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
+
+            return DefineNode(
+                IdentifierNode(functionName.value, functionName.location),
+                LambdaNode(args, body, body.location),
+                Location.merge(lparen.location, rparen.location),
+            )
+        } else {
+            throw SchemeError("Unexpected Token", "I expected either an identifier or a left parenthesis here.", peek().location, null)
+        }
     }
 
     private fun parseApplication(): ApplicationNode {

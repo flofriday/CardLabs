@@ -38,16 +38,12 @@ class ApplicationNode(val expressions: List<ExpressionNode>, location: Location)
     }
 }
 
-class DefineNode(val names: List<IdentifierNode>, val bodies: List<ExpressionNode>, location: Location) :
+class DefineNode(val name: IdentifierNode, val body: ExpressionNode, location: Location) :
     StatementNode(location) {
     override fun dump(indent: Int): String {
         var out = getIndentation(indent) + "DefineNode:\n"
-        for (child in names) {
-            out += child.dump(indent + 1)
-        }
-        for (child in bodies) {
-            out += child.dump(indent + 1)
-        }
+        out += name.dump(indent + 1)
+        out += body.dump(indent + 1)
         return out
     }
 

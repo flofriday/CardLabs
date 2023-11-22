@@ -56,11 +56,8 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
     }
 
     override fun visitedBy(node: DefineNode) {
-        val values = node.bodies.map { b -> b.visit(this) }
-
-        for ((name, value) in node.names.zip(values)) {
-            environment.put(name.identifier, value)
-        }
+        val value = node.body.visit(this)
+        environment.put(node.name.identifier, value)
     }
 
     override fun visitedBy(node: LambdaNode): FuncValue {
