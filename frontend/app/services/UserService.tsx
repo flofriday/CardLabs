@@ -78,6 +78,10 @@ export interface User {
   username: string;
   password: string;
   email: string;
+  location: string | null;
+  sendScoreUpdates: boolean;
+  sendChangeUpdates: boolean;
+  sendNewsletter: boolean;
 }
 
 export async function getUserInfo(): Promise<User> {

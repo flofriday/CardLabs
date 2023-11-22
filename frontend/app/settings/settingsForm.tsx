@@ -12,7 +12,12 @@ export default function SettingsForm(): JSX.Element {
     username: "",
     password: "",
     email: "",
+    location: "",
+    sendChangeUpdates: false,
+    sendNewsletter: false,
+    sendScoreUpdates: false,
   });
+
   const [locations, setLocations] = useState<string[]>([]);
   useEffect(() => {
     getUserInfo()
@@ -65,7 +70,7 @@ export default function SettingsForm(): JSX.Element {
             <DropDown
               values={locations}
               className="w-full"
-              defaultValue="Dropdown"
+              defaultValue={user.location ?? "Unkown / Not set"}
             />
           </div>
         </div>
@@ -75,6 +80,8 @@ export default function SettingsForm(): JSX.Element {
               type="checkbox"
               id="sendScoreUpdate"
               name="sendScoreUpdate"
+              checked={user.sendScoreUpdates}
+              onChange={() => {}}
             />
             <label htmlFor="sendScoreUpdate">
               Send score update notifications
@@ -85,13 +92,21 @@ export default function SettingsForm(): JSX.Element {
               type="checkbox"
               id="sendWebsiteUpdate"
               name="sendWebsiteUpdate"
+              checked={user.sendChangeUpdates}
+              onChange={() => {}}
             />
             <label htmlFor="sendWebsiteUpdate">
               Send website update and changelog notifications
             </label>
           </div>
           <div className="flex space-x-3 align-middle">
-            <input type="checkbox" id="sendNewsletter" name="sendNewsletter" />
+            <input
+              type="checkbox"
+              id="sendNewsletter"
+              name="sendNewsletter"
+              checked={user.sendNewsletter}
+              onChange={() => {}}
+            />
             <label htmlFor="sendNewsletter">Send newsletter</label>
           </div>
         </div>

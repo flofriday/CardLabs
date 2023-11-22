@@ -46,6 +46,10 @@ export default function DropDown({
     setCurrentItems(values);
   }, [values]);
 
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
+
   useClickOutside(dropDownMenu, () => {
     setDropDownVisability(false);
   });
