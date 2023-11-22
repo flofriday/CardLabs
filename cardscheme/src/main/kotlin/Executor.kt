@@ -64,7 +64,7 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
     }
 
     override fun visitedBy(node: LambdaNode): FuncValue {
-        return FuncValue(node.args.map { a -> a.identifier }, node.body, environment)
+        return FuncValue(node.args.map { a -> a.identifier }, Arity(node.args.size, node.args.size), node.body, environment)
     }
 
     override fun visitedBy(node: IfNode): SchemeValue {
@@ -101,6 +101,17 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         val func = node.expressions.first().visit(this)
 
         if (func is NativeFuncValue) {
+            if (!func.arity.inside(node.expressions.size -1)) {
+                val message =
+                    if (func.arity.min == func.arity.max) {
+                        "The function expects ${func.arity.min} arguments, but you provided ${node.expressions.size - 1}"
+                    } else {
+                        "The function expects between ${func.arity.min} and ${func.arity.max} arguments, " +
+                            "but you provided ${node.expressions.size - 1}"
+                    }
+                throw SchemeError("Invalid number of arguments", message, node.location, null)
+            }
+
             val args =
                 node.expressions.drop(1).map { e ->
                     NativeFuncArg(e.visit(this), e.location)
@@ -111,6 +122,17 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
                 throw SchemeError(e.header, e.reason, e.location ?: node.location, e.tip)
             }
         } else if (func is FuncValue) {
+            if (!func.arity.inside(node.expressions.size -1)) {
+                val message =
+                    if (func.arity.min == func.arity.max) {
+                        "The function expects ${func.arity.min} arguments, but you provided ${node.expressions.size - 1}"
+                    } else {
+                        "The function expects between ${func.arity.min} and ${func.arity.max} arguments, " +
+                            "but you provided ${node.expressions.size - 1}"
+                    }
+                throw SchemeError("Invalid number of arguments", message, node.location, null)
+            }
+
             val args =
                 node.expressions.drop(1).map { e ->
                     e.visit(this)

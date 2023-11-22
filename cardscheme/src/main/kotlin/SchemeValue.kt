@@ -110,7 +110,13 @@ data class ListValue(val values: List<SchemeValue>) : SchemeValue() {
     }
 }
 
-data class FuncValue(val args: List<String>, val body: BodyNode, val env: Environment) : SchemeValue() {
+data class Arity(val min: Int, val max: Int) {
+    fun inside(n: Int): Boolean {
+        return n in min..max
+    }
+}
+
+data class FuncValue(val args: List<String>, val arity: Arity, val body: BodyNode, val env: Environment) : SchemeValue() {
     override fun toString(): String {
         // FIXME: Better display
         return "<Function>"
@@ -123,7 +129,7 @@ data class FuncValue(val args: List<String>, val body: BodyNode, val env: Enviro
 
 data class NativeFuncArg(val value: SchemeValue, val location: Location)
 
-data class NativeFuncValue(val name: String, val func: (List<NativeFuncArg>, Environment) -> SchemeValue) :
+data class NativeFuncValue(val name: String, val arity: Arity, val func: (List<NativeFuncArg>, Environment) -> SchemeValue) :
     SchemeValue() {
     override fun toString(): String {
         return "<Native Function $name>"

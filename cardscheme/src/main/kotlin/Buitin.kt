@@ -1,14 +1,14 @@
 fun injectBuiltin(environment: Environment) {
-    environment.put("+", NativeFuncValue("+", ::builtinPlus))
-    environment.put("-", NativeFuncValue("-", ::builtinMinus))
-    environment.put("=", NativeFuncValue("=", ::builtinEqual))
-    environment.put("<", NativeFuncValue("<", ::builtinSmaller))
-    environment.put("<=", NativeFuncValue("<=", ::builtinSmallerEqual))
-    environment.put(">", NativeFuncValue(">", ::builtinGreater))
-    environment.put(">=", NativeFuncValue(">=", ::builtinGreaterEqual))
-    environment.put("display", NativeFuncValue("display", ::builtinDisplay))
-    environment.put("newline", NativeFuncValue("newline", ::builtinNewline))
-    environment.put("cool", NativeFuncValue("cool", ::builtinCool))
+    environment.put("+", NativeFuncValue("+", Arity(2, Int.MAX_VALUE), ::builtinPlus))
+    environment.put("-", NativeFuncValue("-", Arity(2, Int.MAX_VALUE), ::builtinMinus))
+    environment.put("=", NativeFuncValue("=", Arity(2, Int.MAX_VALUE), ::builtinEqual))
+    environment.put("<", NativeFuncValue("<", Arity(2, Int.MAX_VALUE), ::builtinSmaller))
+    environment.put("<=", NativeFuncValue("<=", Arity(2, Int.MAX_VALUE), ::builtinSmallerEqual))
+    environment.put(">", NativeFuncValue(">", Arity(2, Int.MAX_VALUE), ::builtinGreater))
+    environment.put(">=", NativeFuncValue(">=", Arity(2, Int.MAX_VALUE), ::builtinGreaterEqual))
+    environment.put("display", NativeFuncValue("display", Arity(1, 1), ::builtinDisplay))
+    environment.put("newline", NativeFuncValue("newline", Arity(0, 0), ::builtinNewline))
+    environment.put("cool", NativeFuncValue("cool", Arity(0, 0), ::builtinCool))
 }
 
 fun builtinPlus(
@@ -62,9 +62,6 @@ fun builtinDisplay(
     args: List<NativeFuncArg>,
     env: Environment,
 ): SchemeValue {
-    if (args.size != 1) {
-        throw SchemeError("Too many or too few arguments", "The display function takes exactly one argument", null, null)
-    }
     print(args[0].value)
     return VoidValue()
 }
@@ -73,9 +70,6 @@ fun builtinNewline(
     args: List<NativeFuncArg>,
     env: Environment,
 ): SchemeValue {
-    if (args.size > 0) {
-        throw SchemeError("Too many arguments", "The newline function takes exactly one argument", null, null)
-    }
     println()
     return VoidValue()
 }
@@ -84,10 +78,6 @@ fun builtinSmallerEqual(
     args: List<NativeFuncArg>,
     env: Environment,
 ): BooleanValue {
-    if (args.size < 2) {
-        throw SchemeError("Too few arguments", "The equals function takes at least two arguments", null, null)
-    }
-
     for ((value, loc) in args) {
         if (value !is NumberValue) {
             throw SchemeError("Expected number", "You can only compare numbers.", loc, null)
@@ -102,10 +92,6 @@ fun builtinEqual(
     args: List<NativeFuncArg>,
     env: Environment,
 ): BooleanValue {
-    if (args.size < 2) {
-        throw SchemeError("Too few arguments", "The equals function takes at least two arguments", null, null)
-    }
-
     for ((value, loc) in args) {
         if (value.javaClass != args[0].value::class.java) {
             throw SchemeError("Expected same type", "Expected all arguments to be of the same type", loc, null)
@@ -120,10 +106,6 @@ fun builtinSmaller(
     args: List<NativeFuncArg>,
     env: Environment,
 ): BooleanValue {
-    if (args.size < 2) {
-        throw SchemeError("Too few arguments", "The smaller function takes at least two arguments", null, null)
-    }
-
     for ((value, loc) in args) {
         if (value !is NumberValue) {
             throw SchemeError("Expected number", "You can only compare numbers.", loc, null)
@@ -138,17 +120,13 @@ fun builtinGreater(
     args: List<NativeFuncArg>,
     env: Environment,
 ): BooleanValue {
-    if (args.size < 2) {
-        throw SchemeError("Too few arguments", "The greater function takes at least two arguments", null, null)
-    }
-
     for ((value, loc) in args) {
         if (value !is NumberValue) {
             throw SchemeError("Expected number", "You can only compare numbers.", loc, null)
         }
     }
 
-    val result = args.map { a -> a.value as NumberValue }.zipWithNext { a, b -> a.smallerThan(b).value || a == b }.none() { it }
+    val result = args.map { a -> a.value as NumberValue }.zipWithNext { a, b -> a.smallerThan(b).value || a == b }.none { it }
     return BooleanValue(result)
 }
 
@@ -156,17 +134,13 @@ fun builtinGreaterEqual(
     args: List<NativeFuncArg>,
     env: Environment,
 ): BooleanValue {
-    if (args.size < 2) {
-        throw SchemeError("Too few arguments", "The greater equal function takes at least two arguments", null, null)
-    }
-
     for ((value, loc) in args) {
         if (value !is NumberValue) {
             throw SchemeError("Expected number", "You can only compare numbers.", loc, null)
         }
     }
 
-    val result = args.map { a -> a.value as NumberValue }.zipWithNext { a, b -> !a.smallerThan(b).value || a == b }.all() { it }
+    val result = args.map { a -> a.value as NumberValue }.zipWithNext { a, b -> !a.smallerThan(b).value || a == b }.all { it }
     return BooleanValue(result)
 }
 

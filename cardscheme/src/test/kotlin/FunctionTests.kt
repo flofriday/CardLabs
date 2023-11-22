@@ -1,5 +1,6 @@
 
 import org.junit.Assert
+import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class FunctionTests {
@@ -13,13 +14,44 @@ class FunctionTests {
 
     @Test
     fun twoArgumentLambda() {
-        val program = """
+        val program =
+            """
             (define f (lambda (a b) (+ a b)))
             (f 1 2)
-        """.trimMargin()
+            """.trimMargin()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
         Assert.assertEquals(3, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun badArityTooManyArgsLambda() {
+        val program =
+            """
+            (define f (lambda (a b) (+ a b)))
+            (f 1 2 3)
+            """.trimMargin()
+        assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
+
+    @Test
+    fun badArityTooFewArgsLambda() {
+        val program =
+            """
+            (define f (lambda (a b) (+ a b)))
+            (f 1)
+            """.trimMargin()
+        assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
+
+    @Test
+    fun badArityNoArgsLambda() {
+        val program =
+            """
+            (define f (lambda (a b) (+ a b)))
+            (f)
+            """.trimMargin()
+        assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 
     @Test
