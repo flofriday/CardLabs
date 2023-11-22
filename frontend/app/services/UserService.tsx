@@ -102,23 +102,19 @@ export async function getUserInfo(): Promise<User> {
   return user;
 }
 
-export function getUsername(): string {
-  const jwt = getCookie("auth_token") as string | undefined;
-
+export function getUserProfilePicture(jwt: string): string {
+  let username;
   if (jwt === undefined) {
-    return "";
+    username = "Placeholder";
+  } else {
+    const payload = decodeJwt(jwt);
+    username = payload.account_username as string;
   }
 
-  const payload = decodeJwt(jwt);
-  return payload.account_username as string;
-}
-
-export function getUserProfilePicture(): string {
-  const username = getUsername();
   console.log(username);
+
   const saturation = 100;
   const lightness = 50;
-
   const data =
     "data:image/svg+xml;utf8," +
     encodeURIComponent(minidenticon(username, saturation, lightness));

@@ -1,6 +1,9 @@
+"use client";
 import { HiPlus } from "react-icons/hi";
 import Image from "next/image";
 import { getUserProfilePicture } from "../services/UserService";
+import { useEffect, useState } from "react";
+import { getCookie } from "cookies-next";
 
 interface Props {
   changeButton?: boolean;
@@ -9,11 +12,27 @@ interface Props {
 export default function ProfilePicture({
   changeButton = false,
 }: Props): JSX.Element {
+  const [profilePic, setProfilePic] = useState("");
+
+  useEffect(() => {
+    const jwt = getCookie("auth_token") as string;
+    if (jwt === undefined) {
+      return;
+    }
+    const pic = getUserProfilePicture(jwt);
+    console.log(pic);
+    setProfilePic(pic);
+  }, [profilePic]);
+
+  if (profilePic === "") {
+    return <></>;
+  }
+
   return (
     <>
       <div className="h-full">
         <Image
-          src={getUserProfilePicture()}
+          src={profilePic}
           alt="Profile Image"
           className="shadow rounded-full max-w-full h-auto align-middle border-none bg-text"
           width={500}
