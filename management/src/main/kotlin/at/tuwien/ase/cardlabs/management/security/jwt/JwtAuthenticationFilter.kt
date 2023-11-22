@@ -14,7 +14,7 @@ class JwtAuthenticationFilter(private val userDetailsService: UserDetailsService
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        filterChain: FilterChain
+        filterChain: FilterChain,
     ) {
         val jwt = getJwtFromRequest(request)
         if (jwt != null && JwtHelper.validateToken(jwt)) {
@@ -33,6 +33,8 @@ class JwtAuthenticationFilter(private val userDetailsService: UserDetailsService
         val bearerToken = request.getHeader("Authorization")
         return if (!bearerToken.isNullOrEmpty() && bearerToken.startsWith("Bearer ")) {
             bearerToken.substring(7)
-        } else null
+        } else {
+            null
+        }
     }
 }

@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.security.jwt
 
+import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -13,6 +14,7 @@ class JwtHelper {
         lateinit var secretKey: String
 
         fun generateToken(authentication: Authentication): String {
+            val userDetails = authentication.principal as CardLabUser
             val now = Date()
             val validityDuration = 12 * 60 * 60 * 1000; // 12 hours
             val expiryDate = Date(now.time + validityDuration)
@@ -21,7 +23,9 @@ class JwtHelper {
                 .setSubject(authentication.name)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .claim("account_username", authentication.name)
+                .claim("account_id", userDetails.id)
+                .claim("account_username", userDetails.username)
+                .claim("account_email", userDetails.email)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact()
         }
