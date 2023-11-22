@@ -59,7 +59,7 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         val values = node.bodies.map { b -> b.visit(this) }
 
         for ((name, value) in node.names.zip(values)) {
-            environment.getGlobal().put(name.identifier, value)
+            environment.put(name.identifier, value)
         }
     }
 

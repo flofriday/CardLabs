@@ -12,12 +12,36 @@ class Parser {
     }
 
     private fun parseForm(): AstNode {
+        if (isDefinition()) {
+            return parseDefinition()
+        }
+        return parseExpression()
+    }
+
+    private fun isDefinition(): Boolean {
+        if (peek() is LParenToken) {
+            if (peekn(2) is DefineToken) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun parseDefinition(): StatementNode {
         if (peek() is LParenToken) {
             if (peekn(2) is DefineToken) {
                 return parseDefine()
             }
         }
-        return parseExpression()
+        throw Exception("Unknown Definition")
+    }
+
+    private fun parseDefinitions(): List<StatementNode> {
+        val definitionNodes = mutableListOf<StatementNode>()
+        while (isDefinition()) {
+            definitionNodes.addLast(parseDefinition())
+        }
+        return definitionNodes
     }
 
     private fun parseExpression(): ExpressionNode {
@@ -81,20 +105,35 @@ class Parser {
         }
 
         // FIXME: A body could also have some definitions at the beginning
-        val expressions = parseExpressions()
+        val body = parseBody()
         val rparen = consume()
 
         return LambdaNode(
             args,
-            BodyNode(listOf(), expressions, Location.merge(expressions.first().location, expressions.last().location)),
+            body,
             Location.merge(lparen.location, rparen.location),
         )
     }
 
-    /*
-    (if #T
-	    (display "x is greater than 5"))
-     */
+    private fun parseBody(): BodyNode {
+        val definitions = parseDefinitions()
+        val expressions = parseExpressions()
+        if (expressions.isEmpty()) {
+            throw SchemeError("Invalid token", "I expected at least one expression here.", peek().location, null)
+        }
+
+        val location =
+            if (definitions.isEmpty()) {
+                Location.merge(
+                    expressions.first().location,
+                    expressions.last().location,
+                )
+            } else {
+                Location.merge(definitions.first().location, expressions.last().location)
+            }
+        return BodyNode(definitions, expressions, location)
+    }
+
     private fun parseIf(): IfNode {
         val lparen = consume()
         consume()

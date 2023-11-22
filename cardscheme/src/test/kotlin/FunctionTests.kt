@@ -1,4 +1,3 @@
-
 import org.junit.Assert
 import org.junit.Assert.assertThrows
 import org.junit.Test
@@ -18,7 +17,8 @@ class FunctionTests {
             """
             (define f (lambda (a b) (+ a b)))
             (f 1 2)
-            """.trimMargin()
+            """
+                .trimMargin()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
         Assert.assertEquals(3, (result as IntegerValue).value)
@@ -30,7 +30,8 @@ class FunctionTests {
             """
             (define f (lambda (a b) (+ a b)))
             (f 1 2 3)
-            """.trimMargin()
+            """
+                .trimMargin()
         assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 
@@ -40,7 +41,8 @@ class FunctionTests {
             """
             (define f (lambda (a b) (+ a b)))
             (f 1)
-            """.trimMargin()
+            """
+                .trimMargin()
         assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 
@@ -50,7 +52,8 @@ class FunctionTests {
             """
             (define f (lambda (a b) (+ a b)))
             (f)
-            """.trimMargin()
+            """
+                .trimMargin()
         assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 
@@ -67,5 +70,51 @@ class FunctionTests {
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
         Assert.assertEquals(42, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun localDefinition() {
+        val program =
+            """
+            (define g (lambda (n)
+            	(define flo (+ n n))
+            	flo))
+            (g 32)
+        """
+                .trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(64, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun multipleLocalDefinition() {
+        val program =
+            """
+            (define g (lambda (n)
+            	(define first (+ n n))
+            	(define second (+ first 1))
+            	second))
+            (g 2)
+        """
+                .trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(5, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun badLocalDefinitionLeaksVariable() {
+        val program =
+            """
+            (define g (lambda (n)
+            	(define flo (+ n n))
+            	flo))
+            (g 32)
+            flo
+        """
+                .trimIndent()
+
+        assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 }
