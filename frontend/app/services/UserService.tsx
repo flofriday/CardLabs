@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 import { getCookie, setCookie } from "cookies-next";
-
+import { minidenticon } from "minidenticons";
+import { decodeJwt } from "jose";
 // this function returns the jwt on success and null on failure
 export async function login(
   username: string,
@@ -99,4 +100,28 @@ export async function getUserInfo(): Promise<User> {
   const user = (await response.json()) as User;
 
   return user;
+}
+
+export function getUsername(): string {
+  const jwt = getCookie("auth_token") as string | undefined;
+
+  if (jwt === undefined) {
+    return "";
+  }
+
+  const payload = decodeJwt(jwt);
+  return payload.account_username as string;
+}
+
+export function getUserProfilePicture(): string {
+  const username = getUsername();
+  console.log(username);
+  const saturation = 100;
+  const lightness = 50;
+
+  const data =
+    "data:image/svg+xml;utf8," +
+    encodeURIComponent(minidenticon(username, saturation, lightness));
+
+  return data;
 }
