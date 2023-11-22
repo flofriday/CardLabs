@@ -26,9 +26,9 @@ data class BooleanValue(val value: Boolean) : SchemeValue() {
 
 abstract class NumberValue() : SchemeValue() {
     abstract fun add(other: NumberValue): NumberValue
-
     abstract fun sub(other: NumberValue): NumberValue
-
+    abstract fun mul(other: NumberValue): NumberValue
+    abstract fun div(other: NumberValue): NumberValue
     abstract fun smallerThan(other: NumberValue): BooleanValue
 }
 
@@ -45,6 +45,22 @@ data class IntegerValue(val value: Int) : NumberValue() {
         return when (other) {
             is IntegerValue -> IntegerValue(this.value - other.value)
             is FloatValue -> FloatValue(this.value - other.value)
+            else -> TODO("Unsoported type")
+        }
+    }
+
+    override fun mul(other: NumberValue): NumberValue {
+        return when (other) {
+            is IntegerValue -> IntegerValue(this.value * other.value)
+            is FloatValue -> FloatValue(this.value * other.value)
+            else -> TODO("Unsupported type")
+        }
+    }
+
+    override fun div(other: NumberValue): NumberValue {
+        return when (other) {
+            is IntegerValue -> IntegerValue(this.value / other.value)
+            is FloatValue -> FloatValue(this.value / other.value)
             else -> TODO("Unsoported type")
         }
     }
@@ -83,6 +99,22 @@ data class FloatValue(val value: Float) : NumberValue() {
         }
     }
 
+    override fun mul(other: NumberValue): NumberValue {
+        return when (other) {
+            is IntegerValue -> FloatValue(this.value * other.value)
+            is FloatValue -> FloatValue(this.value * other.value)
+            else -> TODO("Unsoported type")
+        }
+    }
+
+    override fun div(other: NumberValue): NumberValue {
+        return when (other) {
+            is IntegerValue -> FloatValue(this.value / other.value)
+            is FloatValue -> FloatValue(this.value / other.value)
+            else -> TODO("Unsoported type")
+        }
+    }
+
     override fun smallerThan(other: NumberValue): BooleanValue {
         return when (other) {
             is IntegerValue -> BooleanValue(this.value < other.value)
@@ -116,7 +148,8 @@ data class Arity(val min: Int, val max: Int) {
     }
 }
 
-data class FuncValue(val args: List<String>, val arity: Arity, val body: BodyNode, val env: Environment) : SchemeValue() {
+data class FuncValue(val args: List<String>, val arity: Arity, val body: BodyNode, val env: Environment) :
+    SchemeValue() {
     override fun toString(): String {
         // FIXME: Better display
         return "<Function>"
@@ -129,7 +162,11 @@ data class FuncValue(val args: List<String>, val arity: Arity, val body: BodyNod
 
 data class NativeFuncArg(val value: SchemeValue, val location: Location)
 
-data class NativeFuncValue(val name: String, val arity: Arity, val func: (List<NativeFuncArg>, Environment) -> SchemeValue) :
+data class NativeFuncValue(
+    val name: String,
+    val arity: Arity,
+    val func: (List<NativeFuncArg>, Environment) -> SchemeValue
+) :
     SchemeValue() {
     override fun toString(): String {
         return "<Native Function $name>"
