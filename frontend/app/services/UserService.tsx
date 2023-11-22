@@ -119,3 +119,22 @@ export function getUserProfilePicture(jwt: string): string {
 
   return data;
 }
+
+export async function updateUser(
+  location: string | null,
+  sendScoreUpdates: boolean,
+  sendChangeUpdates: boolean,
+  sendNewsletter: boolean
+): Promise<boolean> {
+  const r = await new Promise<boolean>(function (resolve, reject) {
+    resolve(true);
+  });
+
+  console.log(location);
+  console.log(sendScoreUpdates);
+  console.log(sendChangeUpdates);
+  console.log(sendNewsletter);
+
+  toast.success("Updated user settings");
+  return r;
+}
