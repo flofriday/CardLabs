@@ -56,7 +56,7 @@ export default function SettingsForm(): JSX.Element {
               name="username"
               type="text"
               value={user.username}
-              onChange={() => {}}
+              disabled={true}
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
             <input
@@ -64,7 +64,7 @@ export default function SettingsForm(): JSX.Element {
               name="e-mail"
               type="text"
               value={user.email}
-              onChange={() => {}}
+              disabled={true}
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
             <DropDown

@@ -111,8 +111,6 @@ export function getUserProfilePicture(jwt: string): string {
     username = payload.account_username as string;
   }
 
-  console.log(username);
-
   const saturation = 100;
   const lightness = 50;
   const data =

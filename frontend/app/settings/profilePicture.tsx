@@ -20,7 +20,6 @@ export default function ProfilePicture({
       return;
     }
     const pic = getUserProfilePicture(jwt);
-    console.log(pic);
     setProfilePic(pic);
   }, [profilePic]);
 

@@ -15,7 +15,6 @@ export default function Profile(): JSX.Element {
       return;
     }
     const pic = getUserProfilePicture(jwt);
-    console.log(pic);
     setProfilePic(pic);
   }, [profilePic]);
 
