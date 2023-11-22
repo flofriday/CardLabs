@@ -26,9 +26,13 @@ data class BooleanValue(val value: Boolean) : SchemeValue() {
 
 abstract class NumberValue() : SchemeValue() {
     abstract fun add(other: NumberValue): NumberValue
+
     abstract fun sub(other: NumberValue): NumberValue
+
     abstract fun mul(other: NumberValue): NumberValue
+
     abstract fun div(other: NumberValue): NumberValue
+
     abstract fun smallerThan(other: NumberValue): BooleanValue
 }
 
@@ -165,7 +169,7 @@ data class NativeFuncArg(val value: SchemeValue, val location: Location)
 data class NativeFuncValue(
     val name: String,
     val arity: Arity,
-    val func: (List<NativeFuncArg>, Environment) -> SchemeValue
+    val func: (List<NativeFuncArg>, Environment) -> SchemeValue,
 ) :
     SchemeValue() {
     override fun toString(): String {
