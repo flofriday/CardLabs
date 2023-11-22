@@ -1,6 +1,7 @@
 package at.tuwien.ase.cardlabs.management.security
 
 import at.tuwien.ase.cardlabs.management.service.AccountService
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -28,9 +29,15 @@ class SecurityConfig(private val accountService: AccountService) {
             .csrf { csrf ->
                 csrf.disable()
             }
+                .headers {h ->
+                    h.frameOptions { fo ->
+                        fo.sameOrigin()
+                    }
+                }
             .authorizeHttpRequests { authorize ->
                 authorize
-                    .requestMatchers("/authentication/login").permitAll()
+                    .requestMatchers(PathRequest.toH2Console()).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/account", "POST")).permitAll()
                     .anyRequest().authenticated()
                     .and().sessionManagement { sessionManagement ->
