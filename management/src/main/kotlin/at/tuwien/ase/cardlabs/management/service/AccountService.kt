@@ -19,7 +19,7 @@ import java.util.Optional
 class AccountService(
     private val accountRepository: AccountRepository,
     private val accountMapper: AccountMapper,
-    @Lazy private val passwordEncoder: PasswordEncoder
+    @Lazy private val passwordEncoder: PasswordEncoder,
 ) {
 
     @Transactional
@@ -57,12 +57,10 @@ class AccountService(
         return accountRepository.findById(id)
     }
 
-
     fun getUser(username: String): Account {
         val account = findByUsername(username) ?: throw AccountNotFoundException("Account could not be found")
         return accountMapper.map(account)
     }
-
 
     fun findByUsername(username: String?): AccountDAO? {
         if (username == null) {

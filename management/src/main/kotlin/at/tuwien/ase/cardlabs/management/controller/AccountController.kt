@@ -39,7 +39,7 @@ class AccountController(val accountService: AccountService) {
     @DeleteMapping("/account/{id}")
     fun delete(
         @AuthenticationPrincipal user: UserDetails,
-        @PathVariable id: Long
+        @PathVariable id: Long,
     ): ResponseEntity<Unit> {
         return try {
             accountService.delete(user, id)
@@ -59,21 +59,21 @@ class AccountController(val accountService: AccountService) {
 
     @GetMapping("/account")
     fun info(
-            @AuthenticationPrincipal user: UserDetails,
+        @AuthenticationPrincipal user: UserDetails,
     ): ResponseEntity<Account> {
         return try {
             val result = accountService.getUser(user.username)
             ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(result)
+                .status(HttpStatus.OK)
+                .body(result)
         } catch (exception: UnauthorizedException) {
             ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .build()
+                .status(HttpStatus.UNAUTHORIZED)
+                .build()
         } catch (exception: IllegalArgumentException) {
             ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .build()
+                .status(HttpStatus.BAD_REQUEST)
+                .build()
         }
     }
 }

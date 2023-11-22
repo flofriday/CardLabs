@@ -29,11 +29,11 @@ class SecurityConfig(private val accountService: AccountService) {
             .csrf { csrf ->
                 csrf.disable()
             }
-                .headers {h ->
-                    h.frameOptions { fo ->
-                        fo.sameOrigin()
-                    }
+            .headers { h ->
+                h.frameOptions { fo ->
+                    fo.sameOrigin()
                 }
+            }
             .authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
@@ -45,7 +45,7 @@ class SecurityConfig(private val accountService: AccountService) {
                     }
                     .addFilterBefore(
                         JwtAuthenticationFilter(DatabaseUserDetailsService(accountService)),
-                        UsernamePasswordAuthenticationFilter::class.java
+                        UsernamePasswordAuthenticationFilter::class.java,
                     )
             }
         return http.build()
@@ -54,7 +54,7 @@ class SecurityConfig(private val accountService: AccountService) {
     @Bean
     fun authenticationManager(
         userDetailsService: UserDetailsService,
-        passwordEncoder: PasswordEncoder
+        passwordEncoder: PasswordEncoder,
     ): AuthenticationManager {
         val authenticationProvider = DaoAuthenticationProvider()
         authenticationProvider.setUserDetailsService(userDetailsService)
