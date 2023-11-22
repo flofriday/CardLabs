@@ -126,15 +126,32 @@ export async function updateUser(
   sendChangeUpdates: boolean,
   sendNewsletter: boolean
 ): Promise<boolean> {
-  const r = await new Promise<boolean>(function (resolve, reject) {
-    resolve(true);
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch("api/account", {
+    mode: "cors",
+    method: "PATCH",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      location,
+      sendScoreUpdates,
+      sendChangeUpdates,
+      sendNewsletter,
+    }),
   });
 
-  console.log(location);
-  console.log(sendScoreUpdates);
-  console.log(sendChangeUpdates);
-  console.log(sendNewsletter);
-
-  toast.success("Updated user settings");
-  return r;
+  if (response.status === 200) {
+    toast.success("Updated user settings");
+    return true;
+  } else if (response.status === 403) {
+    toast.error("Not authorized!");
+    return false;
+  } else {
+    toast.error("Invalid response on register: " + response.status);
+    return false;
+  }
 }

@@ -2,6 +2,7 @@ package at.tuwien.ase.cardlabs.management.service
 
 import at.tuwien.ase.cardlabs.management.Helper
 import at.tuwien.ase.cardlabs.management.controller.model.Account
+import at.tuwien.ase.cardlabs.management.controller.model.AccountUpdate
 import at.tuwien.ase.cardlabs.management.database.model.AccountDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
@@ -56,6 +57,18 @@ class AccountService(
             throw UnauthorizedException("Can't delete an account other than yourself")
         }
         accountRepository.deleteById(id)
+    }
+
+    fun update(user: CardLabUser, accountUpdate: AccountUpdate) {
+        Helper.requireNonNull(user, "No authentication provided")
+        val account = findByUsername(user.username) ?: throw AccountNotFoundException("Account could not be found")
+
+        account.location = accountUpdate.location
+        account.sendNewsletter = accountUpdate.sendNewsletter
+        account.sendScoreUpdates = accountUpdate.sendScoreUpdates
+        account.sendChangeUpdates = accountUpdate.sendChangeUpdates
+
+        accountRepository.save(account)
     }
 
     fun findById(id: Long): Optional<AccountDAO?> {

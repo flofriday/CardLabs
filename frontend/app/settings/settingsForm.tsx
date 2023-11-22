@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import DeleteAccountModal from "./deleteAccountModal";
-import { type User, getUserInfo, updateUser } from "../services/UserService";
+import { getUserInfo, updateUser } from "../services/UserService";
 import DropDown from "../components/DropDown";
 import { getLocations } from "../services/LocationService";
 
