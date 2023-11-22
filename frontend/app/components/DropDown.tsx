@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ChangeEvent, useRef } from "react";
+import { useState, type ChangeEvent, useRef, useEffect } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 
 interface Props {
@@ -9,20 +9,45 @@ interface Props {
   defaultValue?: string;
 }
 
+function useClickOutside(ref: any, onClickOutside: () => void): void {
+  useEffect(() => {
+    /**
+     * Invoke Function onClick outside of element
+     */
+    function handleClickOutside(event: MouseEvent): void {
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      if (ref.current && !ref.current.contains(event.target)) {
+        onClickOutside();
+      }
+    }
+    // Bind
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // dispose
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref, onClickOutside]);
+}
+
 export default function DropDown({
   values = [],
   className = "w-fit",
   defaultValue = "",
 }: Props): JSX.Element {
   const [dropDownVisability, setDropDownVisability] = useState(false);
+  const dropDownMenuButton = useRef(null);
   const dropDownMenu = useRef(null);
   const [currentItems, setCurrentItems] = useState(values);
   const [value, setValue] = useState(defaultValue);
 
-  const test = (e: ChangeEvent<HTMLInputElement>): void => {
+  useClickOutside(dropDownMenu, () => {
+    setDropDownVisability(false);
+  });
+
+  const toggleDropDown = (e: ChangeEvent<HTMLInputElement>): void => {
     const searchTerm = e.target.value.toLowerCase();
 
-    if (dropDownMenu.current == null) {
+    if (dropDownMenuButton.current == null) {
       return;
     }
     const newItems: string[] = [];
@@ -37,14 +62,14 @@ export default function DropDown({
   };
 
   return (
-    <div className={`relative group ${className}`}>
+    <div className={`relative group ${className}`} ref={dropDownMenu}>
       <button
         type="button"
         id="dropdown-button"
         onClick={() => {
           setDropDownVisability(!dropDownVisability);
         }}
-        className="btn bg-primary text-text p-2 w-full rounded-lg shadow-md text-lg inline-flex justify-center items-center w-full"
+        className="btn bg-primary text-text p-2 w-full h-full rounded-lg shadow-md text-lg inline-flex justify-center items-center"
       >
         <div className="flex justify-between w-full">
           <div className="ml-2">{value}</div>
@@ -58,7 +83,7 @@ export default function DropDown({
       </button>
       <div
         id="dropdown-menu"
-        ref={dropDownMenu}
+        ref={dropDownMenuButton}
         className={`absolute text-xl bg-primary left-0 mt-1 w-full rounded-md shadow-lg ring-1 ring-black ring-opacity-5 p-1 space-y-1 ${
           dropDownVisability ? "" : "hidden"
         }`}
@@ -69,7 +94,7 @@ export default function DropDown({
           type="text"
           placeholder="Search items"
           autoComplete="off"
-          onInput={test}
+          onInput={toggleDropDown}
         />
         {currentItems.map((item, index) => (
           <a

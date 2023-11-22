@@ -1,41 +1,21 @@
 "use client";
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import NavDropDown from "./NavDropDown";
-
-function useClickOutside(ref: any, onClickOutside: () => void): void {
-  useEffect(() => {
-    /**
-     * Invoke Function onClick outside of element
-     */
-    function handleClickOutside(event: MouseEvent): void {
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-      if (ref.current && !ref.current.contains(event.target)) {
-        onClickOutside();
-      }
-    }
-    // Bind
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      // dispose
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [ref, onClickOutside]);
-}
 
 export default function Profile(): JSX.Element {
   const [dropdownVisability, setDropdownVisability] = useState(false);
-  const dropDownMenu = useRef(null);
-
-  useClickOutside(dropDownMenu, () => {
-    setDropdownVisability(false);
-  });
+  const [closedByDropDown, setClosedByDropDown] = useState(false);
 
   return (
     <>
       <div
         className="w-11"
         onClick={() => {
+          if (closedByDropDown) {
+            setClosedByDropDown(false);
+            return;
+          }
           setDropdownVisability(!dropdownVisability);
         }}
       >
@@ -51,11 +31,11 @@ export default function Profile(): JSX.Element {
         className={`transition-all ${
           dropdownVisability ? "opacity-100" : "opacity-0"
         }`}
-        ref={dropDownMenu}
       >
         {dropdownVisability && (
           <NavDropDown
             close={() => {
+              setClosedByDropDown(true);
               setDropdownVisability(false);
             }}
           />
