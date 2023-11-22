@@ -40,6 +40,10 @@ export default function DropDown({
   const [currentItems, setCurrentItems] = useState(values);
   const [value, setValue] = useState(defaultValue);
 
+  useEffect(() => {
+    setCurrentItems(values);
+  }, [values]);
+
   useClickOutside(dropDownMenu, () => {
     setDropDownVisability(false);
   });

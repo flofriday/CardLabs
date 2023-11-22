@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import DeleteAccountModal from "./deleteAccountModal";
 import { type User, getUserInfo } from "../services/UserService";
 import DropDown from "../components/DropDown";
+import { getLocations } from "../services/LocationService";
 
 export default function SettingsForm(): JSX.Element {
   const [deleteAccountModalVisiblity, setDeleteAccountModalVisiblity] =
@@ -12,11 +13,16 @@ export default function SettingsForm(): JSX.Element {
     password: "",
     email: "",
   });
-
+  const [locations, setLocations] = useState<string[]>([]);
   useEffect(() => {
     getUserInfo()
       .then((u) => {
         setUser(u);
+      })
+      .catch(() => {});
+    getLocations()
+      .then((l) => {
+        setLocations(l);
       })
       .catch(() => {});
   }, []);
@@ -56,7 +62,7 @@ export default function SettingsForm(): JSX.Element {
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
             <DropDown
-              values={["sdf", "test"]}
+              values={locations}
               className="w-full"
               defaultValue="Dropdown"
             />
