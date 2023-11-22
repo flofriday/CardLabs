@@ -1,17 +1,14 @@
-(define fib (lambda n
-              (if (< n 3)
+(define (fib n)
+              (if (<= n 2)
                 1
-                (+ (fib (- n 1)) (fib (- n 2)))
-                )))
+                (+ (fib (- n 1)) (fib (- n 2)))))
 
-(display (fib 1))
-(newline)
-(display (fib 2))
-(newline)
-(display (fib 3))
-(newline)
-(display (fib 4))
-(newline)
-(display (fib 5))
-(newline)
-(display (fib 6))
+; TODO: This might be beautiful as a do-loop
+(define (printn n) (begin
+                     (if (> n 1) (printn (- n 1)))
+                     ; TODO: In the future we could also print the index but at the time of writing there are no
+                     ; strings
+                     (display (fib n))
+                     (newline)))
+
+(printn 24)
