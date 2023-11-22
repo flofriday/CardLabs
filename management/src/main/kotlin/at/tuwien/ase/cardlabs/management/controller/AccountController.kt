@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -53,6 +54,26 @@ class AccountController(val accountService: AccountService) {
             ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .build()
+        }
+    }
+
+    @GetMapping("/account")
+    fun info(
+            @AuthenticationPrincipal user: UserDetails,
+    ): ResponseEntity<Account> {
+        return try {
+            val result = accountService.getUser(user.username)
+            ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(result)
+        } catch (exception: UnauthorizedException) {
+            ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build()
+        } catch (exception: IllegalArgumentException) {
+            ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build()
         }
     }
 }

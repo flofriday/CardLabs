@@ -5,6 +5,7 @@ import at.tuwien.ase.cardlabs.management.controller.model.Account
 import at.tuwien.ase.cardlabs.management.database.model.AccountDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
+import at.tuwien.ase.cardlabs.management.error.AccountNotFoundException
 import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.mapper.AccountMapper
 import org.springframework.context.annotation.Lazy
@@ -55,6 +56,13 @@ class AccountService(
     fun findById(id: Long): Optional<AccountDAO?> {
         return accountRepository.findById(id)
     }
+
+
+    fun getUser(username: String): Account {
+        val account = findByUsername(username) ?: throw AccountNotFoundException("Account could not be found")
+        return accountMapper.map(account)
+    }
+
 
     fun findByUsername(username: String?): AccountDAO? {
         if (username == null) {
