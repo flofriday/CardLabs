@@ -3,6 +3,7 @@ package at.tuwien.ase.cardlabs.management.controller
 import at.tuwien.ase.cardlabs.management.controller.model.Account
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
 import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
+import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -38,7 +39,7 @@ class AccountController(val accountService: AccountService) {
 
     @DeleteMapping("/account/{id}")
     fun delete(
-        @AuthenticationPrincipal user: UserDetails,
+        @AuthenticationPrincipal user: CardLabUser,
         @PathVariable id: Long,
     ): ResponseEntity<Unit> {
         return try {

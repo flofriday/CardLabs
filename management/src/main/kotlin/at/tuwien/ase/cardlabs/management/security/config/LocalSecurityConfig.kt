@@ -1,9 +1,12 @@
-package at.tuwien.ase.cardlabs.management.security
+package at.tuwien.ase.cardlabs.management.security.config
 
+import at.tuwien.ase.cardlabs.management.security.DatabaseUserDetailsService
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtAuthenticationFilter
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -21,7 +24,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-class SecurityConfig(private val accountService: AccountService) {
+@Profile("local")
+class LocalSecurityConfig(private val accountService: AccountService) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -40,14 +44,15 @@ class SecurityConfig(private val accountService: AccountService) {
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/account", "POST")).permitAll()
                     .anyRequest().authenticated()
-                    .and().sessionManagement { sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    }
-                    .addFilterBefore(
-                        JwtAuthenticationFilter(DatabaseUserDetailsService(accountService)),
-                        UsernamePasswordAuthenticationFilter::class.java,
-                    )
             }
+            .sessionManagement { sessionManagement ->
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .addFilterBefore(
+                JwtAuthenticationFilter(DatabaseUserDetailsService(accountService)),
+                UsernamePasswordAuthenticationFilter::class.java,
+            )
+
         return http.build()
     }
 

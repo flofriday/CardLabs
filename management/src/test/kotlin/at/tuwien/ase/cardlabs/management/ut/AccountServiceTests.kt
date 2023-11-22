@@ -125,7 +125,7 @@ internal class AccountServiceTests {
     @Test
     fun whenAccountDelete_expectSuccess() {
         val account = createAccount("test", "test@test.com", "password", null, true, true, true)
-        val userDetailsAccount = TestHelper.createUserDetails(account.username, account.password)
+        val userDetailsAccount = TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
 
         assertDoesNotThrow {
             accountService.delete(userDetailsAccount, account.id!!)
@@ -136,7 +136,7 @@ internal class AccountServiceTests {
     fun whenAccountDelete_expectUnauthorizedError() {
         val account1 = createAccount("test", "test@test.com", "password", null, true, true, true)
         val account2 = createAccount("test2", "test2@test.com", "password", null, true, true, true)
-        val userDetailsAccount1 = TestHelper.createUserDetails(account1.username, account1.password)
+        val userDetailsAccount1 = TestHelper.createUserDetails(account1.id!!, account1.username, account1.email, account1.password)
 
         val exception = assertThrows<UnauthorizedException> {
             accountService.delete(userDetailsAccount1, account2.id!!)

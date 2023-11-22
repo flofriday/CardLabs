@@ -1,8 +1,8 @@
 package at.tuwien.ase.cardlabs.management.controller
 
-import at.tuwien.ase.cardlabs.management.security.JwtHelper
 import at.tuwien.ase.cardlabs.management.security.authentication.JwtAuthenticationResponse
 import at.tuwien.ase.cardlabs.management.security.authentication.LoginRequest
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtHelper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
@@ -21,8 +21,8 @@ class AuthenticationController(val authenticationManager: AuthenticationManager)
             val authentication = authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken.unauthenticated(
                     loginRequest.username,
-                    loginRequest.password
-                )
+                    loginRequest.password,
+                ),
             )
 
             val jwt = JwtHelper.generateToken(authentication)

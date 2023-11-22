@@ -8,8 +8,8 @@ import at.tuwien.ase.cardlabs.management.error.AccountExistsException
 import at.tuwien.ase.cardlabs.management.error.AccountNotFoundException
 import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.mapper.AccountMapper
+import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import org.springframework.context.annotation.Lazy
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -49,12 +49,10 @@ class AccountService(
         return accountMapper.map(accountRepository.save(acc))
     }
 
-    fun delete(user: UserDetails, id: Long) {
+    fun delete(user: CardLabUser, id: Long) {
         Helper.requireNonNull(user, "No authentication provided")
         Helper.requireNonNull(id, "Cannot delete an account with the id null")
-        val account = findByUsername(user.username)
-            ?: throw IllegalArgumentException("No account with the username ${user.username}")
-        if (account.id != id) {
+        if (user.id != id) {
             throw UnauthorizedException("Can't delete an account other than yourself")
         }
         accountRepository.deleteById(id)
