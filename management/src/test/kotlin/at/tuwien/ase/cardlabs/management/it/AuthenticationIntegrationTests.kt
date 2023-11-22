@@ -40,7 +40,7 @@ class AuthenticationIntegrationTests {
         mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isOk)
     }
@@ -53,7 +53,7 @@ class AuthenticationIntegrationTests {
         mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isUnauthorized)
     }

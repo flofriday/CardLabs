@@ -1,17 +1,15 @@
 package at.tuwien.ase.cardlabs.management
 
 import at.tuwien.ase.cardlabs.management.controller.model.Account
+import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetails
 
 class TestHelper {
 
     companion object {
 
-        fun createUserDetails(username: String, password: String): UserDetails {
-            return User(username, password, listOf(SimpleGrantedAuthority("ROLE_USER")))
+        fun createUserDetails(id: Long, username: String, email: String, password: String): CardLabUser {
+            return CardLabUser(id, username, email, password)
         }
 
         fun createAccount(accountService: AccountService, username: String, email: String, password: String): Account {
@@ -19,7 +17,7 @@ class TestHelper {
                 id = null,
                 username = username,
                 email = email,
-                password = password
+                password = password,
             )
             return accountService.create(account)
         }

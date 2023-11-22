@@ -44,7 +44,7 @@ class AccountIntegrationTests {
         val result = mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isCreated)
             .andReturn()
@@ -65,7 +65,7 @@ class AccountIntegrationTests {
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isConflict)
     }
@@ -78,7 +78,7 @@ class AccountIntegrationTests {
         mockMvc.perform(
             delete("/account/${account.id}")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $authenticationToken")
+                .header("Authorization", "Bearer $authenticationToken"),
         )
             .andExpect(status().isOk)
     }
@@ -92,7 +92,7 @@ class AccountIntegrationTests {
         mockMvc.perform(
             delete("/account/${account2.id}")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $authenticationToken")
+                .header("Authorization", "Bearer $authenticationToken"),
         )
             .andExpect(status().isUnauthorized)
     }
@@ -108,7 +108,7 @@ class AccountIntegrationTests {
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isBadRequest)
     }
@@ -118,7 +118,7 @@ class AccountIntegrationTests {
         val result = mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
+                .content(body),
         )
             .andExpect(status().isOk)
             .andReturn()
