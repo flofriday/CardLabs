@@ -21,10 +21,10 @@ import java.util.Optional
 
 @Service
 class AccountService(
-    private val accountRepository: AccountRepository,
-    private val locationRepository: LocationRepository,
-    private val accountMapper: AccountMapper,
-    @Lazy private val passwordEncoder: PasswordEncoder,
+        private val accountRepository: AccountRepository,
+        private val locationRepository: LocationRepository,
+        private val accountMapper: AccountMapper,
+        @Lazy private val passwordEncoder: PasswordEncoder,
 ) {
 
     @Transactional
@@ -36,7 +36,8 @@ class AccountService(
         Helper.requireNonNull(account.sendChangeUpdates, "The SendChangeUpdates option must be set")
         Helper.requireNonNull(account.sendScoreUpdates, "The SendScoreUpdates option must be set")
         Helper.requireNonNull(account.sendNewsletter, "The SendNewsletter option must be set")
-        if (account.location != null && findLocation(account.location) == null) {
+        val location: LocationDAO? = if (account.location != null) findLocation(account.location) else null
+        if (account.location != null && location == null) {
             throw LocationNotFoundException("Location with name ${account.location} does not exist")
         }
         if (findByUsername(account.username) != null) {
@@ -50,7 +51,7 @@ class AccountService(
         acc.username = account.username
         acc.email = account.email
         acc.password = passwordEncoder.encode(account.password)
-        acc.location = account.location
+        acc.location = location
         acc.sendChangeUpdates = account.sendChangeUpdates
         acc.sendScoreUpdates = account.sendScoreUpdates
         acc.sendNewsletter = account.sendNewsletter
@@ -70,7 +71,11 @@ class AccountService(
         Helper.requireNonNull(user, "No authentication provided")
         val account = findByUsername(user.username) ?: throw AccountNotFoundException("Account could not be found")
 
-        account.location = accountUpdate.location
+        val location: LocationDAO? = if (accountUpdate.location != null) findLocation(accountUpdate.location) else null
+        if (accountUpdate.location != null && location == null) {
+            throw LocationNotFoundException("Location with name ${accountUpdate.location} does not exist")
+        }
+        account.location = location
         account.sendNewsletter = accountUpdate.sendNewsletter
         account.sendScoreUpdates = accountUpdate.sendScoreUpdates
         account.sendChangeUpdates = accountUpdate.sendChangeUpdates

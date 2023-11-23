@@ -1,10 +1,6 @@
 package at.tuwien.ase.cardlabs.management.database.model
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "account")
@@ -23,8 +19,9 @@ class AccountDAO : AuditedEntity() {
     @Column(nullable = false)
     lateinit var password: String
 
-    @Column(nullable = true)
-    var location: String? = null
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "location", nullable = true)
+    var location: LocationDAO? = null
 
     @Column(nullable = false)
     var sendScoreUpdates: Boolean = false
