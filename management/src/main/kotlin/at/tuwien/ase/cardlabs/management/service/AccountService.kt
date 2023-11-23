@@ -21,10 +21,10 @@ import java.util.Optional
 
 @Service
 class AccountService(
-        private val accountRepository: AccountRepository,
-        private val locationRepository: LocationRepository,
-        private val accountMapper: AccountMapper,
-        @Lazy private val passwordEncoder: PasswordEncoder,
+    private val accountRepository: AccountRepository,
+    private val locationRepository: LocationRepository,
+    private val accountMapper: AccountMapper,
+    @Lazy private val passwordEncoder: PasswordEncoder,
 ) {
 
     @Transactional
@@ -67,6 +67,7 @@ class AccountService(
         accountRepository.deleteById(id)
     }
 
+    @Transactional
     fun update(user: CardLabUser, accountUpdate: AccountUpdate) {
         Helper.requireNonNull(user, "No authentication provided")
         val account = findByUsername(user.username) ?: throw AccountNotFoundException("Account could not be found")
