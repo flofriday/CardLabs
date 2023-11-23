@@ -3,6 +3,7 @@ package at.tuwien.ase.cardlabs.management.controller
 import at.tuwien.ase.cardlabs.management.controller.model.Account
 import at.tuwien.ase.cardlabs.management.controller.model.AccountUpdate
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
+import at.tuwien.ase.cardlabs.management.error.LocationNotFoundException
 import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
@@ -27,6 +28,10 @@ class AccountController(val accountService: AccountService) {
             ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(result)
+        } catch (exception: LocationNotFoundException) {
+            ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .build()
         } catch (exception: AccountExistsException) {
             ResponseEntity
                 .status(HttpStatus.CONFLICT)

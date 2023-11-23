@@ -4,9 +4,12 @@ import at.tuwien.ase.cardlabs.management.Helper
 import at.tuwien.ase.cardlabs.management.controller.model.Account
 import at.tuwien.ase.cardlabs.management.controller.model.AccountUpdate
 import at.tuwien.ase.cardlabs.management.database.model.AccountDAO
+import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
+import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
 import at.tuwien.ase.cardlabs.management.error.AccountNotFoundException
+import at.tuwien.ase.cardlabs.management.error.LocationNotFoundException
 import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.mapper.AccountMapper
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
@@ -19,6 +22,7 @@ import java.util.Optional
 @Service
 class AccountService(
     private val accountRepository: AccountRepository,
+    private val locationRepository: LocationRepository,
     private val accountMapper: AccountMapper,
     @Lazy private val passwordEncoder: PasswordEncoder,
 ) {
@@ -32,6 +36,9 @@ class AccountService(
         Helper.requireNonNull(account.sendChangeUpdates, "The SendChangeUpdates option must be set")
         Helper.requireNonNull(account.sendScoreUpdates, "The SendScoreUpdates option must be set")
         Helper.requireNonNull(account.sendNewsletter, "The SendNewsletter option must be set")
+        if (account.location != null && findLocation(account.location) == null) {
+            throw LocationNotFoundException("Location with name ${account.location} does not exist")
+        }
         if (findByUsername(account.username) != null) {
             throw AccountExistsException("An account with the username ${account.username} already exists")
         }
@@ -85,6 +92,10 @@ class AccountService(
             return null
         }
         return accountRepository.findByUsername(username)
+    }
+
+    fun findLocation(name: String): LocationDAO? {
+        return locationRepository.findByName(name)
     }
 
     fun findByEmail(email: String?): AccountDAO? {
