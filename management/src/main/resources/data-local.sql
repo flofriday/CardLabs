@@ -3,7 +3,7 @@ VALUES ('Austria');
 INSERT INTO location (name)
 VALUES ('Germany');
 INSERT INTO location (name)
-VALUES ('Swiss');
+VALUES ('Denmark');
 INSERT INTO location (name)
 VALUES ('Switzerland');
 INSERT INTO location (name)

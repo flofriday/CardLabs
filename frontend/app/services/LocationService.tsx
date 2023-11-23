@@ -1,7 +1,19 @@
+import { toast } from "react-toastify";
+
 export async function getLocations(): Promise<string[]> {
-  const list = ["Austria", "Germany", "Swiss"];
-  const l = await new Promise<string[]>(function (resolve, reject) {
-    resolve(list);
+  const response = await fetch("api/location", {
+    mode: "cors",
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
   });
-  return l;
+
+  if (response.status !== 200) {
+    toast.error("Could not fetch locations");
+    return [];
+  }
+
+  const locations = (await response.json()) as string[];
+  return locations;
 }
