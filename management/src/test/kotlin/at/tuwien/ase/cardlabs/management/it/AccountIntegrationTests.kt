@@ -2,7 +2,9 @@ package at.tuwien.ase.cardlabs.management.it
 
 import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.controller.model.Account
+import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
+import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.security.authentication.JwtAuthenticationResponse
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -28,6 +30,9 @@ class AccountIntegrationTests {
     private lateinit var accountRepository: AccountRepository
 
     @Autowired
+    private lateinit var locationRepository: LocationRepository
+
+    @Autowired
     private lateinit var accountService: AccountService
 
     @Autowired
@@ -36,6 +41,9 @@ class AccountIntegrationTests {
     @BeforeEach
     fun beforeEach() {
         accountRepository.deleteAll()
+        val austria = LocationDAO()
+        austria.name = "Austria"
+        locationRepository.save(austria)
     }
 
     @Test

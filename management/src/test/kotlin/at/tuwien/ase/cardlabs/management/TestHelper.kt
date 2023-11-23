@@ -32,7 +32,7 @@ class TestHelper {
                     "username": "$username",
                     "email": "$email",
                     "password": "$password",
-                    "location": "$location",
+                    "location": ${if (location == null) null else "$location"},
                     "sendScoreUpdates": "$sendScoreUpdates",
                     "sendChangeUpdates": "$sendChangeUpdates",
                     "sendNewsletter": "$sendNewsletter"
