@@ -26,13 +26,28 @@ class TestHelper {
             return accountService.create(account)
         }
 
+        fun getAccount(accountService: AccountService, username: String): Account {
+            return accountService.getUser(username)
+        }
+
         fun createAccountCreateJSON(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): String {
             return """
                 {
                     "username": "$username",
                     "email": "$email",
                     "password": "$password",
-                    "location": ${if (location == null) null else "$location"},
+                    "location": ${if (location == null) null else "\"" + location + "\""},
+                    "sendScoreUpdates": "$sendScoreUpdates",
+                    "sendChangeUpdates": "$sendChangeUpdates",
+                    "sendNewsletter": "$sendNewsletter"
+                }
+            """.trimIndent()
+        }
+
+        fun createAccountUpdateCreateJSON(location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): String {
+            return """
+                {
+                    "location": ${if (location == null) null else "\"" + location + "\""},
                     "sendScoreUpdates": "$sendScoreUpdates",
                     "sendChangeUpdates": "$sendChangeUpdates",
                     "sendNewsletter": "$sendNewsletter"

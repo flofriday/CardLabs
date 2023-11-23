@@ -102,6 +102,10 @@ class AccountController(val accountService: AccountService) {
             ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .build()
+        } catch (exception: LocationNotFoundException) {
+            ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .build()
         }
     }
 }
