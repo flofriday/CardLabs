@@ -147,7 +147,10 @@ export default function RegisterForm(): JSX.Element {
           </div>
         </div>
         <div className="flex justify-around pt-4 mt-5">
-          <button className="btn bg-primary text-text py-2 w-48 rounded-lg shadow-md text-lg">
+          <button
+            className="btn bg-primary text-text py-2 w-48 rounded-lg shadow-md text-lg"
+            id="register_button"
+          >
             Register
           </button>
         </div>

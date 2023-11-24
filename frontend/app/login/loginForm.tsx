@@ -61,7 +61,10 @@ export default function LoginForm(): JSX.Element {
           </div>
         </div>
         <div className="flex justify-around pt-4 mt-10">
-          <button className="btn bg-primary text-text py-2 w-48 rounded-lg shadow-md text-lg">
+          <button
+            className="btn bg-primary text-text py-2 w-48 rounded-lg shadow-md text-lg"
+            id="login_button"
+          >
             Login
           </button>
         </div>

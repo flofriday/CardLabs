@@ -26,6 +26,7 @@ export default function Profile(): JSX.Element {
     <>
       <div
         className="w-11"
+        id="profile_pic_in_navbar"
         onClick={() => {
           if (closedByDropDown) {
             setClosedByDropDown(false);

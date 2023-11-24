@@ -55,6 +55,7 @@ export default function NavDropDown({
           onClick={() => {
             onLogout(router);
           }}
+          id="logout_button_navbar"
         >
           Logout
         </button>
@@ -64,6 +65,7 @@ export default function NavDropDown({
             router.replace("/settings");
             close();
           }}
+          id="settings_button_navbar"
         >
           Settings
         </button>
