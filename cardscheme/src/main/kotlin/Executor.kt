@@ -66,18 +66,15 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         return FuncValue(node.params.map { a -> a.identifier }, Arity(node.params.size, node.params.size), node.body, environment)
     }
 
+    /**
+     * Evaluating an if expression.
+     *
+     * Spec: R7R, chapter 4.1.5
+     */
     override fun visitedBy(node: IfNode): SchemeValue {
         val condition = node.condition.visit(this)
-        if (condition !is BooleanValue) {
-            throw SchemeError(
-                "Expected boolean",
-                "Expected Condition inside if to evaluate to a boolean value",
-                node.location,
-                null,
-            )
-        }
 
-        if (condition.value) {
+        if (condition.isTruthy()) {
             return node.thenExpression.visit(this)
         }
 

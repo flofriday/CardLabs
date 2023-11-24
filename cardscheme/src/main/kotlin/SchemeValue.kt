@@ -4,6 +4,20 @@ abstract class SchemeValue {
     abstract override fun toString(): String
 
     abstract fun typeName(): String
+
+    /**
+     * Determines wether or not a value is considerd as "true".
+     *
+     * Spec: R7R, chapter 6.3
+     * Of all the Scheme values, only #f counts as false in conditional
+     * expressions. All other Scheme values, including #t, count as true.
+     */
+    fun isTruthy(): Boolean {
+        if (this is BooleanValue) {
+            return this.value
+        }
+        return true
+    }
 }
 
 class VoidValue() : SchemeValue() {
@@ -157,8 +171,12 @@ data class Arity(val min: Int, val max: Int) {
     }
 }
 
-data class FuncValue(val args: List<String>, val arity: Arity, val body: BodyNode, val env: Environment) :
-    SchemeValue() {
+data class FuncValue(
+    val args: List<String>,
+    val arity: Arity,
+    val body: BodyNode,
+    val env: Environment,
+) : SchemeValue() {
     override fun toString(): String {
         // FIXME: Better display
         return "<Function>"
@@ -175,8 +193,7 @@ data class NativeFuncValue(
     val name: String,
     val arity: Arity,
     val func: (List<NativeFuncArg>, Environment) -> SchemeValue,
-) :
-    SchemeValue() {
+) : SchemeValue() {
     override fun toString(): String {
         return "<Native Function $name>"
     }

@@ -32,4 +32,28 @@ class ConditionalTests {
         assert(result is IntegerValue)
         Assert.assertEquals(13, (result as IntegerValue).value)
     }
+
+    @Test
+    fun simpleConditionWithNumberAsCondition() {
+        val program = "(if 42 1 2)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(1, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun simpleConditionWithZeroAsCondition() {
+        val program = "(if 0 1 2)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(1, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun simpleConditionWithEmptyListAsCondition() {
+        val program = "(if '() 1 2)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(1, (result as IntegerValue).value)
+    }
 }
