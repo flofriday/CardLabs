@@ -18,12 +18,12 @@ def get_service():
     service = ChromeService(executable_path=filename)
     return service
 
-@pytest.fixture(scope="session")
+@pytest.fixture(autouse=True)
 def driver():
     driver = webdriver.Chrome(options=get_options(), service=get_service())
     yield driver
 
-@pytest.fixture(scope="session")
+@pytest.fixture(autouse=True)
 def driver_headless():
     options = get_options()
     options.add_argument('--headless=new')

@@ -1,2 +1,2 @@
 import pytest
-from seleniumHelper import driver, driver_headless
+from selenium_fixture import driver, driver_headless

@@ -21,8 +21,8 @@ def test_login(driver_headless):
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "profile_pic_in_navbar")))
 
 
-def test_logout(driver):
-
+def test_logout(driver_headless):
+    driver = driver_headless
     #for logout we first need to login
     driver.get("http://127.0.0.1:3000/")
     driver.set_window_size(1900, 1020)
@@ -41,7 +41,8 @@ def test_logout(driver):
     driver.find_element(By.ID, "logout_button_navbar").click()
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "login_button_navbar")))
 
-def test_register(driver):
+def test_register(driver_headless):
+    driver = driver_headless
     driver.get("http://127.0.0.1:3000/")
     driver.set_window_size(1900, 1020)
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "register_button_navbar")))
