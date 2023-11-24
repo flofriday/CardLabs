@@ -82,10 +82,14 @@ class Parser {
         return expressionNodes
     }
 
-    // (lambda () (display 42))
-    // (lambda a 42)
-    //           ^
-    // (lambda (a b) (display (+ a b)))
+    /**
+     * Parse a lambda expression.
+     *
+     * Spec: R7R, chapter 4.1.4
+     * (lambda <formals> <body>)
+     *
+     * FIXME: Incomplete, varargs missing.
+     */
     private fun parseLambda(): LambdaNode {
         val lparen = consume()
         consume()
@@ -104,7 +108,6 @@ class Parser {
             consume()
         }
 
-        // FIXME: A body could also have some definitions at the beginning
         val body = parseBody()
         val rparen = consume()
 
@@ -134,6 +137,13 @@ class Parser {
         return BodyNode(definitions, expressions, location)
     }
 
+    /**
+     * Parse an if expression.
+     *
+     * Spec: R7R, chapter 4.1.5
+     * (if <test> <consequent> <alternate>)
+     * (if <test> <consequent>)
+     */
     private fun parseIf(): IfNode {
         val lparen = consume()
         consume()
@@ -152,6 +162,14 @@ class Parser {
         return IfNode(condition, thenExpression, elseExpression, Location.merge(lparen.location, rparen.location))
     }
 
+    /**
+     * A quote expression (with a single quote).
+     *
+     * Spec: R7R, chapter 4.1.2
+     * '<datum>
+     *
+     * FIXME: The parser doesn't match the spec
+     */
     private fun parseSingleQuote(): ListNode {
         val token = consume() as SingleQuoteToken
         must(LParenToken::class.java, "Quoted List must be followed my left parenthesis")
@@ -160,6 +178,14 @@ class Parser {
         return ListNode(expressionNodes, Location.merge(token.location, rparen.location))
     }
 
+    /**
+     * A quote expression (with the keyword).
+     *
+     * Spec: R7R, chapter 4.1.2
+     * (quote <datum>)
+     *
+     * FIXME: The parser doesn't match the spec
+     */
     private fun parseQuote(): ListNode {
         val lparen = consume()
         consume()
@@ -170,6 +196,15 @@ class Parser {
         return ListNode(expressionNodes, Location.merge(lparen.location, rparen.location))
     }
 
+    /**
+     * Parse a begin expression.
+     *
+     * Spec: R7R, chapter 4.2.3
+     * (begin <expression or definition> ...)
+     * (begin <expression1> <expression2> ...)
+     *
+     * FIXME: We only attempt to parse the second form here but even there I am not sure, if we do it correctly..
+     */
     private fun parseBegin(): BodyNode {
         val lparen = consume()
         consume()
@@ -184,6 +219,19 @@ class Parser {
         )
     }
 
+    /**
+     * Parse a definition.
+     *
+     * Spec: R7R, chapter 5.3
+     * (define <variable> <expression>)
+     * (define (<variable> <formals>) <body>)
+     * (define (<variable> . <formal>) <body>)
+     *
+     * Since the last two forms are just syntactic sugar for a define of the first form with a nested lambda this parser
+     * de-sugars it.
+     *
+     * FIXME: Implement the varargs form.
+     */
     private fun parseDefine(): DefineNode {
         val lparen = consume()
         consume()
@@ -202,7 +250,7 @@ class Parser {
             consume()
             val functionName = must(IdentifierToken::class.java, "Expected an identifier here") as IdentifierToken
 
-            var args = mutableListOf<IdentifierNode>()
+            val args = mutableListOf<IdentifierNode>()
             while (peek() !is RParenToken) {
                 val arg = must(IdentifierToken::class.java, "Expected an identifier here") as IdentifierToken
                 args.addLast(IdentifierNode(arg.value, arg.location))
@@ -222,6 +270,12 @@ class Parser {
         }
     }
 
+    /**
+     * Parse a application of a procedure (aka function call).
+     *
+     * Spec: R7R, chapter 4.1.3
+     * (<operator> <operator1> ...)
+     */
     private fun parseApplication(): ApplicationNode {
         val lparen = consume()
         val expressions: List<ExpressionNode> = mutableListOf()
