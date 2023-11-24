@@ -47,6 +47,10 @@ class Parser {
     private fun parseExpression(): ExpressionNode {
         if (peek() is SingleQuoteToken) {
             return parseSingleQuote()
+        } else if (peek() is PoundToken) {
+            if (peekn(2) is LParenToken) {
+                return parseVector()
+            }
         } else if (peek() is BooleanToken) {
             val token = consume() as BooleanToken
             return BoolNode(token.value, token.location)
@@ -170,14 +174,18 @@ class Parser {
      * Spec: R7R, chapter 4.1.2
      * '<datum>
      *
+     * This parser automatically desugars the syntax to an application
+     *
      * FIXME: The parser doesn't match the spec
      */
-    private fun parseSingleQuote(): ListNode {
+    private fun parseSingleQuote(): ApplicationNode {
         val token = consume() as SingleQuoteToken
         must<LParenToken>("Quoted List must be followed my left parenthesis")
         val expressionNodes = parseExpressions()
         val rparen = consume()
-        return ListNode(expressionNodes, Location.merge(token.location, rparen.location))
+
+        expressionNodes.addFirst(IdentifierNode("list", token.location))
+        return ApplicationNode(expressionNodes, Location.merge(token.location, rparen.location))
     }
 
     /**
@@ -186,16 +194,41 @@ class Parser {
      * Spec: R7R, chapter 4.1.2
      * (quote <datum>)
      *
+     * This parser automatically desugars the syntax to an application
+     *
      * FIXME: The parser doesn't match the spec
      */
-    private fun parseQuote(): ListNode {
-        val lparen = consume()
+    private fun parseQuote(): ApplicationNode {
+        val quoteToken = consume()
         consume()
         must<LParenToken>("Quoted List must be followed my left parenthesis")
         val expressionNodes = parseExpressions()
         consume()
         val rparen = must<RParenToken>("Expected a right parenthesis here")
-        return ListNode(expressionNodes, Location.merge(lparen.location, rparen.location))
+
+        expressionNodes.addFirst(IdentifierNode("list", quoteToken.location))
+        return ApplicationNode(expressionNodes, Location.merge(quoteToken.location, rparen.location))
+    }
+
+    /**
+     * A vector expression
+     *
+     * Spec: R7R, chapter 6.8
+     * #(<expression> ...)
+     *
+     * This parser automatically desugars the syntax to an application
+     *
+     * NOTE: This function intentionally deviates from the Spec which would only create immutable vectors here but
+     * in Cardscheme we won't have the concept of immutable vector values.
+     */
+    private fun parseVector(): ApplicationNode {
+        val pound = consume()
+        consume()
+        val expressionNodes = parseExpressions()
+        val rparen = must<RParenToken>("Expected a right parenthesis here")
+
+        expressionNodes.addFirst(IdentifierNode("vector", pound.location))
+        return ApplicationNode(expressionNodes, Location.merge(pound.location, rparen.location))
     }
 
     /**

@@ -252,20 +252,6 @@ class DoNode(
     }
 }
 
-// FIXME: I am not sure we understood the concept right and maybe it's something else
-class ListNode(val expressions: List<ExpressionNode>, location: Location) :
-    ExpressionNode(location) {
-    override fun dump(indent: Int): String {
-        return getIndentation(indent) +
-            "List: \n" +
-            expressions.joinToString(", ") { e -> e.dump(indent + 1) }
-    }
-
-    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
-        return visitor.visitedBy(this)
-    }
-}
-
 /**
  * If expression.
  *
@@ -307,8 +293,6 @@ interface ExpressionVisitor<T> {
     fun visitedBy(node: IdentifierNode): T
 
     fun visitedBy(node: ApplicationNode): T
-
-    fun visitedBy(node: ListNode): T
 
     fun visitedBy(node: BodyNode): T
 

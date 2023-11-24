@@ -134,7 +134,7 @@ class Tokenizer() {
         return FloatToken(literal.toFloat(), Location(line, line, col - literal.length, col - 1))
     }
 
-    private fun scanPoundSign(): BooleanToken {
+    private fun scanPoundSign(): Token {
         consume()
         if (peek().equals('t', ignoreCase = true)) {
             consume()
@@ -142,9 +142,10 @@ class Tokenizer() {
         } else if (peek().equals('f', ignoreCase = true)) {
             consume()
             return BooleanToken(false, Location(line, line, col - 2, col - 1))
+        } else {
+            return PoundToken(Location(line, line, col - 1, col - 1))
         }
 
-        // FIXME: add support for chars
         throw Exception("No Chars are implemented yet")
     }
 

@@ -1,6 +1,7 @@
 abstract class Token(val location: Location)
 
 class SingleQuoteToken(location: Location) : Token(location)
+class PoundToken(location: Location) : Token(location)
 class QuoteToken(location: Location) : Token(location)
 class LParenToken(location: Location) : Token(location)
 class RParenToken(location: Location) : Token(location)

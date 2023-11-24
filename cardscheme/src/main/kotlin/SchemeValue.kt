@@ -165,6 +165,21 @@ data class ListValue(val values: LinkedList<SchemeValue>) : SchemeValue() {
     }
 }
 
+/**
+ * A vector data structure.
+ *
+ * Spec: R7R, chapter 6.8
+ */
+data class VectorValue(val values: MutableList<SchemeValue>) : SchemeValue() {
+    override fun toString(): String {
+        return "#(" + values.joinToString(" ") { value -> value.toString() } + ")"
+    }
+
+    override fun typeName(): String {
+        return "<#vector>"
+    }
+}
+
 data class Arity(val min: Int, val max: Int) {
     fun inside(n: Int): Boolean {
         return n in min..max
