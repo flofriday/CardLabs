@@ -62,12 +62,14 @@ class Parser {
         } else if (peek() is LParenToken) {
             if (peekn(2) is QuoteToken) {
                 return parseQuote()
-            } else if (peekn(2) is LambdaToken) {
-                return parseLambda()
-            } else if (peekn(2) is IfToken) {
-                return parseIf()
             } else if (peekn(2) is BeginToken) {
                 return parseBegin()
+            } else if (peekn(2) is DoToken) {
+                return parseDo()
+            } else if (peekn(2) is IfToken) {
+                return parseIf()
+            } else if (peekn(2) is LambdaToken) {
+                return parseLambda()
             }
             return parseApplication()
         }
@@ -102,7 +104,7 @@ class Parser {
         } else if (peek() is LParenToken) {
             consume()
             while (peek() !is RParenToken) {
-                val token = must(IdentifierToken::class.java, "I expected an identifier here") as IdentifierToken
+                val token = must<IdentifierToken>("I expected an identifier here")
                 args.addLast(IdentifierNode(token.value, token.location))
             }
             consume()
@@ -158,7 +160,7 @@ class Parser {
         }
 
         val elseExpression = parseExpression()
-        val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
+        val rparen = must<RParenToken>("Expected a right parenthesis here")
         return IfNode(condition, thenExpression, elseExpression, Location.merge(lparen.location, rparen.location))
     }
 
@@ -172,7 +174,7 @@ class Parser {
      */
     private fun parseSingleQuote(): ListNode {
         val token = consume() as SingleQuoteToken
-        must(LParenToken::class.java, "Quoted List must be followed my left parenthesis")
+        must<LParenToken>("Quoted List must be followed my left parenthesis")
         val expressionNodes = parseExpressions()
         val rparen = consume()
         return ListNode(expressionNodes, Location.merge(token.location, rparen.location))
@@ -189,10 +191,10 @@ class Parser {
     private fun parseQuote(): ListNode {
         val lparen = consume()
         consume()
-        must(LParenToken::class.java, "Quoted List must be followed my left parenthesis")
+        must<LParenToken>("Quoted List must be followed my left parenthesis")
         val expressionNodes = parseExpressions()
         consume()
-        val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
+        val rparen = must<RParenToken>("Expected a right parenthesis here")
         return ListNode(expressionNodes, Location.merge(lparen.location, rparen.location))
     }
 
@@ -210,13 +212,60 @@ class Parser {
         consume()
 
         val expressions = parseExpressions()
-        val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
+        val rparen = must<RParenToken>("Expected a right parenthesis here")
 
         return BodyNode(
             listOf(),
             expressions,
             Location.merge(lparen.location, rparen.location),
         )
+    }
+
+    /**
+     * Parse a do loop.
+     *
+     * Spec: R7R, chapter 4.2.4
+     * (do ((<variable1> <init1> <step1>) ...)
+     *      (<test> <expression> ...)
+     * <command> ...)
+     */
+    private fun parseDo(): DoNode {
+        val start = consume()
+        consume()
+
+        // parse variables part
+        val variableInitSteps = mutableListOf<VariableInitStep>()
+        must<LParenToken>("I expected a left parenthesis here.")
+        while (peek() is LParenToken) {
+            consume()
+            val name = must<IdentifierToken>("I expected an identifier here.")
+            val init = parseExpression()
+            val step = if (peek() !is RParenToken) parseExpression() else null
+            must<RParenToken>("I expected a closing right parenthesis here.")
+            variableInitSteps.addLast(VariableInitStep(IdentifierNode(name.value, name.location), init, step))
+        }
+        must<RParenToken>("I expected a closing right parenthesis here.")
+
+        // parse the test
+        must<LParenToken>("I expected a opening left parenthesis here.")
+        val test = parseExpression()
+        val body = if (peek() !is RParenToken) {
+            val bodyExpressions = parseExpressions()
+            BodyNode(listOf(), bodyExpressions, Location.merge(bodyExpressions.first().location, bodyExpressions.last().location))
+        } else {
+            null
+        }
+        must<RParenToken>("I expected a closing right parenthesis here.")
+
+        // parse the command
+        val command = if (peek() !is RParenToken) {
+            val commandExpressions = parseExpressions()
+            BodyNode(listOf(), commandExpressions, Location.merge(commandExpressions.first().location, commandExpressions.last().location))
+        } else {
+            null }
+
+        val end = must<RParenToken>("I expected a closing right parenthesis here.")
+        return DoNode(variableInitSteps, test, body, command, Location.merge(start.location, end.location))
     }
 
     /**
@@ -239,7 +288,7 @@ class Parser {
         if (peek() is IdentifierToken) {
             val variableName = consume() as IdentifierToken
             val body = parseExpression()
-            val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
+            val rparen = must<RParenToken>("Expected a right parenthesis here")
 
             return DefineNode(
                 IdentifierNode(variableName.value, variableName.location),
@@ -248,17 +297,17 @@ class Parser {
             )
         } else if (peek() is LParenToken) {
             consume()
-            val functionName = must(IdentifierToken::class.java, "Expected an identifier here") as IdentifierToken
+            val functionName = must<IdentifierToken>("Expected an identifier here")
 
             val args = mutableListOf<IdentifierNode>()
             while (peek() !is RParenToken) {
-                val arg = must(IdentifierToken::class.java, "Expected an identifier here") as IdentifierToken
+                val arg = must<IdentifierToken>("Expected an identifier here")
                 args.addLast(IdentifierNode(arg.value, arg.location))
             }
             consume()
 
             val body = parseBody()
-            val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
+            val rparen = must<RParenToken>("Expected a right parenthesis here")
 
             return DefineNode(
                 IdentifierNode(functionName.value, functionName.location),
@@ -284,29 +333,37 @@ class Parser {
             expressions.addLast(parseExpression())
         }
 
-        val rparen = must(RParenToken::class.java, "Expected a right parenthesis here")
+        val rparen = must<RParenToken>("Expected a right parenthesis here")
         return ApplicationNode(expressions, Location.merge(lparen.location, rparen.location))
     }
 
-    private fun must(
-        classs: Class<*>,
+    private inline fun <reified T : Token> must(
         error: String,
-    ): Token {
-        if (classs != peek()::class.java) {
+    ): T {
+        if (peek() !is T) {
             throw SchemeError("Unexpected symbol", error, peek().location, null)
         }
-        return consume()
+        return consume() as T
     }
 
     private fun peek(): Token {
+        if (index >= tokens.size) {
+            throw SchemeError("Unexpected end of file", "I was in the middle of reading something but the file just ended.", null, null)
+        }
         return tokens[index]
     }
 
     private fun peekn(n: Int): Token {
+        if (index + n - 1 >= tokens.size) {
+            throw SchemeError("Unexpected end of file", "I was in the middle of reading something but the file just ended.", null, null)
+        }
         return tokens[index + n - 1]
     }
 
     private fun consume(): Token {
+        if (index >= tokens.size) {
+            throw SchemeError("Unexpected end of file", "I was in the middle of reading something but the file just ended.", null, null)
+        }
         index++
         return tokens[index - 1]
     }

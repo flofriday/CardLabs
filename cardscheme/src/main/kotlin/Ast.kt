@@ -1,9 +1,10 @@
 /**
  * The internal representation (abstract syntax tree) for a complete program.
  *
- * Keep in mind this really is just an internal representation and since the parser already does some desugarinig,
- * it might not look exactly like the input program. However, semantically they should be equally. So it happens quite
- * often that multiple Scheme constructs are mapped to one Ast entity.
+ * Keep in mind this really is just an internal representation and since the parser already does
+ * some desugarinig, it might not look exactly like the input program. However, semantically they
+ * should be equally. So it happens quite often that multiple Scheme constructs are mapped to one
+ * Ast entity.
  *
  * @param forms the statements and expressions that make up the program.
  */
@@ -48,18 +49,12 @@ abstract class AstNode(val location: Location) {
     }
 }
 
-/**
- * Any kind of expression in the AST.
- * (Everything that returns something)
- */
+/** Any kind of expression in the AST. (Everything that returns something) */
 abstract class ExpressionNode(location: Location) : AstNode(location) {
     abstract fun <T> visit(visitor: ExpressionVisitor<T>): T
 }
 
-/**
- * Any kind of statement in the AST.
- * (Everything that doesn't return anything)
- */
+/** Any kind of statement in the AST. (Everything that doesn't return anything) */
 abstract class StatementNode(location: Location) : AstNode(location) {
     abstract fun <T> visit(visitor: StatementVisitor<T>): T
 }
@@ -67,9 +62,11 @@ abstract class StatementNode(location: Location) : AstNode(location) {
 /**
  * A application of a procedure (aka function call).
  *
- * @param expressions the expressions making up the call where the first one will (hopefully) evaluate to a procedure.
+ * @param expressions the expressions making up the call where the first one will (hopefully)
+ *   evaluate to a procedure.
  */
-class ApplicationNode(val expressions: List<ExpressionNode>, location: Location) : ExpressionNode(location) {
+class ApplicationNode(val expressions: List<ExpressionNode>, location: Location) :
+    ExpressionNode(location) {
     override fun dump(indent: Int): String {
         var out = getIndentation(indent) + "Application\n"
         for (child in expressions) {
@@ -151,8 +148,9 @@ class FloatNode(val value: Float, location: Location) : ExpressionNode(location)
 /**
  * A identifier.
  *
- * If evaluated on it's own it is a variable read. However, this node is also often used in other nodes since it stores
- * the location which means that other nodes that want to store a variable name with a location also use it.
+ * If evaluated on it's own it is a variable read. However, this node is also often used in other
+ * nodes since it stores the location which means that other nodes that want to store a variable
+ * name with a location also use it.
  *
  * @param identifier the name of the identifier.
  */
@@ -174,8 +172,11 @@ class IdentifierNode(val identifier: String, location: Location) : ExpressionNod
  * @param definitions zero or more definitions which get evaluated before the expressions.
  * @param expressions one or more expressions
  */
-class BodyNode(val definitions: List<StatementNode>, val expressions: List<ExpressionNode>, location: Location) :
-    ExpressionNode(location) {
+class BodyNode(
+    val definitions: List<StatementNode>,
+    val expressions: List<ExpressionNode>,
+    location: Location,
+) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
         var out = getIndentation(indent) + "Body:\n"
         for (d in definitions) {
@@ -203,7 +204,8 @@ class BodyNode(val definitions: List<StatementNode>, val expressions: List<Expre
 class LambdaNode(val params: List<IdentifierNode>, val body: BodyNode, location: Location) :
     ExpressionNode(location) {
     override fun dump(indent: Int): String {
-        return getIndentation(indent) + "Lambda: '${params.joinToString(", ") { a -> a.identifier }}'\n" +
+        return getIndentation(indent) +
+            "Lambda: '${params.joinToString(", ") { a -> a.identifier }}'\n" +
             body.dump(indent + 1)
     }
 
@@ -212,10 +214,51 @@ class LambdaNode(val params: List<IdentifierNode>, val body: BodyNode, location:
     }
 }
 
-// FIXME: I am not sure we understood the concept right and maybe it's something else
-class ListNode(val expressions: List<ExpressionNode>, location: Location) : ExpressionNode(location) {
+data class VariableInitStep(
+    val name: IdentifierNode,
+    val init: ExpressionNode,
+    val step: ExpressionNode?,
+)
+
+class DoNode(
+    val variableInitSteps: List<VariableInitStep>,
+    val test: ExpressionNode,
+    val body: BodyNode?,
+    val command: BodyNode?,
+    location: Location,
+) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
-        return getIndentation(indent) + "List: \n" + expressions.joinToString(", ") { e -> e.dump(indent + 1) }
+        var out = getIndentation(indent) + "Do:\n"
+        for (t in variableInitSteps) {
+            out += t.name.dump(indent + 1)
+            out += t.init.dump(indent + 1)
+            if (t.step != null) {
+                out += t.step.dump(indent + 1)
+            }
+        }
+        out += test.dump(indent + 1)
+        // FIXME: I don't like to omit it in the dump if it is null
+        if (body != null) {
+            out += body.dump(indent + 1)
+        }
+        if (command != null) {
+            out += command.dump(indent + 1)
+        }
+        return out
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visitedBy(this)
+    }
+}
+
+// FIXME: I am not sure we understood the concept right and maybe it's something else
+class ListNode(val expressions: List<ExpressionNode>, location: Location) :
+    ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) +
+            "List: \n" +
+            expressions.joinToString(", ") { e -> e.dump(indent + 1) }
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
@@ -226,7 +269,8 @@ class ListNode(val expressions: List<ExpressionNode>, location: Location) : Expr
 /**
  * If expression.
  *
- * Evaluating a if returns the value of the branch executed. If the else isn't present #void will be returned.
+ * Evaluating a if returns the value of the branch executed. If the else isn't present #void will be
+ * returned.
  *
  * @param condition of the if, is evaluated first.
  * @param thenExpression is evaluated if the condition is true.
@@ -239,11 +283,12 @@ class IfNode(
     location: Location,
 ) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
-        return getIndentation(indent) + "If: ${condition.dump(indent)} \n ${thenExpression.dump(indent + 1)} \n ${
-            elseExpression?.dump(
-                indent + 1,
-            )
-        }"
+        return getIndentation(indent) +
+            "If: ${condition.dump(indent)} \n ${thenExpression.dump(indent + 1)} \n ${
+                elseExpression?.dump(
+                    indent + 1,
+                )
+            }"
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
@@ -251,9 +296,7 @@ class IfNode(
     }
 }
 
-/**
- * The interface for a visitor that can visit all expressions in the AST.
- */
+/** The interface for a visitor that can visit all expressions in the AST. */
 interface ExpressionVisitor<T> {
     fun visitedBy(node: BoolNode): T
 
@@ -272,11 +315,11 @@ interface ExpressionVisitor<T> {
     fun visitedBy(node: LambdaNode): T
 
     fun visitedBy(node: IfNode): T
+
+    fun visitedBy(node: DoNode): T
 }
 
-/**
- * The interface for a visitor that can visit all statements in the AST.
- */
+/** The interface for a visitor that can visit all statements in the AST. */
 interface StatementVisitor<T> {
     fun visitedBy(node: DefineNode): T
 }

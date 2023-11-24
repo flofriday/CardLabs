@@ -30,22 +30,23 @@ class Tokenizer() {
             } else if (c == ';') {
                 col = 1
                 line++
-                while (index < program.length && program[index++] != '\n') {
-                }
+                while (index < program.length && program[index++] != '\n') {}
             } else if (c == '#') {
                 tokens.addLast(scanPoundSign())
             } else if (c.isDigit()) {
                 tokens.addLast(scanNumber())
-            } else if (consumeMatch("define")) {
-                tokens.add(DefineToken(Location(line, line, col - "define".length, col - 1)))
-            } else if (consumeMatch("quote")) {
-                tokens.add(QuoteToken(Location(line, line, col - "quote".length, col - 1)))
-            } else if (consumeMatch("lambda")) {
-                tokens.add(LambdaToken(Location(line, line, col - "lambda".length, col - 1)))
-            } else if (consumeMatch("if")) {
-                tokens.add(IfToken(Location(line, line, col - "if".length, col - 1)))
             } else if (consumeMatch("begin")) {
                 tokens.add(BeginToken(Location(line, line, col - "begin".length, col - 1)))
+            } else if (consumeMatch("define")) {
+                tokens.add(DefineToken(Location(line, line, col - "define".length, col - 1)))
+            } else if (consumeMatch("do")) {
+                tokens.add(DoToken(Location(line, line, col - "do".length, col - 1)))
+            } else if (consumeMatch("if")) {
+                tokens.add(IfToken(Location(line, line, col - "if".length, col - 1)))
+            } else if (consumeMatch("lambda")) {
+                tokens.add(LambdaToken(Location(line, line, col - "lambda".length, col - 1)))
+            } else if (consumeMatch("quote")) {
+                tokens.add(QuoteToken(Location(line, line, col - "quote".length, col - 1)))
             } else if (isIdentifierInitial(c)) {
                 tokens.addLast(scanIdentifier())
             } else if (c.isWhitespace()) {
@@ -65,8 +66,23 @@ class Tokenizer() {
 
     private fun isIdentifierInitial(c: Char): Boolean {
         // FIXME: add ... support
-        return c == '+' || c == '-' || c.isLetter() || c == '!' || c == '$' || c == '%' || c == '&' || c == '*' ||
-            c == '/' || c == ':' || c == '<' || c == '=' || c == '>' || c == '?' || c == '~' || c == '_' || c == '^'
+        return c == '+' ||
+            c == '-' ||
+            c.isLetter() ||
+            c == '!' ||
+            c == '$' ||
+            c == '%' ||
+            c == '&' ||
+            c == '*' ||
+            c == '/' ||
+            c == ':' ||
+            c == '<' ||
+            c == '=' ||
+            c == '>' ||
+            c == '?' ||
+            c == '~' ||
+            c == '_' ||
+            c == '^'
     }
 
     // <initial> | <digit> | . | + | -
@@ -100,7 +116,10 @@ class Tokenizer() {
 
         // Return here if it is just an integer
         if (peek() != '.') {
-            return IntegerToken(literal.toInt(), Location(line, line, col - literal.length, col - 1))
+            return IntegerToken(
+                literal.toInt(),
+                Location(line, line, col - literal.length, col - 1),
+            )
         }
 
         // Eat the point
@@ -134,7 +153,7 @@ class Tokenizer() {
             return false
         }
 
-        for (i in 0..<expected.length) {
+        for (i in 0 ..< expected.length) {
             if (expected[i] != program[index + i]) return false
         }
 

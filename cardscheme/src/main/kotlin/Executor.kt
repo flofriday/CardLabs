@@ -70,7 +70,7 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
     }
 
     /**
-     * Evaluating an if expression.
+     * Evaluate an if expression.
      *
      * Spec: R7R, chapter 4.1.5
      */
@@ -88,6 +88,39 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         return VoidValue()
     }
 
+    /**
+     * Evaluate a do expression.
+     *
+     * Spec: R7R, chapter 4.2.4
+     *
+     */
+    override fun visitedBy(node: DoNode): SchemeValue {
+        val initValues = node.variableInitSteps.map { t -> t.init.visit(this) }
+        pushEnv()
+        node.variableInitSteps
+            .map { t -> t.name }
+            .zip(initValues)
+            .map { (t, v) -> environment.put(t.identifier, v) }
+
+        while (true) {
+            if (node.test.visit(this).isTruthy()) {
+                val result = node.body?.visit(this) ?: VoidValue()
+                popEnv()
+                return result
+            }
+
+            if (node.command != null) {
+                node.command.visit(this)
+            }
+
+            val newValues = node.variableInitSteps.map { t -> t.step?.visit(this) }
+            node.variableInitSteps
+                .map { t -> t.name }
+                .zip(newValues)
+                .map { (t, v) -> if (v != null) environment.put(t.identifier, v) }
+        }
+    }
+
     override fun visitedBy(node: BodyNode): SchemeValue {
         for (d in node.definitions) {
             d.visit(this)
@@ -96,7 +129,6 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
     }
 
     override fun visitedBy(node: ApplicationNode): SchemeValue {
-        // FIXME: Replace by proper function loading from the environment
         val func = node.expressions.first().visit(this)
 
         if (func is NativeFuncValue) {
