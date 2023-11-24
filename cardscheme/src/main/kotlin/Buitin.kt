@@ -1,3 +1,5 @@
+import java.util.*
+
 fun injectBuiltin(environment: Environment) {
     environment.put("+", NativeFuncValue("+", Arity(2, Int.MAX_VALUE), ::builtinPlus))
     environment.put("-", NativeFuncValue("-", Arity(2, Int.MAX_VALUE), ::builtinMinus))
@@ -92,7 +94,8 @@ fun builtinCdr(
         throw SchemeError("Empty List", "Cdr can only be called on non-empty lists", args.first().location, null)
     }
 
-    return ListValue(list.values.drop(1))
+    // FIXME: Is there a better solution?
+    return ListValue(LinkedList(list.values.drop(1)))
 }
 
 fun builtinDisplay(

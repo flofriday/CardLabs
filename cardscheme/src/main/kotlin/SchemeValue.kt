@@ -1,3 +1,5 @@
+import java.util.*
+
 abstract class SchemeValue {
     abstract override fun toString(): String
 
@@ -136,7 +138,7 @@ data class FloatValue(val value: Float) : NumberValue() {
     }
 }
 
-data class ListValue(val values: List<SchemeValue>) : SchemeValue() {
+data class ListValue(val values: LinkedList<SchemeValue>) : SchemeValue() {
     override fun toString(): String {
         return "(" + values.joinToString(" ") { value -> value.toString() } + ")"
     }

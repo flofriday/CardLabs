@@ -1,3 +1,5 @@
+import java.util.*
+
 class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
     private var environment = Environment(null, hashMapOf())
 
@@ -52,7 +54,7 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
     }
 
     override fun visitedBy(node: ListNode): ListValue {
-        return ListValue(node.expressions.map { e -> e.visit(this) })
+        return ListValue(LinkedList(node.expressions.map { e -> e.visit(this) }))
     }
 
     override fun visitedBy(node: DefineNode) {
@@ -61,7 +63,7 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
     }
 
     override fun visitedBy(node: LambdaNode): FuncValue {
-        return FuncValue(node.args.map { a -> a.identifier }, Arity(node.args.size, node.args.size), node.body, environment)
+        return FuncValue(node.params.map { a -> a.identifier }, Arity(node.params.size, node.params.size), node.body, environment)
     }
 
     override fun visitedBy(node: IfNode): SchemeValue {
