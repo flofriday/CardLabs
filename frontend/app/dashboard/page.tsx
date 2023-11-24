@@ -1,7 +1,12 @@
+"use client";
 import LeftPageHeader from "../components/leftPageHeader";
 import Robot, { RobotType } from "../components/robot";
 import MiniLeaderBoard from "./miniLeaderBoard";
 import Link from "next/link";
+import {
+  getGlobalTop5LeaderBoardEntries,
+  getMyTop5LeaderBoardEntries,
+} from "../services/LeaderBoardService";
 
 export default function Dashboard(): JSX.Element {
   return (
@@ -38,8 +43,14 @@ export default function Dashboard(): JSX.Element {
       </div>
 
       <div className="absolute top-0 right-0 space-y-5 flex flex-col justify-center items-center h-full w-1/4 mr-12">
-        <MiniLeaderBoard heading="My Bots" />
-        <MiniLeaderBoard heading="Global Ranking" />
+        <MiniLeaderBoard
+          heading="My Bots"
+          entryFetchFunction={getMyTop5LeaderBoardEntries}
+        />
+        <MiniLeaderBoard
+          heading="Global Ranking"
+          entryFetchFunction={getGlobalTop5LeaderBoardEntries}
+        />
       </div>
     </div>
   );
