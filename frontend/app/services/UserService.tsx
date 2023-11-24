@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { getCookie, setCookie } from "cookies-next";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { minidenticon } from "minidenticons";
 import { decodeJwt } from "jose";
 // this function returns the jwt on success and null on failure
@@ -100,6 +100,31 @@ export async function getUserInfo(): Promise<User> {
   const user = (await response.json()) as User;
 
   return user;
+}
+
+export async function deleteUser(): Promise<boolean> {
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch("api/account", {
+    mode: "cors",
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+    },
+  });
+
+  if (response.status === 200) {
+    toast.success("User account deleted");
+    deleteCookie("auth_token");
+    return true;
+  } else if (response.status === 403) {
+    toast.error("Not authorized!");
+    return false;
+  } else {
+    toast.error("Invalid response on register: " + response.status);
+    return false;
+  }
 }
 
 export function getUserProfilePicture(jwt: string): string {
