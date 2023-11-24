@@ -2,9 +2,10 @@ package at.tuwien.ase.cardlabs.management.ut
 
 import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.controller.model.Account
+import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
+import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
-import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -25,9 +26,20 @@ internal class AccountServiceTests {
     @Autowired
     private lateinit var accountService: AccountService
 
+    @Autowired
+    private lateinit var locationRepository: LocationRepository
+
+    private val countries: List<String> = listOf("Austria", "Germany", "Netherlands")
+
     @BeforeEach
     fun beforeEach() {
         accountRepository.deleteAll()
+        locationRepository.deleteAll()
+        for (country: String in countries) {
+            val c = LocationDAO()
+            c.name = country
+            locationRepository.save(c)
+        }
     }
 
     @Test
@@ -128,20 +140,8 @@ internal class AccountServiceTests {
         val userDetailsAccount = TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
 
         assertDoesNotThrow {
-            accountService.delete(userDetailsAccount, account.id!!)
+            accountService.delete(userDetailsAccount)
         }
-    }
-
-    @Test
-    fun whenAccountDelete_expectUnauthorizedError() {
-        val account1 = createAccount("test", "test@test.com", "password", null, true, true, true)
-        val account2 = createAccount("test2", "test2@test.com", "password", null, true, true, true)
-        val userDetailsAccount1 = TestHelper.createUserDetails(account1.id!!, account1.username, account1.email, account1.password)
-
-        val exception = assertThrows<UnauthorizedException> {
-            accountService.delete(userDetailsAccount1, account2.id!!)
-        }
-        assertEquals("Can't delete an account other than yourself", exception.message)
     }
 
     private fun createAccount(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): Account {

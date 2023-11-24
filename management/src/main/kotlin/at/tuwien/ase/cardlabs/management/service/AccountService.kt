@@ -10,7 +10,6 @@ import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
 import at.tuwien.ase.cardlabs.management.error.AccountNotFoundException
 import at.tuwien.ase.cardlabs.management.error.LocationNotFoundException
-import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.mapper.AccountMapper
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import org.springframework.context.annotation.Lazy
@@ -58,13 +57,8 @@ class AccountService(
         return accountMapper.map(accountRepository.save(acc))
     }
 
-    fun delete(user: CardLabUser, id: Long) {
-        Helper.requireNonNull(user, "No authentication provided")
-        Helper.requireNonNull(id, "Cannot delete an account with the id null")
-        if (user.id != id) {
-            throw UnauthorizedException("Can't delete an account other than yourself")
-        }
-        accountRepository.deleteById(id)
+    fun delete(user: CardLabUser) {
+        accountRepository.deleteById(user.id)
     }
 
     @Transactional

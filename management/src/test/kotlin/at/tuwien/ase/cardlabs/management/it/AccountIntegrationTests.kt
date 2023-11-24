@@ -263,11 +263,11 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountDelete_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "password", null, true, true, true)
+        createAccount("test", "test@test.com", "password", null, true, true, true)
         val authenticationToken = getAuthenticationToken("test", "password")
 
         mockMvc.perform(
-            delete("/account/${account.id}")
+            delete("/account")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer $authenticationToken"),
         )
@@ -275,17 +275,15 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountDelete_expectUnauthorizedError() {
-        val account1 = createAccount("test", "test@test.com", "password", null, true, true, true)
-        val account2 = createAccount("test2", "test2@test.com", "password", null, true, true, true)
-        val authenticationToken = getAuthenticationToken("test", "password")
+    fun whenAccountDelete_expectForbiddenError() {
+        createAccount("test", "test@test.com", "password", null, true, true, true)
+        getAuthenticationToken("test", "password")
 
         mockMvc.perform(
-            delete("/account/${account2.id}")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $authenticationToken"),
+            delete("/account")
+                .contentType(MediaType.APPLICATION_JSON),
         )
-            .andExpect(status().isUnauthorized)
+            .andExpect(status().isForbidden)
     }
 
     @Test
