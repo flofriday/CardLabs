@@ -1,4 +1,5 @@
 import org.junit.Assert
+import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class MathTests {
@@ -32,5 +33,11 @@ class MathTests {
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
         Assert.assertEquals(2, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun badIncompatibleTypesAdd() {
+        val program = "(+ 3 4 #t)"
+        assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 }

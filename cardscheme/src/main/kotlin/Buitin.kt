@@ -20,16 +20,20 @@ fun injectBuiltin(environment: Environment) {
     environment.put("cool", NativeFuncValue("cool", Arity(0, 0), ::builtinCool))
 }
 
-fun verifyAllNumbers(args: List<NativeFuncArg>) {
-    for ((arg, loc) in args) {
-        if (arg !is NumberValue) {
-            throw SchemeError(
-                "Unsupported Type",
-                "I expected numbers here but this one was a ${arg.typeName()}",
-                loc,
-                null,
-            )
-        }
+inline fun <reified T : SchemeValue> verifyType(arg: NativeFuncArg, expectedMsg: String) {
+    if (arg.value !is T) {
+        throw SchemeError(
+            "Unsupported Type",
+            "$expectedMsg, but this argument is a ${arg.value.typeName()}",
+            arg.location,
+            null,
+        )
+    }
+}
+
+inline fun <reified T : SchemeValue> verifyAllType(args: List<NativeFuncArg>, expectedMsg: String) {
+    for (arg in args) {
+        verifyType<T>(arg, expectedMsg)
     }
 }
 
@@ -37,7 +41,7 @@ fun builtinPlus(
     args: List<NativeFuncArg>,
     env: Environment,
 ): NumberValue {
-    verifyAllNumbers(args)
+    verifyAllType<NumberValue>(args, "Only numbers can be subtracted")
     return args.map { a -> a.value as NumberValue }.reduce { sum, n -> sum.add(n) }
 }
 
@@ -45,7 +49,7 @@ fun builtinMinus(
     args: List<NativeFuncArg>,
     env: Environment,
 ): SchemeValue {
-    verifyAllNumbers(args)
+    verifyAllType<NumberValue>(args, "Only numbers can be subtracted")
     return args.map { a -> a.value as NumberValue }.reduce { res, n -> res.sub(n) }
 }
 
@@ -53,7 +57,7 @@ fun builtinMul(
     args: List<NativeFuncArg>,
     env: Environment,
 ): NumberValue {
-    verifyAllNumbers(args)
+    verifyAllType<NumberValue>(args, "Only numbers can be multiplied")
     return args.map { a -> a.value as NumberValue }.reduce { res, n -> res.mul(n) }
 }
 
@@ -61,7 +65,7 @@ fun builtinDiv(
     args: List<NativeFuncArg>,
     env: Environment,
 ): NumberValue {
-    verifyAllNumbers(args)
+    verifyAllType<NumberValue>(args, "Only numbers can be divided")
     return args.map { a -> a.value as NumberValue }.reduce { res, n -> res.div(n) }
 }
 
@@ -69,10 +73,8 @@ fun builtinCar(
     args: List<NativeFuncArg>,
     env: Environment,
 ): SchemeValue {
-    val list = args.first().value
-    if (list !is ListValue) {
-        throw SchemeError("Type Mismatch", "I expected a list here but you provided a ${list.typeName()}", args.first().location, null)
-    }
+    verifyType<ListValue>(args.first(), "I expected a list here")
+    val list = args.first().value as ListValue
 
     if (list.values.isEmpty()) {
         throw SchemeError("Empty List", "Car can only be called on non-empty lists", args.first().location, null)
@@ -85,10 +87,8 @@ fun builtinCdr(
     args: List<NativeFuncArg>,
     env: Environment,
 ): SchemeValue {
-    val list = args.first().value
-    if (list !is ListValue) {
-        throw SchemeError("Type Mismatch", "I expected a list here but you provided a ${list.typeName()}", args.first().location, null)
-    }
+    verifyType<ListValue>(args.first(), "I expected a list here")
+    val list = args.first().value as ListValue
 
     if (list.values.isEmpty()) {
         throw SchemeError("Empty List", "Cdr can only be called on non-empty lists", args.first().location, null)
@@ -96,40 +96,6 @@ fun builtinCdr(
 
     // FIXME: Is there a better solution?
     return ListValue(LinkedList(list.values.drop(1)))
-}
-
-fun builtinDisplay(
-    args: List<NativeFuncArg>,
-    env: Environment,
-): SchemeValue {
-    print(args[0].value)
-    return VoidValue()
-}
-
-fun builtinNewline(
-    args: List<NativeFuncArg>,
-    env: Environment,
-): SchemeValue {
-    println()
-    return VoidValue()
-}
-
-fun builtinSmallerEqual(
-    args: List<NativeFuncArg>,
-    env: Environment,
-): BooleanValue {
-    for ((value, loc) in args) {
-        if (value !is NumberValue) {
-            throw SchemeError("Expected number", "You can only compare numbers.", loc, null)
-        }
-    }
-
-    val result =
-        args
-            .map { a -> a.value as NumberValue }
-            .zipWithNext { a, b -> a.smallerThan(b).value || a == b }
-            .all { it }
-    return BooleanValue(result)
 }
 
 fun builtinEqual(
@@ -151,15 +117,25 @@ fun builtinEqual(
     return BooleanValue(result)
 }
 
+fun builtinSmallerEqual(
+    args: List<NativeFuncArg>,
+    env: Environment,
+): BooleanValue {
+    verifyAllType<NumberValue>(args, "Only numbers can be compared")
+
+    val result =
+        args
+            .map { a -> a.value as NumberValue }
+            .zipWithNext { a, b -> a.smallerThan(b).value || a == b }
+            .all { it }
+    return BooleanValue(result)
+}
+
 fun builtinSmaller(
     args: List<NativeFuncArg>,
     env: Environment,
 ): BooleanValue {
-    for ((value, loc) in args) {
-        if (value !is NumberValue) {
-            throw SchemeError("Expected number", "You can only compare numbers.", loc, null)
-        }
-    }
+    verifyAllType<NumberValue>(args, "Only numbers can be compared")
 
     val result =
         args
@@ -173,11 +149,7 @@ fun builtinGreater(
     args: List<NativeFuncArg>,
     env: Environment,
 ): BooleanValue {
-    for ((value, loc) in args) {
-        if (value !is NumberValue) {
-            throw SchemeError("Expected number", "You can only compare numbers.", loc, null)
-        }
-    }
+    verifyAllType<NumberValue>(args, "Only numbers can be compared")
 
     val result =
         args
@@ -191,11 +163,7 @@ fun builtinGreaterEqual(
     args: List<NativeFuncArg>,
     env: Environment,
 ): BooleanValue {
-    for ((value, loc) in args) {
-        if (value !is NumberValue) {
-            throw SchemeError("Expected number", "You can only compare numbers.", loc, null)
-        }
-    }
+    verifyAllType<NumberValue>(args, "Only numbers can be compared")
 
     val result =
         args
@@ -203,6 +171,22 @@ fun builtinGreaterEqual(
             .zipWithNext { a, b -> !a.smallerThan(b).value || a == b }
             .all { it }
     return BooleanValue(result)
+}
+
+fun builtinDisplay(
+    args: List<NativeFuncArg>,
+    env: Environment,
+): SchemeValue {
+    print(args[0].value)
+    return VoidValue()
+}
+
+fun builtinNewline(
+    args: List<NativeFuncArg>,
+    env: Environment,
+): SchemeValue {
+    println()
+    return VoidValue()
 }
 
 fun builtinCool(
