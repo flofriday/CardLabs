@@ -8,19 +8,14 @@ interface Props {
 
 function useClickOutside(ref: any, onClickOutside: () => void): void {
   useEffect(() => {
-    /**
-     * Invoke Function onClick outside of element
-     */
     function handleClickOutside(event: MouseEvent): void {
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (ref.current && !ref.current.contains(event.target)) {
         onClickOutside();
       }
     }
-    // Bind
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      // dispose
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [ref, onClickOutside]);

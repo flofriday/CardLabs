@@ -24,7 +24,9 @@ export async function login(
     toast.error("Login is currently not possible! We are working on it");
     return false;
   } else if (response.status !== 200) {
-    toast.error("Other error: " + response.status);
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
     return false;
   }
   const json = await response.json();
@@ -69,7 +71,9 @@ export async function register(
     toast.error("Registration is currently not possible! We are working on it");
     return false;
   } else {
-    toast.error("Invalid response on register: " + response.status);
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
     return false;
   }
 }
@@ -122,7 +126,9 @@ export async function deleteUser(): Promise<boolean> {
     toast.error("Not authorized!");
     return false;
   } else {
-    toast.error("Invalid response on register: " + response.status);
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
     return false;
   }
 }
@@ -176,7 +182,9 @@ export async function updateUser(
     toast.error("Not authorized!");
     return false;
   } else {
-    toast.error("Invalid response on register: " + response.status);
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
     return false;
   }
 }
