@@ -47,6 +47,7 @@ fun main(args: Array<String>) {
                 println(obj)
             }
         } catch (e: SchemeError) {
+            println()
             e.display(program)
         }
     }

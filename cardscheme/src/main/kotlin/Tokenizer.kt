@@ -100,7 +100,7 @@ class Tokenizer() {
 
         // Return here if it is just an integer
         if (peek() != '.') {
-            return IntegerToken(literal.toInt(), Location(line, line, col - 1 - literal.length, col - 1))
+            return IntegerToken(literal.toInt(), Location(line, line, col - literal.length, col - 1))
         }
 
         // Eat the point
@@ -112,17 +112,17 @@ class Tokenizer() {
             literal += digit
         }
 
-        return FloatToken(literal.toFloat(), Location(line, line, col - 1 - literal.length, col - 1))
+        return FloatToken(literal.toFloat(), Location(line, line, col - literal.length, col - 1))
     }
 
     private fun scanPoundSign(): BooleanToken {
         consume()
         if (peek().equals('t', ignoreCase = true)) {
             consume()
-            return BooleanToken(true, Location(line, line, col - 1, col - 1))
+            return BooleanToken(true, Location(line, line, col - 2, col - 1))
         } else if (peek().equals('f', ignoreCase = true)) {
             consume()
-            return BooleanToken(false, Location(line, line, col - 1, col - 1))
+            return BooleanToken(false, Location(line, line, col - 2, col - 1))
         }
 
         // FIXME: add support for chars

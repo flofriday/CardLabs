@@ -3,11 +3,14 @@ import java.util.*
 class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
     private var environment = Environment(null, hashMapOf())
 
+    /**
+     * This method must not be called more than once.
+     * On error the internal environment may be messed up and repeated calls will result in a faulty execution.
+     */
     fun execute(
         ast: Ast,
         env: Environment,
     ): SchemeValue? {
-        // FIXME: Replace by empty list
         this.environment = env
         for (form in ast.forms.dropLast(1)) {
             when (form) {
@@ -145,7 +148,13 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
             environment = old
             return result
         } else {
-            throw Exception("Functions must be callable!")
+            throw SchemeError(
+                "Type Mismatch",
+                "The first argument of a function call must be a function," +
+                    " but it was a ${func.typeName()}",
+                node.expressions.first().location,
+                null,
+            )
         }
     }
 
