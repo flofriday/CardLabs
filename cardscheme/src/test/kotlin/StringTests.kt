@@ -65,4 +65,5 @@ class StringTests {
         assert(result is FloatValue)
         Assert.assertEquals(50.3456f, (result as FloatValue).value)
     }
+
 }

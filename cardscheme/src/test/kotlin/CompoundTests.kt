@@ -77,4 +77,49 @@ class CompoundTests {
         assert(result is IntegerValue)
         Assert.assertEquals(21, (result as IntegerValue).value)
     }
+
+    @Test
+    fun bottlesOfBeerTest() {
+        val interpreter = SchemeInterpreter()
+
+        val program =
+            """
+            (define (bottles-of-beer n)
+                (if (= n 0)
+                    "No more bottles of beer on the wall, no more bottles of beer.\n"
+                    (string-append
+                        (string-append
+                            (number->string n)
+                            " bottle" (if (= n 1) "" "s") " of beer on the wall, ")
+                    (string-append
+                        (number->string n)
+                        " bottle" (if (= n 1) "" "s") " of beer.\n")
+                    "Take one down and pass it around, "
+                    (string-append
+                        (number->string (- n 1))
+                        " bottle" (if (= (- n 1) 1) "" "s") " of beer on the wall.\n\n"
+                        (bottles-of-beer (- n 1))))))
+            """.trimIndent()
+        interpreter.run(program)
+
+        val result = interpreter.run("(display (bottles-of-beer 5))")
+        Assert.assertEquals("""5 bottles of beer on the wall, 5 bottles of beer.
+Take one down and pass it around, 4 bottles of beer on the wall.
+
+4 bottles of beer on the wall, 4 bottles of beer.
+Take one down and pass it around, 3 bottles of beer on the wall.
+
+3 bottles of beer on the wall, 3 bottles of beer.
+Take one down and pass it around, 2 bottles of beer on the wall.
+
+2 bottles of beer on the wall, 2 bottles of beer.
+Take one down and pass it around, 1 bottle of beer on the wall.
+
+1 bottle of beer on the wall, 1 bottle of beer.
+Take one down and pass it around, 0 bottles of beer on the wall.
+
+No more bottles of beer on the wall, no more bottles of beer.""", outputStreamCapture.toString().trim())
+
+
+    }
 }

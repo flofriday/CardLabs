@@ -413,7 +413,15 @@ fun builtinDisplay(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    print(args[0].value)
+    val arg = args[0].value
+
+    if (arg is StringValue){
+        print(arg.toPureString())
+    }
+    else{
+        print(arg)
+    }
+
     return VoidValue()
 }
 

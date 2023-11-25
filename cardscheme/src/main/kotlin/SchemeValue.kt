@@ -157,6 +157,10 @@ data class StringValue(val value: String) : SchemeValue() {
         return '"' + value + '"'
     }
 
+    fun toPureString(): String {
+        return value
+    }
+
     override fun typeName(): String {
         return "<#string>"
     }
