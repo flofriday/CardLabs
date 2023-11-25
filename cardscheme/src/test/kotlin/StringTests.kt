@@ -3,7 +3,6 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class StringTests {
-
     @Test
     fun stringAppend() {
         val program = """(string-append "abc" "efg")"""
@@ -65,5 +64,4 @@ class StringTests {
         assert(result is FloatValue)
         Assert.assertEquals(50.3456f, (result as FloatValue).value)
     }
-
 }

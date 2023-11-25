@@ -295,8 +295,9 @@ fun builtinStringToNumber(
 ): SchemeValue {
     verifyType<StringValue>(args[0], "Only strings can be converted to numbers by this function")
     val stringValue = (args[0].value as StringValue).value
-    if (stringValue.contains("."))
+    if (stringValue.contains(".")) {
         return FloatValue(stringValue.toFloat())
+    }
 
     return IntegerValue(stringValue.toInt())
 }
@@ -415,10 +416,9 @@ fun builtinDisplay(
 ): SchemeValue {
     val arg = args[0].value
 
-    if (arg is StringValue){
+    if (arg is StringValue) {
         print(arg.toPureString())
-    }
-    else{
+    } else {
         print(arg)
     }
 

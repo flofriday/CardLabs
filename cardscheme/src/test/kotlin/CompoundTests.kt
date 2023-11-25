@@ -103,7 +103,8 @@ class CompoundTests {
         interpreter.run(program)
 
         val result = interpreter.run("(display (bottles-of-beer 5))")
-        Assert.assertEquals("""5 bottles of beer on the wall, 5 bottles of beer.
+        Assert.assertEquals(
+            """5 bottles of beer on the wall, 5 bottles of beer.
 Take one down and pass it around, 4 bottles of beer on the wall.
 
 4 bottles of beer on the wall, 4 bottles of beer.
@@ -118,8 +119,8 @@ Take one down and pass it around, 1 bottle of beer on the wall.
 1 bottle of beer on the wall, 1 bottle of beer.
 Take one down and pass it around, 0 bottles of beer on the wall.
 
-No more bottles of beer on the wall, no more bottles of beer.""", outputStreamCapture.toString().trim())
-
-
+No more bottles of beer on the wall, no more bottles of beer.""",
+            outputStreamCapture.toString().trim(),
+        )
     }
 }

@@ -153,16 +153,20 @@ class Tokenizer() {
 
     private fun scanCharacter(): CharToken {
         consume()
-        return when(consume()){
-            'b'-> CharToken('\b', Location(line, line, col-2, col))
-            't'-> CharToken('\t', Location(line, line, col-2, col))
-            'n'-> CharToken('\n', Location(line, line, col-2, col))
-            'r'-> CharToken('\r', Location(line, line, col-2, col))
-            '"'-> CharToken('\"', Location(line, line, col-2, col))
-            '\\'-> CharToken('\\', Location(line, line, col-2, col))
+        return when (consume()) {
+            'b' -> CharToken('\b', Location(line, line, col - 2, col))
+            't' -> CharToken('\t', Location(line, line, col - 2, col))
+            'n' -> CharToken('\n', Location(line, line, col - 2, col))
+            'r' -> CharToken('\r', Location(line, line, col - 2, col))
+            '"' -> CharToken('\"', Location(line, line, col - 2, col))
+            '\\' -> CharToken('\\', Location(line, line, col - 2, col))
             else -> {
-                throw SchemeError("Unknown character", "Did not expect this character", Location(line, line, col, col),
-                    null)
+                throw SchemeError(
+                    "Unknown character",
+                    "Did not expect this character",
+                    Location(line, line, col, col),
+                    null,
+                )
             }
         }
     }
@@ -174,7 +178,7 @@ class Tokenizer() {
 
         var stringValue = ""
         while (peek() != '"') {
-            if (peek() == '\\'){
+            if (peek() == '\\') {
                 val char = scanCharacter()
                 stringValue += char.value
                 continue
