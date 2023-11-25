@@ -1,3 +1,4 @@
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -35,5 +36,14 @@ class ListTests {
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
         assertEquals(listOf(IntegerValue(5), IntegerValue(7), IntegerValue(9)), (result as ListValue).values)
+    }
+
+    @Test
+    fun badMapTooManyArguments() {
+        val program = """
+            (define (id n) n)
+            (map id '( 12 3 4) '(4 5 6))
+        """
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 }
