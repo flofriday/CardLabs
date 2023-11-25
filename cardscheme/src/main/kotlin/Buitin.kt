@@ -28,6 +28,10 @@ fun injectBuiltin(environment: Environment) {
     environment.put("vector-ref", NativeFuncValue("vector-ref", Arity(2, 2), ::builtinVectorRef))
     environment.put("vector-set!", NativeFuncValue("vector-set!", Arity(3, 3), ::builtinVectorSet))
 
+    environment.put("string-append", NativeFuncValue("string-append", Arity(0, Int.MAX_VALUE), ::builtinStringAppend))
+    environment.put("string->number", NativeFuncValue("string->number", Arity(1, 1), ::builtinStringToNumber))
+    environment.put("number->string", NativeFuncValue("number->string", Arity(1, 1), ::builtinNumberToString))
+
     environment.put("display", NativeFuncValue("display", Arity(1, 1), ::builtinDisplay))
     environment.put("newline", NativeFuncValue("newline", Arity(0, 0), ::builtinNewline))
     environment.put("cool", NativeFuncValue("cool", Arity(0, 0), ::builtinCool))
@@ -247,6 +251,54 @@ fun builtinEqual(
 
     val result = args.map { a -> a.value }.zipWithNext { a, b -> a == b }.all { it }
     return BooleanValue(result)
+}
+
+/**
+ * Built in string append
+ *
+ * Spec: R7R, Chapter 6.7
+ * Syntax: (string-append string ...)
+ * */
+fun builtinStringAppend(
+    args: List<FuncArg>,
+    executor: Executor,
+): StringValue {
+    verifyAllType<StringValue>(args, "Only strings can be appended")
+    return StringValue(args.joinToString("") { a -> (a.value as StringValue).value })
+}
+
+/**
+ * Built in number to string conversion
+ *
+ * Spec: R7R, Chapter 6.2.7
+ * Syntax: (number->string z)
+ *         (number->string z radix ) //FIXME: Not implemented
+ * */
+fun builtinNumberToString(
+    args: List<FuncArg>,
+    executor: Executor,
+): StringValue {
+    verifyType<NumberValue>(args[0], "Only numbers can be converted to string by this function")
+    return StringValue(args[0].value.toString())
+}
+
+/**
+ * Built in string to number conversion
+ *
+ * Spec: R7R, Chapter 6.2.7
+ * Syntax: (string->number string)
+ *         (number->string z radix ) //FIXME: Not implemented
+ * */
+fun builtinStringToNumber(
+    args: List<FuncArg>,
+    executor: Executor,
+): SchemeValue {
+    verifyType<StringValue>(args[0], "Only strings can be converted to numbers by this function")
+    val stringValue = (args[0].value as StringValue).value
+    if (stringValue.contains("."))
+        return FloatValue(stringValue.toFloat())
+
+    return IntegerValue(stringValue.toInt())
 }
 
 fun builtinSmallerEqual(

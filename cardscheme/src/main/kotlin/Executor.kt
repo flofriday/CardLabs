@@ -41,6 +41,10 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         return FloatValue(node.value)
     }
 
+    override fun visitedBy(node: StringNode): SchemeValue {
+        return StringValue(node.value)
+    }
+
     override fun visitedBy(node: IdentifierNode): SchemeValue {
         val res = environment.get(node.identifier)
         if (res == null) {

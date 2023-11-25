@@ -145,6 +145,21 @@ class FloatNode(val value: Float, location: Location) : ExpressionNode(location)
 }
 
 /**
+ * A float literal.
+ *
+ * @param value of the literal.
+ */
+class StringNode(val value: String, location: Location) : ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) + "String: $value \n"
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visitedBy(this)
+    }
+}
+
+/**
  * A identifier.
  *
  * If evaluated on it's own it is a variable read. However, this node is also often used in other
@@ -288,6 +303,8 @@ interface ExpressionVisitor<T> {
     fun visitedBy(node: IntNode): T
 
     fun visitedBy(node: FloatNode): T
+
+    fun visitedBy(node: StringNode): T
 
     fun visitedBy(node: IdentifierNode): T
 

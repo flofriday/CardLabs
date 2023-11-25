@@ -23,6 +23,8 @@ class Tokenizer() {
             } else if (c == '\'') {
                 tokens.add(SingleQuoteToken(Location(line, line, col, col)))
                 consume()
+            } else if (c == '"') {
+                tokens.addLast(scanString())
             } else if (c == '\n') {
                 col = 1
                 line++
@@ -147,6 +149,20 @@ class Tokenizer() {
         }
 
         throw Exception("No Chars are implemented yet")
+    }
+
+    private fun scanString(): StringToken {
+        val startLine = line
+        val startCol = col
+        consume()
+
+        var stringValue = ""
+        while (peek() != '"') {
+            stringValue += consume()
+        }
+
+        consume()
+        return StringToken(stringValue, Location(startLine, line, startCol, col))
     }
 
     private fun consumeMatch(expected: String): Boolean {
