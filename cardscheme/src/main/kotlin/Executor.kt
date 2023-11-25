@@ -122,58 +122,35 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         return node.expressions.map { e -> e.visit(this) }.last()
     }
 
-    override fun visitedBy(node: ApplicationNode): SchemeValue {
-        val func = node.expressions.first().visit(this)
-
+    /**
+     * Call a function in the current environment.
+     *
+     * The call must ensure that the number of arguments match the functions arity.
+     */
+    fun callFunction(func: CallableValue, args: List<FuncArg>): SchemeValue {
         if (func is NativeFuncValue) {
-            if (!func.arity.inside(node.expressions.size -1)) {
-                val message =
-                    if (func.arity.min == func.arity.max) {
-                        "The function expects ${func.arity.min} arguments, but you provided ${node.expressions.size - 1}"
-                    } else {
-                        "The function expects between ${func.arity.min} and ${func.arity.max} arguments, " +
-                            "but you provided ${node.expressions.size - 1}"
-                    }
-                throw SchemeError("Invalid number of arguments", message, node.location, null)
-            }
-
-            val args =
-                node.expressions.drop(1).map { e ->
-                    NativeFuncArg(e.visit(this), e.location)
-                }
-            try {
-                return func.func(args, environment)
-            } catch (e: SchemeError) {
-                throw SchemeError(e.header, e.reason, e.location ?: node.location, e.tip)
-            }
+            return func.func(args, environment)
         } else if (func is FuncValue) {
-            if (!func.arity.inside(node.expressions.size -1)) {
-                val message =
-                    if (func.arity.min == func.arity.max) {
-                        "The function expects ${func.arity.min} arguments, but you provided ${node.expressions.size - 1}"
-                    } else {
-                        "The function expects between ${func.arity.min} and ${func.arity.max} arguments, " +
-                            "but you provided ${node.expressions.size - 1}"
-                    }
-                throw SchemeError("Invalid number of arguments", message, node.location, null)
-            }
-
-            val args =
-                node.expressions.drop(1).map { e ->
-                    e.visit(this)
-                }
+            val argValues = args.map { a -> a.value }
 
             val old = environment
             // environment for the lambda function
             environment = func.env
             // environment for the CONTENT of the lambda function
             pushEnv()
-            func.args.zip(args).map { (name, value) -> environment.put(name, value) }
+            func.params.zip(args).map { (name, arg) -> environment.put(name, arg.value) }
             val result = func.body.visit(this)
             popEnv()
             environment = old
             return result
-        } else {
+        }
+        throw Exception("Should never happen")
+    }
+
+    override fun visitedBy(node: ApplicationNode): SchemeValue {
+        val func = node.expressions.first().visit(this)
+
+        if (func !is CallableValue) {
             throw SchemeError(
                 "Type Mismatch",
                 "The first argument of a function call must be a function," +
@@ -181,6 +158,24 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
                 node.expressions.first().location,
                 null,
             )
+        }
+
+        if (!func.arity.inside(node.expressions.size -1)) {
+            val message =
+                if (func.arity.min == func.arity.max) {
+                    "The function expects ${func.arity.min} arguments, but you provided ${node.expressions.size - 1}"
+                } else {
+                    "The function expects between ${func.arity.min} and ${func.arity.max} arguments, " +
+                        "but you provided ${node.expressions.size - 1}"
+                }
+            throw SchemeError("Invalid number of arguments", message, node.location, null)
+        }
+
+        val args = node.expressions.drop(1).map { e -> FuncArg(e.visit(this), e.location) }
+        try {
+            return callFunction(func, args)
+        } catch (e: SchemeError) {
+            throw SchemeError(e.header, e.reason, e.location ?: node.location, e.tip)
         }
     }
 

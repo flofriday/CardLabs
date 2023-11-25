@@ -186,12 +186,14 @@ data class Arity(val min: Int, val max: Int) {
     }
 }
 
+abstract class CallableValue(open val arity: Arity) : SchemeValue()
+
 data class FuncValue(
-    val args: List<String>,
-    val arity: Arity,
+    val params: List<String>,
+    override val arity: Arity,
     val body: BodyNode,
     val env: Environment,
-) : SchemeValue() {
+) : CallableValue(arity) {
     override fun toString(): String {
         // FIXME: Better display
         return "<Function>"
@@ -202,13 +204,13 @@ data class FuncValue(
     }
 }
 
-data class NativeFuncArg(val value: SchemeValue, val location: Location)
+data class FuncArg(val value: SchemeValue, val location: Location)
 
 data class NativeFuncValue(
     val name: String,
-    val arity: Arity,
-    val func: (List<NativeFuncArg>, Environment) -> SchemeValue,
-) : SchemeValue() {
+    override val arity: Arity,
+    val func: (List<FuncArg>, Environment) -> SchemeValue,
+) : CallableValue(arity) {
     override fun toString(): String {
         return "<Native Function $name>"
     }

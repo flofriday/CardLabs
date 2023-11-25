@@ -12,6 +12,10 @@ fun injectBuiltin(environment: Environment) {
     environment.put(">", NativeFuncValue(">", Arity(2, Int.MAX_VALUE), ::builtinGreater))
     environment.put(">=", NativeFuncValue(">=", Arity(2, Int.MAX_VALUE), ::builtinGreaterEqual))
 
+    environment.put("and", NativeFuncValue("and", Arity(0, Int.MAX_VALUE), ::builtinAnd))
+    environment.put("or", NativeFuncValue("or", Arity(0, Int.MAX_VALUE), ::builtinOr))
+    environment.put("not", NativeFuncValue("not", Arity(1, 1), ::builtinNot))
+
     environment.put("list", NativeFuncValue("list", Arity(0, Int.MAX_VALUE), ::builtinList))
     environment.put("car", NativeFuncValue("car", Arity(1, 1), ::builtinCar))
     environment.put("cdr", NativeFuncValue("cdr", Arity(1, 1), ::builtinCdr))
@@ -28,7 +32,7 @@ fun injectBuiltin(environment: Environment) {
     environment.put("cool", NativeFuncValue("cool", Arity(0, 0), ::builtinCool))
 }
 
-inline fun <reified T : SchemeValue> verifyType(arg: NativeFuncArg, expectedMsg: String): T {
+inline fun <reified T : SchemeValue> verifyType(arg: FuncArg, expectedMsg: String): T {
     if (arg.value !is T) {
         throw SchemeError(
             "Unsupported Type",
@@ -40,22 +44,22 @@ inline fun <reified T : SchemeValue> verifyType(arg: NativeFuncArg, expectedMsg:
     return arg.value
 }
 
-inline fun <reified T : SchemeValue> verifyAllType(args: List<NativeFuncArg>, expectedMsg: String) {
+inline fun <reified T : SchemeValue> verifyAllType(args: List<FuncArg>, expectedMsg: String) {
     for (arg in args) {
         verifyType<T>(arg, expectedMsg)
     }
 }
 
 fun builtinPlus(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): NumberValue {
-    verifyAllType<NumberValue>(args, "Only numbers can be subtracted")
+    verifyAllType<NumberValue>(args, "Only numbers can be added")
     return args.map { a -> a.value as NumberValue }.reduce { sum, n -> sum.add(n) }
 }
 
 fun builtinMinus(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): SchemeValue {
     verifyAllType<NumberValue>(args, "Only numbers can be subtracted")
@@ -63,7 +67,7 @@ fun builtinMinus(
 }
 
 fun builtinMul(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): NumberValue {
     verifyAllType<NumberValue>(args, "Only numbers can be multiplied")
@@ -71,7 +75,7 @@ fun builtinMul(
 }
 
 fun builtinDiv(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): NumberValue {
     verifyAllType<NumberValue>(args, "Only numbers can be divided")
@@ -79,14 +83,14 @@ fun builtinDiv(
 }
 
 fun builtinList(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): SchemeValue {
     return ListValue(LinkedList(args.map { a -> a.value }))
 }
 
 fun builtinCar(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): SchemeValue {
     verifyType<ListValue>(args.first(), "I expected a list here")
@@ -100,7 +104,7 @@ fun builtinCar(
 }
 
 fun builtinCdr(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): ListValue {
     verifyType<ListValue>(args.first(), "I expected a list here")
@@ -115,21 +119,21 @@ fun builtinCdr(
 }
 
 fun builtinVector(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): VectorValue {
     return VectorValue(args.map { a -> a.value }.toMutableList())
 }
 
 fun builtinIsVector(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): BooleanValue {
     return BooleanValue(args.first().value is VectorValue)
 }
 
 fun builtinMakeVector(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): VectorValue {
     val k = verifyType<IntegerValue>(args.first(), "Only positive integers can be used to specify the length of a vector")
@@ -142,7 +146,7 @@ fun builtinMakeVector(
 }
 
 fun builtinVectorLength(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): IntegerValue {
     val vec = verifyType<VectorValue>(args.first(), "Only vectors are expected here")
@@ -150,7 +154,7 @@ fun builtinVectorLength(
 }
 
 fun builtinVectorRef(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): SchemeValue {
     val vec = verifyType<VectorValue>(args.first(), "Only vectors are expected here")
@@ -164,7 +168,7 @@ fun builtinVectorRef(
 }
 
 fun builtinVectorSet(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): VoidValue {
     val vec = verifyType<VectorValue>(args.first(), "Only vectors are expected here")
@@ -181,7 +185,7 @@ fun builtinVectorSet(
 }
 
 fun builtinEqual(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): BooleanValue {
     for ((value, loc) in args) {
@@ -200,7 +204,7 @@ fun builtinEqual(
 }
 
 fun builtinSmallerEqual(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): BooleanValue {
     verifyAllType<NumberValue>(args, "Only numbers can be compared")
@@ -214,7 +218,7 @@ fun builtinSmallerEqual(
 }
 
 fun builtinSmaller(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): BooleanValue {
     verifyAllType<NumberValue>(args, "Only numbers can be compared")
@@ -228,7 +232,7 @@ fun builtinSmaller(
 }
 
 fun builtinGreater(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): BooleanValue {
     verifyAllType<NumberValue>(args, "Only numbers can be compared")
@@ -242,7 +246,7 @@ fun builtinGreater(
 }
 
 fun builtinGreaterEqual(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): BooleanValue {
     verifyAllType<NumberValue>(args, "Only numbers can be compared")
@@ -255,8 +259,60 @@ fun builtinGreaterEqual(
     return BooleanValue(result)
 }
 
+/**
+ * Built in logical and
+ *
+ * Spec: R7R, Chapter 4.2.1
+ * */
+fun builtinAnd(
+    args: List<FuncArg>,
+    env: Environment,
+): SchemeValue {
+    if (args.isEmpty()) {
+        return BooleanValue(true)
+    }
+    for (arg in args) {
+        if (!arg.value.isTruthy()) {
+            return BooleanValue(false)
+        }
+    }
+    return args.last().value
+}
+
+/**
+ * Built in logical or
+ *
+ * Spec: R7R, Chapter 4.2.1
+ * */
+fun builtinOr(
+    args: List<FuncArg>,
+    env: Environment,
+): SchemeValue {
+    if (args.isEmpty()) {
+        return BooleanValue(false)
+    }
+    for (arg in args) {
+        if (arg.value.isTruthy()) {
+            return arg.value
+        }
+    }
+    return BooleanValue(false)
+}
+
+/**
+ * Built in logical not
+ *
+ * Spec: R7R, Chapter 6.3
+ * */
+fun builtinNot(
+    args: List<FuncArg>,
+    env: Environment,
+): BooleanValue {
+    return BooleanValue(!args[0].value.isTruthy())
+}
+
 fun builtinDisplay(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): SchemeValue {
     print(args[0].value)
@@ -264,7 +320,7 @@ fun builtinDisplay(
 }
 
 fun builtinNewline(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): SchemeValue {
     println()
@@ -272,7 +328,7 @@ fun builtinNewline(
 }
 
 fun builtinCool(
-    args: List<NativeFuncArg>,
+    args: List<FuncArg>,
     env: Environment,
 ): SchemeValue {
     println("cool")

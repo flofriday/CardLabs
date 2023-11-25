@@ -216,9 +216,9 @@ class Parser {
      * Spec: R7R, chapter 6.8
      * #(<expression> ...)
      *
-     * This parser automatically desugars the syntax to an application
+     * This parser automatically desugars the syntax to an application.
      *
-     * NOTE: This function intentionally deviates from the Spec which would only create immutable vectors here but
+     * NOTE: This function intentionally deviates from the spec which would only create immutable vectors here but
      * in Cardscheme we won't have the concept of immutable vector values.
      */
     private fun parseVector(): ApplicationNode {
@@ -238,7 +238,7 @@ class Parser {
      * (begin <expression or definition> ...)
      * (begin <expression1> <expression2> ...)
      *
-     * FIXME: We only attempt to parse the second form here but even there I am not sure, if we do it correctly..
+     * FIXME: We only parse the second form here
      */
     private fun parseBegin(): BodyNode {
         val lparen = consume()
