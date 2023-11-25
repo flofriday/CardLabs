@@ -127,7 +127,10 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
      *
      * The call must ensure that the number of arguments match the functions arity.
      */
-    fun callFunction(func: CallableValue, args: List<FuncArg>): SchemeValue {
+    fun callFunction(
+        func: CallableValue,
+        args: List<FuncArg>,
+    ): SchemeValue {
         if (func is NativeFuncValue) {
             return func.func(args, this)
         } else if (func is FuncValue) {

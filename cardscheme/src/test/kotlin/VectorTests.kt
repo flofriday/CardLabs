@@ -68,11 +68,12 @@ class VectorTests {
 
     @Test
     fun vectorSet() {
-        val program = """
+        val program =
+            """
             (define v #(1 2 3))
             (vector-set! v 2 42)
             (vector-ref v 2)
-        """.trimIndent()
+            """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
         assertEquals(42, (result as IntegerValue).value)

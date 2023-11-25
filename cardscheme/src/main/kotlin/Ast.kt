@@ -9,7 +9,6 @@
  * @param forms the statements and expressions that make up the program.
  */
 class Ast(val forms: List<AstNode>) {
-
     /**
      * Dump the complete AST to a string.
      *

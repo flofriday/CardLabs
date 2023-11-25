@@ -154,7 +154,7 @@ class Tokenizer() {
             return false
         }
 
-        for (i in 0 ..< expected.length) {
+        for (i in 0..<expected.length) {
             if (expected[i] != program[index + i]) return false
         }
 

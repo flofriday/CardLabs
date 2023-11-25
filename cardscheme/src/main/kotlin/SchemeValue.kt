@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.LinkedList
 
 abstract class SchemeValue {
     abstract override fun toString(): String

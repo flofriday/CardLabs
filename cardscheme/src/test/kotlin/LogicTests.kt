@@ -2,7 +2,6 @@ import org.junit.Assert
 import org.junit.Test
 
 class LogicTests {
-
     @Test
     fun andTestWithEqualsAndGreater() {
         val program = "(and (= 2 2) (> 2 1))"

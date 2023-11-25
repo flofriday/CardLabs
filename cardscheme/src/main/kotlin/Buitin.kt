@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.LinkedList
 
 fun injectBuiltin(environment: Environment) {
     environment.put("+", NativeFuncValue("+", Arity(2, Int.MAX_VALUE), ::builtinPlus))
@@ -33,7 +33,10 @@ fun injectBuiltin(environment: Environment) {
     environment.put("cool", NativeFuncValue("cool", Arity(0, 0), ::builtinCool))
 }
 
-inline fun <reified T : SchemeValue> verifyType(arg: FuncArg, expectedMsg: String): T {
+inline fun <reified T : SchemeValue> verifyType(
+    arg: FuncArg,
+    expectedMsg: String,
+): T {
     if (arg.value !is T) {
         throw SchemeError(
             "Unsupported Type",
@@ -45,7 +48,10 @@ inline fun <reified T : SchemeValue> verifyType(arg: FuncArg, expectedMsg: Strin
     return arg.value
 }
 
-inline fun <reified T : SchemeValue> verifyAllType(args: List<FuncArg>, expectedMsg: String): List<T> {
+inline fun <reified T : SchemeValue> verifyAllType(
+    args: List<FuncArg>,
+    expectedMsg: String,
+): List<T> {
     return args.map { a -> verifyType<T>(a, expectedMsg) }
 }
 
@@ -158,10 +164,20 @@ fun builtinMakeVector(
 ): VectorValue {
     val k = verifyType<IntegerValue>(args.first(), "Only positive integers can be used to specify the length of a vector")
     if (k.value <= 0) {
-        throw SchemeError("Type Mismatch", "Only positive integers can be used to specify the length of a vector, but the value was ${k.value}.", args.first().location, null)
+        throw SchemeError(
+            "Type Mismatch",
+            "Only positive integers can be used to specify the length of a vector, but the value was ${k.value}.",
+            args.first().location,
+            null,
+        )
     }
 
-    val filler = if (args.size == 2) { args[1].value } else { VoidValue() }
+    val filler =
+        if (args.size == 2) {
+            args[1].value
+        } else {
+            VoidValue()
+        }
     return VectorValue((1..k.value).map { filler }.toMutableList())
 }
 
@@ -181,7 +197,12 @@ fun builtinVectorRef(
     val k = verifyType<IntegerValue>(args[1], "The index must be an integer")
 
     if (k.value < 0 || k.value >= vec.values.size) {
-        throw SchemeError("Invalid Index", "The vector has ${vec.values.size} elements but you tried to access index ${k.value}.", args[1].location, null)
+        throw SchemeError(
+            "Invalid Index",
+            "The vector has ${vec.values.size} elements but you tried to access index ${k.value}.",
+            args[1].location,
+            null,
+        )
     }
 
     return vec.values[k.value]
@@ -196,7 +217,12 @@ fun builtinVectorSet(
     val obj = args[2].value
 
     if (k.value < 0 || k.value >= vec.values.size) {
-        throw SchemeError("Invalid Index", "The vector has ${vec.values.size} elements but you tried to access index ${k.value}.", args[1].location, null)
+        throw SchemeError(
+            "Invalid Index",
+            "The vector has ${vec.values.size} elements but you tried to access index ${k.value}.",
+            args[1].location,
+            null,
+        )
     }
 
     vec.values[k.value] = obj

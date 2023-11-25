@@ -4,11 +4,12 @@ import org.junit.Test
 class IterationTest {
     @Test
     fun iterationCountToHundred() {
-        val program = """
+        val program =
+            """
             (do (
                     (i 0 (+ i 1)))
                 ((>= i 100) i))
-        """.trimIndent()
+            """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
         Assert.assertEquals(100, (result as IntegerValue).value)
@@ -16,22 +17,24 @@ class IterationTest {
 
     @Test
     fun iterationWithoutReturn() {
-        val program = """
+        val program =
+            """
             (do (
                     (i 0 (+ i 1)))
                 ((>= i 100)))
-        """.trimIndent()
+            """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is VoidValue)
     }
 
     @Test
     fun iterationWithoutStep() {
-        val program = """
+        val program =
+            """
             (do (
                     (i 42))
                 ((>= i 10) i))
-        """.trimIndent()
+            """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
         Assert.assertEquals(42, (result as IntegerValue).value)

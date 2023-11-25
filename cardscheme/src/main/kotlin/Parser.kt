@@ -282,20 +282,27 @@ class Parser {
         // parse the test
         must<LParenToken>("I expected a opening left parenthesis here.")
         val test = parseExpression()
-        val body = if (peek() !is RParenToken) {
-            val bodyExpressions = parseExpressions()
-            BodyNode(listOf(), bodyExpressions, Location.merge(bodyExpressions.first().location, bodyExpressions.last().location))
-        } else {
-            null
-        }
+        val body =
+            if (peek() !is RParenToken) {
+                val bodyExpressions = parseExpressions()
+                BodyNode(listOf(), bodyExpressions, Location.merge(bodyExpressions.first().location, bodyExpressions.last().location))
+            } else {
+                null
+            }
         must<RParenToken>("I expected a closing right parenthesis here.")
 
         // parse the command
-        val command = if (peek() !is RParenToken) {
-            val commandExpressions = parseExpressions()
-            BodyNode(listOf(), commandExpressions, Location.merge(commandExpressions.first().location, commandExpressions.last().location))
-        } else {
-            null }
+        val command =
+            if (peek() !is RParenToken) {
+                val commandExpressions = parseExpressions()
+                BodyNode(
+                    listOf(),
+                    commandExpressions,
+                    Location.merge(commandExpressions.first().location, commandExpressions.last().location),
+                )
+            } else {
+                null
+            }
 
         val end = must<RParenToken>("I expected a closing right parenthesis here.")
         return DoNode(variableInitSteps, test, body, command, Location.merge(start.location, end.location))
@@ -370,9 +377,7 @@ class Parser {
         return ApplicationNode(expressions, Location.merge(lparen.location, rparen.location))
     }
 
-    private inline fun <reified T : Token> must(
-        error: String,
-    ): T {
+    private inline fun <reified T : Token> must(error: String): T {
         if (peek() !is T) {
             throw SchemeError("Unexpected symbol", error, peek().location, null)
         }
