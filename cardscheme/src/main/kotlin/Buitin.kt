@@ -140,6 +140,15 @@ fun builtinMap(
     val func = verifyType<CallableValue>(args.first(), "The first argument must be a procedure")
     val lists = verifyAllType<ListValue>(args.drop(1), "All arguments after the first one must be lists")
 
+    if (!func.arity.inside(lists.size)) {
+        val message = if (func.arity.min == func.arity.max) {
+            "The procedure provided expects ${func.arity.min} arguments but provided ${lists.size} lists."
+        } else {
+            "The procedure provided expects between ${func.arity.min} and ${func.arity.min} arguments but provided ${lists.size} lists."
+        }
+        throw SchemeError("Invalid number of arguments", message, null, null)
+    }
+
     val values = LinkedList<SchemeValue>()
     for (i in 0..<lists.map { l -> l.values.size }.min()) {
         val iterationArgs = lists.map { l -> FuncArg(l.values[i], null) }
