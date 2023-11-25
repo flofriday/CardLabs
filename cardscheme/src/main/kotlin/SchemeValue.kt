@@ -204,12 +204,12 @@ data class FuncValue(
     }
 }
 
-data class FuncArg(val value: SchemeValue, val location: Location)
+data class FuncArg(val value: SchemeValue, val location: Location?)
 
 data class NativeFuncValue(
     val name: String,
     override val arity: Arity,
-    val func: (List<FuncArg>, Environment) -> SchemeValue,
+    val func: (List<FuncArg>, Executor) -> SchemeValue,
 ) : CallableValue(arity) {
     override fun toString(): String {
         return "<Native Function $name>"

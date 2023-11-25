@@ -129,10 +129,8 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
      */
     fun callFunction(func: CallableValue, args: List<FuncArg>): SchemeValue {
         if (func is NativeFuncValue) {
-            return func.func(args, environment)
+            return func.func(args, this)
         } else if (func is FuncValue) {
-            val argValues = args.map { a -> a.value }
-
             val old = environment
             // environment for the lambda function
             environment = func.env

@@ -19,6 +19,7 @@ fun injectBuiltin(environment: Environment) {
     environment.put("list", NativeFuncValue("list", Arity(0, Int.MAX_VALUE), ::builtinList))
     environment.put("car", NativeFuncValue("car", Arity(1, 1), ::builtinCar))
     environment.put("cdr", NativeFuncValue("cdr", Arity(1, 1), ::builtinCdr))
+    environment.put("map", NativeFuncValue("map", Arity(2, Int.MAX_VALUE), ::builtinMap))
 
     environment.put("vector", NativeFuncValue("vector", Arity(1, Int.MAX_VALUE), ::builtinVector))
     environment.put("vector?", NativeFuncValue("vector?", Arity(1, 1), ::builtinIsVector))
@@ -44,15 +45,13 @@ inline fun <reified T : SchemeValue> verifyType(arg: FuncArg, expectedMsg: Strin
     return arg.value
 }
 
-inline fun <reified T : SchemeValue> verifyAllType(args: List<FuncArg>, expectedMsg: String) {
-    for (arg in args) {
-        verifyType<T>(arg, expectedMsg)
-    }
+inline fun <reified T : SchemeValue> verifyAllType(args: List<FuncArg>, expectedMsg: String): List<T> {
+    return args.map { a -> verifyType<T>(a, expectedMsg) }
 }
 
 fun builtinPlus(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): NumberValue {
     verifyAllType<NumberValue>(args, "Only numbers can be added")
     return args.map { a -> a.value as NumberValue }.reduce { sum, n -> sum.add(n) }
@@ -60,7 +59,7 @@ fun builtinPlus(
 
 fun builtinMinus(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): SchemeValue {
     verifyAllType<NumberValue>(args, "Only numbers can be subtracted")
     return args.map { a -> a.value as NumberValue }.reduce { res, n -> res.sub(n) }
@@ -68,7 +67,7 @@ fun builtinMinus(
 
 fun builtinMul(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): NumberValue {
     verifyAllType<NumberValue>(args, "Only numbers can be multiplied")
     return args.map { a -> a.value as NumberValue }.reduce { res, n -> res.mul(n) }
@@ -76,7 +75,7 @@ fun builtinMul(
 
 fun builtinDiv(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): NumberValue {
     verifyAllType<NumberValue>(args, "Only numbers can be divided")
     return args.map { a -> a.value as NumberValue }.reduce { res, n -> res.div(n) }
@@ -84,14 +83,14 @@ fun builtinDiv(
 
 fun builtinList(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): SchemeValue {
     return ListValue(LinkedList(args.map { a -> a.value }))
 }
 
 fun builtinCar(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): SchemeValue {
     verifyType<ListValue>(args.first(), "I expected a list here")
     val list = args.first().value as ListValue
@@ -105,7 +104,7 @@ fun builtinCar(
 
 fun builtinCdr(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): ListValue {
     verifyType<ListValue>(args.first(), "I expected a list here")
     val list = args.first().value as ListValue
@@ -118,23 +117,44 @@ fun builtinCdr(
     return ListValue(LinkedList(list.values.drop(1)))
 }
 
+/**
+ * Built in map
+ *
+ * Spec: R7R, Chapter 6.10
+ * Syntax: (map proc list1 list2 ...)
+ * */
+fun builtinMap(
+    args: List<FuncArg>,
+    executor: Executor,
+): ListValue {
+    val func = verifyType<CallableValue>(args.first(), "The first argument must be a procedure")
+    val lists = verifyAllType<ListValue>(args.drop(1), "All arguments after the first one must be lists")
+
+    val values = LinkedList<SchemeValue>()
+    for (i in 0..<lists.map { l -> l.values.size }.min()) {
+        val iterationArgs = lists.map { l -> FuncArg(l.values[i], null) }
+        values.addLast(executor.callFunction(func, iterationArgs))
+    }
+    return ListValue(values)
+}
+
 fun builtinVector(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): VectorValue {
     return VectorValue(args.map { a -> a.value }.toMutableList())
 }
 
 fun builtinIsVector(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): BooleanValue {
     return BooleanValue(args.first().value is VectorValue)
 }
 
 fun builtinMakeVector(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): VectorValue {
     val k = verifyType<IntegerValue>(args.first(), "Only positive integers can be used to specify the length of a vector")
     if (k.value <= 0) {
@@ -147,7 +167,7 @@ fun builtinMakeVector(
 
 fun builtinVectorLength(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): IntegerValue {
     val vec = verifyType<VectorValue>(args.first(), "Only vectors are expected here")
     return IntegerValue(vec.values.size)
@@ -155,7 +175,7 @@ fun builtinVectorLength(
 
 fun builtinVectorRef(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): SchemeValue {
     val vec = verifyType<VectorValue>(args.first(), "Only vectors are expected here")
     val k = verifyType<IntegerValue>(args[1], "The index must be an integer")
@@ -169,7 +189,7 @@ fun builtinVectorRef(
 
 fun builtinVectorSet(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): VoidValue {
     val vec = verifyType<VectorValue>(args.first(), "Only vectors are expected here")
     val k = verifyType<IntegerValue>(args[1], "The index must be an integer")
@@ -186,7 +206,7 @@ fun builtinVectorSet(
 
 fun builtinEqual(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): BooleanValue {
     for ((value, loc) in args) {
         if (value.javaClass != args[0].value::class.java) {
@@ -205,7 +225,7 @@ fun builtinEqual(
 
 fun builtinSmallerEqual(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): BooleanValue {
     verifyAllType<NumberValue>(args, "Only numbers can be compared")
 
@@ -219,7 +239,7 @@ fun builtinSmallerEqual(
 
 fun builtinSmaller(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): BooleanValue {
     verifyAllType<NumberValue>(args, "Only numbers can be compared")
 
@@ -233,7 +253,7 @@ fun builtinSmaller(
 
 fun builtinGreater(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): BooleanValue {
     verifyAllType<NumberValue>(args, "Only numbers can be compared")
 
@@ -247,7 +267,7 @@ fun builtinGreater(
 
 fun builtinGreaterEqual(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): BooleanValue {
     verifyAllType<NumberValue>(args, "Only numbers can be compared")
 
@@ -266,7 +286,7 @@ fun builtinGreaterEqual(
  * */
 fun builtinAnd(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): SchemeValue {
     if (args.isEmpty()) {
         return BooleanValue(true)
@@ -286,7 +306,7 @@ fun builtinAnd(
  * */
 fun builtinOr(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): SchemeValue {
     if (args.isEmpty()) {
         return BooleanValue(false)
@@ -306,14 +326,14 @@ fun builtinOr(
  * */
 fun builtinNot(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): BooleanValue {
     return BooleanValue(!args[0].value.isTruthy())
 }
 
 fun builtinDisplay(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): SchemeValue {
     print(args[0].value)
     return VoidValue()
@@ -321,7 +341,7 @@ fun builtinDisplay(
 
 fun builtinNewline(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): SchemeValue {
     println()
     return VoidValue()
@@ -329,7 +349,7 @@ fun builtinNewline(
 
 fun builtinCool(
     args: List<FuncArg>,
-    env: Environment,
+    executor: Executor,
 ): SchemeValue {
     println("cool")
     return VoidValue()
