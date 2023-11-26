@@ -9,7 +9,7 @@ class AccountMapper {
 
     fun map(account: Account): AccountDAO {
         val accountDAO = AccountDAO()
-        accountDAO.id = account.id
+        accountDAO.accountId = account.id
         accountDAO.username = account.username
         accountDAO.email = account.email
         accountDAO.password = account.password
@@ -21,7 +21,7 @@ class AccountMapper {
         // this can be done as we are passing data away from the center of the application
         // account.password = accountDAO.password
         return Account(
-            id = accountDAO.id,
+            id = accountDAO.accountId,
             username = accountDAO.username,
             email = accountDAO.email,
             password = "REDACTED",

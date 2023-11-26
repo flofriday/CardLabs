@@ -89,7 +89,7 @@ internal class AccountServiceTests {
 
         val found = accountRepository.findByUsernameAndDeletedIsNull(created.username)
         assertNotNull(found)
-        assertEquals(created.id, found?.id)
+        assertEquals(created.id, found?.accountId)
     }
 
     @Test

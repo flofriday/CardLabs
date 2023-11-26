@@ -10,13 +10,15 @@ import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
 import at.tuwien.ase.cardlabs.management.error.AccountNotFoundException
 import at.tuwien.ase.cardlabs.management.error.LocationNotFoundException
+import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.mapper.AccountMapper
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import org.springframework.context.annotation.Lazy
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
+import java.time.Instant
+
 
 @Service
 class AccountService(
@@ -98,10 +100,6 @@ class AccountService(
         return accountMapper.map(accountRepository.save(acc))
     }
 
-    fun delete(user: CardLabUser) {
-        accountRepository.deleteById(user.id)
-    }
-
     @Transactional
     fun update(user: CardLabUser, accountUpdate: AccountUpdate) {
         Helper.requireNonNull(user, "No authentication provided")
@@ -119,13 +117,27 @@ class AccountService(
         accountRepository.save(account)
     }
 
-    fun findById(id: Long): Optional<AccountDAO?> {
-        return accountRepository.findById(id)
+    @Transactional
+    fun delete(user: CardLabUser, id: Long) {
+        Helper.requireNonNull(user, "No authentication provided")
+        Helper.requireNonNull(id, "Cannot delete an account with the id null")
+        if (user.id != id) {
+            throw UnauthorizedException("Can't delete an account other than yourself")
+        }
+
+        val accountDao = findById(id)
+        if (accountDao != null) {
+            accountDao.deleted = Instant.now()
+        }
     }
 
     fun getUser(username: String): Account {
         val account = findByUsername(username) ?: throw AccountNotFoundException("Account could not be found")
         return accountMapper.map(account)
+    }
+
+    fun findById(id: Long): AccountDAO? {
+        return accountRepository.findByAccountIdAndDeletedIsNull(id)
     }
 
     fun findByUsername(username: String?): AccountDAO? {

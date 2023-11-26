@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface AccountRepository : CrudRepository<AccountDAO?, Long?> {
 
-    fun findByIdAndDeletedIsNull(id: Long): AccountDAO?
+    fun findByAccountIdAndDeletedIsNull(id: Long): AccountDAO?
 
     fun findByUsernameAndDeletedIsNull(username: String): AccountDAO?
 
