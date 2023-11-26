@@ -1,14 +1,27 @@
 import { leaderBoardEntry } from "../types/leaderBoardEntry";
+import { LeaderBoardType } from "../types/LeaderBoardType";
+import { RegionType } from "../types/RegionType";
 
 interface Props {
-  title: string;
+  leaderBoardType: LeaderBoardType;
+  regionType: RegionType;
   entries: leaderBoardEntry[];
 }
 
 export default function MiniLeaderBoardContent({
-  title,
+  leaderBoardType,
+  regionType,
   entries,
 }: Props): JSX.Element {
+  let title = "";
+  if (leaderBoardType === LeaderBoardType.MY_BOTS) {
+    title = "My Bots - " + regionType;
+  } else if (leaderBoardType === LeaderBoardType.ALL_BOTS) {
+    title = regionType + " Leaderboard";
+  } else {
+    title = "Leaderboard";
+  }
+
   return (
     <div className="pb-4 px-4">
       <h2 className="text-4xl font-bold mb-4">{title}</h2>

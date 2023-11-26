@@ -31,11 +31,11 @@ export async function getGlobalTop5LeaderBoardEntries(
   regionType: RegionType
 ): Promise<leaderBoardEntry[]> {
   // TODO replace this with calls to the backend
-  if (regionType === RegionType.Global) {
+  if (regionType === RegionType.GLOBAL) {
     return exampleEntries;
-  } else if (regionType === RegionType.Continent) {
+  } else if (regionType === RegionType.CONTINENT) {
     return exampleEntries1;
-  } else if (regionType === RegionType.Country) {
+  } else if (regionType === RegionType.COUNTRY) {
     return exampleEntries2;
   } else {
     return exampleEntries;
@@ -46,11 +46,11 @@ export async function getMyTop5LeaderBoardEntries(
   regionType: RegionType
 ): Promise<leaderBoardEntry[]> {
   // TODO replace this with calls to the backend
-  if (regionType === RegionType.Global) {
+  if (regionType === RegionType.GLOBAL) {
     return exampleEntries;
-  } else if (regionType === RegionType.Continent) {
+  } else if (regionType === RegionType.CONTINENT) {
     return exampleEntries1;
-  } else if (regionType === RegionType.Country) {
+  } else if (regionType === RegionType.COUNTRY) {
     return exampleEntries2;
   } else {
     return exampleEntries;

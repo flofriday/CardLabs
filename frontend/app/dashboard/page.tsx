@@ -7,6 +7,7 @@ import {
   getGlobalTop5LeaderBoardEntries,
   getMyTop5LeaderBoardEntries,
 } from "../services/LeaderBoardService";
+import { LeaderBoardType } from "../types/LeaderBoardType";
 
 export default function Dashboard(): JSX.Element {
   return (
@@ -44,11 +45,11 @@ export default function Dashboard(): JSX.Element {
 
       <div className="absolute top-0 right-0 space-y-5 flex flex-col justify-center items-center h-full w-1/4 mr-12">
         <MiniLeaderBoard
-          heading="My Bots"
+          leaderboardType={LeaderBoardType.MY_BOTS}
           entryFetchFunction={getMyTop5LeaderBoardEntries}
         />
         <MiniLeaderBoard
-          heading="Global Ranking"
+          leaderboardType={LeaderBoardType.ALL_BOTS}
           entryFetchFunction={getGlobalTop5LeaderBoardEntries}
         />
       </div>

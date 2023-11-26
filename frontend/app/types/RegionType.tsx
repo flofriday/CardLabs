@@ -1,6 +1,5 @@
 export enum RegionType {
-  Global,
-  Continent,
-  Country
+  GLOBAL = "Global",
+  CONTINENT = "Continent",
+  COUNTRY = "Country",
 }
-
