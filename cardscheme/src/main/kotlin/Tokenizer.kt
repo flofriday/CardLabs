@@ -98,14 +98,14 @@ class Tokenizer() {
 
         // FIXME: add support for '...'
         if (initial == '+' || initial == '-') {
-            return IdentifierToken(literal, Location(line, line, col - 1 - literal.length, col - 1))
+            return IdentifierToken(literal, Location(line, line, col - literal.length, col - 1))
         }
 
         while (isIdentifierSubsequent(peek())) {
             literal += consume()
         }
 
-        return IdentifierToken(literal, Location(line, line, col - 1 - literal.length, col - 1))
+        return IdentifierToken(literal, Location(line, line, col - literal.length, col - 1))
     }
 
     private fun scanNumber(): Token {

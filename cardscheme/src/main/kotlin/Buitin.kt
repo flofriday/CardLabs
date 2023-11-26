@@ -5,6 +5,8 @@ fun injectBuiltin(environment: Environment) {
     environment.put("-", NativeFuncValue("-", Arity(2, Int.MAX_VALUE), ::builtinMinus))
     environment.put("*", NativeFuncValue("*", Arity(2, Int.MAX_VALUE), ::builtinMul))
     environment.put("/", NativeFuncValue("/", Arity(2, Int.MAX_VALUE), ::builtinDiv))
+    environment.put("abs", NativeFuncValue("abs", Arity(1, 1), ::builtinAbs))
+    environment.put("sqrt", NativeFuncValue("sqrt", Arity(1, 1), ::builtinSqrt))
 
     environment.put("=", NativeFuncValue("=", Arity(2, Int.MAX_VALUE), ::builtinEqual))
     environment.put("<", NativeFuncValue("<", Arity(2, Int.MAX_VALUE), ::builtinSmaller))
@@ -89,6 +91,44 @@ fun builtinDiv(
 ): NumberValue {
     verifyAllType<NumberValue>(args, "Only numbers can be divided")
     return args.map { a -> a.value as NumberValue }.reduce { res, n -> res.div(n) }
+}
+
+/**
+ * Builtin absolut function.
+ *
+ * The abs procedure returns the absolute value of its argument.
+ *
+ * Spec: R7R, chapter 6.2.6
+ * Syntax: (abs x)
+ */
+fun builtinAbs(
+    args: List<FuncArg>,
+    executor: Executor,
+): NumberValue {
+    val n = verifyType<NumberValue>(args.first(), "Only numbers can have an absolut")
+    return n.abs()
+}
+
+/**
+ * Builtin sqrt function.
+ *
+ * Returns the principal square root of z
+ *
+ * Spec: R7R, chapter 6.2.6
+ * Syntax: (sqrt z)
+ *
+ * NOTE: We intentionally deviate from the standard here and consider it an error calling the function with negative
+ * numbers. This is due to the lack of a native complex number implementation.
+ */
+fun builtinSqrt(
+    args: List<FuncArg>,
+    executor: Executor,
+): NumberValue {
+    val n = verifyType<NumberValue>(args.first(), "Only numbers can have an square roots")
+    if (n.smallerThan(IntegerValue(0)).value) {
+        throw SchemeError("Invalid argument", "You can only calculate the square route of positive numbers in cardscheme, but the value was $n.", args.first().location, null)
+    }
+    return n.sqrt()
 }
 
 fun builtinList(

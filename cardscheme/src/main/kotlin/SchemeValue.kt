@@ -1,4 +1,5 @@
 import java.util.LinkedList
+import kotlin.math.absoluteValue
 
 abstract class SchemeValue {
     abstract override fun toString(): String
@@ -50,6 +51,10 @@ abstract class NumberValue() : SchemeValue() {
     abstract fun div(other: NumberValue): NumberValue
 
     abstract fun smallerThan(other: NumberValue): BooleanValue
+
+    abstract fun abs(): NumberValue
+
+    abstract fun sqrt(): NumberValue
 }
 
 data class IntegerValue(val value: Int) : NumberValue() {
@@ -79,7 +84,8 @@ data class IntegerValue(val value: Int) : NumberValue() {
 
     override fun div(other: NumberValue): NumberValue {
         return when (other) {
-            is IntegerValue -> IntegerValue(this.value / other.value)
+            // FIXME: In theory the cast to float would only happen if the result cannot be expressed as an integer
+            is IntegerValue -> FloatValue(this.value.toFloat() / other.value)
             is FloatValue -> FloatValue(this.value / other.value)
             else -> TODO("Unsoported type")
         }
@@ -91,6 +97,14 @@ data class IntegerValue(val value: Int) : NumberValue() {
             is FloatValue -> BooleanValue(this.value < other.value)
             else -> TODO("Unsoported type")
         }
+    }
+
+    override fun abs(): IntegerValue {
+        return IntegerValue(value.absoluteValue)
+    }
+
+    override fun sqrt(): FloatValue {
+        return FloatValue(kotlin.math.sqrt(value.toFloat()))
     }
 
     override fun toString(): String {
@@ -141,6 +155,14 @@ data class FloatValue(val value: Float) : NumberValue() {
             is FloatValue -> BooleanValue(this.value < other.value)
             else -> TODO("Unsoported type")
         }
+    }
+
+    override fun abs(): FloatValue {
+        return FloatValue(value.absoluteValue)
+    }
+
+    override fun sqrt(): FloatValue {
+        return FloatValue(kotlin.math.sqrt(value))
     }
 
     override fun toString(): String {
