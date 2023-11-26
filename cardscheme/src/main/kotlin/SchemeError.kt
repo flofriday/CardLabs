@@ -12,7 +12,13 @@ data class SchemeError(val header: String, val reason: String, val location: Loc
                 println("%03d| ".format(location.startline) + line)
                 println(" ".repeat(5 + location.startcol - 1) + "^".repeat(location.endcol + 1 - location.startcol))
             } else {
-                println("    Multiline preview not implemented")
+                println(
+                    program.lines()
+                        .drop(location.startline - 1)
+                        .take(location.endline - location.startline + 1)
+                        .zip(location.startline..location.endline)
+                        .joinToString("\n") { (l, n) -> "%03d|> ".format(n) + l },
+                )
             }
         } else {
             println("    No preview available")
