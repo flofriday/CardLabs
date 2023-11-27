@@ -1,4 +1,4 @@
-import java.util.LinkedList
+import java.util.*
 import kotlin.math.absoluteValue
 
 abstract class SchemeValue {
@@ -84,8 +84,13 @@ data class IntegerValue(val value: Int) : NumberValue() {
 
     override fun div(other: NumberValue): NumberValue {
         return when (other) {
-            // FIXME: In theory the cast to float would only happen if the result cannot be expressed as an integer
-            is IntegerValue -> FloatValue(this.value.toFloat() / other.value)
+            is IntegerValue -> {
+                if (this.value % other.value == 0) {
+                    IntegerValue(this.value / other.value)
+                } else {
+                    FloatValue(this.value.toFloat() / other.value)
+                }
+            }
             is FloatValue -> FloatValue(this.value / other.value)
             else -> TODO("Unsoported type")
         }

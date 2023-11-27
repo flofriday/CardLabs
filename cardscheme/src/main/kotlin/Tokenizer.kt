@@ -151,19 +151,20 @@ class Tokenizer() {
         throw Exception("No Chars are implemented yet")
     }
 
-    private fun scanCharacter(): CharToken {
+    private fun scanEscapeCharacter(): Char {
         consume()
+
         return when (consume()) {
-            'b' -> CharToken('\b', Location(line, line, col - 2, col))
-            't' -> CharToken('\t', Location(line, line, col - 2, col))
-            'n' -> CharToken('\n', Location(line, line, col - 2, col))
-            'r' -> CharToken('\r', Location(line, line, col - 2, col))
-            '"' -> CharToken('\"', Location(line, line, col - 2, col))
-            '\\' -> CharToken('\\', Location(line, line, col - 2, col))
+            'b' -> '\b'
+            't' -> '\t'
+            'n' -> '\n'
+            'r' -> '\r'
+            '"' -> '\"'
+            '\\' -> '\\'
             else -> {
                 throw SchemeError(
-                    "Unknown character",
-                    "Did not expect this character",
+                    "Unknown escape character",
+                    "I did not expect this character.",
                     Location(line, line, col, col),
                     null,
                 )
@@ -179,8 +180,7 @@ class Tokenizer() {
         var stringValue = ""
         while (peek() != '"') {
             if (peek() == '\\') {
-                val char = scanCharacter()
-                stringValue += char.value
+                stringValue += scanEscapeCharacter()
                 continue
             }
             stringValue += consume()
