@@ -32,6 +32,7 @@ fun main(args: Array<String>) {
     while (true) {
         print(">>> ")
         var program = readln()
+        if (program.trim().isEmpty()) continue
 
         try {
             var tokens = Tokenizer().tokenize(program)

@@ -10,6 +10,9 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         env: Environment,
     ): SchemeValue? {
         this.environment = env
+
+        if (ast.forms.isEmpty()) return null
+
         for (form in ast.forms.dropLast(1)) {
             when (form) {
                 is ExpressionNode -> form.visit(this)

@@ -1,6 +1,6 @@
 ; Since card scheme doesn't have complex numbers we are building our own here
 (define (make-cplx re im)
-  #(re im))
+  (vector re im))
 
 (define (cplx-re c)
   (vector-ref c 0))
@@ -29,7 +29,7 @@
      (- starty (* y (abs (/ (- endy starty) 28))))
     ))
 
-; A custom modular implmentation
+; A custom modulo implmentation
 (define (mod-ten n)
   (do ((n n (- n 10)))
     ((< n 10) n)
