@@ -156,12 +156,13 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
         val func = node.expressions.first().visit(this)
 
         if (func !is CallableValue) {
+            val infixTip = "Maybe you wrote the C-like infix notation instead of the Lisp-like prefix notation?"
             throw SchemeError(
                 "Type Mismatch",
                 "The first argument of a function call must be a function," +
-                    " but it was a ${func.typeName()}",
+                    " but it was a ${func.typeName()}.",
                 node.expressions.first().location,
-                null,
+                if (node.expressions.size >= 3 && func is NumberValue) infixTip else null,
             )
         }
 

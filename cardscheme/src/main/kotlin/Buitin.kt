@@ -126,7 +126,12 @@ fun builtinSqrt(
 ): NumberValue {
     val n = verifyType<NumberValue>(args.first(), "Only numbers can have an square roots")
     if (n.smallerThan(IntegerValue(0)).value) {
-        throw SchemeError("Invalid argument", "You can only calculate the square route of positive numbers in cardscheme, but the value was $n.", args.first().location, null)
+        throw SchemeError(
+            "Invalid argument",
+            "You can only calculate the square route of positive numbers in cardscheme, but the value was $n.",
+            args.first().location,
+            null,
+        )
     }
     return n.sqrt()
 }
@@ -181,11 +186,12 @@ fun builtinMap(
     val lists = verifyAllType<ListValue>(args.drop(1), "All arguments after the first one must be lists")
 
     if (!func.arity.inside(lists.size)) {
-        val message = if (func.arity.min == func.arity.max) {
-            "The procedure provided expects ${func.arity.min} arguments but provided ${lists.size} lists."
-        } else {
-            "The procedure provided expects between ${func.arity.min} and ${func.arity.min} arguments but provided ${lists.size} lists."
-        }
+        val message =
+            if (func.arity.min == func.arity.max) {
+                "The procedure provided expects ${func.arity.min} arguments but provided ${lists.size} lists."
+            } else {
+                "The procedure provided expects between ${func.arity.min} and ${func.arity.min} arguments but provided ${lists.size} lists."
+            }
         throw SchemeError("Invalid number of arguments", message, null, null)
     }
 

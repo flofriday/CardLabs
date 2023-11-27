@@ -6,5 +6,5 @@
 (do (
       (i 1 (+ i 1)))
   ((> i 24))
-  (display (fib i))
+  (display (string-append (number->string i) ": " (number->string (fib i))))
   (newline))

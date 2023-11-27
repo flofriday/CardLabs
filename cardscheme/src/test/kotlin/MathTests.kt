@@ -43,7 +43,7 @@ class MathTests {
 
     @Test
     fun simpleAbs() {
-        val program = "(abs -9)"
+        val program = "(abs (- 0 9))"
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
         Assert.assertEquals(9, (result as IntegerValue).value)
