@@ -40,4 +40,28 @@ class MathTests {
         val program = "(+ 3 4 #t)"
         assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
+
+    @Test
+    fun simpleAbs() {
+        val program = "(abs -9)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(9, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun simpleAbsOnPositive() {
+        val program = "(abs 3)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(3, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun simpleSqrt() {
+        val program = "(sqrt 9.0)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is FloatValue)
+        Assert.assertEquals(3, (result as FloatValue).value.toInt())
+    }
 }
