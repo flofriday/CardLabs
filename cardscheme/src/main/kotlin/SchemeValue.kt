@@ -1,4 +1,3 @@
-import java.util.LinkedList
 import kotlin.math.absoluteValue
 
 abstract class SchemeValue {
@@ -196,7 +195,7 @@ data class StringValue(val value: String) : SchemeValue() {
 // FIXME: We probably call quite often cdr (tail) on the list but from what
 // I can see we can only implement that in Java in O(n) even though that should
 // be quite easy to do in O(1). So we probably need to write our own.
-data class ListValue(val values: LinkedList<SchemeValue>) : SchemeValue() {
+data class ListValue(val values: SchemeList<SchemeValue>) : SchemeValue() {
     override fun toString(): String {
         return "(" + values.joinToString(" ") { value -> value.toString() } + ")"
     }

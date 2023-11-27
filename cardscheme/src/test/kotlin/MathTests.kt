@@ -64,4 +64,20 @@ class MathTests {
         assert(result is FloatValue)
         Assert.assertEquals(3, (result as FloatValue).value.toInt())
     }
+
+    @Test
+    fun simpleModulo() {
+        val program = "(modulo 5 2)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(1, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun simpleModulo2() {
+        val program = "(modulo 11 6)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(5, (result as IntegerValue).value)
+    }
 }

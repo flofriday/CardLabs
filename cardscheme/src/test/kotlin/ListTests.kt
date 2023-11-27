@@ -8,7 +8,7 @@ class ListTests {
         val program = "(quote (1 2 3))"
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(1), IntegerValue(2), IntegerValue(3)), (result as ListValue).values)
+        assertEquals(listOf(IntegerValue(1), IntegerValue(2), IntegerValue(3)), (result as ListValue).values.toList())
     }
 
     @Test
@@ -16,7 +16,7 @@ class ListTests {
         val program = "'(1 2 3)"
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(1), IntegerValue(2), IntegerValue(3)), (result as ListValue).values)
+        assertEquals(listOf(IntegerValue(1), IntegerValue(2), IntegerValue(3)), (result as ListValue).values.toList())
     }
 
     @Test
@@ -26,7 +26,7 @@ class ListTests {
         assert(result is ListValue)
         assertEquals(
             listOf(IntegerValue(1), IntegerValue(4), IntegerValue(9), IntegerValue(16), IntegerValue(25)),
-            (result as ListValue).values,
+            (result as ListValue).values.toList(),
         )
     }
 
@@ -35,7 +35,7 @@ class ListTests {
         val program = "(map + '(1 2 3) '(4 5 6 7))"
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(5), IntegerValue(7), IntegerValue(9)), (result as ListValue).values)
+        assertEquals(listOf(IntegerValue(5), IntegerValue(7), IntegerValue(9)), (result as ListValue).values.toList())
     }
 
     @Test

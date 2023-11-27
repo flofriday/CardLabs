@@ -1,10 +1,11 @@
-import java.util.LinkedList
 
 fun injectBuiltin(environment: Environment) {
     environment.put("+", NativeFuncValue("+", Arity(2, Int.MAX_VALUE), ::builtinPlus))
     environment.put("-", NativeFuncValue("-", Arity(2, Int.MAX_VALUE), ::builtinMinus))
     environment.put("*", NativeFuncValue("*", Arity(2, Int.MAX_VALUE), ::builtinMul))
     environment.put("/", NativeFuncValue("/", Arity(2, Int.MAX_VALUE), ::builtinDiv))
+    environment.put("floor-remainder", NativeFuncValue("floor-remainder", Arity(2, 2), ::builtinFloorRemainder))
+    environment.put("modulo", NativeFuncValue("modulo", Arity(2, 2), ::builtinFloorRemainder))
     environment.put("abs", NativeFuncValue("abs", Arity(1, 1), ::builtinAbs))
     environment.put("sqrt", NativeFuncValue("sqrt", Arity(1, 1), ::builtinSqrt))
 
@@ -136,11 +137,19 @@ fun builtinSqrt(
     return n.sqrt()
 }
 
+fun builtinFloorRemainder(
+    args: List<FuncArg>,
+    executor: Executor,
+): IntegerValue {
+    val arguments = verifyAllType<IntegerValue>(args, "Only integers are allowed for modulo")
+    return IntegerValue(arguments[0].value % arguments[1].value)
+}
+
 fun builtinList(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    return ListValue(LinkedList(args.map { a -> a.value }))
+    return ListValue(SchemeList(args.map { a -> a.value }))
 }
 
 fun builtinCar(
@@ -168,8 +177,7 @@ fun builtinCdr(
         throw SchemeError("Empty List", "Cdr can only be called on non-empty lists", args.first().location, null)
     }
 
-    // FIXME: Is there a better solution?
-    return ListValue(LinkedList(list.values.drop(1)))
+    return ListValue(SchemeList(list.values.tail()))
 }
 
 /**
@@ -195,10 +203,11 @@ fun builtinMap(
         throw SchemeError("Invalid number of arguments", message, null, null)
     }
 
-    val values = LinkedList<SchemeValue>()
-    for (i in 0..<lists.map { l -> l.values.size }.min()) {
-        val iterationArgs = lists.map { l -> FuncArg(l.values[i], null) }
-        values.addLast(executor.callFunction(func, iterationArgs))
+    val values = SchemeList<SchemeValue>()
+    val iterators = lists.map { l -> l.values.iterator() }
+    while (iterators.all { i -> i.hasNext() }) {
+        val iterationArgs = iterators.map { i -> FuncArg(i.next(), null) }
+        values.add(executor.callFunction(func, iterationArgs))
     }
     return ListValue(values)
 }
