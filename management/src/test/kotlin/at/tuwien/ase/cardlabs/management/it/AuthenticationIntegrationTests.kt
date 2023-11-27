@@ -46,7 +46,7 @@ class AuthenticationIntegrationTests {
     }
 
     @Test
-    fun whenLogin_expectBadCredentialsError() {
+    fun whenLogin_withInvalidPassword_expectUnauthorizedError() {
         createAccount("test", "test@test.com", "password", null, true, true, true)
 
         val body = TestHelper.createAccountLoginJSON("test", "password2")

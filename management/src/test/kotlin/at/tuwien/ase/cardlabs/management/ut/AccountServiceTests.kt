@@ -43,7 +43,7 @@ internal class AccountServiceTests {
     }
 
     @Test
-    fun whenAccountCreate_expectIllegalIdError() {
+    fun whenAccountCreate_withIdSet_expectIllegalIdError() {
         val account = Account(
             id = 1L,
             username = "test",
@@ -87,13 +87,13 @@ internal class AccountServiceTests {
         assertEquals(true, created.sendNewsletter)
         assertEquals(true, created.sendChangeUpdates)
 
-        val found = accountRepository.findByUsername(created.username)
+        val found = accountRepository.findByUsernameAndDeletedIsNull(created.username)
         assertNotNull(found)
         assertEquals(created.id, found?.id)
     }
 
     @Test
-    fun whenAccountCreate_expectAccountExistUsernameError() {
+    fun whenAccountCreate_withExistingUsername_expectAccountExistUsernameError() {
         createAccount("test", "test@test.com", "password", null, true, true, true)
 
         val account = Account(
@@ -114,7 +114,7 @@ internal class AccountServiceTests {
     }
 
     @Test
-    fun whenAccountCreate_expectAccountExistEmailError() {
+    fun whenAccountCreate_withExistingEmail_expectAccountExistEmailError() {
         createAccount("test", "test@test.com", "password", null, true, true, true)
 
         val account = Account(

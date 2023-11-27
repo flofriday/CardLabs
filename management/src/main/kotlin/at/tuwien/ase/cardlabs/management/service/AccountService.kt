@@ -35,6 +35,7 @@ class AccountService(
         Helper.requireNonNull(account.sendChangeUpdates, "The SendChangeUpdates option must be set")
         Helper.requireNonNull(account.sendScoreUpdates, "The SendScoreUpdates option must be set")
         Helper.requireNonNull(account.sendNewsletter, "The SendNewsletter option must be set")
+
         val location: LocationDAO? = if (account.location != null) findLocation(account.location) else null
         if (account.location != null && location == null) {
             throw LocationNotFoundException("Location with name ${account.location} does not exist")
@@ -91,7 +92,7 @@ class AccountService(
         if (username == null) {
             return null
         }
-        return accountRepository.findByUsername(username)
+        return accountRepository.findByUsernameAndDeletedIsNull(username)
     }
 
     fun findLocation(name: String): LocationDAO? {
@@ -102,6 +103,6 @@ class AccountService(
         if (email == null) {
             return null
         }
-        return accountRepository.findByEmail(email)
+        return accountRepository.findByEmailAndDeletedIsNull(email)
     }
 }

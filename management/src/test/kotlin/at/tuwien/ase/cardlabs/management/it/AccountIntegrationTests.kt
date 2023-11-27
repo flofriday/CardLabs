@@ -275,7 +275,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountDelete_expectForbiddenError() {
+    fun whenAccountDelete_withoutJWT_expectForbiddenError() {
         createAccount("test", "test@test.com", "password", null, true, true, true)
         getAuthenticationToken("test", "password")
 
@@ -287,7 +287,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountCreate_expectIllegalArgumentError() {
+    fun whenAccountCreate_withoutUsername_expectIllegalArgumentError() {
         val body = """
             {
                 "email": "test@test.com",

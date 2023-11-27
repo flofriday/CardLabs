@@ -9,6 +9,10 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
+/**
+ * A database entry representing a user. When the deleted field from the parent class AuditedEntity is set, then the
+ * account counts as being deleted
+ */
 @Entity
 @Table(name = "account")
 class AccountDAO : AuditedEntity() {
