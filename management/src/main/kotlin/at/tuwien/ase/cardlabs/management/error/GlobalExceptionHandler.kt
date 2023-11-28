@@ -17,6 +17,20 @@ class GlobalExceptionHandler {
             .body(ex.message)
     }
 
+    @ExceptionHandler(AccountDoesNotExistException::class)
+    fun handleAccountDoesNotExistException(ex: AccountDoesNotExistException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ex.message)
+    }
+
+    @ExceptionHandler(BotDoesNotExistException::class)
+    fun handleBotDoesNotExistException(ex: BotDoesNotExistException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ex.message)
+    }
+
     // == Authentication exceptions ==
     @ExceptionHandler(UnauthorizedException::class)
     fun handleUnauthorizedException(ex: UnauthorizedException): ResponseEntity<String> {
