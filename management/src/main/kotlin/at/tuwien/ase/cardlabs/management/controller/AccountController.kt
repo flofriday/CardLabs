@@ -4,7 +4,6 @@ import at.tuwien.ase.cardlabs.management.controller.model.Account
 import at.tuwien.ase.cardlabs.management.controller.model.AccountUpdate
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
 import at.tuwien.ase.cardlabs.management.error.LocationNotFoundException
-import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import org.springframework.http.HttpStatus
@@ -35,10 +34,6 @@ class AccountController(val accountService: AccountService) {
             ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .build()
-        } catch (exception: IllegalArgumentException) {
-            ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .build()
         }
     }
 
@@ -46,20 +41,11 @@ class AccountController(val accountService: AccountService) {
     fun delete(
         @AuthenticationPrincipal user: CardLabUser,
     ): ResponseEntity<Unit> {
-        return try {
-            accountService.delete(user)
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .build()
-        } catch (exception: UnauthorizedException) {
-            ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .build()
-        } catch (exception: IllegalArgumentException) {
-            ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .build()
-        }
+
+        accountService.delete(user, user.id)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .build()
     }
 
     @GetMapping("/account")
@@ -91,14 +77,6 @@ class AccountController(val accountService: AccountService) {
             accountService.update(user, accountUpdate)
             ResponseEntity
                 .status(HttpStatus.OK)
-                .build()
-        } catch (exception: UnauthorizedException) {
-            ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .build()
-        } catch (exception: IllegalArgumentException) {
-            ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
                 .build()
         } catch (exception: LocationNotFoundException) {
             ResponseEntity
