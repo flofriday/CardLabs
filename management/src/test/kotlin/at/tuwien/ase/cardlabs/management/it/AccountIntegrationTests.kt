@@ -223,6 +223,17 @@ class AccountIntegrationTests {
     }
 
     @Test
+    fun whenAccountCreate_withEmptyEmail_expectBadRequest() {
+        val body = TestHelper.createAccountCreateJSON("test", "", "PassWord123?!", "Austria", false, true, false)
+        mockMvc.perform(
+            post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body),
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun whenAccountCreate_withUsernameThatContainsWhitespaces_expectBadRequest() {
         val body = TestHelper.createAccountCreateJSON("test ", "test@test.com", "PassWord123?!", "Austria", false, true, false)
         mockMvc.perform(
