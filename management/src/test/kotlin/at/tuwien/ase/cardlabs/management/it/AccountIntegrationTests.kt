@@ -135,6 +135,61 @@ class AccountIntegrationTests {
     }
 
     @Test
+    fun whenAccountCreate_withToShortPassword_expectBadRequest() {
+        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "Pw12?!", "Austria", false, true, false)
+        mockMvc.perform(
+            post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body),
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun whenAccountCreate_withPasswordThatContainsWhitespaces_expectBadRequest() {
+        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "Password12?! ", "Austria", false, true, false)
+        mockMvc.perform(
+            post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body),
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun whenAccountCreate_withPasswordThatContainsNoDigit_expectBadRequest() {
+        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "Password?!", "Austria", false, true, false)
+        mockMvc.perform(
+            post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body),
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun whenAccountCreate_withPasswordThatContainsNoUpperCaseChar_expectBadRequest() {
+        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password213?!", "Austria", false, true, false)
+        mockMvc.perform(
+            post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body),
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun whenAccountCreate_withPasswordThatContainsNoSpecialChar_expectBadRequest() {
+        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password213", "Austria", false, true, false)
+        mockMvc.perform(
+            post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body),
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun whenAccountCreate_withValidAccountAndSendNewsletter_expectSuccessAndSendNewsletterTrue() {
         val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "PassWord1!?", "Austria", false, false, true)
         val result = mockMvc.perform(
