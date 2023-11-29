@@ -64,6 +64,14 @@ class AccountService(
             throw java.lang.IllegalArgumentException("Invalid email address")
         }
 
+        if (account.username.any { it.isWhitespace() }) {
+            throw java.lang.IllegalArgumentException("Username may not contain whitespaces")
+        }
+
+        if (account.username.isEmpty()) {
+            throw java.lang.IllegalArgumentException("Username may be empty")
+        }
+
         val location: LocationDAO? = if (account.location != null) findLocation(account.location) else null
         if (account.location != null && location == null) {
             throw LocationNotFoundException("Location with name ${account.location} does not exist")
