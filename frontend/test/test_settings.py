@@ -1,12 +1,10 @@
 import pytest
 import helper
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from random import randint
+import time
 
 def test_delete_existing_user(driver_headless):
     driver = driver_headless
@@ -39,8 +37,11 @@ def test_delete_existing_user(driver_headless):
 
 def test_change_website_notifications_updates_setting(driver):
     helper.login(driver, "test1", "pass1")
-    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
-    driver.find_element(By.CSS_SELECTOR, ".shadow").click()
+
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "profile_pic_in_navbar")))
+    driver.find_element(By.ID, "profile_pic_in_navbar").click()
+
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "settings_button_navbar")))
     driver.find_element(By.ID, "settings_button_navbar").click()
 
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "sendWebsiteUpdate")))
@@ -49,8 +50,9 @@ def test_change_website_notifications_updates_setting(driver):
 
     driver.find_element(By.LINK_TEXT, "Card Labs").click()
 
-    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
-    driver.find_element(By.CSS_SELECTOR, ".shadow").click()
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "profile_pic_in_navbar")))
+    driver.find_element(By.ID, "profile_pic_in_navbar").click()
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "settings_button_navbar")))
     driver.find_element(By.ID, "settings_button_navbar").click()
 
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "sendWebsiteUpdate")))
