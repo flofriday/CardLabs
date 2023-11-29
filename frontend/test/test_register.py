@@ -5,8 +5,8 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from random import randint
 
-def test_register_with_valid_data(driver):
-    driver = driver
+def test_register_with_valid_data(driver_headless):
+    driver = driver_headless
     driver.get("http://127.0.0.1:3000/")
     driver.set_window_size(1900, 1020)
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "register_button_navbar")))
@@ -21,9 +21,7 @@ def test_register_with_valid_data(driver):
     driver.find_element(By.ID, "password").click()
     driver.find_element(By.ID, "password").send_keys("Password1!")
     driver.find_element(By.ID, "register_button").click()
-    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".text-sm > div:nth-child(2)")))
-    text = driver.find_element(By.CSS_SELECTOR, ".text-sm > div:nth-child(2)").text
-    assert text == "Registration was successful"
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "profile_pic_in_navbar")))
 
 def test_register_with_invalid_username(driver_headless):
     driver = driver_headless
@@ -64,7 +62,7 @@ def test_register_with_invalid_whitespace_password(driver_headless):
     driver.find_element(By.ID, "register_button").click()
 
     valdiationMessage = driver.execute_script("return arguments[0].validationMessage", driver.find_element(By.ID, "password"))
-    assert valdiationMessage == "Passwords can't contain whitespaces"
+    assert valdiationMessage == "Password can't contain whitespaces"
 
 
 def test_register_with_too_short_password(driver_headless):
