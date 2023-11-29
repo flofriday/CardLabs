@@ -3,6 +3,7 @@ package at.tuwien.ase.cardlabs.management.error
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
@@ -17,6 +18,7 @@ class GlobalExceptionHandler {
             .body(ex.message)
     }
 
+    // == Account exceptions ==
     @ExceptionHandler(AccountDoesNotExistException::class)
     fun handleAccountDoesNotExistException(ex: AccountDoesNotExistException): ResponseEntity<String> {
         return ResponseEntity
@@ -24,6 +26,7 @@ class GlobalExceptionHandler {
             .body(ex.message)
     }
 
+    // == Bot exceptions ==
     @ExceptionHandler(BotDoesNotExistException::class)
     fun handleBotDoesNotExistException(ex: BotDoesNotExistException): ResponseEntity<String> {
         return ResponseEntity
@@ -36,6 +39,13 @@ class GlobalExceptionHandler {
     fun handleUnauthorizedException(ex: UnauthorizedException): ResponseEntity<String> {
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
+            .body(ex.message)
+    }
+
+    @ExceptionHandler(UsernameNotFoundException::class)
+    fun handleUsernameNotFoundException(ex: UsernameNotFoundException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
             .body(ex.message)
     }
 
