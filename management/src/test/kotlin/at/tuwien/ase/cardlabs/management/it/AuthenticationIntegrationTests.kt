@@ -34,9 +34,9 @@ class AuthenticationIntegrationTests {
 
     @Test
     fun whenLogin_expectSuccess() {
-        createAccount("test", "test@test.com", "password", null, true, true, true)
+        createAccount("test", "test@test.com", "PassWord?!123", null, true, true, true)
 
-        val body = TestHelper.createAccountLoginJSON("test", "password")
+        val body = TestHelper.createAccountLoginJSON("test", "PassWord?!123")
         mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -47,9 +47,9 @@ class AuthenticationIntegrationTests {
 
     @Test
     fun whenLogin_withInvalidPassword_expectUnauthorizedError() {
-        createAccount("test", "test@test.com", "password", null, true, true, true)
+        createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
 
-        val body = TestHelper.createAccountLoginJSON("test", "password2")
+        val body = TestHelper.createAccountLoginJSON("test", "passWord9838932984u73298!!!")
         mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)

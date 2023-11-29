@@ -26,6 +26,28 @@ class AccountService(
     @Lazy private val passwordEncoder: PasswordEncoder,
 ) {
 
+    private fun validPassword(password: String) {
+        if (password.length < 8) {
+            throw IllegalArgumentException("Invalid password length, need to be at least 8 characters")
+        }
+
+        if (password.any { it.isWhitespace() }) {
+            throw java.lang.IllegalArgumentException("Password may not contain whitespaces")
+        }
+
+        if (password.none { it.isDigit() }) {
+            throw java.lang.IllegalArgumentException("Password needs to contain digit")
+        }
+
+        if (password.none { it.isUpperCase() }) {
+            throw java.lang.IllegalArgumentException("Password needs to contain uppercase character")
+        }
+
+        if (password.none { !it.isLetterOrDigit() }) {
+            throw java.lang.IllegalArgumentException("Password needs to contain special character")
+        }
+    }
+
     @Transactional
     fun create(account: Account): Account {
         Helper.requireNull(account.id, "The id must not be set")
@@ -35,6 +57,8 @@ class AccountService(
         Helper.requireNonNull(account.sendChangeUpdates, "The SendChangeUpdates option must be set")
         Helper.requireNonNull(account.sendScoreUpdates, "The SendScoreUpdates option must be set")
         Helper.requireNonNull(account.sendNewsletter, "The SendNewsletter option must be set")
+
+        validPassword(account.password)
 
         val location: LocationDAO? = if (account.location != null) findLocation(account.location) else null
         if (account.location != null && location == null) {

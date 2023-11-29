@@ -67,7 +67,7 @@ internal class AccountServiceTests {
             id = null,
             username = "test",
             email = "test@test.com",
-            password = "password",
+            password = "PassWord123?!",
             location = "Austria",
             sendScoreUpdates = true,
             sendNewsletter = true,
@@ -94,13 +94,13 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountCreate_withExistingUsername_expectAccountExistUsernameError() {
-        createAccount("test", "test@test.com", "password", null, true, true, true)
+        createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
 
         val account = Account(
             id = null,
             username = "test",
             email = "test@test.com",
-            password = "password",
+            password = "PassWord123?!",
             location = "Austria",
             sendScoreUpdates = true,
             sendNewsletter = true,
@@ -115,13 +115,13 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountCreate_withExistingEmail_expectAccountExistEmailError() {
-        createAccount("test", "test@test.com", "password", null, true, true, true)
+        createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
 
         val account = Account(
             id = null,
             username = "test2",
             email = "test@test.com",
-            password = "password",
+            password = "PassWord123?!",
             location = "Austria",
             sendScoreUpdates = true,
             sendNewsletter = true,
@@ -136,7 +136,7 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountDelete_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "password", null, true, true, true)
+        val account = createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
         val userDetailsAccount = TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
 
         assertDoesNotThrow {

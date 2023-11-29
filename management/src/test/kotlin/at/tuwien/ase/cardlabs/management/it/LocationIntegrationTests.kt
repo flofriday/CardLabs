@@ -63,8 +63,8 @@ class LocationIntegrationTests {
 
     @Test
     fun whenGetLocations_withValidJWT_expectSuccess() {
-        createAccount("test", "test@test.com", "password", null, true, true, true)
-        val authenticationToken = getAuthenticationToken("test", "password")
+        createAccount("test", "test@test.com", "PassWord123!?", null, true, true, true)
+        val authenticationToken = getAuthenticationToken("test", "PassWord123!?")
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/locations")
