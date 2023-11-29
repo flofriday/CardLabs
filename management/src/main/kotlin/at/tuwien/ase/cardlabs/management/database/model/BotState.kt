@@ -13,7 +13,7 @@ enum class BotState {
     AWAITING_VERIFICATION,
 
     /**
-     * The state when the code has been varied
+     * The state when the code has been verified
      */
     READY,
 

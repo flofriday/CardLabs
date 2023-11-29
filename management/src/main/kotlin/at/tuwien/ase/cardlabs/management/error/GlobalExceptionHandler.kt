@@ -34,6 +34,13 @@ class GlobalExceptionHandler {
             .body(ex.message)
     }
 
+    @ExceptionHandler(BotStateException::class)
+    fun handleBotStateException(ex: BotStateException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(ex.message)
+    }
+
     // == Authentication exceptions ==
     @ExceptionHandler(UnauthorizedException::class)
     fun handleUnauthorizedException(ex: UnauthorizedException): ResponseEntity<String> {
@@ -52,6 +59,13 @@ class GlobalExceptionHandler {
     // == Generic exceptions ==
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ex.message)
+    }
+
+    @ExceptionHandler(ValidationException::class)
+    fun handleValidationException(ex: ValidationException): ResponseEntity<String> {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(ex.message)

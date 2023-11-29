@@ -44,7 +44,7 @@ class BotValidator {
             }
         }
 
-        private fun codeValidationRules(): List<ValidationRule<String>> {
+        fun codeValidationRules(): List<ValidationRule<String>> {
             return mutableListOf(
                 NotEmptyRule(),
                 LengthRule(1, 32768)

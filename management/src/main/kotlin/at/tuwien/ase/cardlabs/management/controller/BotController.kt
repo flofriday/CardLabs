@@ -52,6 +52,17 @@ class BotController(
             .body(result)
     }
 
+    @PatchMapping("/bot/{id}/rank")
+    fun rank(
+        @AuthenticationPrincipal user: CardLabUser,
+        @PathVariable id: Long
+    ): ResponseEntity<Void> {
+        botService.rank(user, id)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .build()
+    }
+
     @GetMapping("/bot/{id}")
     fun fetch(
         @AuthenticationPrincipal user: CardLabUser,
