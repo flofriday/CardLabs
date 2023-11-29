@@ -20,10 +20,10 @@ import java.util.Optional
 
 @Service
 class AccountService(
-        private val accountRepository: AccountRepository,
-        private val locationRepository: LocationRepository,
-        private val accountMapper: AccountMapper,
-        @Lazy private val passwordEncoder: PasswordEncoder,
+    private val accountRepository: AccountRepository,
+    private val locationRepository: LocationRepository,
+    private val accountMapper: AccountMapper,
+    @Lazy private val passwordEncoder: PasswordEncoder,
 ) {
 
     private fun validPassword(password: String) {
@@ -41,6 +41,10 @@ class AccountService(
 
         if (password.none { it.isUpperCase() }) {
             throw java.lang.IllegalArgumentException("Password needs to contain uppercase character")
+        }
+
+        if (password.none { it.isLowerCase() }) {
+            throw java.lang.IllegalArgumentException("Password needs to contain lowercase character")
         }
 
         if (password.none { !it.isLetterOrDigit() }) {

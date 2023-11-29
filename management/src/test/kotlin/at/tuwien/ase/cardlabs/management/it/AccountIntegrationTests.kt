@@ -179,6 +179,17 @@ class AccountIntegrationTests {
     }
 
     @Test
+    fun whenAccountCreate_withPasswordThatContainsNoLowerCaseChar_expectBadRequest() {
+        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "PASSWORD213?!", "Austria", false, true, false)
+        mockMvc.perform(
+            post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body),
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun whenAccountCreate_withInvalidEmail1_expectBadRequest() {
         val body = TestHelper.createAccountCreateJSON("test", "test@test", "PassWord123?!", "Austria", false, true, false)
         mockMvc.perform(
