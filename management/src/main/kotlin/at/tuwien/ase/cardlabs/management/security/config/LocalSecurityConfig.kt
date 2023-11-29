@@ -42,7 +42,7 @@ class LocalSecurityConfig(private val accountService: AccountService) {
                 authorize
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
-                    .requestMatchers(AntPathRequestMatcher("/location")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/account", "POST")).permitAll()
                     .anyRequest().authenticated()
             }

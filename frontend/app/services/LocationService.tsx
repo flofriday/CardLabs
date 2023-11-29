@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 
 export async function getLocations(): Promise<string[]> {
-  const response = await fetch("api/location", {
+  const response = await fetch("api/locations", {
     mode: "cors",
     method: "GET",
     headers: {
@@ -10,7 +10,9 @@ export async function getLocations(): Promise<string[]> {
   });
 
   if (response.status !== 200) {
-    toast.error("Could not fetch locations");
+    toast.error(
+      "Could not fetch locations as our servers seem to be too busy. Please try again."
+    );
     return [];
   }
 

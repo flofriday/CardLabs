@@ -53,7 +53,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountCreate_expectSuccess() {
+    fun whenAccountCreate_withValidAccountDataAndNullLocation_expectSuccess() {
         val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password", null, true, true, true)
         val result = mockMvc.perform(
             post("/account")
@@ -76,7 +76,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountCreateWithCountry_expectSuccess() {
+    fun whenAccountCreate_withValidAccountDataAndNotNullLocation_expectSuccess() {
         val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password", "Austria", true, true, true)
         val result = mockMvc.perform(
             post("/account")
@@ -99,7 +99,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountCreateWithSendScore_expectSuccessAndSendScoreTrue() {
+    fun whenAccountCreate_withValidAccountAndSendScore_expectSuccessAndSendScoreTrue() {
         val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password", "Austria", true, false, false)
         val result = mockMvc.perform(
             post("/account")
@@ -117,7 +117,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountCreateWithSendUpdate_expectSuccessAndSendUpdatesTrue() {
+    fun whenAccountCreate_withValidAccountAndSendUpdate_expectSuccessAndSendUpdatesTrue() {
         val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password", "Austria", false, true, false)
         val result = mockMvc.perform(
             post("/account")
@@ -135,7 +135,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountCreateWithSendNewsletter_expectSuccessAndSendNewsletterTrue() {
+    fun whenAccountCreate_withValidAccountAndSendNewsletter_expectSuccessAndSendNewsletterTrue() {
         val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password", "Austria", false, false, true)
         val result = mockMvc.perform(
             post("/account")
@@ -153,7 +153,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountCreateWithExistingUsername_expectAccountExistError() {
+    fun whenAccountCreate_withExistingUsername_expectAccountExistError() {
         createAccount("test", "test@test.com", "password", "Austria", true, true, true)
 
         val body = TestHelper.createAccountCreateJSON("test", "other@test.com", "password", null, true, true, true)
@@ -166,7 +166,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenGetUserInfo_expectSuccess() {
+    fun whenGetUserInfo_withExistingAccount_expectSuccess() {
         createAccount("test", "test@test.com", "password", null, true, true, true)
         val authenticationToken = getAuthenticationToken("test", "password")
 
@@ -191,7 +191,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenGetUserInfoNotToken_expectForbidden() {
+    fun whenGetUserInfo_withoutToken_expectForbidden() {
         createAccount("test", "test@test.com", "password", null, true, true, true)
 
         mockMvc.perform(
@@ -202,7 +202,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenUpdateUser_expectSuccess() {
+    fun whenUpdateUser_withValidUserData_expectSuccess() {
         createAccount("test", "test@test.com", "password", null, true, true, true)
         val authenticationToken = getAuthenticationToken("test", "password")
         val body = TestHelper.createAccountUpdateCreateJSON("Austria", false, false, false)
@@ -223,7 +223,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenUpdateUserWithInvalidLocation_expectBadRequest() {
+    fun whenUpdateUser_withInvalidLocation_expectBadRequest() {
         createAccount("test", "test@test.com", "password", null, true, true, true)
         val authenticationToken = getAuthenticationToken("test", "password")
         val body = TestHelper.createAccountUpdateCreateJSON("not-valid", false, false, false)
@@ -238,7 +238,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountCreateWithExistingEmail_expectAccountExistError() {
+    fun whenAccountCreate_withExistingEmail_expectAccountExistError() {
         createAccount("test", "test@test.com", "password", "Austria", true, true, true)
 
         val body = TestHelper.createAccountCreateJSON("other", "test@test.com", "password", null, true, true, true)
@@ -251,7 +251,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountCreateWithInvalidCountry_expectBadRequest() {
+    fun whenAccountCreate_withInvalidCountry_expectBadRequest() {
         val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password", "Non-Exist", true, true, true)
         mockMvc.perform(
             post("/account")
@@ -262,7 +262,7 @@ class AccountIntegrationTests {
     }
 
     @Test
-    fun whenAccountDelete_expectSuccess() {
+    fun whenAccountDelete_withValidJWT_expectSuccess() {
         createAccount("test", "test@test.com", "password", null, true, true, true)
         val authenticationToken = getAuthenticationToken("test", "password")
 

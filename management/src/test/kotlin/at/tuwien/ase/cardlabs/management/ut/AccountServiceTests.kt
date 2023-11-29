@@ -62,7 +62,7 @@ internal class AccountServiceTests {
     }
 
     @Test
-    fun whenAccountCreate_expectSuccess() {
+    fun whenAccountCreate_withValidAccountData_expectSuccess() {
         val account = Account(
             id = null,
             username = "test",

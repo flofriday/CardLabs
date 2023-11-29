@@ -35,7 +35,7 @@ class SecurityConfig(private val accountService: AccountService) {
             .authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
-                    .requestMatchers(AntPathRequestMatcher("/location")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/account", "POST")).permitAll()
                     .anyRequest().authenticated()
             }
