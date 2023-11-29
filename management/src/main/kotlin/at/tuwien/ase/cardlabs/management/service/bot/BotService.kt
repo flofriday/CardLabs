@@ -12,6 +12,7 @@ import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.mapper.BotMapper
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
+import at.tuwien.ase.cardlabs.management.validation.validator.BotValidator
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -38,10 +39,12 @@ class BotService(
         val owner = accountService.findById(user.id)
             ?: throw AccountDoesNotExistException("An account with the id ${user.id} doesn't exist")
 
+        BotValidator.validate(botCreate)
+
         val bot = BotDAO()
         bot.name = botCreate.name
         bot.owner = owner
-        bot.currentCode = botCreate.currentCode
+        bot.currentCode = botCreate.currentCode ?: ""
         bot.codeHistory = mutableListOf()
         bot.eloScore = INITIAL_ELO_VALUE
         bot.currentState = BotState.CREATED
@@ -54,6 +57,8 @@ class BotService(
     fun patch(user: CardLabUser, botId: Long, botUpdate: BotUpdate): Bot {
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+
+        BotValidator.validate(botUpdate)
 
         botUpdate.currentCode?.let { bot.currentCode = it }
 
