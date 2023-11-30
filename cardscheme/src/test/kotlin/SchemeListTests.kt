@@ -20,6 +20,23 @@ class SchemeListTests {
     }
 
     @Test
+    fun addFirstToList() {
+        val list = SchemeList<Int>()
+        list.add(4)
+        assert(!list.isEmpty())
+        assert(list.contains(4))
+        list.add(2)
+        Assert.assertEquals(listOf(4, 2), list.toList())
+        Assert.assertEquals(2, list.size)
+        list.add(3)
+        Assert.assertEquals(listOf(4, 2, 3), list.toList())
+        Assert.assertEquals(3, list.size)
+        list.addFirst(1)
+        Assert.assertEquals(listOf(1, 4, 2, 3), list.toList())
+        Assert.assertEquals(4, list.size)
+    }
+
+    @Test
     fun removeFromList() {
         val list = SchemeList<Int>(listOf(4, 2, 4))
         Assert.assertEquals(3, list.size)

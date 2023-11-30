@@ -1,3 +1,4 @@
+import java.lang.Exception
 
 fun injectBuiltin(environment: Environment) {
     environment.put("+", NativeFuncValue("+", Arity(2, Int.MAX_VALUE), ::builtinPlus))
@@ -23,6 +24,9 @@ fun injectBuiltin(environment: Environment) {
     environment.put("car", NativeFuncValue("car", Arity(1, 1), ::builtinCar))
     environment.put("cdr", NativeFuncValue("cdr", Arity(1, 1), ::builtinCdr))
     environment.put("map", NativeFuncValue("map", Arity(2, Int.MAX_VALUE), ::builtinMap))
+    environment.put("cons", NativeFuncValue("cons", Arity(2, 2), ::builtInCons))
+    environment.put("append", NativeFuncValue("append", Arity(0, Int.MAX_VALUE), ::builtInAppend))
+    environment.put("length", NativeFuncValue("length", Arity(1, 1), ::builtInLength))
 
     environment.put("vector", NativeFuncValue("vector", Arity(1, Int.MAX_VALUE), ::builtinVector))
     environment.put("vector?", NativeFuncValue("vector?", Arity(1, 1), ::builtinIsVector))
@@ -34,6 +38,7 @@ fun injectBuiltin(environment: Environment) {
     environment.put("string-append", NativeFuncValue("string-append", Arity(0, Int.MAX_VALUE), ::builtinStringAppend))
     environment.put("string->number", NativeFuncValue("string->number", Arity(1, 1), ::builtinStringToNumber))
     environment.put("number->string", NativeFuncValue("number->string", Arity(1, 1), ::builtinNumberToString))
+    environment.put("string-length", NativeFuncValue("string-length", Arity(1, 1), ::builtinStringLength))
 
     environment.put("display", NativeFuncValue("display", Arity(1, 1), ::builtinDisplay))
     environment.put("newline", NativeFuncValue("newline", Arity(0, 0), ::builtinNewline))
@@ -178,6 +183,82 @@ fun builtinCdr(
     }
 
     return ListValue(SchemeList(list.values.tail()))
+}
+
+/**
+ * Built in string length
+ *
+ * Spec: R7R, Chapter 6.7
+ * Syntax: (string-length string)
+ * */
+fun builtinStringLength(
+    args: List<FuncArg>,
+    executor: Executor,
+): IntegerValue {
+    val arg = verifyType<StringValue>(args.first(), "I expected a string here")
+    return IntegerValue(arg.value.length)
+}
+
+/**
+ * Built in cons (adds to the front of the pair)
+ *
+ * Spec: R7R, Chapter 6.4
+ * Syntax: (cons obj1 obj2)
+ * */
+fun builtInCons(
+    args: List<FuncArg>,
+    executor: Executor,
+): SchemeValue {
+    if (args[1].value is ListValue) {
+        val newList = SchemeList((args[1].value as ListValue).values)
+        newList.addFirst(args[0].value)
+        return ListValue(newList)
+    }
+
+    throw Exception("Unsupported type for 'cons'")
+}
+
+/**
+ * Built in append for lists
+ *
+ * Spec: R7R, Chapter 6.4
+ * Syntax: (append list ...)
+ * */
+fun builtInAppend(
+    args: List<FuncArg>,
+    executor: Executor,
+): ListValue {
+    if (args.isEmpty()) {
+        return ListValue(SchemeList())
+    }
+    val allArgsButLast = verifyAllType<ListValue>(args.dropLast(1), "Expected this to be a list")
+    val newList = SchemeList<SchemeValue>()
+
+    for (arg in allArgsButLast) {
+        newList.addAll(arg.values)
+    }
+
+    if (args.last().value is ListValue) {
+        newList.addAll((args.last().value as ListValue).values)
+    } else {
+        newList.add(args.last().value)
+    }
+
+    return ListValue(newList)
+}
+
+/**
+ * Built in length for lists
+ *
+ * Spec: R7R, Chapter 6.4
+ * Syntax: (length list)
+ * */
+fun builtInLength(
+    args: List<FuncArg>,
+    executor: Executor,
+): IntegerValue {
+    val arg = verifyType<ListValue>(args.first(), "Expected a list here")
+    return IntegerValue(arg.values.size)
 }
 
 /**

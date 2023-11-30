@@ -64,4 +64,18 @@ class StringTests {
         assert(result is FloatValue)
         Assert.assertEquals(50.3456f, (result as FloatValue).value)
     }
+
+    @Test
+    fun stringLength() {
+        val program = """(string-length "AB")"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(2, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun stringLengthTooManyArguments() {
+        val program = """(string-length "AB" "AB")"""
+        assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
 }

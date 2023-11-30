@@ -41,6 +41,13 @@ class SchemeList<T>() : MutableCollection<T> {
         return node!!.add(element)
     }
 
+    fun addFirst(element: T): Boolean {
+        size++
+        val oldHead = node
+        node = SchemeListNode(element, oldHead)
+        return true
+    }
+
     override fun isEmpty(): Boolean {
         return node == null
     }
