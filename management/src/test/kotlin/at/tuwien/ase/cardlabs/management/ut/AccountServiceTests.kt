@@ -2,9 +2,10 @@ package at.tuwien.ase.cardlabs.management.ut
 
 import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.controller.model.Account
+import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
+import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.error.AccountExistsException
-import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -25,9 +26,20 @@ internal class AccountServiceTests {
     @Autowired
     private lateinit var accountService: AccountService
 
+    @Autowired
+    private lateinit var locationRepository: LocationRepository
+
+    private val countries: List<String> = listOf("Austria", "Germany", "Netherlands")
+
     @BeforeEach
     fun beforeEach() {
         accountRepository.deleteAll()
+        locationRepository.deleteAll()
+        for (country: String in countries) {
+            val c = LocationDAO()
+            c.name = country
+            locationRepository.save(c)
+        }
     }
 
     @Test
@@ -37,6 +49,10 @@ internal class AccountServiceTests {
             username = "test",
             email = "test@test.com",
             password = "password",
+            location = null,
+            sendScoreUpdates = true,
+            sendNewsletter = true,
+            sendChangeUpdates = true,
         )
 
         val exception = assertThrows<IllegalArgumentException> {
@@ -46,12 +62,16 @@ internal class AccountServiceTests {
     }
 
     @Test
-    fun whenAccountCreate_expectSuccess() {
+    fun whenAccountCreate_withValidAccountData_expectSuccess() {
         val account = Account(
             id = null,
             username = "test",
             email = "test@test.com",
-            password = "password",
+            password = "PassWord123?!",
+            location = "Austria",
+            sendScoreUpdates = true,
+            sendNewsletter = true,
+            sendChangeUpdates = true,
         )
 
         val created = assertDoesNotThrow {
@@ -62,6 +82,10 @@ internal class AccountServiceTests {
         assertEquals("test", created.username)
         assertEquals("test@test.com", created.email)
         assertEquals("REDACTED", created.password)
+        assertEquals("Austria", created.location)
+        assertEquals(true, created.sendScoreUpdates)
+        assertEquals(true, created.sendNewsletter)
+        assertEquals(true, created.sendChangeUpdates)
 
         val found = accountRepository.findByUsernameAndDeletedIsNull(created.username)
         assertNotNull(found)
@@ -70,13 +94,17 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountCreate_withExistingUsername_expectAccountExistUsernameError() {
-        createAccount("test", "test@test.com", "password")
+        createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
 
         val account = Account(
             id = null,
             username = "test",
             email = "test@test.com",
-            password = "password",
+            password = "PassWord123?!",
+            location = "Austria",
+            sendScoreUpdates = true,
+            sendNewsletter = true,
+            sendChangeUpdates = true,
         )
 
         val exception = assertThrows<AccountExistsException> {
@@ -87,13 +115,17 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountCreate_withExistingEmail_expectAccountExistEmailError() {
-        createAccount("test", "test@test.com", "password")
+        createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
 
         val account = Account(
             id = null,
             username = "test2",
             email = "test@test.com",
-            password = "password",
+            password = "PassWord123?!",
+            location = "Austria",
+            sendScoreUpdates = true,
+            sendNewsletter = true,
+            sendChangeUpdates = true,
         )
 
         val exception = assertThrows<AccountExistsException> {
@@ -104,29 +136,15 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountDelete_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "password")
-        val userDetailsAccount =
-            TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
+        val account = createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
+        val userDetailsAccount = TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
 
         assertDoesNotThrow {
-            accountService.delete(userDetailsAccount, account.id!!)
+            accountService.delete(userDetailsAccount)
         }
     }
 
-    @Test
-    fun whenAccountDelete_otherAccount_expectUnauthorizedError() {
-        val account1 = createAccount("test", "test@test.com", "password")
-        val account2 = createAccount("test2", "test2@test.com", "password")
-        val userDetailsAccount1 =
-            TestHelper.createUserDetails(account1.id!!, account1.username, account1.email, account1.password)
-
-        val exception = assertThrows<UnauthorizedException> {
-            accountService.delete(userDetailsAccount1, account2.id!!)
-        }
-        assertEquals("Can't delete an account other than yourself", exception.message)
-    }
-
-    private fun createAccount(username: String, email: String, password: String): Account {
-        return TestHelper.createAccount(accountService, username, email, password)
+    private fun createAccount(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): Account {
+        return TestHelper.createAccount(accountService, username, email, password, location, sendScoreUpdates, sendChangeUpdates, sendNewsletter)
     }
 }

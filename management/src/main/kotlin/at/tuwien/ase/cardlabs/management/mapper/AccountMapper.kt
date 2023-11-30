@@ -24,7 +24,11 @@ class AccountMapper {
             id = accountDAO.id,
             username = accountDAO.username,
             email = accountDAO.email,
-            password = "REDACTED"
+            password = "REDACTED",
+            location = accountDAO.location?.name,
+            sendChangeUpdates = accountDAO.sendChangeUpdates,
+            sendNewsletter = accountDAO.sendNewsletter,
+            sendScoreUpdates = accountDAO.sendScoreUpdates,
         )
     }
 }
