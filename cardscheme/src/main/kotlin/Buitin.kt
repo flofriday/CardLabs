@@ -1,4 +1,4 @@
-import java.lang.Exception
+
 
 fun injectBuiltin(environment: Environment) {
     environment.put("+", NativeFuncValue("+", Arity(2, Int.MAX_VALUE), ::builtinPlus))
@@ -209,13 +209,9 @@ fun builtInCons(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    if (args[1].value is ListValue) {
-        val newList = SchemeList((args[1].value as ListValue).values)
-        newList.addFirst(args[0].value)
-        return ListValue(newList)
-    }
-
-    throw Exception("Unsupported type for 'cons'")
+    val list = SchemeList((args[1].value as ListValue).values)
+    list.addFirst(args[0].value)
+    return ListValue(list)
 }
 
 /**
