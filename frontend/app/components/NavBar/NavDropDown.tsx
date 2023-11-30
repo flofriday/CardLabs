@@ -48,6 +48,7 @@ export default function NavDropDown({
         <button
           className="btn bg-accent text-text py-2 w-48 rounded-lg shadow-md text-lg"
           onClick={() => {
+            close();
             onLogout(router);
           }}
           id="logout_button_navbar"
@@ -57,8 +58,8 @@ export default function NavDropDown({
         <button
           className="btn bg-secondary text-text py-2 w-48 rounded-lg shadow-md text-lg"
           onClick={() => {
-            router.replace("/settings");
             close();
+            router.replace("/settings");
           }}
           id="settings_button_navbar"
         >
