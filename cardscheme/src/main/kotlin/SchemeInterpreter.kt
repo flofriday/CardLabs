@@ -1,10 +1,17 @@
 class SchemeInterpreter() {
-    private var env = Environment(null, HashMap())
+    var env = Environment(null, HashMap())
+
+    fun getStdOut(): String {
+        TODO()
+    }
 
     init {
         injectBuiltin(env)
     }
 
+    /**
+     * Executes a given program with some time and memory constraints.
+     */
     fun run(program: String): SchemeValue? {
         val tokens = Tokenizer().tokenize(program)
         // println("Tokens:")
@@ -12,6 +19,15 @@ class SchemeInterpreter() {
         val ast = Parser().parse(tokens)
         // println("AST: ")
         // print(ast.dump())
-        return Executor().execute(ast, env)
+        val buffer = StringBuffer()
+        return Executor(env, buffer).execute(ast)
+    }
+
+    /**
+     * Executes a given function with some time and memory constraints.
+     */
+    fun run(func: CallableValue, args: List<SchemeValue>): SchemeValue? {
+        val buffer = StringBuffer()
+        return Executor(env, buffer).execute(func, args)
     }
 }

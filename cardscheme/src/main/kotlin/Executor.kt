@@ -1,16 +1,13 @@
-class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
-    private var environment = Environment(null, hashMapOf())
+
+
+class Executor(var environment: Environment, val buffer: StringBuffer) : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
 
     /**
-     * This method must not be called more than once.
      * On error the internal environment may be messed up and repeated calls will result in a faulty execution.
      */
     fun execute(
         ast: Ast,
-        env: Environment,
     ): SchemeValue? {
-        this.environment = env
-
         if (ast.forms.isEmpty()) return null
 
         for (form in ast.forms.dropLast(1)) {
@@ -30,6 +27,16 @@ class Executor : ExpressionVisitor<SchemeValue>, StatementVisitor<Unit> {
 
             else -> throw Exception("Forms in AST must either be ExpressionNodes or StatementNodes")
         }
+    }
+
+    /**
+     * On error the internal environment may be messed up and repeated calls will result in a faulty execution.
+     */
+    fun execute(
+        func: CallableValue,
+        args: List<SchemeValue>,
+    ): SchemeValue {
+        return this.callFunction(func, args.map { v -> FuncArg(v, null) })
     }
 
     override fun visitedBy(node: BoolNode): SchemeValue {
