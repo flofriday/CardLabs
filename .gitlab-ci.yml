@@ -69,7 +69,7 @@ test:management:
   stage: test
   script:
     - cd ${MANAGEMENT_DIR}
-    - gradle test
+    - gradle test --info
   dependencies:
     - build:management
   allow_failure: false

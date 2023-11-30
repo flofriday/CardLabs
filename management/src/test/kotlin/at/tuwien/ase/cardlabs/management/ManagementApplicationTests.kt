@@ -8,5 +8,6 @@ class ManagementApplicationTests {
 
     @Test
     fun contextLoads() {
+        // Sanity test that checks if the application loads
     }
 }
