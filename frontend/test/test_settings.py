@@ -35,43 +35,40 @@ def test_delete_existing_user(driver_headless):
 
     assert driver.find_element(By.CSS_SELECTOR, ".absolute").text == "Login"
 
-def test_change_website_notifications_updates_setting(driver):
-    helper.login(driver, "test1", "pass1")
-
-    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "profile_pic_in_navbar")))
-    driver.find_element(By.ID, "profile_pic_in_navbar").click()
-
-    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "settings_button_navbar")))
-    driver.find_element(By.ID, "settings_button_navbar").click()
-
-    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "sendWebsiteUpdate")))
-    driver.find_element(By.ID, "sendWebsiteUpdate").click()
-    driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(2)").click()
-
-    driver.find_element(By.LINK_TEXT, "Card Labs").click()
-
-    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "profile_pic_in_navbar")))
-    driver.find_element(By.ID, "profile_pic_in_navbar").click()
-    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "settings_button_navbar")))
-    driver.find_element(By.ID, "settings_button_navbar").click()
-
-    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "sendWebsiteUpdate")))
-    assert driver.find_element(By.ID, "sendWebsiteUpdate").is_selected() is True
-    driver.find_element(By.ID, "sendWebsiteUpdate").click()
-    driver.find_element(By.CSS_SELECTOR, ".bg-secondary").click()
-    driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(2)").click()
-
-
-def test_change_website_notifications_updates_setting(driver):
+def test_change_website_notifications_updates_setting(driver_headless):
+    driver = driver_headless
     helper.login(driver, "test1", "pass1")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
     driver.find_element(By.CSS_SELECTOR, ".shadow").click()
     driver.find_element(By.ID, "settings_button_navbar").click()
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "sendWebsiteUpdate")))
+    if not driver.find_element(By.ID, "sendWebsiteUpdate").is_selected():
+        driver.find_element(By.ID, "sendWebsiteUpdate").click()
+    driver.find_element(By.ID, "save_settings_button").click()
+    driver.find_element(By.LINK_TEXT, "Card Labs").click()
 
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
+    driver.find_element(By.CSS_SELECTOR, ".shadow").click()
+    driver.find_element(By.ID, "settings_button_navbar").click()
+
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "sendWebsiteUpdate")))
+
+    WebDriverWait(driver, 5).until(expected_conditions.element_selection_state_to_be(driver.find_element(By.ID, "sendWebsiteUpdate"), True))
+    driver.find_element(By.ID, "sendWebsiteUpdate").click()
+    driver.find_element(By.ID, "save_settings_button").click()
+
+
+
+def test_change_score_notifications_updates_setting(driver_headless):
+    driver = driver_headless
+    helper.login(driver, "test1", "pass1")
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
+    driver.find_element(By.CSS_SELECTOR, ".shadow").click()
+    driver.find_element(By.ID, "settings_button_navbar").click()
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "sendScoreUpdate")))
-    driver.find_element(By.ID, "sendScoreUpdate").click()
-    driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(2)").click()
-
+    if not driver.find_element(By.ID, "sendScoreUpdate").is_selected():
+        driver.find_element(By.ID, "sendScoreUpdate").click()
+    driver.find_element(By.ID, "save_settings_button").click()
     driver.find_element(By.LINK_TEXT, "Card Labs").click()
 
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
@@ -79,21 +76,21 @@ def test_change_website_notifications_updates_setting(driver):
     driver.find_element(By.ID, "settings_button_navbar").click()
 
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "sendScoreUpdate")))
-    assert driver.find_element(By.ID, "sendScoreUpdate").is_selected() is True
-    driver.find_element(By.ID, "sendScoreUpdate").click()
-    driver.find_element(By.CSS_SELECTOR, ".bg-secondary").click()
-    driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(2)").click()
 
-def test_change_newletter_setting(driver):
+    WebDriverWait(driver, 5).until(expected_conditions.element_selection_state_to_be(driver.find_element(By.ID, "sendScoreUpdate"), True))
+    driver.find_element(By.ID, "sendScoreUpdate").click()
+    driver.find_element(By.ID, "save_settings_button").click()
+
+def test_change_newletter_setting(driver_headless):
+    driver = driver_headless
     helper.login(driver, "test1", "pass1")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
     driver.find_element(By.CSS_SELECTOR, ".shadow").click()
     driver.find_element(By.ID, "settings_button_navbar").click()
-
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "sendNewsletter")))
-    driver.find_element(By.ID, "sendNewsletter").click()
-    driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(2)").click()
-
+    if not driver.find_element(By.ID, "sendNewsletter").is_selected():
+        driver.find_element(By.ID, "sendNewsletter").click()
+    driver.find_element(By.ID, "save_settings_button").click()
     driver.find_element(By.LINK_TEXT, "Card Labs").click()
 
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
@@ -101,12 +98,14 @@ def test_change_newletter_setting(driver):
     driver.find_element(By.ID, "settings_button_navbar").click()
 
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "sendNewsletter")))
-    assert driver.find_element(By.ID, "sendNewsletter").is_selected() is True
-    driver.find_element(By.ID, "sendNewsletter").click()
-    driver.find_element(By.CSS_SELECTOR, ".bg-secondary").click()
-    driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(2)").click()
 
-def test_change_location(driver):
+    WebDriverWait(driver, 5).until(expected_conditions.element_selection_state_to_be(driver.find_element(By.ID, "sendNewsletter"), True))
+    driver.find_element(By.ID, "sendNewsletter").click()
+    driver.find_element(By.ID, "save_settings_button").click()
+
+
+def test_change_location(driver_headless):
+    driver = driver_headless
     helper.login(driver, "test1", "pass1")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
     driver.find_element(By.CSS_SELECTOR, ".shadow").click()
@@ -115,15 +114,30 @@ def test_change_location(driver):
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "#dropdown-button > .flex")))
     driver.find_element(By.CSS_SELECTOR, "#dropdown-button > .flex").click()
     driver.find_element(By.LINK_TEXT, "Denmark").click()
-    driver.find_element(By.CSS_SELECTOR, ".h-full > .items-center").click()
-    assert driver.find_element(By.CSS_SELECTOR, "#dropdown-button > .flex").text == "Denmark"
-    driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(2)").click()
+    driver.find_element(By.ID, "save_settings_button").click()
+
     driver.find_element(By.LINK_TEXT, "Card Labs").click()
 
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
     driver.find_element(By.CSS_SELECTOR, ".shadow").click()
     driver.find_element(By.ID, "settings_button_navbar").click()
-    assert driver.find_element(By.CSS_SELECTOR, "#dropdown-button > .flex").text == "Denmark"
+
+    WebDriverWait(driver, 30).until(expected_conditions.text_to_be_present_in_element((By.CSS_SELECTOR, "#dropdown-button > .flex"), "Denmark"))
+
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "#dropdown-button > .flex")))
+    driver.find_element(By.CSS_SELECTOR, "#dropdown-button > .flex").click()
+    driver.find_element(By.LINK_TEXT, "Germany").click()
+    driver.find_element(By.ID, "save_settings_button").click()
+
+    driver.find_element(By.LINK_TEXT, "Card Labs").click()
+
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
+    driver.find_element(By.CSS_SELECTOR, ".shadow").click()
+    driver.find_element(By.ID, "settings_button_navbar").click()
+
+    WebDriverWait(driver, 30).until(expected_conditions.text_to_be_present_in_element((By.CSS_SELECTOR, "#dropdown-button > .flex"), "Germany"))
+
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "#dropdown-button > .flex")))
     driver.find_element(By.CSS_SELECTOR, "#dropdown-button > .flex").click()
     driver.find_element(By.LINK_TEXT, "Austria").click()
-    driver.find_element(By.CSS_SELECTOR, ".btn:nth-child(2)").click()
+    driver.find_element(By.ID, "save_settings_button").click()
