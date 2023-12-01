@@ -6,40 +6,27 @@ import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
 import at.tuwien.ase.cardlabs.management.database.model.BotState
-import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
-import at.tuwien.ase.cardlabs.management.database.repository.BotRepository
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
+import org.springframework.test.annotation.DirtiesContext
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 internal class BotServiceTests {
-
-    @Autowired
-    private lateinit var accountRepository: AccountRepository
 
     @Autowired
     private lateinit var accountService: AccountService
 
     @Autowired
-    private lateinit var botRepository: BotRepository
-
-    @Autowired
     private lateinit var botService: BotService
-
-    @BeforeEach
-    fun beforeEach() {
-        accountRepository.deleteAll()
-        botRepository.deleteAll()
-    }
 
     @Test
     fun whenBotCreate_withValidData_expectSuccess() {
