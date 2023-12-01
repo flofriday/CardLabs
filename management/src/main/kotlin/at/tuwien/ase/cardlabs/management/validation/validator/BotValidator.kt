@@ -1,7 +1,7 @@
 package at.tuwien.ase.cardlabs.management.validation.validator
 
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
-import at.tuwien.ase.cardlabs.management.controller.model.bot.BotUpdate
+import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
 import at.tuwien.ase.cardlabs.management.error.ValidationException
 import at.tuwien.ase.cardlabs.management.validation.ValidationRule
 import at.tuwien.ase.cardlabs.management.validation.string.LengthRule
@@ -35,8 +35,8 @@ class BotValidator {
          *
          * @throws ValidationException if any rule is violated
          */
-        fun validate(botUpdate: BotUpdate) {
-            botUpdate.currentCode?.let {
+        fun validate(botPatch: BotPatch) {
+            botPatch.currentCode?.let {
                 Validator.validate(
                     it,
                     codeValidationRules()

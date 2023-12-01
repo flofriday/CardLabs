@@ -1,7 +1,7 @@
 package at.tuwien.ase.cardlabs.management.ut
 
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
-import at.tuwien.ase.cardlabs.management.controller.model.bot.BotUpdate
+import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
 import at.tuwien.ase.cardlabs.management.error.ValidationException
 import at.tuwien.ase.cardlabs.management.validation.validator.BotValidator
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -50,17 +50,17 @@ internal class BotValidatorTests {
     @Test
     fun whenValidateBotUpdate_withNoDataSet_expectSuccess() {
         assertDoesNotThrow {
-            BotValidator.validate(BotUpdate())
+            BotValidator.validate(BotPatch())
         }
     }
 
     @Test
     fun whenValidateBotUpdate_withCodeSetEmpty_expectValidationError() {
         val exception = assertThrows<ValidationException> {
-            val botUpdate = BotUpdate(
+            val botPatch = BotPatch(
                 currentCode = ""
             )
-            BotValidator.validate(botUpdate)
+            BotValidator.validate(botPatch)
         }
 
         assertEquals("The input can not be empty or blank", exception.message)
@@ -69,10 +69,10 @@ internal class BotValidatorTests {
     @Test
     fun whenValidateBotUpdate_withCodeSet_expectSuccess() {
         assertDoesNotThrow {
-            val botUpdate = BotUpdate(
+            val botPatch = BotPatch(
                 currentCode = "a"
             )
-            BotValidator.validate(botUpdate)
+            BotValidator.validate(botPatch)
         }
     }
 }

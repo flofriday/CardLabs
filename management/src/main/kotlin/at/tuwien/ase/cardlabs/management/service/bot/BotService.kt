@@ -2,7 +2,7 @@ package at.tuwien.ase.cardlabs.management.service.bot
 
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
-import at.tuwien.ase.cardlabs.management.controller.model.bot.BotUpdate
+import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
 import at.tuwien.ase.cardlabs.management.database.model.BotCodeDAO
 import at.tuwien.ase.cardlabs.management.database.model.BotDAO
 import at.tuwien.ase.cardlabs.management.database.model.BotState
@@ -18,6 +18,8 @@ import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.validation.validator.BotValidator
 import at.tuwien.ase.cardlabs.management.validation.validator.Validator
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -60,16 +62,16 @@ class BotService(
     }
 
     @Transactional
-    fun patch(user: CardLabUser, botId: Long, botUpdate: BotUpdate): Bot {
+    fun patch(user: CardLabUser, botId: Long, botPatch: BotPatch): Bot {
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
         if (bot.owner.accountId != user.id) {
             throw UnauthorizedException("Can't update a bot not belonging to you")
         }
 
-        BotValidator.validate(botUpdate)
+        BotValidator.validate(botPatch)
 
-        botUpdate.currentCode?.let { bot.currentCode = it }
+        botPatch.currentCode?.let { bot.currentCode = it }
 
         return botMapper.map(bot)
     }
@@ -117,6 +119,12 @@ class BotService(
     }
 
     @Transactional
+    fun fetchAll(user: CardLabUser, pageable: Pageable): Page<Bot> {
+        return botRepository.findByOwnerIdAndDeletedIsNull(user.id, pageable)
+            .map(botMapper::map)
+    }
+
+    @Transactional
     fun delete(user: CardLabUser, botId: Long) {
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
@@ -126,6 +134,14 @@ class BotService(
         }
 
         bot.deleted = Instant.now()
+    }
+
+    @Transactional
+    fun rankPosition(user: CardLabUser, botId: Long): Long {
+        val bot = findById(botId)
+            ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+
+        return botRepository.findBotRankPosition(botId)
     }
 
     private fun findById(botId: Long): BotDAO? {
