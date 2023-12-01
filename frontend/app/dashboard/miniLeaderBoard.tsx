@@ -2,7 +2,7 @@
 
 import MiniLeaderBoardContent from "./miniLeaderBoardContent";
 import { leaderBoardEntry } from "../types/leaderBoardEntry";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { RegionType } from "../types/RegionType";
 import { LeaderBoardType } from "../types/LeaderBoardType";
 
@@ -38,7 +38,7 @@ export default function MiniLeaderBoard({
         setCountryEntries(entries);
       })
       .catch(() => {});
-  }, []);
+  }, [entryFetchFunction]);
 
   return (
     <div className="bg-secondary rounded-lg w-full">
@@ -61,7 +61,9 @@ export default function MiniLeaderBoard({
             data-te-target="#tabs-global"
             aria-controls="tabs-global"
             aria-selected={selectedRegion === RegionType.GLOBAL}
-            onClick={() => setSelectedRegion(RegionType.GLOBAL)}
+            onClick={() => {
+              setSelectedRegion(RegionType.GLOBAL);
+            }}
           >
             Global
           </a>
@@ -80,7 +82,9 @@ export default function MiniLeaderBoard({
             data-te-target="#tabs-continent"
             aria-controls="tabs-continent"
             aria-selected={selectedRegion === RegionType.CONTINENT}
-            onClick={() => setSelectedRegion(RegionType.CONTINENT)}
+            onClick={() => {
+              setSelectedRegion(RegionType.CONTINENT);
+            }}
           >
             Continent
           </a>
@@ -99,7 +103,9 @@ export default function MiniLeaderBoard({
             data-te-target="#tabs-country"
             aria-controls="tabs-country"
             aria-selected={selectedRegion === RegionType.COUNTRY}
-            onClick={() => setSelectedRegion(RegionType.COUNTRY)}
+            onClick={() => {
+              setSelectedRegion(RegionType.COUNTRY);
+            }}
           >
             Country
           </a>
