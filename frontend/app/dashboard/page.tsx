@@ -14,7 +14,7 @@ export default function Dashboard(): JSX.Element {
     <div className="h-full relative">
       <LeftPageHeader title="Dashboard" />
 
-      <Robot type={RobotType.QUESTIONMARK} />
+      <Robot type={RobotType.BASIC} />
 
       <div className="flex flex-col justify-center items-center space-y-16 pt-10 w-full h-full">
         <Link
