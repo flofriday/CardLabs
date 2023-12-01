@@ -1,6 +1,6 @@
 package at.tuwien.ase.cardlabs.management.controller.model.bot
 
-import at.tuwien.ase.cardlabs.management.database.model.BotState
+import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 
 data class Bot(
     val id: Long?,

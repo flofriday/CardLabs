@@ -32,7 +32,7 @@ internal class BotValidatorTests {
             BotValidator.validate(botCreate)
         }
 
-        assertEquals("The input can not be empty or blank", exception.message)
+        assertEquals("The name can not be empty or blank", exception.message)
     }
 
     @Test
@@ -44,7 +44,7 @@ internal class BotValidatorTests {
             BotValidator.validate(botCreate)
         }
 
-        assertEquals("The input must have length [5, 30]", exception.message)
+        assertEquals("The name must have length [5, 30]", exception.message)
     }
 
     @Test
@@ -63,7 +63,7 @@ internal class BotValidatorTests {
             BotValidator.validate(botPatch)
         }
 
-        assertEquals("The input can not be empty or blank", exception.message)
+        assertEquals("The code can not be empty or blank", exception.message)
     }
 
     @Test

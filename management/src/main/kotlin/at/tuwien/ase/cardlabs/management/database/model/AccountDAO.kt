@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.database.model
 
+import at.tuwien.ase.cardlabs.management.database.model.bot.BotDAO
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -20,7 +21,7 @@ class AccountDAO : AuditedEntity() {
 
     @Id
     @GeneratedValue
-    var accountId: Long? = null
+    var id: Long? = null
 
     @Column(nullable = false)
     lateinit var username: String

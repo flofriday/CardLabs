@@ -3,16 +3,16 @@ package at.tuwien.ase.cardlabs.management.service.bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
-import at.tuwien.ase.cardlabs.management.database.model.BotCodeDAO
-import at.tuwien.ase.cardlabs.management.database.model.BotDAO
-import at.tuwien.ase.cardlabs.management.database.model.BotState
+import at.tuwien.ase.cardlabs.management.database.model.bot.BotCodeDAO
+import at.tuwien.ase.cardlabs.management.database.model.bot.BotDAO
+import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 import at.tuwien.ase.cardlabs.management.database.repository.BotCodeRepository
 import at.tuwien.ase.cardlabs.management.database.repository.BotRepository
-import at.tuwien.ase.cardlabs.management.error.AccountDoesNotExistException
-import at.tuwien.ase.cardlabs.management.error.BotDoesNotExistException
-import at.tuwien.ase.cardlabs.management.error.BotStateException
 import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.error.ValidationException
+import at.tuwien.ase.cardlabs.management.error.account.AccountDoesNotExistException
+import at.tuwien.ase.cardlabs.management.error.bot.BotDoesNotExistException
+import at.tuwien.ase.cardlabs.management.error.bot.BotStateException
 import at.tuwien.ase.cardlabs.management.mapper.BotMapper
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
@@ -65,7 +65,7 @@ class BotService(
     fun patch(user: CardLabUser, botId: Long, botPatch: BotPatch): Bot {
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
-        if (bot.owner.accountId != user.id) {
+        if (bot.owner.id != user.id) {
             throw UnauthorizedException("Can't update a bot not belonging to you")
         }
 
@@ -80,7 +80,7 @@ class BotService(
     fun rank(user: CardLabUser, botId: Long) {
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
-        if (bot.owner.accountId != user.id) {
+        if (bot.owner.id != user.id) {
             throw UnauthorizedException("Can't rank a bot not belonging to you")
         }
 
@@ -111,7 +111,7 @@ class BotService(
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
-        if (bot.owner.accountId != user.id) {
+        if (bot.owner.id != user.id) {
             throw UnauthorizedException("You are not authorized to view the bot $botId")
         }
 
@@ -129,7 +129,7 @@ class BotService(
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
-        if (bot.owner.accountId != user.id) {
+        if (bot.owner.id != user.id) {
             throw UnauthorizedException("Can't delete a bot not belonging to you")
         }
 
@@ -138,14 +138,14 @@ class BotService(
 
     @Transactional
     fun rankPosition(user: CardLabUser, botId: Long): Long {
-        val bot = findById(botId)
+        findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
         return botRepository.findBotRankPosition(botId)
     }
 
     private fun findById(botId: Long): BotDAO? {
-        return botRepository.findByBotIdAndDeletedIsNull(botId)
+        return botRepository.findByIdAndDeletedIsNull(botId)
     }
 
     // Assume that botCodeId is set for every item

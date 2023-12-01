@@ -1,6 +1,6 @@
 package at.tuwien.ase.cardlabs.management.database.repository
 
-import at.tuwien.ase.cardlabs.management.database.model.BotDAO
+import at.tuwien.ase.cardlabs.management.database.model.bot.BotDAO
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
@@ -14,13 +14,13 @@ import org.springframework.stereotype.Repository
 @Repository
 interface BotRepository : CrudRepository<BotDAO?, Long?> {
 
-    fun findByBotIdAndDeletedIsNull(id: Long): BotDAO?
+    fun findByIdAndDeletedIsNull(id: Long): BotDAO?
 
     @Query(
         """
         SELECT b
             FROM BotDAO b
-            WHERE b.owner.accountId = :ownerId
+            WHERE b.owner.id = :ownerId
         """
     )
     fun findByOwnerIdAndDeletedIsNull(@Param("ownerId") ownerId: Long, pageable: Pageable): Page<BotDAO>
@@ -29,7 +29,7 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
         """
         SELECT COUNT(b) + 1
             FROM BotDAO b 
-            WHERE b.eloScore > (SELECT b2.eloScore FROM BotDAO b2 WHERE b2.botId = :botId)
+            WHERE b.eloScore > (SELECT b2.eloScore FROM BotDAO b2 WHERE b2.id = :botId)
         """
     )
     fun findBotRankPosition(@Param("botId") botId: Long): Long

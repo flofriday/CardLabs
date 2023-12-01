@@ -1,4 +1,4 @@
-package at.tuwien.ase.cardlabs.management.database.model
+package at.tuwien.ase.cardlabs.management.database.model.bot
 
 enum class BotState {
 

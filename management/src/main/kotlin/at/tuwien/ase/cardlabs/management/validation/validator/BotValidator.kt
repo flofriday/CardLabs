@@ -19,8 +19,8 @@ class BotValidator {
         fun validate(botCreate: BotCreate) {
             Validator.validate(
                 botCreate.name,
-                NotEmptyRule(),
-                LengthRule(5, 30)
+                NotEmptyRule("name"),
+                LengthRule("name", 5, 30)
             )
             botCreate.currentCode?.let {
                 Validator.validate(
@@ -45,9 +45,10 @@ class BotValidator {
         }
 
         fun codeValidationRules(): List<ValidationRule<String>> {
+            val inputName = "code"
             return mutableListOf(
-                NotEmptyRule(),
-                LengthRule(1, 32768)
+                NotEmptyRule(inputName),
+                LengthRule(inputName, 1, 32768)
             )
         }
     }

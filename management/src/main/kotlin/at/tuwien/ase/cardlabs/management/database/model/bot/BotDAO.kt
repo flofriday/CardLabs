@@ -1,5 +1,7 @@
-package at.tuwien.ase.cardlabs.management.database.model
+package at.tuwien.ase.cardlabs.management.database.model.bot
 
+import at.tuwien.ase.cardlabs.management.database.model.AccountDAO
+import at.tuwien.ase.cardlabs.management.database.model.AuditedEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -22,7 +24,7 @@ class BotDAO : AuditedEntity() {
 
     @Id
     @GeneratedValue
-    var botId: Long? = null
+    var id: Long? = null
 
     @Column(nullable = false)
     lateinit var name: String

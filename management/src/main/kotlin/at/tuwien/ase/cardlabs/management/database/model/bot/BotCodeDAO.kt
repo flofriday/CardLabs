@@ -1,5 +1,6 @@
-package at.tuwien.ase.cardlabs.management.database.model
+package at.tuwien.ase.cardlabs.management.database.model.bot
 
+import at.tuwien.ase.cardlabs.management.database.model.AuditedEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -22,7 +23,7 @@ class BotCodeDAO : AuditedEntity() {
     var botCodeId: Long? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "botId", nullable = false)
+    @JoinColumn(name = "id", nullable = false)
     lateinit var bot: BotDAO
 
     @Transient

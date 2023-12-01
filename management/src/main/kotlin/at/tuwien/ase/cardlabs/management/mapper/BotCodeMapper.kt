@@ -1,7 +1,7 @@
 package at.tuwien.ase.cardlabs.management.mapper
 
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCode
-import at.tuwien.ase.cardlabs.management.database.model.BotCodeDAO
+import at.tuwien.ase.cardlabs.management.database.model.bot.BotCodeDAO
 import org.springframework.stereotype.Component
 
 @Component
