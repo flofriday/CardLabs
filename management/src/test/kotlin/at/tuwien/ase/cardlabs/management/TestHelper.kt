@@ -21,9 +21,15 @@ class TestHelper {
         }
 
         // == Account ==
-        fun createAccount(accountService: AccountService,
-            username: String, email: String, password: String, location: String?,
-            sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean
+        fun createAccount(
+            accountService: AccountService,
+            username: String,
+            email: String,
+            password: String,
+            location: String?,
+            sendScoreUpdates: Boolean,
+            sendChangeUpdates: Boolean,
+            sendNewsletter: Boolean
         ): Account {
             val account = Account(
                 id = null,
@@ -43,8 +49,13 @@ class TestHelper {
         }
 
         fun createAccountCreateJSON(
-            username: String, email: String, password: String, location: String?,
-            sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean
+            username: String,
+            email: String,
+            password: String,
+            location: String?,
+            sendScoreUpdates: Boolean,
+            sendChangeUpdates: Boolean,
+            sendNewsletter: Boolean
         ): String {
             return """
                 {
