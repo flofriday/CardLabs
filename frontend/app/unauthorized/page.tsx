@@ -1,4 +1,4 @@
-export default function Unauthorized() {
+export default function Unauthorized(): JSX.Element {
   return (
     <div className="flex h-full">
       <div className="m-auto">

@@ -1,5 +1,5 @@
 import Image from "next/image";
-export default function Home() {
+export default function Home(): JSX.Element {
   return (
     <main className="flex justify-around">
       <div className="text-text text-[7vw] font-base w-4/12 pt-[15vh]">
