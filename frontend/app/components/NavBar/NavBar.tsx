@@ -9,6 +9,7 @@ export default async function NavBar(): Promise<JSX.Element> {
       <div className="h-full flex items-center space-x-6 w-fit float-left">
         {(await isAuthenticated()) ? (
           <Link
+            id="home_authenticated"
             href="/dashboard"
             className="mx-3 tracking-[.3em] font-bold text-[1.6em]"
           >
@@ -16,6 +17,7 @@ export default async function NavBar(): Promise<JSX.Element> {
           </Link>
         ) : (
           <Link
+            id="home_unauthenticated"
             href="/"
             className="mx-3 tracking-[.3em] font-bold text-[1.6em]"
           >
