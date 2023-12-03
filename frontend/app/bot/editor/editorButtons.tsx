@@ -1,27 +1,20 @@
-import IconButton from "./iconButton";
+import IconButton, { ButtonIcon } from "./iconButton";
 import DropDown from "@/app/components/DropDown";
-export enum ButtonIcon {
-  COMPILE,
-  SAVE,
-  TEST,
-  RANK,
-  DELETE,
-}
 
 export default function EditorButtons(): JSX.Element {
   return (
-    <div className=" w-full mt-44 h-16 flex p-3">
-      <IconButton text="Compile" />
-      <IconButton text="Save" />
-      <IconButton text="Test Bot" />
-      <IconButton text="Rank Bot" />
+    <div className=" w-full mt-44 h-16 flex p-3 space-x-4 ml-4">
+      <IconButton text="Compile" type={ButtonIcon.COMPILE} />
+      <IconButton text="Save" type={ButtonIcon.SAVE} />
+      <IconButton text="Test Bot" type={ButtonIcon.TEST} />
+      <IconButton text="Rank Bot" type={ButtonIcon.RANK} />
       <DropDown
-        defaultValue="test"
+        defaultValue="Current"
         className="w-36"
-        customButtonClass="text-text p-2 w-full h-full rounded-full shadow-md text-lg rounded-full outline outline-1"
-        values={["test"]}
+        customButtonClass="text-text p-2 w-full h-full rounded-full shadow-md text-lg rounded-full outline outline-1  hover:bg-primary"
+        values={[]}
       />
-      <IconButton text="Delete" />
+      <IconButton text="Delete" type={ButtonIcon.DELETE} />
     </div>
   );
 }
