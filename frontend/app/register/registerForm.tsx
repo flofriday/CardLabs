@@ -14,16 +14,70 @@ function loginSuccess(router: any): void {
   toast.success("Registration was successful");
 }
 
+function verifyUsername(username: string): string {
+  const reWhiteSpace = /\s/g;
+  if (reWhiteSpace.test(username)) {
+    return "Username can't contain whitespaces";
+  }
+  return "";
+}
+
+function verifyEMail(email: string): string {
+  const reEmail =
+    // eslint-disable-next-line no-control-regex
+    /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/g;
+  console.log(email);
+  if (!reEmail.test(email)) {
+    return "Invalid E-Mail address";
+  }
+  return "";
+}
+
+function verifyPassword(password: string): string {
+  if (password.length < 8) {
+    return "Password need to be at least 8 characters long";
+  }
+
+  console.log(password);
+  const reWhiteSpace = /\s/g;
+  if (reWhiteSpace.test(password)) {
+    return "Password can't contain whitespaces";
+  }
+
+  const reUpperCase = /[A-Z]/g;
+  if (!reUpperCase.test(password)) {
+    return "Password needs to contain uppercase character";
+  }
+
+  console.log(password);
+
+  const reLowerCase = /[a-z]/g;
+  if (!reLowerCase.test(password)) {
+    return "Password needs to contain lowercase character";
+  }
+
+  const reDigit = /[0-9]/g;
+  if (!reDigit.test(password)) {
+    return "Password needs to contain digit";
+  }
+
+  const reSpecial = /[^0-9A-Za-z\s]/g;
+  if (!reSpecial.test(password)) {
+    return "Password needs to contain special character";
+  }
+  return "";
+}
 function registerHandler(e: React.SyntheticEvent, router: any): void {
   e.preventDefault();
 
   const target = e.target as typeof e.target & {
-    username: { value: string };
-    password: { value: string };
-    email: { value: string };
+    username: { value: string; setCustomValidity: (msg: string) => void };
+    password: { value: string; setCustomValidity: (msg: string) => void };
+    email: { value: string; setCustomValidity: (msg: string) => void };
     sendScoreUpdate: { checked: boolean };
     sendWebsiteUpdate: { checked: boolean };
     sendNewsletter: { checked: boolean };
+    reportValidity: () => void;
   };
 
   const username = target.username.value;
@@ -32,6 +86,19 @@ function registerHandler(e: React.SyntheticEvent, router: any): void {
   const sendScoreUpdate = target.sendScoreUpdate.checked;
   const sendWebsiteUpdate = target.sendWebsiteUpdate.checked;
   const sendNewsletter = target.sendNewsletter.checked;
+
+  const usernameErr = verifyUsername(username);
+  const emailErr = verifyEMail(email);
+  const passwordErr = verifyPassword(password);
+
+  target.username.setCustomValidity(usernameErr);
+  target.email.setCustomValidity(emailErr);
+  target.password.setCustomValidity(passwordErr);
+
+  if (usernameErr !== "" || emailErr !== "" || passwordErr !== "") {
+    target.reportValidity();
+    return;
+  }
 
   register(
     username,
@@ -97,11 +164,17 @@ export default function RegisterForm(): JSX.Element {
               type="text"
               required
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
+              onChange={(e) => {
+                e.target.setCustomValidity("");
+              }}
             />
             <input
               id="email"
               name="email"
               type="email"
+              onChange={(e) => {
+                e.target.setCustomValidity("");
+              }}
               required
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
@@ -116,6 +189,9 @@ export default function RegisterForm(): JSX.Element {
               name="password"
               required
               type="password"
+              onChange={(e) => {
+                e.target.setCustomValidity("");
+              }}
               className="max-xl:h-10 bg-text border border-secondary front-bold text-primary text-lg rounded-lg focus:ring-primary focus:border-primary block p-2.5 w-full"
             />
           </div>

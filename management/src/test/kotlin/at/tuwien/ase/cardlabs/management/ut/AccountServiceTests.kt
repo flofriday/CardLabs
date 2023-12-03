@@ -1,11 +1,11 @@
 package at.tuwien.ase.cardlabs.management.ut
 
 import at.tuwien.ase.cardlabs.management.TestHelper
-import at.tuwien.ase.cardlabs.management.controller.model.Account
+import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
-import at.tuwien.ase.cardlabs.management.error.AccountExistsException
+import at.tuwien.ase.cardlabs.management.error.account.AccountExistsException
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -16,8 +16,10 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.annotation.DirtiesContext
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 internal class AccountServiceTests {
 
     @Autowired
@@ -33,8 +35,6 @@ internal class AccountServiceTests {
 
     @BeforeEach
     fun beforeEach() {
-        accountRepository.deleteAll()
-        locationRepository.deleteAll()
         for (country: String in countries) {
             val c = LocationDAO()
             c.name = country
@@ -43,7 +43,7 @@ internal class AccountServiceTests {
     }
 
     @Test
-    fun whenAccountCreate_expectIllegalIdError() {
+    fun whenAccountCreate_withIdSet_expectIllegalIdError() {
         val account = Account(
             id = 1L,
             username = "test",
@@ -62,12 +62,12 @@ internal class AccountServiceTests {
     }
 
     @Test
-    fun whenAccountCreate_expectSuccess() {
+    fun whenAccountCreate_withValidAccountData_expectSuccess() {
         val account = Account(
             id = null,
             username = "test",
             email = "test@test.com",
-            password = "password",
+            password = "PassWord123?!",
             location = "Austria",
             sendScoreUpdates = true,
             sendNewsletter = true,
@@ -87,20 +87,20 @@ internal class AccountServiceTests {
         assertEquals(true, created.sendNewsletter)
         assertEquals(true, created.sendChangeUpdates)
 
-        val found = accountRepository.findByUsername(created.username)
+        val found = accountRepository.findByUsernameAndDeletedIsNull(created.username)
         assertNotNull(found)
         assertEquals(created.id, found?.id)
     }
 
     @Test
-    fun whenAccountCreate_expectAccountExistUsernameError() {
-        createAccount("test", "test@test.com", "password", null, true, true, true)
+    fun whenAccountCreate_withExistingUsername_expectAccountExistUsernameError() {
+        createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
 
         val account = Account(
             id = null,
             username = "test",
             email = "test@test.com",
-            password = "password",
+            password = "PassWord123?!",
             location = "Austria",
             sendScoreUpdates = true,
             sendNewsletter = true,
@@ -114,14 +114,14 @@ internal class AccountServiceTests {
     }
 
     @Test
-    fun whenAccountCreate_expectAccountExistEmailError() {
-        createAccount("test", "test@test.com", "password", null, true, true, true)
+    fun whenAccountCreate_withExistingEmail_expectAccountExistEmailError() {
+        createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
 
         val account = Account(
             id = null,
             username = "test2",
             email = "test@test.com",
-            password = "password",
+            password = "PassWord123?!",
             location = "Austria",
             sendScoreUpdates = true,
             sendNewsletter = true,
@@ -136,15 +136,33 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountDelete_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "password", null, true, true, true)
-        val userDetailsAccount = TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
+        val account = createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
+        val userDetailsAccount =
+            TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
 
         assertDoesNotThrow {
-            accountService.delete(userDetailsAccount)
+            accountService.delete(userDetailsAccount, userDetailsAccount.id!!)
         }
     }
 
-    private fun createAccount(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): Account {
-        return TestHelper.createAccount(accountService, username, email, password, location, sendScoreUpdates, sendChangeUpdates, sendNewsletter)
+    private fun createAccount(
+        username: String,
+        email: String,
+        password: String,
+        location: String?,
+        sendScoreUpdates: Boolean,
+        sendChangeUpdates: Boolean,
+        sendNewsletter: Boolean
+    ): Account {
+        return TestHelper.createAccount(
+            accountService,
+            username,
+            email,
+            password,
+            location,
+            sendScoreUpdates,
+            sendChangeUpdates,
+            sendNewsletter
+        )
     }
 }

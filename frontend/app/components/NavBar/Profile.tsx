@@ -1,4 +1,5 @@
 "use client";
+"use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import NavDropDown from "./NavDropDown";
@@ -7,7 +8,6 @@ import { getCookie } from "cookies-next";
 
 export default function Profile(): JSX.Element {
   const [dropdownVisability, setDropdownVisability] = useState(false);
-  const [closedByDropDown, setClosedByDropDown] = useState(false);
   const [profilePic, setProfilePic] = useState("");
   useEffect(() => {
     const jwt = getCookie("auth_token") as string;
@@ -28,10 +28,6 @@ export default function Profile(): JSX.Element {
         className="w-11"
         id="profile_pic_in_navbar"
         onClick={() => {
-          if (closedByDropDown) {
-            setClosedByDropDown(false);
-            return;
-          }
           setDropdownVisability(!dropdownVisability);
         }}
       >
@@ -52,7 +48,6 @@ export default function Profile(): JSX.Element {
         {dropdownVisability && (
           <NavDropDown
             close={() => {
-              setClosedByDropDown(true);
               setDropdownVisability(false);
             }}
           />

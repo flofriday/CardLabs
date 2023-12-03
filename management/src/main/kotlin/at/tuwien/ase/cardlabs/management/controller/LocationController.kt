@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class LocationController(val locationService: LocationService) {
 
-    @GetMapping("/location")
+    @GetMapping("/locations")
     fun locations(): ResponseEntity<List<String>> {
         val result = locationService.getAll()
         return ResponseEntity

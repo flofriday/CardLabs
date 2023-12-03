@@ -162,7 +162,10 @@ export default function SettingsForm(): JSX.Element {
           >
             Delete Account
           </button>
-          <button className="btn bg-primary text-text py-2 w-48 rounded-lg shadow-md text-lg">
+          <button
+            className="btn bg-primary text-text py-2 w-48 rounded-lg shadow-md text-lg"
+            id="save_settings_button"
+          >
             Save
           </button>
         </div>

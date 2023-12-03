@@ -1,4 +1,4 @@
-package at.tuwien.ase.cardlabs.management.controller.model
+package at.tuwien.ase.cardlabs.management.controller.model.account
 
 data class Account(
     val id: Long?,
