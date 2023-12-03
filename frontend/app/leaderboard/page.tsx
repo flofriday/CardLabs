@@ -1,16 +1,79 @@
+"use client";
+
+import Pagination from "../components/Pagination";
 import RegionSelector from "../components/RegionSelector";
 import LeftPageHeader from "../components/leftPageHeader";
 import Robot, { RobotType } from "../components/robot";
+import LeaderBoardEntry from "./LeaderBoardEntry";
+import { useState, useEffect } from "react";
+import { leaderBoardEntry } from "../types/leaderBoardEntry";
+import {
+  getLeaderBoardPage,
+  getTotalNumberOfPages,
+} from "../services/LeaderBoardService";
+import { RegionType } from "../types/RegionType";
+import { LeaderBoardType } from "../types/LeaderBoardType";
 
 export default function Leaderboard(): JSX.Element {
+  const entriesPerPage = 5;
+  const [leaderBoardEntries, setLeaderBoardEntries] = useState<
+    leaderBoardEntry[]
+  >([]);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(2);
+  const [selectedRegion, setSelectedRegion] = useState(RegionType.GLOBAL);
+
+  useEffect(() => {
+    getTotalNumberOfPages(entriesPerPage)
+      .then((pages) => {
+        setTotalPages(pages);
+      })
+      .catch(() => {});
+    getLeaderBoardPage(
+      entriesPerPage,
+      pageNumber,
+      selectedRegion,
+      LeaderBoardType.ALL_BOTS
+    ).then((entries) => {
+      setLeaderBoardEntries(entries);
+    });
+  });
+
+  const handlePageChange = (page: number) => {
+    setPageNumber(page);
+
+    getLeaderBoardPage(5, page, selectedRegion, LeaderBoardType.ALL_BOTS)
+      .then((entries) => {
+        setLeaderBoardEntries(entries);
+        console.log(entries);
+      })
+      .catch(() => {});
+  };
+
   return (
-    <div className="h-full relative">
+    <div className="flex flex-col h-full">
       <LeftPageHeader title="Leaderboard" />
 
-      <Robot type={RobotType.QUESTIONMARK} />
+      <div className="flex flex-1 justify-center items-center pt-20">
+        <div className="w-1/4 p-12">
+          <Robot type={RobotType.QUESTIONMARK} />
+        </div>
 
-      <div className="absolute top-0 right-0 space-y-5 flex flex-col justify-center items-center h-full w-1/4 mr-12">
-        <RegionSelector />
+        <div className="w-1/2 px-12 pt-16">
+          <div className="flex flex-col items-center justify-center space-y-10">
+            {leaderBoardEntries.map((entry, index) => (
+              <LeaderBoardEntry key={index} entry={entry} />
+            ))}
+            <Pagination
+              totalNumberOfPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </div>
+
+        <div className="w-1/4 p-12">
+          <RegionSelector />
+        </div>
       </div>
     </div>
   );

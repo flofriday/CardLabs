@@ -1,3 +1,5 @@
+import test from "node:test";
+import { LeaderBoardType } from "../types/LeaderBoardType";
 import { RegionType } from "../types/RegionType";
 import { leaderBoardEntry } from "../types/leaderBoardEntry";
 
@@ -25,6 +27,22 @@ const exampleEntries2: leaderBoardEntry[] = [
   { place: 3, score: 77, botName: "BotZ", userName: "UserZ" },
   { place: 4, score: 71, botName: "BotW", userName: "UserW" },
   { place: 5, score: 65, botName: "BotV", userName: "UserV" },
+];
+
+const testentries1: leaderBoardEntry[] = [
+  { place: 1, score: 100, botName: "Bot1", userName: "User1" },
+  { place: 2, score: 90, botName: "Bot2", userName: "User2" },
+  { place: 3, score: 100, botName: "Bot1", userName: "User1" },
+  { place: 4, score: 90, botName: "Bot2", userName: "User2" },
+  { place: 5, score: 90, botName: "Bot2", userName: "User2" },
+];
+
+const testentries2: leaderBoardEntry[] = [
+  { place: 6, score: 100, botName: "Bot1", userName: "User1" },
+  { place: 7, score: 90, botName: "Bot2", userName: "User2" },
+  { place: 8, score: 100, botName: "Bot1", userName: "User1" },
+  { place: 9, score: 90, botName: "Bot2", userName: "User2" },
+  { place: 10, score: 90, botName: "Bot2", userName: "User2" },
 ];
 
 export async function getGlobalTop5LeaderBoardEntries(
@@ -55,4 +73,25 @@ export async function getMyTop5LeaderBoardEntries(
   } else {
     return exampleEntries;
   }
+}
+
+export async function getLeaderBoardPage(
+  numberOfEntriesPerPage: number,
+  pageNumber: number,
+  regionType: RegionType,
+  boardType: LeaderBoardType
+): Promise<leaderBoardEntry[]> {
+  // TODO replace this with calls to the backend
+  if (pageNumber == 1) {
+    return testentries1;
+  } else {
+    return testentries2;
+  }
+}
+
+export async function getTotalNumberOfPages(
+  entriesPerPage: number
+): Promise<number> {
+  // TODO replace this with calls to the backend
+  return 2;
 }
