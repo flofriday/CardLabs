@@ -35,7 +35,7 @@ interface Props {
 //  "Robot surrounded by question marks"
 export default function Robot({ type }: Props): JSX.Element {
   return (
-    <div className="absolute w-2/12 m-12 flex h-full">
+    <div className="absolute w-2/12 mx-12 flex h-full">
       <Image src={type.src} alt={type.alt} width={500} height={500} />
     </div>
   );
