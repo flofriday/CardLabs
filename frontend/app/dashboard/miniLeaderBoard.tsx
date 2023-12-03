@@ -2,40 +2,43 @@
 
 import MiniLeaderBoardContent from "./miniLeaderBoardContent";
 import { leaderBoardEntry } from "../types/leaderBoardEntry";
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { RegionType } from "../types/RegionType";
+import { LeaderBoardType } from "../types/LeaderBoardType";
 
 interface Props {
-  heading: string;
+  leaderboardType: LeaderBoardType;
+  entryFetchFunction: (region: RegionType) => Promise<leaderBoardEntry[]>;
 }
 
-// TODO: Remove this as this is just mocked data to test the frontend
-const exampleEntries: leaderBoardEntry[] = [
-  { place: 1, score: 90, botName: "Lewisbot", userName: "User1" },
-  { place: 2, score: 85, botName: "Goropogo", userName: "User2" },
-  { place: 3, score: 80, botName: "Greenpop", userName: "User3" },
-  { place: 4, score: 75, botName: "ThisIsAnAwesome name", userName: "User4" },
-  { place: 5, score: 70, botName: "Bot5", userName: "User5" },
-];
+export default function MiniLeaderBoard({
+  leaderboardType,
+  entryFetchFunction,
+}: Props): JSX.Element {
+  const [selectedRegion, setSelectedRegion] = useState(RegionType.GLOBAL);
+  const [globalEntries, setGlobalEntries] = useState<leaderBoardEntry[]>([]);
+  const [continentEntries, setContinentEntries] = useState<leaderBoardEntry[]>(
+    []
+  );
+  const [countryEntries, setCountryEntries] = useState<leaderBoardEntry[]>([]);
 
-const exampleEntries1: leaderBoardEntry[] = [
-  { place: 1, score: 95, botName: "BotA", userName: "UserA" },
-  { place: 2, score: 88, botName: "BotB", userName: "UserB" },
-  { place: 3, score: 82, botName: "BotC", userName: "UserC" },
-  { place: 4, score: 76, botName: "BotD", userName: "UserD" },
-  { place: 5, score: 70, botName: "BotE", userName: "UserE" },
-];
-
-// Example Entry List 2
-const exampleEntries2: leaderBoardEntry[] = [
-  { place: 1, score: 89, botName: "BotX", userName: "UserX" },
-  { place: 2, score: 83, botName: "BotY", userName: "UserY" },
-  { place: 3, score: 77, botName: "BotZ", userName: "UserZ" },
-  { place: 4, score: 71, botName: "BotW", userName: "UserW" },
-  { place: 5, score: 65, botName: "BotV", userName: "UserV" },
-];
-
-export default function MiniLeaderBoard({ heading }: Props): JSX.Element {
-  const [selectedTab, setSelectedTab] = useState("tabs-global");
+  useEffect(() => {
+    entryFetchFunction(RegionType.GLOBAL)
+      .then((entries) => {
+        setGlobalEntries(entries);
+      })
+      .catch(() => {});
+    entryFetchFunction(RegionType.CONTINENT)
+      .then((entries) => {
+        setContinentEntries(entries);
+      })
+      .catch(() => {});
+    entryFetchFunction(RegionType.COUNTRY)
+      .then((entries) => {
+        setCountryEntries(entries);
+      })
+      .catch(() => {});
+  }, [entryFetchFunction]);
 
   return (
     <div className="bg-secondary rounded-lg w-full">
@@ -47,7 +50,7 @@ export default function MiniLeaderBoard({ heading }: Props): JSX.Element {
         <li
           role="presentation"
           className={`flex-auto text-center bg-primary rounded-tl-lg ${
-            selectedTab === "tabs-global"
+            selectedRegion === RegionType.GLOBAL
               ? "text-white border-b-2 border-white"
               : "bg-primary"
           }`}
@@ -57,8 +60,10 @@ export default function MiniLeaderBoard({ heading }: Props): JSX.Element {
             data-te-toggle="pill"
             data-te-target="#tabs-global"
             aria-controls="tabs-global"
-            aria-selected={selectedTab === "tabs-global"}
-            onClick={() => setSelectedTab("tabs-global")}
+            aria-selected={selectedRegion === RegionType.GLOBAL}
+            onClick={() => {
+              setSelectedRegion(RegionType.GLOBAL);
+            }}
           >
             Global
           </a>
@@ -66,7 +71,7 @@ export default function MiniLeaderBoard({ heading }: Props): JSX.Element {
         <li
           role="presentation"
           className={`flex-auto text-center bg-primary ${
-            selectedTab === "tabs-continent"
+            selectedRegion === RegionType.CONTINENT
               ? "text-white border-b-2 border-white"
               : "bg-primary"
           }`}
@@ -76,8 +81,10 @@ export default function MiniLeaderBoard({ heading }: Props): JSX.Element {
             data-te-toggle="pill"
             data-te-target="#tabs-continent"
             aria-controls="tabs-continent"
-            aria-selected={selectedTab === "tabs-continent"}
-            onClick={() => setSelectedTab("tabs-continent")}
+            aria-selected={selectedRegion === RegionType.CONTINENT}
+            onClick={() => {
+              setSelectedRegion(RegionType.CONTINENT);
+            }}
           >
             Continent
           </a>
@@ -85,7 +92,7 @@ export default function MiniLeaderBoard({ heading }: Props): JSX.Element {
         <li
           role="presentation"
           className={`flex-auto text-center bg-primary rounded-tr-lg ${
-            selectedTab === "tabs-country"
+            selectedRegion === RegionType.COUNTRY
               ? "text-white border-b-2 border-white"
               : "bg-primary"
           }`}
@@ -95,8 +102,10 @@ export default function MiniLeaderBoard({ heading }: Props): JSX.Element {
             data-te-toggle="pill"
             data-te-target="#tabs-country"
             aria-controls="tabs-country"
-            aria-selected={selectedTab === "tabs-country"}
-            onClick={() => setSelectedTab("tabs-country")}
+            aria-selected={selectedRegion === RegionType.COUNTRY}
+            onClick={() => {
+              setSelectedRegion(RegionType.COUNTRY);
+            }}
           >
             Country
           </a>
@@ -105,33 +114,47 @@ export default function MiniLeaderBoard({ heading }: Props): JSX.Element {
 
       <div className="mb-6">
         <div
-          style={{ display: selectedTab === "tabs-global" ? "block" : "none" }}
+          style={{
+            display: selectedRegion === RegionType.GLOBAL ? "block" : "none",
+          }}
           id="tabs-global"
           role="tabpanel"
           aria-labelledby="tabs-global"
           data-te-tab-active
         >
-          <MiniLeaderBoardContent title={heading} entries={exampleEntries} />
+          <MiniLeaderBoardContent
+            regionType={RegionType.GLOBAL}
+            leaderBoardType={leaderboardType}
+            entries={globalEntries}
+          />
         </div>
         <div
           style={{
-            display: selectedTab === "tabs-continent" ? "block" : "none",
+            display: selectedRegion === RegionType.CONTINENT ? "block" : "none",
           }}
           id="tabs-continent"
           role="tabpanel"
           aria-labelledby="tabs-continent"
         >
-          <MiniLeaderBoardContent title={heading} entries={exampleEntries1} />
+          <MiniLeaderBoardContent
+            regionType={RegionType.CONTINENT}
+            leaderBoardType={leaderboardType}
+            entries={continentEntries}
+          />
         </div>
         <div
           style={{
-            display: selectedTab === "tabs-country" ? "block" : "none",
+            display: selectedRegion === RegionType.COUNTRY ? "block" : "none",
           }}
           id="tabs-country"
           role="tabpanel"
           aria-labelledby="tabs-country"
         >
-          <MiniLeaderBoardContent title={heading} entries={exampleEntries2} />
+          <MiniLeaderBoardContent
+            regionType={RegionType.COUNTRY}
+            leaderBoardType={leaderboardType}
+            entries={countryEntries}
+          />
         </div>
       </div>
     </div>

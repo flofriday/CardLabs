@@ -16,8 +16,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }): JSX.Element {
-  // h-[calc(100%_-_5rem)] is needed so that the h-full works as expected in the
-  // children
   return (
     <html lang="en">
       <body className={inter.className}>
