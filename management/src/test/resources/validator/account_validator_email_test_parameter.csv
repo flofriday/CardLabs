@@ -1,0 +1,5 @@
+# email | success | errorMessage | description
+"test",false,"The email must be a valid email address","Test no @ without end"
+"test@",false,"The email must be a valid email address","Test with @ without end"
+"testtest.com",false,"The email must be a valid email address","Test no @ with end"
+"test@test.com",true,"","Test successful validation"

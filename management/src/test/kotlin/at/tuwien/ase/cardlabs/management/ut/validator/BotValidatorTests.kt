@@ -1,4 +1,4 @@
-package at.tuwien.ase.cardlabs.management.ut
+package at.tuwien.ase.cardlabs.management.ut.validator
 
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch

@@ -28,7 +28,7 @@ class AccountValidator {
             )
             Validator.validate(
                 account.email,
-                IsEmailRule("email")
+                emailValidationRules()
             )
             Validator.validate(
                 account.password,
@@ -36,6 +36,11 @@ class AccountValidator {
             )
         }
 
+        /**
+         * The validation rules that are used to validate a username
+         *
+         * @return the validation rules
+         */
         @JvmStatic
         fun usernameValidationRules(): List<ValidationRule<String>> {
             val inputName = "username"
@@ -46,6 +51,24 @@ class AccountValidator {
             )
         }
 
+        /**
+         * The validation rules that are used to validate an email
+         *
+         * @return the validation rules
+         */
+        @JvmStatic
+        fun emailValidationRules(): List<ValidationRule<String>> {
+            val inputName = "email";
+            return mutableListOf(
+                IsEmailRule(inputName)
+            )
+        }
+
+        /**
+         * The validation rules that are used to validate a password
+         *
+         * @return the validation rules
+         */
         @JvmStatic
         fun passwordValidationRules(): List<ValidationRule<String>> {
             val inputName = "password"
