@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.ut
 
+import at.tuwien.ase.cardlabs.management.TestConfig
 import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
@@ -13,6 +14,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvFileSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
@@ -28,76 +32,74 @@ internal class BotServiceTests {
     @Autowired
     private lateinit var botService: BotService
 
-    @Test
-    fun whenBotCreate_withValidData_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "PassWord123?!")
+    @ParameterizedTest
+    @CsvFileSource(resources = ["/service/bot/bot_service_create_test_parameter.csv"])
+    fun testBotCreate(name: String, currentCode: String?, success: Boolean, errorMessage: String, description: String) {
+        val account = createAccount()
         val user = TestHelper.createUserDetails(account)
 
         val botCreate = BotCreate(
-            name = "Tytartron"
+            name = "Tytartron",
+            currentCode = currentCode.takeUnless { it.equals(TestConfig.CSV_NULL_VALUE) }
         )
-        val result = assertDoesNotThrow {
-            botService.create(user, botCreate)
-        }
 
-        assertNotNull(result)
-        assertNotNull(result.id)
-        assertEquals(botCreate.name, result.name)
-        assertEquals(account.id!!, result.ownerId)
-        assertEquals("", result.currentCode)
-        assertEquals(0, result.codeHistory.size)
-        assertEquals(1000, result.eloScore)
-        assertEquals(BotState.CREATED, result.currentState)
-        assertEquals(BotState.READY, result.defaultState)
+        if (success) {
+            val result = assertDoesNotThrow {
+                botService.create(user, botCreate)
+            }
+
+            assertNotNull(result)
+            assertNotNull(result.id)
+            assertEquals(botCreate.name, result.name)
+            assertEquals(account.id!!, result.ownerId)
+            assertEquals(if (currentCode.equals(TestConfig.CSV_NULL_VALUE)) "" else currentCode, result.currentCode)
+            assertEquals(0, result.codeHistory.size)
+            assertEquals(1000, result.eloScore)
+            assertEquals(BotState.CREATED, result.currentState)
+            assertEquals(BotState.READY, result.defaultState)
+        } else {
+            val exception = assertThrows<Exception> {
+                botService.create(user, botCreate)
+            }
+            assertEquals(errorMessage, exception.message)
+        }
     }
 
-    @Test
-    fun whenBotPatch_withNoData_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "PassWord123?!")
-        val user = TestHelper.createUserDetails(account)
-        val bot = createBot(user, "Tytartron", null)
-
-        val botFetch = BotPatch()
-        val result = assertDoesNotThrow {
-            botService.patch(user, bot.id!!, botFetch)
-        }
-        assertEquals(bot.id, result.id)
-        assertEquals(bot.name, result.name)
-        assertEquals(bot.ownerId, result.ownerId)
-        assertEquals("", result.currentCode)
-        assertEquals(bot.codeHistory.size, result.codeHistory.size)
-        assertEquals(bot.eloScore, result.eloScore)
-        assertEquals(bot.currentState, result.currentState)
-        assertEquals(bot.defaultState, result.defaultState)
-        assertEquals(bot.errorStateMessage, result.errorStateMessage)
-    }
-
-    @Test
-    fun whenBotPatch_withCodeData_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "PassWord123?!")
+    @ParameterizedTest
+    @CsvFileSource(resources = ["/service/bot/bot_service_patch_test_parameter.csv"])
+    fun testBotPatch(currentCode: String?, success: Boolean, errorMessage: String, description: String) {
+        val account = createAccount()
         val user = TestHelper.createUserDetails(account)
         val bot = createBot(user, "Tytartron", null)
 
         val botFetch = BotPatch(
-            currentCode = "x = 5"
+            currentCode = currentCode.takeUnless { it.equals(TestConfig.CSV_NULL_VALUE) }
         )
-        val result = assertDoesNotThrow {
-            botService.patch(user, bot.id!!, botFetch)
+
+        if (success) {
+            val result = assertDoesNotThrow {
+                botService.patch(user, bot.id!!, botFetch)
+            }
+            assertEquals(bot.id, result.id)
+            assertEquals(bot.name, result.name)
+            assertEquals(bot.ownerId, result.ownerId)
+            assertEquals(if (currentCode.equals(TestConfig.CSV_NULL_VALUE)) "" else currentCode, result.currentCode)
+            assertEquals(bot.codeHistory.size, result.codeHistory.size)
+            assertEquals(bot.eloScore, result.eloScore)
+            assertEquals(bot.currentState, result.currentState)
+            assertEquals(bot.defaultState, result.defaultState)
+            assertEquals(bot.errorStateMessage, result.errorStateMessage)
+        } else {
+            val exception = assertThrows<Exception> {
+                botService.patch(user, bot.id!!, botFetch)
+            }
+            assertEquals(errorMessage, exception.message)
         }
-        assertEquals(bot.id, result.id)
-        assertEquals(bot.name, result.name)
-        assertEquals(bot.ownerId, result.ownerId)
-        assertEquals(botFetch.currentCode, result.currentCode)
-        assertEquals(bot.codeHistory.size, result.codeHistory.size)
-        assertEquals(bot.eloScore, result.eloScore)
-        assertEquals(bot.currentState, result.currentState)
-        assertEquals(bot.defaultState, result.defaultState)
-        assertEquals(bot.errorStateMessage, result.errorStateMessage)
     }
 
     @Test
-    fun whenBotRank_withValidData_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "PassWord123?!")
+    fun whenBotCodeVersion_withValidData_expectSuccess() {
+        val account = createAccount()
         val user = TestHelper.createUserDetails(account)
         val bot = createBot(user, "Tytartron", "x = 5")
 
@@ -108,7 +110,7 @@ internal class BotServiceTests {
 
     @Test
     fun whenBotFetchById_withValidData_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "PassWord123?!")
+        val account = createAccount()
         val userDetails = TestHelper.createUserDetails(account)
         val bot = createBot(userDetails, "Tytartron", null)
 
@@ -126,7 +128,7 @@ internal class BotServiceTests {
 
     @Test
     fun whenBotFetchByAll_withValidData_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "PassWord123?!")
+        val account = createAccount()
         val userDetails = TestHelper.createUserDetails(account)
         val bot1 = createBot(userDetails, "Tytartron", null)
         val bot2 = createBot(userDetails, "Neophotron", null)
@@ -140,7 +142,7 @@ internal class BotServiceTests {
 
     @Test
     fun whenBotDelete_withValidData_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "PassWord123?!")
+        val account = createAccount()
         val userDetails = TestHelper.createUserDetails(account)
         val bot = createBot(userDetails, "Tytartron", null)
 
@@ -150,8 +152,8 @@ internal class BotServiceTests {
     }
 
     @Test
-    fun whenBotRankPosition_withValidData_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "PassWord123?!")
+    fun whenBotRankPosition_withOneBot_expectSuccess() {
+        val account = createAccount()
         val userDetails = TestHelper.createUserDetails(account)
         val bot = createBot(userDetails, "Tytartron", null)
 
@@ -161,12 +163,29 @@ internal class BotServiceTests {
         assertEquals(1, result)
     }
 
-    private fun createAccount(username: String, email: String, password: String): Account {
+    @Test
+    fun whenBotRankPosition_withMultipleBots_expectSuccess() {
+        val account = createAccount()
+        val userDetails = TestHelper.createUserDetails(account)
+        val bot1 = createBot(userDetails, "Tytartron", null)
+        val bot2 = createBot(userDetails, "Neophotron", null)
+
+        val result1 = assertDoesNotThrow {
+            botService.fetchRankPosition(userDetails, bot1.id!!)
+        }
+        assertEquals(1, result1)
+        val result2 = assertDoesNotThrow {
+            botService.fetchRankPosition(userDetails, bot2.id!!)
+        }
+        assertEquals(1, result2)
+    }
+
+    private fun createAccount(): Account {
         return TestHelper.createAccount(
             accountService = accountService,
-            username = username,
-            email = email,
-            password = password,
+            username = "test",
+            email = "test@test.com",
+            password = "PassWord123?!",
             location = null,
             sendScoreUpdates = false,
             sendChangeUpdates = false,

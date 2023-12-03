@@ -18,6 +18,7 @@ import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.validation.validator.BotValidator
 import at.tuwien.ase.cardlabs.management.validation.validator.Validator
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -33,11 +34,12 @@ class BotService(
     private val botCodeRepository: BotCodeRepository
 ) {
 
-    companion object {
+    @Value("\${cardlabs.elo.initial-value}")
+    private val initialEloValue = 1000
 
-        const val INITIAL_ELO_VALUE: Int = 1000
-    }
-
+    /**
+     * Generate a bot name
+     */
     fun generateBotName(): String {
         return botNameGenerator.generateBotName()
     }
@@ -57,7 +59,7 @@ class BotService(
         bot.owner = owner
         bot.currentCode = botCreate.currentCode ?: ""
         bot.codeHistory = mutableListOf()
-        bot.eloScore = INITIAL_ELO_VALUE
+        bot.eloScore = initialEloValue
         bot.currentState = BotState.CREATED
         bot.defaultState = BotState.READY
 

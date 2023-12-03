@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest
 internal class BotValidatorTests {
 
     @ParameterizedTest
-    @CsvFileSource(resources = ["/validator/bot_validator_create_test_parameter.csv"], numLinesToSkip = 1)
+    @CsvFileSource(resources = ["/validator/bot/bot_validator_create_test_parameter.csv"])
     fun testBotCreateValidator(
         name: String,
         currentCode: String,
@@ -41,7 +41,7 @@ internal class BotValidatorTests {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = ["/validator/bot_validator_patch_test_parameter.csv"], numLinesToSkip = 1)
+    @CsvFileSource(resources = ["/validator/bot/bot_validator_patch_test_parameter.csv"])
     fun testBotPatchValidator(currentCode: String, success: Boolean, errorMessage: String, description: String) {
         val botPatch = BotPatch(
             currentCode = currentCode
@@ -59,7 +59,7 @@ internal class BotValidatorTests {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = ["/validator/bot_validator_rules_name_test_parameter.csv"], numLinesToSkip = 1)
+    @CsvFileSource(resources = ["/validator/bot/bot_validator_rules_name_test_parameter.csv"])
     fun testNameValidator(name: String, success: Boolean, errorMessage: String, description: String) {
         if (success) {
             assertDoesNotThrow {
@@ -74,7 +74,7 @@ internal class BotValidatorTests {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = ["/validator/bot_validator_rules_code_test_parameter.csv"], numLinesToSkip = 1)
+    @CsvFileSource(resources = ["/validator/bot/bot_validator_rules_code_test_parameter.csv"])
     fun testCodeValidator(code: String, success: Boolean, errorMessage: String, description: String) {
         if (success) {
             assertDoesNotThrow {
