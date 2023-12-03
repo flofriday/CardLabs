@@ -3,6 +3,9 @@ package at.tuwien.ase.cardlabs.management.validation.string
 import at.tuwien.ase.cardlabs.management.error.ValidationException
 import at.tuwien.ase.cardlabs.management.validation.ValidationRule
 
+/**
+ * A rule that checks if the given string is within a given length where the min and max length are inclusive
+ */
 class LengthRule(private var inputName: String?, private val min: Int, private val max: Int) : ValidationRule<String> {
 
     init {

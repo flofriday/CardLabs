@@ -47,7 +47,7 @@ internal class AccountValidatorTests {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = ["/validator/account_validator_username_test_parameter.csv"], numLinesToSkip = 1)
+    @CsvFileSource(resources = ["/validator/account_validator_rules_username_test_parameter.csv"], numLinesToSkip = 1)
     fun testUsernameValidator(username: String, success: Boolean, errorMessage: String, description: String) {
         if (success) {
             assertDoesNotThrow {
@@ -62,7 +62,7 @@ internal class AccountValidatorTests {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = ["/validator/account_validator_email_test_parameter.csv"], numLinesToSkip = 1)
+    @CsvFileSource(resources = ["/validator/account_validator_rules_email_test_parameter.csv"], numLinesToSkip = 1)
     fun testEmailValidator(username: String, success: Boolean, errorMessage: String, description: String) {
         if (success) {
             assertDoesNotThrow {
@@ -77,7 +77,7 @@ internal class AccountValidatorTests {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = ["/validator/account_validator_password_test_parameter.csv"], numLinesToSkip = 1)
+    @CsvFileSource(resources = ["/validator/account_validator_rules_password_test_parameter.csv"], numLinesToSkip = 1)
     fun testPasswordValidator(username: String, success: Boolean, errorMessage: String, description: String) {
         if (success) {
             assertDoesNotThrow {

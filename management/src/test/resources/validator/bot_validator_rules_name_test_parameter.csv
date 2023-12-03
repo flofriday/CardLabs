@@ -1,0 +1,5 @@
+# name | success | errorMessage | description
+"",false,"The name can not be empty or blank","Test the not empty rule"
+"a",false,"The name must have length [5, 30]","Test the min length rule"
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",false,"The name must have length [5, 30]","Test the max length rule"
+"Xennixos",true,"","Test successful validation"

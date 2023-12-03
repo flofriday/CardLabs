@@ -7,6 +7,9 @@ import at.tuwien.ase.cardlabs.management.validation.ValidationRule
 import at.tuwien.ase.cardlabs.management.validation.string.LengthRule
 import at.tuwien.ase.cardlabs.management.validation.string.NotEmptyRule
 
+/**
+ * Data validation methods for bot operations
+ */
 class BotValidator {
 
     companion object {
@@ -20,8 +23,7 @@ class BotValidator {
         fun validate(botCreate: BotCreate) {
             Validator.validate(
                 botCreate.name,
-                NotEmptyRule("name"),
-                LengthRule("name", 5, 30)
+                nameValidationRules()
             )
             botCreate.currentCode?.let {
                 Validator.validate(
@@ -46,6 +48,25 @@ class BotValidator {
             }
         }
 
+        /**
+         * The validation rules that are used to validate a name
+         *
+         * @return the validation rules
+         */
+        @JvmStatic
+        fun nameValidationRules(): List<ValidationRule<String>> {
+            val inputName = "name"
+            return mutableListOf(
+                NotEmptyRule(inputName),
+                LengthRule(inputName, 5, 30)
+            )
+        }
+
+        /**
+         * The validation rules that are used to validate code
+         *
+         * @return the validation rules
+         */
         @JvmStatic
         fun codeValidationRules(): List<ValidationRule<String>> {
             val inputName = "code"

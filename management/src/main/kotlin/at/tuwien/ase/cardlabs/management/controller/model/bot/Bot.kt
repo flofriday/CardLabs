@@ -2,6 +2,9 @@ package at.tuwien.ase.cardlabs.management.controller.model.bot
 
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 
+/**
+ * A model representing a bot
+ */
 data class Bot(
     val id: Long?,
     val name: String,

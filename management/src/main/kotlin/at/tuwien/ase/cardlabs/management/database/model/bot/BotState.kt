@@ -1,5 +1,8 @@
 package at.tuwien.ase.cardlabs.management.database.model.bot
 
+/**
+ * The state in which the bot currently is
+ */
 enum class BotState {
 
     /**

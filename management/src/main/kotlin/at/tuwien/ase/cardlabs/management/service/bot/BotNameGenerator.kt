@@ -5,7 +5,11 @@ import org.springframework.stereotype.Component
 @Component
 class BotNameGenerator {
 
-    // Generates a bot name by combining random syllables
+    /**
+     * Generates a random bot name by combining random syllables
+     *
+     * @return a random bot name
+     */
     fun generateBotName(): String {
         val first = listOf("Zar", "Xen", "Kry", "Vex", "Neo", "Jen", "Ty", "Rax")
         val middle = listOf("lon", "tar", "nix", "mek", "zor", "dor", "pho", "gi", "")

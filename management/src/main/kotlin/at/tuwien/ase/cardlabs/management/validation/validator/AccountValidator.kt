@@ -11,6 +11,9 @@ import at.tuwien.ase.cardlabs.management.validation.string.LengthRule
 import at.tuwien.ase.cardlabs.management.validation.string.NotContainWhitespaceRule
 import at.tuwien.ase.cardlabs.management.validation.string.NotEmptyRule
 
+/**
+ * Data validation methods for account operations
+ */
 class AccountValidator {
 
     companion object {
@@ -58,7 +61,7 @@ class AccountValidator {
          */
         @JvmStatic
         fun emailValidationRules(): List<ValidationRule<String>> {
-            val inputName = "email";
+            val inputName = "email"
             return mutableListOf(
                 IsEmailRule(inputName)
             )

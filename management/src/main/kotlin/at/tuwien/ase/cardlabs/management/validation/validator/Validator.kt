@@ -2,21 +2,30 @@ package at.tuwien.ase.cardlabs.management.validation.validator
 
 import at.tuwien.ase.cardlabs.management.validation.ValidationRule
 
+/**
+ * Helper methods for performing validations
+ */
 class Validator {
 
     companion object {
 
+        /**
+         * Validates all given rules against a given input
+         */
         @JvmStatic
-        fun <T> validate(t: T, rules: List<ValidationRule<T>>) {
+        fun <T> validate(input: T, rules: List<ValidationRule<T>>) {
             for (rule in rules) {
-                rule.validate(t)
+                rule.validate(input)
             }
         }
 
+        /**
+         * Validates all given rules against a given input
+         */
         @JvmStatic
-        fun <T> validate(t: T, vararg rules: ValidationRule<T>) {
+        fun <T> validate(input: T, vararg rules: ValidationRule<T>) {
             for (rule in rules) {
-                rule.validate(t)
+                rule.validate(input)
             }
         }
     }

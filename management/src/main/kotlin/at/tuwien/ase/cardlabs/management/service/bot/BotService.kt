@@ -42,6 +42,9 @@ class BotService(
         return botNameGenerator.generateBotName()
     }
 
+    /**
+     * Create a bot
+     */
     @Transactional
     fun create(user: CardLabUser, botCreate: BotCreate): Bot {
         val owner = accountService.findById(user.id)
@@ -61,6 +64,9 @@ class BotService(
         return botMapper.map(botRepository.save(bot))
     }
 
+    /**
+     * Update a bot
+     */
     @Transactional
     fun patch(user: CardLabUser, botId: Long, botPatch: BotPatch): Bot {
         val bot = findById(botId)
@@ -76,8 +82,11 @@ class BotService(
         return botMapper.map(bot)
     }
 
+    /**
+     * Create a new version of the current code which is used when a bot is playing a game
+     */
     @Transactional
-    fun rank(user: CardLabUser, botId: Long) {
+    fun createCodeVersion(user: CardLabUser, botId: Long) {
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
         if (bot.owner.id != user.id) {
@@ -106,6 +115,9 @@ class BotService(
         bot.codeHistory.add(botCodeDAO)
     }
 
+    /**
+     * Fetch a bot by its id
+     */
     @Transactional
     fun fetch(user: CardLabUser, botId: Long): Bot {
         val bot = findById(botId)
@@ -118,12 +130,18 @@ class BotService(
         return botMapper.map(bot)
     }
 
+    /**
+     * Fetch all bots by user
+     */
     @Transactional
     fun fetchAll(user: CardLabUser, pageable: Pageable): Page<Bot> {
         return botRepository.findByOwnerIdAndDeletedIsNull(user.id, pageable)
             .map(botMapper::map)
     }
 
+    /**
+     * Delete a bot by its id
+     */
     @Transactional
     fun delete(user: CardLabUser, botId: Long) {
         val bot = findById(botId)
@@ -136,8 +154,11 @@ class BotService(
         bot.deleted = Instant.now()
     }
 
+    /**
+     * Fetch the current rank position of a bot
+     */
     @Transactional
-    fun rankPosition(user: CardLabUser, botId: Long): Long {
+    fun fetchRankPosition(user: CardLabUser, botId: Long): Long {
         findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 

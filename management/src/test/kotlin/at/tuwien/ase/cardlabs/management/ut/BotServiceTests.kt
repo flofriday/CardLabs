@@ -102,7 +102,7 @@ internal class BotServiceTests {
         val bot = createBot(user, "Tytartron", "x = 5")
 
         val result = assertDoesNotThrow {
-            botService.rank(user, bot.id!!)
+            botService.createCodeVersion(user, bot.id!!)
         }
     }
 
@@ -156,7 +156,7 @@ internal class BotServiceTests {
         val bot = createBot(userDetails, "Tytartron", null)
 
         val result = assertDoesNotThrow {
-            botService.rankPosition(userDetails, bot.id!!)
+            botService.fetchRankPosition(userDetails, bot.id!!)
         }
         assertEquals(1, result)
     }

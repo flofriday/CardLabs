@@ -12,7 +12,7 @@ import jakarta.persistence.Table
 
 /**
  * A database entry representing a bot code. When the deleted field from the parent class AuditedEntity is set, then
- * the account counts as being deleted
+ * the bot code counts as being deleted
  */
 @Entity
 @Table(name = "bot_code")
