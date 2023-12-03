@@ -16,6 +16,7 @@ class BotValidator {
          *
          * @throws ValidationException if any rule is violated
          */
+        @JvmStatic
         fun validate(botCreate: BotCreate) {
             Validator.validate(
                 botCreate.name,
@@ -35,6 +36,7 @@ class BotValidator {
          *
          * @throws ValidationException if any rule is violated
          */
+        @JvmStatic
         fun validate(botPatch: BotPatch) {
             botPatch.currentCode?.let {
                 Validator.validate(
@@ -44,6 +46,7 @@ class BotValidator {
             }
         }
 
+        @JvmStatic
         fun codeValidationRules(): List<ValidationRule<String>> {
             val inputName = "code"
             return mutableListOf(

@@ -6,12 +6,14 @@ class Validator {
 
     companion object {
 
+        @JvmStatic
         fun <T> validate(t: T, rules: List<ValidationRule<T>>) {
             for (rule in rules) {
                 rule.validate(t)
             }
         }
 
+        @JvmStatic
         fun <T> validate(t: T, vararg rules: ValidationRule<T>) {
             for (rule in rules) {
                 rule.validate(t)

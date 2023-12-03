@@ -16,10 +16,11 @@ class AccountValidator {
     companion object {
 
         /**
-         * Checks if a BotCreate instance violates any rule
+         * Checks if a Account instance violates any rule in the context of account creation
          *
          * @throws ValidationException if any rule is violated
          */
+        @JvmStatic
         fun validateAccountCreate(account: Account) {
             Validator.validate(
                 account.username,
@@ -35,6 +36,7 @@ class AccountValidator {
             )
         }
 
+        @JvmStatic
         fun usernameValidationRules(): List<ValidationRule<String>> {
             val inputName = "username"
             return mutableListOf(
@@ -44,6 +46,7 @@ class AccountValidator {
             )
         }
 
+        @JvmStatic
         fun passwordValidationRules(): List<ValidationRule<String>> {
             val inputName = "password"
             return mutableListOf(

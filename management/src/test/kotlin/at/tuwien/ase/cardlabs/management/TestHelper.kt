@@ -12,15 +12,18 @@ class TestHelper {
     companion object {
 
         // == Authentication ==
+        @JvmStatic
         fun createUserDetails(id: Long, username: String, email: String, password: String): CardLabUser {
             return CardLabUser(id, username, email, password)
         }
 
+        @JvmStatic
         fun createUserDetails(account: Account): CardLabUser {
             return CardLabUser(account.id!!, account.username, account.email, account.password)
         }
 
         // == Account ==
+        @JvmStatic
         fun createAccount(
             accountService: AccountService,
             username: String,
@@ -44,10 +47,12 @@ class TestHelper {
             return accountService.create(account)
         }
 
+        @JvmStatic
         fun getAccount(accountService: AccountService, username: String): Account {
             return accountService.getUser(username)
         }
 
+        @JvmStatic
         fun createAccountCreateJSON(
             username: String,
             email: String,
@@ -70,6 +75,7 @@ class TestHelper {
             """.trimIndent()
         }
 
+        @JvmStatic
         fun createAccountUpdateCreateJSON(
             location: String?,
             sendScoreUpdates: Boolean,
@@ -86,6 +92,7 @@ class TestHelper {
             """.trimIndent()
         }
 
+        @JvmStatic
         fun createAccountLoginJSON(username: String, password: String): String {
             return """
                 {
@@ -96,6 +103,7 @@ class TestHelper {
         }
 
         // == Bot ==
+        @JvmStatic
         fun createBot(botService: BotService, user: CardLabUser, name: String, code: String?): Bot {
             val botCreate = BotCreate(
                 name = name,
