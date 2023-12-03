@@ -7,6 +7,7 @@ interface Props {
   values: string[];
   className?: string;
   defaultValue?: string;
+  customButtonClass?: string;
   onChange?: (value: string) => void;
 }
 
@@ -34,6 +35,7 @@ export default function DropDown({
   values = [],
   className = "w-fit",
   defaultValue = "",
+  customButtonClass = "bg-primary text-text p-2 w-full h-full rounded-lg shadow-md text-lg",
   onChange = () => {},
 }: Props): JSX.Element {
   const [dropDownVisability, setDropDownVisability] = useState(false);
@@ -79,7 +81,7 @@ export default function DropDown({
         onClick={() => {
           setDropDownVisability(!dropDownVisability);
         }}
-        className="btn bg-primary text-text p-2 w-full h-full rounded-lg shadow-md text-lg inline-flex justify-center items-center"
+        className={`btn inline-flex justify-center items-center ${customButtonClass}`}
       >
         <div className="flex justify-between w-full">
           <div className="ml-2">{value}</div>
