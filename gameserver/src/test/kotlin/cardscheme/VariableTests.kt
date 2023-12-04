@@ -58,15 +58,15 @@ class VariableTests {
     fun defineNested() {
         val program =
             """
-                ; At the end g should not be updated
-                (define g 2)
-                
-                (define (badUpdateGlobal n) 
-                    (define g n)
-                    n)
-                   
-                (badUpdateGlobal 3)
-                g
+            ; At the end g should not be updated
+            (define g 2)
+            
+            (define (badUpdateGlobal n) 
+                (define g n)
+                n)
+               
+            (badUpdateGlobal 3)
+            g
             """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
@@ -77,15 +77,15 @@ class VariableTests {
     fun defineUpdateNested() {
         val program =
             """
-                ; At the end g should be updated
-                (define g 2)
-                
-                (define (correctUpdateGlobal n) 
-                    (set! g n)
-                    n)
-                   
-                (correctUpdateGlobal 3)
-                g
+            ; At the end g should be updated
+            (define g 2)
+            
+            (define (correctUpdateGlobal n) 
+                (set! g n)
+                n)
+               
+            (correctUpdateGlobal 3)
+            g
             """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)

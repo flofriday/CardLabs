@@ -52,8 +52,9 @@ fun builtinMatchingCards(
     val first = verifyCard(args[0])
     val second = verifyCardList(args[1])
 
-    val matchingCards = second.filter { c -> first.match(c) }
-        .map { c -> encodeCard(c) }
+    val matchingCards =
+        second.filter { c -> first.match(c) }
+            .map { c -> encodeCard(c) }
     return ListValue(SchemeList(matchingCards))
 }
 
@@ -78,6 +79,13 @@ fun builtinRandomChoice(
     return when (collection) {
         is VectorValue -> collection.values.random()
         is ListValue -> collection.values.random()
-        else -> { throw SchemeError("Type Mismatch", "I can only take a random element from vectors or lists, but you provided a ${collection.typeName()}", args.first().location, null) }
+        else -> {
+            throw SchemeError(
+                "Type Mismatch",
+                "I can only take a random element from vectors or lists, but you provided a ${collection.typeName()}",
+                args.first().location,
+                null,
+            )
+        }
     }
 }

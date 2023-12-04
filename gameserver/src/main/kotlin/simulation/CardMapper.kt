@@ -5,15 +5,16 @@ import cardscheme.StringValue
 import cardscheme.VectorValue
 
 fun encodeCard(card: Card): SchemeValue {
-    val type = when (card) {
-        is NumberCard -> card.number.toString()
-        is SwitchCard -> "switch"
-        is SkipCard -> "skip"
-        is DrawCard -> "draw"
-        is ChooseCard -> "choose"
-        is ChooseDrawCard -> "chooseDraw"
-        else -> throw Exception("Invalid case")
-    }
+    val type =
+        when (card) {
+            is NumberCard -> card.number.toString()
+            is SwitchCard -> "switch"
+            is SkipCard -> "skip"
+            is DrawCard -> "draw"
+            is ChooseCard -> "choose"
+            is ChooseDrawCard -> "chooseDraw"
+            else -> throw Exception("Invalid case")
+        }
     return VectorValue(mutableListOf<SchemeValue>(StringValue(card.color.toString()), StringValue(type)))
 }
 

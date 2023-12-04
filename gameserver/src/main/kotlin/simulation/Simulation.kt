@@ -95,14 +95,15 @@ class Simulation {
 
             val players = this.players.map { p -> VectorValue(mutableListOf(StringValue(p.bot.name), IntegerValue(p.hand.size))) }
 
-            result = player.interpreter.run(
-                func,
-                listOf<SchemeValue>(
-                    encodeCard(topCard),
-                    ListValue(SchemeList(player.hand.map { c -> encodeCard(c) })),
-                    ListValue(SchemeList(players)),
-                ),
-            )
+            result =
+                player.interpreter.run(
+                    func,
+                    listOf<SchemeValue>(
+                        encodeCard(topCard),
+                        ListValue(SchemeList(player.hand.map { c -> encodeCard(c) })),
+                        ListValue(SchemeList(players)),
+                    ),
+                )
         } catch (e: SchemeError) {
             throw DisqualificationError(player.bot.id, "The bot crashed while taking a turn.", e)
         }

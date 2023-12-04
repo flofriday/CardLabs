@@ -85,7 +85,6 @@ data class DrawCard(override val color: Color) : Card(color) {
 }
 
 data class ChooseCard(override val color: Color) : Card(color) {
-
     override fun match(next: Card): Boolean {
         if (next is ChooseCard || next is ChooseDrawCard) {
             return true
@@ -100,7 +99,6 @@ data class ChooseCard(override val color: Color) : Card(color) {
 }
 
 data class ChooseDrawCard(override val color: Color) : Card(color) {
-
     override fun match(next: Card): Boolean {
         if (next is ChooseCard || next is ChooseDrawCard) {
             return true
