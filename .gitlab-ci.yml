@@ -7,7 +7,7 @@ stages:
 variables:
   FRONTEND_DIR: "frontend"
   MANAGEMENT_DIR: "management"
-  CARDSCHEME_DIR: "cardscheme"
+  GAMESERVER_DIR: "gameserver"
 
 cache:
   paths:
@@ -76,23 +76,23 @@ test:management:
   # TODO: deploy stage
 
 ###########################
-### CardScheme pipeline ###
+### GameServer pipeline ###
 ###########################
-analysis:cardscheme:
+analysis:gameserver:
   image: amazoncorretto:21-alpine
   stage: analysis
   script:
-    - cd ${CARDSCHEME_DIR}
+    - cd ${GAMESERVER_DIR}
     - ./mvnw clean install
     - ./mvnw ktlint:check
   allow_failure: false
 
-test:cardscheme:
+test:gameserver:
   image: amazoncorretto:21-alpine
   stage: test
   script:
-    - cd ${CARDSCHEME_DIR}
+    - cd ${GAMESERVER_DIR}
     - ./mvnw clean test
   dependencies:
-    - analysis:cardscheme
+    - analysis:gameserver
   allow_failure: false
