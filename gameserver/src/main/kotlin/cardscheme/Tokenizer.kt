@@ -51,6 +51,8 @@ class Tokenizer() {
                 tokens.add(LambdaToken(Location(line, line, col - "lambda".length, col - 1)))
             } else if (consumeMatch("quote")) {
                 tokens.add(QuoteToken(Location(line, line, col - "quote".length, col - 1)))
+            } else if (consumeMatch("set!")) {
+                tokens.add(SetToken(Location(line, line, col - "set!".length, col - 1)))
             } else if (isIdentifierInitial(c)) {
                 tokens.addLast(scanIdentifier())
             } else if (c.isWhitespace()) {

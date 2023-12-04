@@ -28,6 +28,8 @@ class BeginToken(location: Location) : Token(location)
 
 class DefineToken(location: Location) : Token(location)
 
+class SetToken(location: Location) : Token(location)
+
 class DoToken(location: Location) : Token(location)
 
 class IfToken(location: Location) : Token(location)

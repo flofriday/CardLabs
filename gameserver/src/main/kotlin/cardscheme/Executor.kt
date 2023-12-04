@@ -81,6 +81,23 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     }
 
     /**
+     * Evaluating a set! expression.
+     *
+     * Spec: R7R, chapter 4.1.6
+     * Expression is evaluated, and the resulting
+     * value is stored in the location to which variable is bound.
+     */
+    override fun visitedBy(node: SetNode): SchemeValue {
+        val value = node.expression.visit(this)
+        try {
+            environment.update(node.name.identifier, value)
+        } catch (e: SchemeError) {
+            throw SchemeError(e.header, e.reason, node.name.location, e.tip)
+        }
+        return VoidValue()
+    }
+
+    /**
      * Evaluate an if expression.
      *
      * Spec: R7R, chapter 4.1.5

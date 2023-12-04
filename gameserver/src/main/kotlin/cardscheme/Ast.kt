@@ -245,6 +245,26 @@ class LambdaNode(val params: List<IdentifierNode>, val body: BodyNode, location:
     }
 }
 
+/**
+ * A set expression.
+ *
+ * Bind an existing name to a new value
+ *
+ * @param params are the names to which the arguments upon calling get bound.
+ * @param body of the function.
+ */
+class SetNode(val name: IdentifierNode, val expression: ExpressionNode, location: Location) :
+    ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) +
+            "SetNode:\n" + name.dump(indent + 1) + expression.dump(indent + 1)
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visitedBy(this)
+    }
+}
+
 data class VariableInitStep(
     val name: IdentifierNode,
     val init: ExpressionNode,
@@ -332,6 +352,8 @@ interface ExpressionVisitor<T> {
     fun visitedBy(node: BodyNode): T
 
     fun visitedBy(node: LambdaNode): T
+
+    fun visitedBy(node: SetNode): T
 
     fun visitedBy(node: IfNode): T
 

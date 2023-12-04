@@ -82,6 +82,8 @@ class Parser {
                 return parseIf()
             } else if (peekn(2) is LambdaToken) {
                 return parseLambda()
+            } else if (peekn(2) is SetToken) {
+                return parseSet()
             }
             return parseApplication()
         }
@@ -365,6 +367,24 @@ class Parser {
         } else {
             throw SchemeError("Unexpected Token", "I expected either an identifier or a left parenthesis here.", peek().location, null)
         }
+    }
+
+    /**
+     * Parse a set! expression.
+     *
+     * Spec: R7R, chapter 4.16
+     * (set! <variable> <expression>)
+     *
+     */
+    private fun parseSet(): SetNode {
+        val lparen = consume()
+        consume()
+
+        val name = must<IdentifierToken>("The first argument of a `set!` must be a variable name.")
+        val expression = parseExpression()
+        val rparen = must<RParenToken>("I expected a closing right parenthesis here.")
+
+        return SetNode(IdentifierNode(name.value, name.location), expression, Location.merge(lparen.location, rparen.location))
     }
 
     /**
