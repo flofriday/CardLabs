@@ -39,6 +39,7 @@ fun injectBuiltin(environment: Environment) {
     environment.put("string->number", NativeFuncValue("string->number", Arity(1, 1), ::builtinStringToNumber))
     environment.put("number->string", NativeFuncValue("number->string", Arity(1, 1), ::builtinNumberToString))
     environment.put("string-length", NativeFuncValue("string-length", Arity(1, 1), ::builtinStringLength))
+    environment.put("make-string", NativeFuncValue("make-string", Arity(1, 2), ::builtinMakeString))
 
     environment.put("display", NativeFuncValue("display", Arity(1, 1), ::builtinDisplay))
     environment.put("newline", NativeFuncValue("newline", Arity(0, 0), ::builtinNewline))
@@ -197,6 +198,25 @@ fun builtinStringLength(
 ): IntegerValue {
     val arg = verifyType<StringValue>(args.first(), "I expected a string here")
     return IntegerValue(arg.value.length)
+}
+
+/**
+ * Built in make string
+ *
+ * Spec: R7R, Chapter 6.7
+ * Syntax: (make-string k)
+ *         (make-string k char )
+ * */
+fun builtinMakeString(
+    args: List<FuncArg>,
+    executor: Executor,
+): StringValue {
+    val count = verifyType<IntegerValue>(args.first(), "I expected a integer here")
+    var character:CharacterValue = CharacterValue('\n')
+    if (args.size > 1) {
+        character = verifyType<CharacterValue>(args[1], "I expected a character here")
+    }
+    return StringValue(character.value.toString().repeat(count.value))
 }
 
 /**

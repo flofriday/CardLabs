@@ -80,4 +80,12 @@ class StringTests {
         val program = """(string-length "AB" "AB")"""
         assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
+
+    @Test
+    fun makeString() {
+        val program = """(make-string 4 #\a)"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is StringValue)
+        Assert.assertEquals("aaaa", (result as StringValue).value)
+    }
 }

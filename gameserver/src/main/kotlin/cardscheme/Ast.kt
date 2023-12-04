@@ -147,13 +147,28 @@ class FloatNode(val value: Float, location: Location) : ExpressionNode(location)
 }
 
 /**
- * A float literal.
+ * A string literal.
  *
  * @param value of the literal.
  */
 class StringNode(val value: String, location: Location) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) + "String: $value \n"
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visitedBy(this)
+    }
+}
+
+/**
+ * A char literal.
+ *
+ * @param value of the literal.
+ */
+class CharNode(val value: Char, location: Location) : ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) + "Char: $value \n"
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
@@ -307,6 +322,8 @@ interface ExpressionVisitor<T> {
     fun visitedBy(node: FloatNode): T
 
     fun visitedBy(node: StringNode): T
+
+    fun visitedBy(node: CharNode): T
 
     fun visitedBy(node: IdentifierNode): T
 

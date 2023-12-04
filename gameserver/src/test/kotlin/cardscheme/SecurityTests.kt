@@ -26,10 +26,10 @@ class SecurityTests {
         Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 
-    // check if an infinitley long running loop is cancelled after a timeout of 5 seconds
+    // check if an infinitely long-running loop is cancelled after a timeout of 5 seconds
     @Test(timeout = 5 * 1000)
     fun infinitelyLongRunningLoopShouldBeCancelled() {
-        val program = """(do ((i 1)) ((> i 24)))"""
+        val program = """(do ((i 1)) ((> i 2)))"""
         Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 }

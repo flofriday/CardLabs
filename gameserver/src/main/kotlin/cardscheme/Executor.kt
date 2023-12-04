@@ -56,6 +56,10 @@ class Executor(var environment: Environment, val buffer: StringBuffer) : Express
         return StringValue(node.value)
     }
 
+    override fun visitedBy(node: CharNode): SchemeValue {
+        return CharacterValue(node.value)
+    }
+
     override fun visitedBy(node: IdentifierNode): SchemeValue {
         val res = environment.get(node.identifier)
         if (res == null) {

@@ -140,17 +140,27 @@ class Tokenizer() {
 
     private fun scanPoundSign(): Token {
         consume()
-        if (peek().equals('t', ignoreCase = true)) {
+        return if (peek().equals('t', ignoreCase = true)) {
             consume()
-            return BooleanToken(true, Location(line, line, col - 2, col - 1))
+            BooleanToken(true, Location(line, line, col - 2, col - 1))
         } else if (peek().equals('f', ignoreCase = true)) {
             consume()
-            return BooleanToken(false, Location(line, line, col - 2, col - 1))
-        } else {
-            return PoundToken(Location(line, line, col - 1, col - 1))
+            BooleanToken(false, Location(line, line, col - 2, col - 1))
+        } else if (peek() == '\\') {
+            consume()
+            scanCharacter();
+        }  else {
+            PoundToken(Location(line, line, col - 1, col - 1))
         }
+    }
 
-        throw Exception("No Chars are implemented yet")
+    private fun scanCharacter(): CharToken {
+        if (peek().isLetter()){
+            return CharToken(consume(), Location(line, line, col - 2, col - 1))
+        }
+        else {
+            throw SchemeError("Unknown Character", "This does not seem to be a character", Location(line, line, col - 2, col - 1), null)
+        }
     }
 
     private fun scanEscapeCharacter(): Char {
