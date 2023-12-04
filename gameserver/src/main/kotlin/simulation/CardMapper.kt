@@ -9,7 +9,9 @@ fun encodeCard(card: Card): SchemeValue {
         is NumberCard -> card.number.toString()
         is SwitchCard -> "switch"
         is SkipCard -> "skip"
-        is PlusTwoCard -> "plusTwo"
+        is DrawCard -> "draw"
+        is ChooseCard -> "choose"
+        is ChooseDrawCard -> "chooseDraw"
         else -> throw Exception("Invalid case")
     }
     return VectorValue(mutableListOf<SchemeValue>(StringValue(card.color.toString()), StringValue(type)))
@@ -33,7 +35,9 @@ fun decodeCard(value: SchemeValue): Card {
     return when {
         type == "switch" -> SwitchCard(Color.valueOf(color))
         type == "skip" -> SkipCard(Color.valueOf(color))
-        type == "plusTwo" -> PlusTwoCard(Color.valueOf(color))
+        type == "draw" -> DrawCard(Color.valueOf(color))
+        type == "choose" -> ChooseCard(Color.valueOf(color))
+        type == "chooseDraw" -> ChooseDrawCard(Color.valueOf(color))
         (type.toIntOrNull() != null) -> NumberCard(Color.valueOf(color), type.toInt())
         else -> throw DecodeError("Invalid type $type")
     }

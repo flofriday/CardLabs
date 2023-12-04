@@ -5,6 +5,7 @@ enum class Color {
     YELLOW,
     BLUE,
     GREEN,
+    ANY,
 }
 
 abstract class Card(open val color: Color) {
@@ -13,6 +14,10 @@ abstract class Card(open val color: Color) {
 
 data class NumberCard(override val color: Color, val number: Int) : Card(color) {
     override fun match(next: Card): Boolean {
+        if (next is ChooseCard || next is ChooseDrawCard) {
+            return true
+        }
+
         if (color == next.color) {
             return true
         }
@@ -27,6 +32,10 @@ data class NumberCard(override val color: Color, val number: Int) : Card(color) 
 
 data class SwitchCard(override val color: Color) : Card(color) {
     override fun match(next: Card): Boolean {
+        if (next is ChooseCard || next is ChooseDrawCard) {
+            return true
+        }
+
         if (color == next.color) {
             return true
         }
@@ -41,6 +50,10 @@ data class SwitchCard(override val color: Color) : Card(color) {
 
 data class SkipCard(override val color: Color) : Card(color) {
     override fun match(next: Card): Boolean {
+        if (next is ChooseCard || next is ChooseDrawCard) {
+            return true
+        }
+
         if (color == next.color) {
             return true
         }
@@ -53,13 +66,17 @@ data class SkipCard(override val color: Color) : Card(color) {
     }
 }
 
-data class PlusTwoCard(override val color: Color) : Card(color) {
+data class DrawCard(override val color: Color) : Card(color) {
     override fun match(next: Card): Boolean {
+        if (next is ChooseCard || next is ChooseDrawCard) {
+            return true
+        }
+
         if (color == next.color) {
             return true
         }
 
-        if (next is PlusTwoCard) {
+        if (next is DrawCard) {
             return true
         }
 
@@ -67,4 +84,32 @@ data class PlusTwoCard(override val color: Color) : Card(color) {
     }
 }
 
-// FIXME: implement Choosecard
+data class ChooseCard(override val color: Color) : Card(color) {
+
+    override fun match(next: Card): Boolean {
+        if (next is ChooseCard || next is ChooseDrawCard) {
+            return true
+        }
+
+        if (color == Color.ANY || color == next.color) {
+            return true
+        }
+
+        return false
+    }
+}
+
+data class ChooseDrawCard(override val color: Color) : Card(color) {
+
+    override fun match(next: Card): Boolean {
+        if (next is ChooseCard || next is ChooseDrawCard) {
+            return true
+        }
+
+        if (color == Color.ANY || color == next.color) {
+            return true
+        }
+
+        return false
+    }
+}

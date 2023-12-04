@@ -22,8 +22,6 @@ class Simulation {
 
         // Verify all players
         for (player in players) {
-            // FIXME: Inject custom methods here.
-
             try {
                 player.interpreter.run(player.bot.code)
             } catch (e: SchemeError) {
@@ -41,10 +39,16 @@ class Simulation {
             val player = players[currentPlayer]
 
             // Pick up cards if necessary
-            if (pile.last() is PlusTwoCard) {
+            if (pile.last() is DrawCard) {
                 println("Player ${player.bot.id} draws a card")
                 println("Player ${player.bot.id} draws a card")
                 player.hand.addAll(pickup(2))
+            } else if (pile.last() is ChooseDrawCard) {
+                println("Player ${player.bot.id} draws a card")
+                println("Player ${player.bot.id} draws a card")
+                println("Player ${player.bot.id} draws a card")
+                println("Player ${player.bot.id} draws a card")
+                player.hand.addAll(pickup(4))
             }
 
             // Play a card
@@ -82,19 +86,21 @@ class Simulation {
         }
 
         // Call the bot
-        val func = player.interpreter.env.get("turn")!!
-        if (func !is CallableValue) {
-            throw DisqualificationError(player.bot.id, "`turn` isn't a function but a `${func.typeName()}`", null)
-        }
-
         val result: SchemeValue?
         try {
+            val func = player.interpreter.env.get("turn")!!
+            if (func !is CallableValue) {
+                throw DisqualificationError(player.bot.id, "`turn` isn't a function but a `${func.typeName()}`", null)
+            }
+
+            val players = this.players.map { p -> VectorValue(mutableListOf(StringValue(p.bot.name), IntegerValue(p.hand.size))) }
+
             result = player.interpreter.run(
                 func,
                 listOf<SchemeValue>(
                     encodeCard(topCard),
                     ListValue(SchemeList(player.hand.map { c -> encodeCard(c) })),
-                    ListValue(SchemeList<SchemeValue>()),
+                    ListValue(SchemeList(players)),
                 ),
             )
         } catch (e: SchemeError) {

@@ -24,7 +24,19 @@ class CardMapper {
 
     @Test
     fun encodeDecodePlusTwoCard() {
-        val card = PlusTwoCard(Color.BLUE)
+        val card = DrawCard(Color.BLUE)
+        Assert.assertEquals(card, decodeCard(encodeCard(card)))
+    }
+
+    @Test
+    fun encodeChooseCard() {
+        val card = ChooseCard(Color.BLUE)
+        Assert.assertEquals(card, decodeCard(encodeCard(card)))
+    }
+
+    @Test
+    fun encodeChooseDrawCard() {
+        val card = ChooseDrawCard(Color.ANY)
         Assert.assertEquals(card, decodeCard(encodeCard(card)))
     }
 }
