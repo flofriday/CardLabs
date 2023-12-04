@@ -1,20 +1,24 @@
 package simulation
 
 import cardscheme.*
+import kotlin.math.abs
 
 class Simulation {
-    var pile: List<Card> = mutableListOf()
-    var drawPile: List<Card> = mutableListOf()
-    var players: List<Player> = listOf()
+    var pile: MutableList<Card> = mutableListOf()
+    var drawPile: MutableList<Card> = mutableListOf()
+    var players: List<Player> = mutableListOf()
     var currentPlayer = 0
     var direction = 1
 
     fun run(bots: List<Bot>) {
-        drawPile = generateDeck().shuffled()
+        drawPile = generateDeck().shuffled().toMutableList()
         for (bot in bots) {
-            players.addLast(Player(bot, pickup(7).toMutableList(), SchemeInterpreter()))
+            val player = Player(bot, pickup(7).toMutableList(), SchemeInterpreter())
+            injectSimulationBuiltin(player.interpreter.env)
+            players.addLast(player)
         }
         pile = pickup(1).toMutableList()
+        println("Initial card is ${pile.last()}")
 
         // Verify all players
         for (player in players) {
@@ -35,21 +39,37 @@ class Simulation {
 
         while (true) {
             val player = players[currentPlayer]
+
+            // Pick up cards if necessary
+            if (pile.last() is PlusTwoCard) {
+                println("Player ${player.bot.id} draws a card")
+                println("Player ${player.bot.id} draws a card")
+                player.hand.addAll(pickup(2))
+            }
+
+            // Play a card
             takeTurn(player)
+            println("Player ${player.bot.id} played ${pile.last()}")
             if (player.hand.isEmpty()) {
                 println("Player ${player.bot.id} won!!!")
                 break
             }
-            println("Player ${player.bot.id} played ${pile.last()}")
 
+            // Determine the next player
             if (pile.last() is SwitchCard) {
-                direction *= -1
-                currentPlayer += direction
+                // If only two players play its basically a skip card
+                // TODO: Is this how this should work
+                if (players.size != 2) {
+                    direction *= -1
+                    currentPlayer += direction
+                }
             } else if (pile.last() is SkipCard) {
-                currentPlayer += direction * 2
+                currentPlayer += (direction * 2)
             } else {
                 currentPlayer += direction
             }
+            currentPlayer %= players.size
+            if (currentPlayer < 0) currentPlayer = players.size - abs(currentPlayer)
         }
     }
 
@@ -57,7 +77,7 @@ class Simulation {
         val topCard = pile.last()
         // Verify that the player has at least a matching card
         while (player.hand.none { c -> topCard.match(c) }) {
-            println("Bot ${player.bot.id} draws a card")
+            println("Player ${player.bot.id} draws a card")
             player.hand.addLast(pickup(1).first())
         }
 
@@ -96,8 +116,16 @@ class Simulation {
     }
 
     fun pickup(number: Int): List<Card> {
+        // Reshuffle the pile if necessary
+        if (number > drawPile.size) {
+            println("Reshuffle pile into the draw pile")
+            val playedCards = pile.drop(1)
+            pile = pile.take(1).toMutableList()
+            drawPile.addAll(playedCards.shuffled())
+        }
+
         val cards = drawPile.take(number)
-        drawPile = drawPile.drop(number)
+        drawPile = drawPile.drop(number).toMutableList()
         return cards
     }
 }

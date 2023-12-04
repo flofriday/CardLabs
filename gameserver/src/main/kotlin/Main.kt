@@ -1,9 +1,25 @@
-import simulation.Color
-import simulation.NumberCard
-import simulation.PlusTwoCard
-import simulation.encodeCard
+import simulation.Bot
+import simulation.Simulation
 
 fun main(args: Array<String>) {
-    println(encodeCard(PlusTwoCard(Color.RED)))
-    println(encodeCard(NumberCard(Color.GREEN, 8)))
+    val bot1 = Bot(
+        1,
+        """
+        (define (turn topCard hand players)
+            (random-choice
+                (matching-cards topCard hand)))
+        """.trimIndent(),
+    )
+
+    val bot2 = Bot(
+        2,
+        """
+        (define (turn topCard hand players)
+            (random-choice
+                (matching-cards topCard hand)))
+        """.trimIndent(),
+    )
+
+    val simulation = Simulation()
+    simulation.run(listOf(bot1, bot2))
 }
