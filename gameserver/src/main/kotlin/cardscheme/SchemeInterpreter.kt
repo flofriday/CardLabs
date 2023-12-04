@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 class SchemeInterpreter(
-    private val timeLimitInSeconds: Long = 200,
-    private val memoryLimit: Long = 100000000,
+    private val timeLimitInSeconds: Long = 2,
+    private val memoryLimit: Long = 1024 * 1014 * 1024,
     private val timeoutBetweenChecks: Long = 100,
 ) {
     var env = Environment(null, HashMap())

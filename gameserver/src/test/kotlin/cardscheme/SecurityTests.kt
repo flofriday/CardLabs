@@ -59,7 +59,7 @@ class SecurityTests {
   (display (infinite-append))
 """
 
-        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter(memoryLimit = 100000000).run(program) }
     }
      */
 }
