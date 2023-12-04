@@ -1,7 +1,9 @@
-import cardscheme.*
-import java.io.File
-import kotlin.system.exitProcess
+import simulation.Color
+import simulation.NumberCard
+import simulation.PlusTwoCard
+import simulation.encodeCard
 
 fun main(args: Array<String>) {
-    println("Gameserver")
+    println(encodeCard(PlusTwoCard(Color.RED)))
+    println(encodeCard(NumberCard(Color.GREEN, 8)))
 }

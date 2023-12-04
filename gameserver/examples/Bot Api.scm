@@ -2,7 +2,7 @@
 (define-structure card (color symbol))
 
 ; Create a card
-(make-card "red" reverse)
+(make-card "red" "reverse")
 
 ; Player definition
 (define-structure player (name cardCount))

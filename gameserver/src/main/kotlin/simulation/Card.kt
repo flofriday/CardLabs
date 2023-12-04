@@ -1,9 +1,5 @@
 package simulation
 
-abstract class Card {
-    abstract fun match(next: Card): Boolean
-}
-
 enum class Color {
     RED,
     YELLOW,
@@ -11,11 +7,13 @@ enum class Color {
     GREEN,
 }
 
-abstract class ColorCard(val color: Color) : Card()
+abstract class Card(open val color: Color) {
+    abstract fun match(next: Card): Boolean
+}
 
-class NumberCard(color: Color, val number: Int) : ColorCard(color) {
+data class NumberCard(override val color: Color, val number: Int) : Card(color) {
     override fun match(next: Card): Boolean {
-        if (next is ColorCard && color == next.color) {
+        if (color == next.color) {
             return true
         }
 
@@ -27,9 +25,9 @@ class NumberCard(color: Color, val number: Int) : ColorCard(color) {
     }
 }
 
-class SwitchCard(color: Color) : ColorCard(color) {
+data class SwitchCard(override val color: Color) : Card(color) {
     override fun match(next: Card): Boolean {
-        if (next is ColorCard && color == next.color) {
+        if (color == next.color) {
             return true
         }
 
@@ -41,9 +39,9 @@ class SwitchCard(color: Color) : ColorCard(color) {
     }
 }
 
-class SkipCard(color: Color) : ColorCard(color) {
+data class SkipCard(override val color: Color) : Card(color) {
     override fun match(next: Card): Boolean {
-        if (next is ColorCard && color == next.color) {
+        if (color == next.color) {
             return true
         }
 
@@ -55,9 +53,9 @@ class SkipCard(color: Color) : ColorCard(color) {
     }
 }
 
-class PlusTwoCard(color: Color) : ColorCard(color) {
+data class PlusTwoCard(override val color: Color) : Card(color) {
     override fun match(next: Card): Boolean {
-        if (next is ColorCard && color == next.color) {
+        if (color == next.color) {
             return true
         }
 
