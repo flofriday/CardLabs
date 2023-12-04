@@ -1,4 +1,5 @@
 import { getCookie } from "cookies-next";
+import { toast } from "react-toastify";
 
 export async function getNewBotName(): Promise<string> {
   const jwt = getCookie("auth_token");
@@ -11,6 +12,14 @@ export async function getNewBotName(): Promise<string> {
       Authorization: "Bearer " + jwt,
     },
   });
+
+  if (response.status !== 200) {
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
+    throw new EvalError(); // TODO change this
+  }
+
   return await response.text();
 }
 
@@ -34,10 +43,16 @@ export async function createBot(
     }),
   });
 
-  // TODO add error handling
-
-  const data = await response.json();
-  return data.id;
+  if (response.status === 201) {
+    toast.success("Bot created and saved!");
+    const data = await response.json();
+    return data.id;
+  } else {
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
+    throw new EvalError(); // TODO change this
+  }
 }
 
 enum BotState {
@@ -61,7 +76,7 @@ export interface Bot {
   errorStateMessage: string;
 }
 
-export async function getBot(id: number): Promise<any> {
+export async function getBot(id: number): Promise<Bot> {
   const jwt = getCookie("auth_token");
 
   const response = await fetch("/api/bot/" + id, {
@@ -72,6 +87,13 @@ export async function getBot(id: number): Promise<any> {
       Authorization: "Bearer " + jwt,
     },
   });
+
+  if (response.status !== 200) {
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
+    throw new EvalError(); // TODO change this
+  }
 
   // TODO add error handling
   const bot = (await response.json()) as Bot;
@@ -97,10 +119,13 @@ export async function saveBot(
     }),
   });
 
-  // TODO add error handling
   if (response.status === 200) {
+    toast.success("Code saved");
     return true;
+  } else {
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
+    return false;
   }
-
-  return false;
 }

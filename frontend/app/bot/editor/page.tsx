@@ -13,6 +13,7 @@ import {
   saveBot as _saveBot,
 } from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 interface Props {
   id?: number;
@@ -21,18 +22,20 @@ interface Props {
 function saveNewBot(
   name: string,
   code: string | null,
-  setId: (id: number) => void
+  setId: (id: number) => void,
+  router: AppRouterInstance
 ): void {
   createBot(name, code)
     .then((id) => {
       setId(id);
+      router.replace("/bot/editor/" + String(id));
     })
     .catch(() => {});
 }
 
 function saveBot(id: number, code: string | null): void {
   _saveBot(id, code)
-    .then((r) => {})
+    .then(() => {})
     .catch(() => {});
 }
 
@@ -67,10 +70,7 @@ export default function BotEditor({ id = undefined }: Props): JSX.Element {
         <EditorButtons
           save={() => {
             if (_id == null) {
-              saveNewBot(name, code, setId);
-              if (_id !== undefined) {
-                router.replace("/bot/editor/" + String(_id));
-              }
+              saveNewBot(name, code, setId, router);
             } else {
               saveBot(_id, code);
             }
