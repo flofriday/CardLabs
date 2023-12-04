@@ -82,6 +82,8 @@ class Parser {
                 return parseIf()
             } else if (peekn(2) is LambdaToken) {
                 return parseLambda()
+            } else if (peekn(2) is LetToken) {
+                return parseLet()
             } else if (peekn(2) is SetToken) {
                 return parseSet()
             }
@@ -132,6 +134,37 @@ class Parser {
             body,
             Location.merge(lparen.location, rparen.location),
         )
+    }
+
+    /**
+     * Parse let expression.
+     *
+     * Spec: R7R, chapter 4.2.2
+     * (let ((<variable> <init>) ...) <body>)
+     * (let* ((<variable> <init>) ...) <body>)
+     * (letrec ((<variable> <init>) ...) <body>)
+     * (letrec* ((<variable> <init>) ...) <body>)
+     *
+     * FIXME: At the moment it doesn't handle the named-let syntax (let <variable> ((<variable> <init>) ...) <body>)
+     */
+    private fun parseLet(): LetNode {
+        val lparen = consume()
+        val letToken = consume() as LetToken
+
+        val bindings = mutableListOf<VariableBinding>()
+        must<LParenToken>("I expected a opening left parenthesis here.")
+        while (peek() !is RParenToken) {
+            val bindingStart = must<LParenToken>("I expected a opening left parenthesis here.")
+            val name = must<IdentifierToken>("I expected a variable name here.")
+            val init = parseExpression()
+            val bindingEnd = must<RParenToken>("I expected a closing right parenthesis here.")
+            bindings.addLast(VariableBinding(IdentifierNode(name.value, name.location), init, Location.merge(bindingStart.location, bindingEnd.location)))
+        }
+        consume()
+
+        val body = parseBody()
+        val rparen = must<RParenToken>("I expected a closing right parenthesis here.")
+        return LetNode(letToken.rec, letToken.star, bindings, body, Location.merge(lparen.location, rparen.location))
     }
 
     private fun parseBody(): BodyNode {

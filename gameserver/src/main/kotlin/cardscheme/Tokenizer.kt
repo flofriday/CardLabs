@@ -49,6 +49,14 @@ class Tokenizer() {
                 tokens.add(IfToken(Location(line, line, col - "if".length, col - 1)))
             } else if (consumeMatch("lambda")) {
                 tokens.add(LambdaToken(Location(line, line, col - "lambda".length, col - 1)))
+            } else if (consumeMatch("letrec*")) {
+                tokens.add(LetToken(true, true, Location(line, line, col - "letrec*".length, col - 1)))
+            } else if (consumeMatch("letrec")) {
+                tokens.add(LetToken(true, false, Location(line, line, col - "letrec".length, col - 1)))
+            } else if (consumeMatch("let*")) {
+                tokens.add(LetToken(false, true, Location(line, line, col - "let*".length, col - 1)))
+            } else if (consumeMatch("let")) {
+                tokens.add(LetToken(false, false, Location(line, line, col - "let".length, col - 1)))
             } else if (consumeMatch("quote")) {
                 tokens.add(QuoteToken(Location(line, line, col - "quote".length, col - 1)))
             } else if (consumeMatch("set!")) {

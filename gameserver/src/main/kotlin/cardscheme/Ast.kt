@@ -245,6 +245,20 @@ class LambdaNode(val params: List<IdentifierNode>, val body: BodyNode, location:
     }
 }
 
+data class VariableBinding(val name: IdentifierNode, val init: ExpressionNode, val location: Location)
+
+class LetNode(val rec: Boolean, val star: Boolean, val bindings: List<VariableBinding>, val body: BodyNode, location: Location) :
+    ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) +
+            "LetNode: (rec: $rec, star: $star)\n" + bindings.map { b -> b.name.dump(indent + 1) + b.init.dump(indent + 1) } + body.dump(indent + 1)
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visitedBy(this)
+    }
+}
+
 /**
  * A set expression.
  *
@@ -352,6 +366,8 @@ interface ExpressionVisitor<T> {
     fun visitedBy(node: BodyNode): T
 
     fun visitedBy(node: LambdaNode): T
+
+    fun visitedBy(node: LetNode): T
 
     fun visitedBy(node: SetNode): T
 

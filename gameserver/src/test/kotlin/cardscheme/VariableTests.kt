@@ -91,4 +91,126 @@ class VariableTests {
         assert(result is IntegerValue)
         Assert.assertEquals(3, (result as IntegerValue).value)
     }
+
+    @Test
+    fun simpleLet() {
+        val program =
+            """
+            (let ((x 2) (y 3))
+                (* x y))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(6, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun simpleLetDoesntLeakVariable() {
+        val program =
+            """
+            (let ((x 2) (y 3))
+                (* x y))
+            x
+            """.trimIndent()
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
+
+    @Test
+    fun simpleLetNoSequentialBinding() {
+        val program =
+            """
+            (let ((x 2) (y (+ x 1)))
+                (* x y))
+            """.trimIndent()
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
+
+    @Test
+    fun simpleLetUsesOuterScope() {
+        val program =
+            """
+            (define a 20)
+            (define b 1)
+            (let ((a (* 2 b)) (b (* 2 a)))
+                (+ a b))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(42, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun simpleLetStarSequentualBinding() {
+        val program =
+            """
+            (let* ((x 2) (y (+ x 1)))
+                (+ x y))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(5, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun simpleLetStarNestedInLet() {
+        val program =
+            """
+            ; This example is from the spec
+            (let ((x 2) (y 3))
+                (let* ((x 7)
+                       (z (+x y)))
+                  (* z x)))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(70, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun simpleLetRecFunctions() {
+        val program =
+            """
+            ; This example is from the spec
+            (define (zero? n) (= n 0))
+            
+            (letrec ((even?
+                    (lambda (n)
+                        (if (zero? n)
+                            #t
+                            (odd? (- n 1)))))
+                (odd?
+                    (lambda (n)
+                        (if (zero? n)
+                            #f
+                            (even? (- n 1))))))
+            (even? 88))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun simpleLetRecStarFunctions() {
+        val program =
+            """
+            ; This example is from the spec
+            (define (zero? n) (= n 0))
+            
+            (letrec* ((p
+                    (lambda (x)
+                            (+ 1 (q (- x 1)))))
+                (q
+                    (lambda (y)
+                        (if (zero? y)
+                            0
+                            (+ 1 (p (- y 1))))))
+                (x (p 5))
+                (y x))
+                y)
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(5, (result as IntegerValue).value)
+    }
 }

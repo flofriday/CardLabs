@@ -81,6 +81,118 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     }
 
     /**
+     * Evaluate a let expression.
+     *
+     * Spec: R7R, chapter 4.2.2
+     * The init are evaluated in the current environment
+     * (in some unspecified order), the variable are
+     * bound to fresh locations holding the results, the body is
+     * evaluated in the extended environment, and the values of
+     * the last expression of body are returned. Each binding
+     * of a variable has body as its region.
+     */
+    private fun evalLet(node: LetNode): SchemeValue {
+        val values = node.bindings.map { b -> b.init.visit(this) }
+
+        pushEnv()
+        node.bindings.map { b -> b.name.identifier }.zip(values).forEach { (n, v) -> environment.put(n, v) }
+        val result = node.body.visit(this)
+        popEnv()
+
+        return result
+    }
+
+    /**
+     * Evaluate a let* expression.
+     *
+     * Spec: R7R, chapter 4.2.4
+     * The let* binding construct is similar to let,
+     * but the bindings are performed sequentially from left to
+     * right, and the region of a binding indicated by (variable
+     * init) is that part of the let* expression to the right of
+     * the binding. Thus the second binding is done in an
+     * environment in which the first binding is visible, and so on.
+     * The variables need not be distinct.
+     */
+    private fun evalLetStar(node: LetNode): SchemeValue {
+        for (binding in node.bindings) {
+            pushEnv()
+            val value = binding.init.visit(this)
+            environment.put(binding.name.identifier, value)
+        }
+
+        val result = node.body.visit(this)
+        node.bindings.forEach { _ -> popEnv() }
+
+        return result
+    }
+
+    /**
+     * Evaluate a letrec expression.
+     *
+     * Spec: R7R, chapter 4.2.4
+     * The variables are bound to fresh locations
+     * holding unspecified values, the inits are evaluated in the
+     * resulting environment (in some unspecified order), each
+     * variable is assigned to the result of the corresponding
+     * init, the body is evaluated in the resulting environment,
+     * and the values of the last expression in body are returned.
+     * Each binding of a variable has the entire letrec expression
+     * as its region, making it possible to define mutually
+     * recursive procedures.
+     */
+    private fun evalLetRec(node: LetNode): SchemeValue {
+        pushEnv()
+        node.bindings.forEach { b -> environment.put(b.name.identifier, VoidValue()) }
+        val values = node.bindings.map { b -> b.init.visit(this) }
+        node.bindings.map { b -> b.name.identifier }.zip(values).forEach { (n, v) -> environment.update(n, v) }
+        val result = node.body.visit(this)
+        popEnv()
+
+        return result
+    }
+
+    /**
+     * Evaluate a letrec* expression.
+     *
+     * Spec: R7R, chapter 4.2.4
+     * The variables are bound to fresh locations,
+     * each variable is assigned in left-to-right
+     * order to the result of evaluating the
+     * corresponding * init, the body is evaluated in
+     * the resulting environment, and the values of
+     * the last expression in body are returned.
+     * Despite the left to right evaluation and assignment order, each binding of a
+     * variable has the entire letrec* expression as its region,
+     * making it possible to define mutually recursive procedures.
+     */
+    private fun evalLetRecStar(node: LetNode): SchemeValue {
+        pushEnv()
+        node.bindings.forEach { b -> environment.put(b.name.identifier, VoidValue()) }
+        for (binding in node.bindings) {
+            val value = binding.init.visit(this)
+            environment.update(binding.name.identifier, value)
+        }
+        val result = node.body.visit(this)
+        popEnv()
+
+        return result
+    }
+
+    override fun visitedBy(node: LetNode): SchemeValue {
+        if (!node.star && !node.rec) {
+            return evalLet(node)
+        } else if (node.star && !node.rec) {
+            return evalLetStar(node)
+        } else if (!node.star && node.rec) {
+            return evalLetRec(node)
+        } else if (node.star && node.rec) {
+            return evalLetRecStar(node)
+        }
+        throw Exception("Invalid combination")
+    }
+
+    /**
      * Evaluating a set! expression.
      *
      * Spec: R7R, chapter 4.1.6
