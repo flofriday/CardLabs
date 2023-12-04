@@ -1,11 +1,15 @@
 import IconButton, { ButtonIcon } from "./iconButton";
 import DropDown from "@/app/components/DropDown";
 
-export default function EditorButtons(): JSX.Element {
+interface Props {
+  save?: () => void;
+}
+
+export default function EditorButtons({ save }: Props): JSX.Element {
   return (
     <div className=" w-full mt-44 h-16 flex p-3 space-x-4 ml-4">
       <IconButton text="Compile" type={ButtonIcon.COMPILE} />
-      <IconButton text="Save" type={ButtonIcon.SAVE} />
+      <IconButton onClick={save} text="Save" type={ButtonIcon.SAVE} />
       <IconButton text="Test Bot" type={ButtonIcon.TEST} />
       <IconButton text="Rank Bot" type={ButtonIcon.RANK} />
       <DropDown

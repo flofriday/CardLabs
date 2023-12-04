@@ -3,6 +3,7 @@ import Image from "next/image";
 interface Props {
   text: string;
   type: ButtonIcon;
+  onClick?: () => void;
 }
 
 export enum ButtonIcon {
@@ -13,9 +14,16 @@ export enum ButtonIcon {
   DELETE = "delete.svg",
 }
 
-export default function IconButton({ text, type }: Props): JSX.Element {
+export default function IconButton({
+  text,
+  type,
+  onClick = () => {},
+}: Props): JSX.Element {
   return (
-    <button className="btn text-text py-2 w-36 rounded-full shadow-md text-lg outline outline-1 align-middle inline-flex items-center justify-start hover:bg-primary">
+    <button
+      onClick={onClick}
+      className="btn text-text py-2 w-36 rounded-full shadow-md text-lg outline outline-1 align-middle inline-flex items-center justify-start hover:bg-primary"
+    >
       <Image
         src={`/buttonIcons/${type}`}
         alt=""

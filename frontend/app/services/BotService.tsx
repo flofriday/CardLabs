@@ -13,3 +13,27 @@ export async function getNewBotName(): Promise<string> {
   });
   return await response.text();
 }
+
+export async function createBot(
+  name: string,
+  currentCode: string | null
+): Promise<number> {
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch("/api/bot", {
+    mode: "cors",
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+      currentCode,
+    }),
+  });
+
+  const data = await response.json();
+  return data.id;
+}
