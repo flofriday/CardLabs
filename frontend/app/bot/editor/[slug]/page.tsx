@@ -1,7 +1,7 @@
 "use client";
 
-import BotEditor from "../page";
 import { notFound } from "next/navigation";
+import BotEditor from "../botEditor";
 export default function BotWithIdEditor({
   params,
 }: {
