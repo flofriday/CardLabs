@@ -77,3 +77,30 @@ export async function getBot(id: number): Promise<any> {
   const bot = (await response.json()) as Bot;
   return bot;
 }
+
+export async function saveBot(
+  id: number,
+  currentCode: string | null
+): Promise<boolean> {
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch("/api/bot/" + id, {
+    mode: "cors",
+    method: "PATCH",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      currentCode,
+    }),
+  });
+
+  // TODO add error handling
+  if (response.status === 200) {
+    return true;
+  }
+
+  return false;
+}

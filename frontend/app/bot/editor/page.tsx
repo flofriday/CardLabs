@@ -10,6 +10,7 @@ import {
   createBot,
   getBot,
   Bot,
+  saveBot as _saveBot,
 } from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
 
@@ -29,7 +30,11 @@ function saveNewBot(
     .catch(() => {});
 }
 
-function saveBot(name: string, code: string | null, id: number): void {}
+function saveBot(id: number, code: string | null): void {
+  _saveBot(id, code)
+    .then((r) => {})
+    .catch(() => {});
+}
 
 export default function BotEditor({ id = undefined }: Props): JSX.Element {
   const [_id, setId] = useState(id);
@@ -67,7 +72,7 @@ export default function BotEditor({ id = undefined }: Props): JSX.Element {
                 router.replace("/bot/editor/" + String(_id));
               }
             } else {
-              saveBot(name, code, _id);
+              saveBot(_id, code);
             }
           }}
         />
