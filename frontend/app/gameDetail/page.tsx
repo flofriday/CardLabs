@@ -1,4 +1,5 @@
 import LeftPageHeader from "../components/leftPageHeader";
+import RoundLogContainer from "./roundLogContainer";
 
 interface Props {
   date: string;
@@ -6,6 +7,15 @@ interface Props {
 }
 
 export default function GameDetail({ date, place }: Props): JSX.Element {
+  const logExamples = [
+    { message: "This is a normal log message." },
+    { message: "Another log entry." },
+    { message: "Debugging information.", isDebug: true },
+    { message: "More normal logs." },
+    { message: "Debug log with additional information.", isDebug: true },
+    { message: "More normal logs." },
+  ];
+
   return (
     <div className="flex flex-col h-full">
       <LeftPageHeader title="Game XX.YY.ZZZZ - X. Place" />
