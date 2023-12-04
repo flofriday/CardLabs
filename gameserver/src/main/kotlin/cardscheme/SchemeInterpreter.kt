@@ -1,5 +1,6 @@
 package cardscheme
 
+import MemoryMonitor
 import java.util.concurrent.*
 
 class SchemeInterpreter() {
@@ -24,7 +25,7 @@ class SchemeInterpreter() {
         // println("AST: ")
         // print(ast.dump())
         val buffer = StringBuffer()
-        return runWithTimeout({ Executor(env, buffer).execute(ast) })
+        return runWithTimeoutAndMemoryLimit({ Executor(env, buffer).execute(ast) })
     }
 
     /**
@@ -32,10 +33,10 @@ class SchemeInterpreter() {
      */
     fun run(func: CallableValue, args: List<SchemeValue>): SchemeValue? {
         val buffer = StringBuffer()
-        return runWithTimeout({ Executor(env, buffer).execute(func, args) })
+        return runWithTimeoutAndMemoryLimit({ Executor(env, buffer).execute(func, args) })
     }
 
-    private fun runWithTimeout(function: () -> SchemeValue?, timeoutInSeconds: Long = 2): SchemeValue? {
+    private fun runWithTimeoutAndMemoryLimit(function: () -> SchemeValue?, timeoutInSeconds: Long = 2, memoryLimitInMB : Long = 1024, timeoutBetweenChecks : Long=100): SchemeValue? {
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
         try {
@@ -44,15 +45,23 @@ class SchemeInterpreter() {
                     function()
                 },
             )
+            val memoryMonitorThread = Thread(MemoryMonitor(Thread.currentThread(), memoryLimitInMB, timeoutBetweenChecks))
+            memoryMonitorThread.start()
 
-            return future.get(timeoutInSeconds, TimeUnit.SECONDS) // Timeout set to 2 seconds
+            val result = future.get(timeoutInSeconds, TimeUnit.SECONDS)
+            memoryMonitorThread.interrupt()
+            return result
         } catch (e: TimeoutException) {
             throw SchemeError("Function exceeded timeout", "The execution of the Interpreter was cancelled because it exceeded the timeout of $timeoutInSeconds seconds", null, null)
+        } catch (e: InterruptedException) {
+            throw SchemeError("Function exceeded memory limit", "The execution of the Interpreter was cancelled because it exceeded the memory limit of $memoryLimitInMB MB", null, null)
         } catch (e: ExecutionException) {
             if (e.cause is SchemeError) {
                 throw e.cause as SchemeError
             }
             throw e
+        } finally {
+            executor.shutdownNow()
         }
     }
 }
