@@ -3,7 +3,6 @@ package simulation
 import org.junit.Test
 
 class CardTests {
-
     // NumberCards
     @Test
     fun equalNumberCardMatch() {

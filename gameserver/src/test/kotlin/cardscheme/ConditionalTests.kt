@@ -1,8 +1,5 @@
 package cardscheme
 
-import cardscheme.IntegerValue
-import cardscheme.SchemeInterpreter
-import cardscheme.VoidValue
 import org.junit.Assert
 import org.junit.Test
 

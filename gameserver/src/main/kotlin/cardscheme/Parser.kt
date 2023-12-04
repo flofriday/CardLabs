@@ -62,6 +62,9 @@ class Parser {
         } else if (peek() is FloatToken) {
             val token = consume() as FloatToken
             return FloatNode(token.value, token.location)
+        } else if (peek() is CharToken) {
+            val token = consume() as CharToken
+            return CharNode(token.value, token.location)
         } else if (peek() is StringToken) {
             val token = consume() as StringToken
             return StringNode(token.value, token.location)
