@@ -5,7 +5,12 @@ import EditorButtons from "./editorButtons";
 import LoggingElement from "./loggingElement";
 import CodeEditor from "./codeEditor";
 import { useEffect, useState } from "react";
-import { getNewBotName, createBot } from "@/app/services/BotService";
+import {
+  getNewBotName,
+  createBot,
+  getBot,
+  Bot,
+} from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -24,6 +29,8 @@ function saveNewBot(
     .catch(() => {});
 }
 
+function saveBot(name: string, code: string | null, id: number): void {}
+
 export default function BotEditor({ id = undefined }: Props): JSX.Element {
   const [_id, setId] = useState(id);
   const [name, setName] = useState("");
@@ -39,8 +46,12 @@ export default function BotEditor({ id = undefined }: Props): JSX.Element {
         })
         .catch(() => {});
     } else {
-      // fetch bot
-      setName("Name 2");
+      getBot(_id)
+        .then((b: Bot) => {
+          setName(b.name);
+          setCode(b.currentCode);
+        })
+        .catch(() => {});
     }
   }, [_id]);
 
@@ -55,10 +66,12 @@ export default function BotEditor({ id = undefined }: Props): JSX.Element {
               if (_id !== undefined) {
                 router.replace("/bot/editor/" + String(_id));
               }
+            } else {
+              saveBot(name, code, _id);
             }
           }}
         />
-        <CodeEditor onChange={setCode} />
+        <CodeEditor code={code} onChange={setCode} />
       </div>
       <LoggingElement />
     </div>

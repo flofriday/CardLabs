@@ -34,6 +34,46 @@ export async function createBot(
     }),
   });
 
+  // TODO add error handling
+
   const data = await response.json();
   return data.id;
+}
+
+enum BotState {
+  CREATED,
+  AWAITING_VERIFICATION,
+  READY,
+  QUEUED,
+  PLAYING,
+  ERROR,
+}
+
+export interface Bot {
+  id: number;
+  name: string;
+  ownerId: number;
+  currentCode: string;
+  codeHistory: any; // todo fix this type
+  eloScore: number;
+  currentState: BotState;
+  defaultState: BotState;
+  errorStateMessage: string;
+}
+
+export async function getBot(id: number): Promise<any> {
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch("/api/bot/" + id, {
+    mode: "cors",
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+    },
+  });
+
+  // TODO add error handling
+  const bot = (await response.json()) as Bot;
+  return bot;
 }
