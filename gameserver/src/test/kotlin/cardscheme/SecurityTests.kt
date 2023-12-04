@@ -4,6 +4,7 @@ import org.junit.Assert
 import org.junit.Test
 
 class SecurityTests {
+
     @Test
     fun openFileShouldFail() {
         val program = """(open-input-file "Readme.md")"""
@@ -32,4 +33,34 @@ class SecurityTests {
         val program = """(do ((i 1)) ((> i 2)))"""
         Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
+
+    @Test
+    fun limitedMemoryTest() {
+        val program = """(do ((i 1 (+ i 1)))
+    ((> i 100))
+  (+ i 2))
+  (+ 1 5)
+"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(6, (result as IntegerValue).value)
+
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter(memoryLimit = 1).run(program) }
+    }
+
+    /*
+    @Test(timeout = 30000)
+    fun limitedMemoryTest2() {
+        val program = """(define (infinite-append)
+  (define empty-list (list ))
+
+  (do ((acc empty-list (append acc (list 1)))
+       (i 0 (+ i 1)))
+      ((= i 1000000) acc)))
+  (display (infinite-append))
+"""
+
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
+     */
 }
