@@ -1,4 +1,10 @@
-import cardscheme.*
+
+import cardscheme.LParenToken
+import cardscheme.RParenToken
+import cardscheme.SchemeError
+import cardscheme.SchemeInterpreter
+import cardscheme.Tokenizer
+import cardscheme.VoidValue
 import java.io.File
 import kotlin.system.exitProcess
 

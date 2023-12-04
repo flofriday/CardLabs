@@ -1,7 +1,13 @@
 package cardscheme
 
 import MemoryMonitor
-import java.util.concurrent.*
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class SchemeInterpreter() {
     var env = Environment(null, HashMap())
@@ -31,20 +37,29 @@ class SchemeInterpreter() {
     /**
      * Executes a given function with some time and memory constraints.
      */
-    fun run(func: CallableValue, args: List<SchemeValue>): SchemeValue? {
+    fun run(
+        func: CallableValue,
+        args: List<SchemeValue>,
+    ): SchemeValue? {
         val buffer = StringBuffer()
         return runWithTimeoutAndMemoryLimit({ Executor(env, buffer).execute(func, args) })
     }
 
-    private fun runWithTimeoutAndMemoryLimit(function: () -> SchemeValue?, timeoutInSeconds: Long = 2, memoryLimitInMB : Long = 1024, timeoutBetweenChecks : Long=100): SchemeValue? {
+    private fun runWithTimeoutAndMemoryLimit(
+        function: () -> SchemeValue?,
+        timeoutInSeconds: Long = 2,
+        memoryLimitInMB: Long = 1024,
+        timeoutBetweenChecks: Long = 100,
+    ): SchemeValue? {
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
         try {
-            val future: Future<SchemeValue?> = executor.submit(
-                Callable {
-                    function()
-                },
-            )
+            val future: Future<SchemeValue?> =
+                executor.submit(
+                    Callable {
+                        function()
+                    },
+                )
             val memoryMonitorThread = Thread(MemoryMonitor(Thread.currentThread(), memoryLimitInMB, timeoutBetweenChecks))
             memoryMonitorThread.start()
 
@@ -52,9 +67,19 @@ class SchemeInterpreter() {
             memoryMonitorThread.interrupt()
             return result
         } catch (e: TimeoutException) {
-            throw SchemeError("Function exceeded timeout", "The execution of the Interpreter was cancelled because it exceeded the timeout of $timeoutInSeconds seconds", null, null)
+            throw SchemeError(
+                "Function exceeded timeout",
+                "The execution of the Interpreter was cancelled because it exceeded the timeout of $timeoutInSeconds seconds",
+                null,
+                null,
+            )
         } catch (e: InterruptedException) {
-            throw SchemeError("Function exceeded memory limit", "The execution of the Interpreter was cancelled because it exceeded the memory limit of $memoryLimitInMB MB", null, null)
+            throw SchemeError(
+                "Function exceeded memory limit",
+                "The execution of the Interpreter was cancelled because it exceeded the memory limit of $memoryLimitInMB MB",
+                null,
+                null,
+            )
         } catch (e: ExecutionException) {
             if (e.cause is SchemeError) {
                 throw e.cause as SchemeError

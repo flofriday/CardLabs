@@ -1,7 +1,5 @@
 package cardscheme
 
-import cardscheme.BooleanValue
-import cardscheme.SchemeInterpreter
 import org.junit.Assert
 import org.junit.Test
 

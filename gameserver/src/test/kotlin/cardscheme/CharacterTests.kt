@@ -4,7 +4,6 @@ import org.junit.Assert
 import org.junit.Test
 
 class CharacterTests {
-
     @Test
     fun simpleACharacter() {
         val program = """#\a"""
@@ -21,4 +20,3 @@ class CharacterTests {
         Assert.assertEquals('A', (result as CharacterValue).value)
     }
 }
-

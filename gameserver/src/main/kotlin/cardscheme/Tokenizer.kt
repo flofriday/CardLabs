@@ -148,17 +148,16 @@ class Tokenizer() {
             BooleanToken(false, Location(line, line, col - 2, col - 1))
         } else if (peek() == '\\') {
             consume()
-            scanCharacter();
-        }  else {
+            scanCharacter()
+        } else {
             PoundToken(Location(line, line, col - 1, col - 1))
         }
     }
 
     private fun scanCharacter(): CharToken {
-        if (peek().isLetter()){
+        if (peek().isLetter()) {
             return CharToken(consume(), Location(line, line, col - 2, col - 1))
-        }
-        else {
+        } else {
             throw SchemeError("Unknown Character", "This does not seem to be a character", Location(line, line, col - 2, col - 1), null)
         }
     }

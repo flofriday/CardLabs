@@ -1,14 +1,12 @@
 package cardscheme
 
-class Executor(var environment: Environment, val buffer: StringBuffer) : ExpressionVisitor<SchemeValue>,
+class Executor(var environment: Environment, val buffer: StringBuffer) :
+    ExpressionVisitor<SchemeValue>,
     StatementVisitor<Unit> {
-
     /**
      * On error the internal environment may be messed up and repeated calls will result in a faulty execution.
      */
-    fun execute(
-        ast: Ast,
-    ): SchemeValue? {
+    fun execute(ast: Ast): SchemeValue? {
         if (ast.forms.isEmpty()) return null
 
         for (form in ast.forms.dropLast(1)) {

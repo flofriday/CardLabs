@@ -212,7 +212,7 @@ fun builtinMakeString(
     executor: Executor,
 ): StringValue {
     val count = verifyType<IntegerValue>(args.first(), "I expected a integer here")
-    var character:CharacterValue = CharacterValue('\n')
+    var character: CharacterValue = CharacterValue('\n')
     if (args.size > 1) {
         character = verifyType<CharacterValue>(args[1], "I expected a character here")
     }
