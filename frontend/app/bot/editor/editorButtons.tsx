@@ -1,4 +1,4 @@
-import IconButton, { ButtonIcon } from "./iconButton";
+import IconButton, { ButtonIcon } from "../../components/iconButton";
 import DropDown from "@/app/components/DropDown";
 
 interface Props {

@@ -6,6 +6,7 @@ import LoggingElement from "./loggingElement";
 import CodeEditor from "./codeEditor";
 import { useEffect, useState } from "react";
 import { getNewBotName, createBot } from "@/app/services/BotService";
+import { useRouter } from "next/navigation";
 
 interface Props {
   id?: number;
@@ -23,10 +24,11 @@ function saveNewBot(
     .catch(() => {});
 }
 
-export default function BotEditor({ id }: Props): JSX.Element {
+export default function BotEditor({ id = undefined }: Props): JSX.Element {
   const [_id, setId] = useState(id);
   const [name, setName] = useState("");
   const [code, setCode] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (_id == null) {
@@ -50,6 +52,9 @@ export default function BotEditor({ id }: Props): JSX.Element {
           save={() => {
             if (_id == null) {
               saveNewBot(name, code, setId);
+              if (_id !== undefined) {
+                router.replace("/bot/editor/" + String(_id));
+              }
             }
           }}
         />
