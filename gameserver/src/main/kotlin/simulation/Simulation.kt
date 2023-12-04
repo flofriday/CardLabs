@@ -4,11 +4,11 @@ import cardscheme.*
 import kotlin.math.abs
 
 class Simulation {
-    var pile: MutableList<Card> = mutableListOf()
-    var drawPile: MutableList<Card> = mutableListOf()
-    var players: List<Player> = mutableListOf()
-    var currentPlayer = 0
-    var direction = 1
+    private var pile: MutableList<Card> = mutableListOf()
+    private var drawPile: MutableList<Card> = mutableListOf()
+    private var players: List<Player> = mutableListOf()
+    private var currentPlayer = 0
+    private var direction = 1
 
     fun run(bots: List<Bot>) {
         drawPile = generateDeck().shuffled().toMutableList()
@@ -77,7 +77,7 @@ class Simulation {
         }
     }
 
-    fun takeTurn(player: Player) {
+    private fun takeTurn(player: Player) {
         val topCard = pile.last()
         // Verify that the player has at least a matching card
         while (player.hand.none { c -> topCard.match(c) }) {
@@ -98,7 +98,7 @@ class Simulation {
             result =
                 player.interpreter.run(
                     func,
-                    listOf<SchemeValue>(
+                    listOf(
                         encodeCard(topCard),
                         ListValue(SchemeList(player.hand.map { c -> encodeCard(c) })),
                         ListValue(SchemeList(players)),
@@ -122,7 +122,7 @@ class Simulation {
         pile.addLast(playedCard)
     }
 
-    fun pickup(number: Int): List<Card> {
+    private fun pickup(number: Int): List<Card> {
         // Reshuffle the pile if necessary
         if (number > drawPile.size) {
             println("Reshuffle pile into the draw pile")
