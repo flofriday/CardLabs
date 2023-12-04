@@ -11,9 +11,11 @@ import {
   getBot,
   Bot,
   saveBot as _saveBot,
+  deleteBot as _deleteBot,
 } from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { toast } from "react-toastify";
 
 interface Props {
   id?: number;
@@ -36,6 +38,14 @@ function saveNewBot(
 function saveBot(id: number, code: string | null): void {
   _saveBot(id, code)
     .then(() => {})
+    .catch(() => {});
+}
+
+function deleteBot(id: number, router: AppRouterInstance): void {
+  _deleteBot(id)
+    .then(() => {
+      router.replace("/bot");
+    })
     .catch(() => {});
 }
 
@@ -73,6 +83,14 @@ export default function BotEditor({ id = undefined }: Props): JSX.Element {
               saveNewBot(name, code, setId, router);
             } else {
               saveBot(_id, code);
+            }
+          }}
+          _delete={() => {
+            if (_id != null) {
+              deleteBot(_id, router);
+            } else {
+              toast.success("Bot deleted");
+              router.replace("/bot");
             }
           }}
         />

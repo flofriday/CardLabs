@@ -2,10 +2,11 @@ import IconButton, { ButtonIcon } from "../../components/iconButton";
 import DropDown from "@/app/components/DropDown";
 
 interface Props {
-  save?: () => void;
+  save: () => void;
+  _delete: () => void;
 }
 
-export default function EditorButtons({ save }: Props): JSX.Element {
+export default function EditorButtons({ save, _delete }: Props): JSX.Element {
   return (
     <div className=" w-full mt-44 h-16 flex p-3 space-x-4 ml-4">
       <IconButton text="Compile" type={ButtonIcon.COMPILE} />
@@ -18,7 +19,7 @@ export default function EditorButtons({ save }: Props): JSX.Element {
         customButtonClass="text-text p-2 w-full h-full rounded-full shadow-md text-lg rounded-full outline outline-1  hover:bg-primary"
         values={[]}
       />
-      <IconButton text="Delete" type={ButtonIcon.DELETE} />
+      <IconButton onClick={_delete} text="Delete" type={ButtonIcon.DELETE} />
     </div>
   );
 }

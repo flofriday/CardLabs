@@ -129,3 +129,27 @@ export async function saveBot(
     return false;
   }
 }
+
+export async function deleteBot(id: number): Promise<boolean> {
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch("/api/bot/" + id, {
+    mode: "cors",
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+    },
+  });
+
+  if (response.status !== 200) {
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
+    throw new EvalError(); // TODO change this
+  }
+
+  toast.success("Bot deleted!");
+
+  return true;
+}
