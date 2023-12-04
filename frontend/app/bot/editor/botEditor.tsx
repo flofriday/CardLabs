@@ -48,9 +48,9 @@ interface Props {
   id?: number | null;
 }
 export default function BotEditor({ id = null }: Props): JSX.Element {
-  const [_id, setId] = useState<number | null>(null);
+  const [_id, setId] = useState<number | null>(id);
   const [name, setName] = useState("");
-  const [code, setCode] = useState<string | null>(null);
+  const [code, setCode] = useState<string | undefined>(undefined);
   const router = useRouter();
 
   useEffect(() => {
@@ -74,13 +74,13 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   return (
     <div className="w-full h-full flex">
       <LeftPageHeader title={name} subTitle="Bot-Name" />
-      <div className="h-full w-8/12">
+      <div className="h-full w-11/12">
         <EditorButtons
           save={() => {
             if (_id == null) {
-              saveNewBot(name, code, setId, router);
+              saveNewBot(name, code ?? null, setId, router);
             } else {
-              saveBot(_id, code);
+              saveBot(_id, code ?? null);
             }
           }}
           _delete={() => {
@@ -92,7 +92,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
             }
           }}
         />
-        <CodeEditor code={code} onChange={setCode} />
+        <CodeEditor code={code ?? null} onChange={setCode} />
       </div>
       <LoggingElement />
     </div>

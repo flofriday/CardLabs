@@ -1,8 +1,18 @@
+import { Editor } from "@monaco-editor/react";
 import { useEffect, useState } from "react";
 
 interface Props {
-  onChange?: (code: string | null) => void;
+  onChange?: (code: string | undefined) => void;
   code: string | null;
+}
+
+function setEditorTheme(monaco: any): void {
+  monaco.editor.defineTheme("card-labs", {
+    base: "vs-dark",
+    inherit: true,
+    rules: [],
+    colors: {},
+  });
 }
 
 export default function CodeEditor({
@@ -16,12 +26,13 @@ export default function CodeEditor({
 
   return (
     <div className="w-full h-[calc(100%_-_4rem_-_11rem)] bg-secondary">
-      <textarea
-        className="h-full w-full bg-secondary p-3"
-        value={_code ?? ""}
-        onChange={(e) => {
-          onChange(e.target.value);
-        }}
+      <Editor
+        height={"100%"}
+        defaultLanguage="javascript"
+        theme="card-labs"
+        value={_code ?? undefined}
+        onChange={onChange}
+        beforeMount={setEditorTheme}
       />
     </div>
   );
