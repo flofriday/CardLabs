@@ -25,4 +25,11 @@ class SecurityTests {
     (display "This is written to a file.")))"""
         Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
+
+    // check if an infinitley long running loop is cancelled after a timeout of 5 seconds
+    @Test(timeout = 5 * 1000)
+    fun infinitelyLongRunningLoopShouldBeCancelled() {
+        val program = """(do ((i 1)) ((> i 24)))"""
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
 }

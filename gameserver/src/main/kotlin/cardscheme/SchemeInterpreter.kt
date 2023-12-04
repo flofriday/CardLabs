@@ -1,5 +1,7 @@
 package cardscheme
 
+import java.util.concurrent.*
+
 class SchemeInterpreter() {
     var env = Environment(null, HashMap())
 
@@ -22,7 +24,7 @@ class SchemeInterpreter() {
         // println("AST: ")
         // print(ast.dump())
         val buffer = StringBuffer()
-        return Executor(env, buffer).execute(ast)
+        return runWithTimeout({ Executor(env, buffer).execute(ast) })
     }
 
     /**
@@ -30,6 +32,27 @@ class SchemeInterpreter() {
      */
     fun run(func: CallableValue, args: List<SchemeValue>): SchemeValue? {
         val buffer = StringBuffer()
-        return Executor(env, buffer).execute(func, args)
+        return runWithTimeout({ Executor(env, buffer).execute(func, args) })
+    }
+
+    private fun runWithTimeout(function: () -> SchemeValue?, timeoutInSeconds: Long = 2): SchemeValue? {
+        val executor: ExecutorService = Executors.newSingleThreadExecutor()
+
+        try {
+            val future: Future<SchemeValue?> = executor.submit(
+                Callable {
+                    function()
+                },
+            )
+
+            return future.get(timeoutInSeconds, TimeUnit.SECONDS) // Timeout set to 2 seconds
+        } catch (e: TimeoutException) {
+            throw SchemeError("Function exceeded timeout", "The execution of the Interpreter was cancelled because it exceeded the timeout of $timeoutInSeconds seconds", null, null)
+        } catch (e: ExecutionException) {
+            if (e.cause is SchemeError) {
+                throw e.cause as SchemeError
+            }
+            throw e
+        }
     }
 }
