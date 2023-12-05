@@ -15,7 +15,7 @@ fun encodeCard(card: Card): SchemeValue {
             is ChooseDrawCard -> "chooseDraw"
             else -> throw Exception("Invalid case")
         }
-    return VectorValue(mutableListOf<SchemeValue>(StringValue(card.color.toString()), StringValue(type)))
+    return VectorValue(mutableListOf<SchemeValue>(StringValue(card.color.toString().lowercase()), StringValue(type)))
 }
 
 fun decodeCard(value: SchemeValue): Card {
@@ -31,7 +31,7 @@ fun decodeCard(value: SchemeValue): Card {
         throw DecodeError("Both fields of a card must be strings")
     }
 
-    val color = (value.values[0] as StringValue).value
+    val color = (value.values[0] as StringValue).value.uppercase()
     val type = (value.values[1] as StringValue).value
     return when {
         type == "switch" -> SwitchCard(Color.valueOf(color))

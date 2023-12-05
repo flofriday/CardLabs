@@ -229,8 +229,13 @@ fun builtInCons(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    val list = SchemeList((args[1].value as ListValue).values)
-    list.addFirst(args[0].value)
+    if (args[1].value is ListValue){
+        val list = SchemeList((args[1].value as ListValue).values)
+        list.addFirst(args[0].value)
+        return ListValue(list)
+    }
+
+    val list = SchemeList(listOf( args[0].value, args[1].value))
     return ListValue(list)
 }
 

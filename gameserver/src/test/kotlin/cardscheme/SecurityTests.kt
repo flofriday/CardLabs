@@ -48,6 +48,29 @@ class SecurityTests {
     }
 
     /*
+        @Test
+    fun memoryExhaustion() {
+        val program =
+            """
+            (define l (list ))
+            (do (
+                    (i 0 (+ i 1)))
+                ((>= i 1000) i)
+                (do (
+                    (j 0 (+ j 1)))
+                ((>= j 1000) j)
+                (set! l (cons #(j l) l))
+                )
+                )
+                (display l)
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(100, (result as IntegerValue).value)
+    }
+     */
+
+    /*
     @Test(timeout = 30000)
     fun limitedMemoryTest2() {
         val program = """(define (infinite-append)
