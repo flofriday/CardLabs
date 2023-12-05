@@ -40,7 +40,7 @@ internal class BotServiceTests {
 
         val botCreate = BotCreate(
             name = "Tytartron",
-            currentCode = currentCode.takeUnless { it.equals(TestConfig.CSV_NULL_VALUE) }
+            currentCode = currentCode.takeUnless { it.equals(TestConfig.CSV_NULL_VALUE) },
         )
 
         if (success) {
@@ -73,7 +73,7 @@ internal class BotServiceTests {
         val bot = createBot(user, "Tytartron", null)
 
         val botFetch = BotPatch(
-            currentCode = currentCode.takeUnless { it.equals(TestConfig.CSV_NULL_VALUE) }
+            currentCode = currentCode.takeUnless { it.equals(TestConfig.CSV_NULL_VALUE) },
         )
 
         if (success) {
@@ -189,7 +189,7 @@ internal class BotServiceTests {
             location = null,
             sendScoreUpdates = false,
             sendChangeUpdates = false,
-            sendNewsletter = false
+            sendNewsletter = false,
         )
     }
 

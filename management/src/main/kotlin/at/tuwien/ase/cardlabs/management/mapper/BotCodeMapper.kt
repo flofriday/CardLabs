@@ -19,7 +19,7 @@ class BotCodeMapper {
         return BotCode(
             id = botCodeDAO.botCodeId,
             botId = botCodeDAO.botId,
-            code = botCodeDAO.code
+            code = botCodeDAO.code,
         )
     }
 }

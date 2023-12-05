@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class BotController(
-    val botService: BotService
+    val botService: BotService,
 ) {
 
     @GetMapping("/bot/name")
@@ -35,7 +35,7 @@ class BotController(
     @PostMapping("/bot")
     fun create(
         @AuthenticationPrincipal user: CardLabUser,
-        @RequestBody botCreate: BotCreate
+        @RequestBody botCreate: BotCreate,
     ): ResponseEntity<Bot> {
         val result = botService.create(user, botCreate)
         return ResponseEntity
@@ -47,7 +47,7 @@ class BotController(
     fun patch(
         @AuthenticationPrincipal user: CardLabUser,
         @PathVariable id: Long,
-        @RequestBody botPatch: BotPatch
+        @RequestBody botPatch: BotPatch,
     ): ResponseEntity<Bot> {
         val result = botService.patch(user, id, botPatch)
         return ResponseEntity
@@ -58,8 +58,8 @@ class BotController(
     @PatchMapping("/bot/{id}/code-version")
     fun rank(
         @AuthenticationPrincipal user: CardLabUser,
-        @PathVariable id: Long
-    ): ResponseEntity<Void> {
+        @PathVariable id: Long,
+    ): ResponseEntity<Unit> {
         botService.createCodeVersion(user, id)
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -69,7 +69,7 @@ class BotController(
     @GetMapping("/bot/{id}/rank")
     fun rankPosition(
         @AuthenticationPrincipal user: CardLabUser,
-        @PathVariable id: Long
+        @PathVariable id: Long,
     ): ResponseEntity<Long> {
         val rank = botService.fetchRankPosition(user, id)
         return ResponseEntity
@@ -80,7 +80,7 @@ class BotController(
     @GetMapping("/bot/{id}")
     fun fetch(
         @AuthenticationPrincipal user: CardLabUser,
-        @PathVariable id: Long
+        @PathVariable id: Long,
     ): ResponseEntity<Bot> {
         val result = botService.fetch(user, id)
         return ResponseEntity
@@ -92,7 +92,7 @@ class BotController(
     fun fetchAll(
         @AuthenticationPrincipal user: CardLabUser,
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
-        @RequestParam(required = false, defaultValue = "10") pageSize: Int
+        @RequestParam(required = false, defaultValue = "10") pageSize: Int,
     ): ResponseEntity<Page<Bot>> {
         val pageable = PageRequest.of(pageNumber, pageSize)
         val result = botService.fetchAll(user, pageable)
@@ -104,7 +104,7 @@ class BotController(
     @DeleteMapping("/bot/{id}")
     fun delete(
         @AuthenticationPrincipal user: CardLabUser,
-        @PathVariable id: Long
+        @PathVariable id: Long,
     ): ResponseEntity<Unit> {
         botService.delete(user, id)
         return ResponseEntity

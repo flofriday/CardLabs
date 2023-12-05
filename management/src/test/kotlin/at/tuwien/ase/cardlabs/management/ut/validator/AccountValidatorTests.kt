@@ -22,7 +22,7 @@ internal class AccountValidatorTests {
         password: String,
         success: Boolean,
         errorMessage: String,
-        description: String
+        description: String,
     ) {
         val account = Account(
             id = null,
@@ -32,7 +32,7 @@ internal class AccountValidatorTests {
             location = null,
             sendScoreUpdates = false,
             sendChangeUpdates = false,
-            sendNewsletter = false
+            sendNewsletter = false,
         )
         if (success) {
             assertDoesNotThrow {

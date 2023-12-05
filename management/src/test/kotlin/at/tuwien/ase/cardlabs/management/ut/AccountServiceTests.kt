@@ -152,7 +152,7 @@ internal class AccountServiceTests {
         location: String?,
         sendScoreUpdates: Boolean,
         sendChangeUpdates: Boolean,
-        sendNewsletter: Boolean
+        sendNewsletter: Boolean,
     ): Account {
         return TestHelper.createAccount(
             accountService,
@@ -162,7 +162,7 @@ internal class AccountServiceTests {
             location,
             sendScoreUpdates,
             sendChangeUpdates,
-            sendNewsletter
+            sendNewsletter,
         )
     }
 }
