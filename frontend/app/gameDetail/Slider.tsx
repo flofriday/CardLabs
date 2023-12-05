@@ -62,7 +62,7 @@ export default function Slider({ totalRoundNumber }: Props): JSX.Element {
           value={inputText}
           onChange={handleInputChange}
           onKeyUp={handleInputKeyPress}
-          className="px-4 py-3 w-14 h-14 text-4xl bg-text text-primary rounded-md hover:bg-primary hover:text-text"
+          className="px-4 py-3 w-28 h-14 text-center text-4xl bg-text text-primary rounded-md hover:bg-primary hover:text-text"
         />
       </div>
 

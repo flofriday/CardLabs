@@ -1,7 +1,4 @@
-interface LogLine {
-  message: string;
-  isDebug?: boolean;
-}
+import { LogLine } from "../types/LogLine";
 
 interface Props {
   logLines: LogLine[];
