@@ -220,7 +220,7 @@ fun builtinMakeString(
 }
 
 /**
- * Built in cons (adds to the front of the pair)
+ * Built in cons (returns a new pair with two elements obj1 as car and ob2 as cdr)
  *
  * Spec: R7R, Chapter 6.4
  * Syntax: (cons obj1 obj2)
@@ -327,7 +327,8 @@ fun builtinMakeVector(
     args: List<FuncArg>,
     executor: Executor,
 ): VectorValue {
-    val k = verifyType<IntegerValue>(args.first(), "Only positive integers can be used to specify the length of a vector")
+    val k =
+        verifyType<IntegerValue>(args.first(), "Only positive integers can be used to specify the length of a vector")
     if (k.value <= 0) {
         throw SchemeError(
             "Type Mismatch",
