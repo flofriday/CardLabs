@@ -21,7 +21,9 @@ export default function BotHandsContainer({
   return (
     <div className="flex flex-col text-4xl py-2 items-start">
       <div className="flex items-center space-x-2">
-        <p className="flex-shrink-0 w-40 truncate">{botName}:</p>
+        <p className="flex-shrink-0 w-40 truncate" title={botName}>
+          {botName}:
+        </p>
         {cardsToShow.map((card, index) => (
           <div key={index}>
             <Card
@@ -32,12 +34,12 @@ export default function BotHandsContainer({
           </div>
         ))}
         {botHand.length > 10 && (
-          <div className="flex items-center ml-2">
+          <div className="flex items-center mt-2 ml-2">
             <button
               className="btn bg-primary p-6 py-2 font-bold rounded-lg shadow-md text-4xl  hover:bg-primary_highlight"
               onClick={() => setShowNextSet(!showNextSet)}
             >
-              {showNextSet ? "Previous cards" : "Next cards"}
+              {showNextSet ? "Previous Cards" : "Next Cards"}
             </button>
           </div>
         )}
