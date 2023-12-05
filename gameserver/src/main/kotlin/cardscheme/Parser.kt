@@ -160,7 +160,13 @@ class Parser {
             val name = must<IdentifierToken>("I expected a variable name here.")
             val init = parseExpression()
             val bindingEnd = must<RParenToken>("I expected a closing right parenthesis here.")
-            bindings.addLast(VariableBinding(IdentifierNode(name.value, name.location), init, Location.merge(bindingStart.location, bindingEnd.location)))
+            bindings.addLast(
+                VariableBinding(
+                    IdentifierNode(name.value, name.location),
+                    init,
+                    Location.merge(bindingStart.location, bindingEnd.location),
+                ),
+            )
         }
         consume()
 
@@ -227,7 +233,7 @@ class Parser {
         val conditionsList = SchemeList<ExpressionNode>()
         val expressionsList = SchemeList<List<ExpressionNode>>()
 
-        var currentClause : ExpressionNode? = null
+        var currentClause: ExpressionNode? = null
 
         do {
             must<LParenToken>("Expected left parenthesis here")
@@ -247,7 +253,7 @@ class Parser {
         } while (peek() !is RParenToken)
         must<RParenToken>("Expected right parenthesis here")
 
-        for ((condition, thenExpressions) in conditionsList.zip(expressionsList)){
+        for ((condition, thenExpressions) in conditionsList.zip(expressionsList)) {
             currentClause = IfNode(condition, BodyNode(emptyList(), thenExpressions, lparen.location), currentClause, lparen.location)
         }
 

@@ -106,7 +106,4 @@ class ConditionalTests {
         assert(result is StringValue)
         Assert.assertEquals("other", (result as StringValue).value)
     }
-
-
-
 }

@@ -68,9 +68,7 @@ class SecurityTests {
         assert(result is IntegerValue)
         Assert.assertEquals(100, (result as IntegerValue).value)
     }
-     */
 
-    /*
     @Test(timeout = 30000)
     fun limitedMemoryTest2() {
         val program = """(define (infinite-append)

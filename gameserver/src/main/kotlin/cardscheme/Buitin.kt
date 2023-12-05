@@ -229,13 +229,13 @@ fun builtInCons(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    if (args[1].value is ListValue){
+    if (args[1].value is ListValue) {
         val list = SchemeList((args[1].value as ListValue).values)
         list.addFirst(args[0].value)
         return ListValue(list)
     }
 
-    val list = SchemeList(listOf( args[0].value, args[1].value))
+    val list = SchemeList(listOf(args[0].value, args[1].value))
     return ListValue(list)
 }
 
@@ -332,7 +332,8 @@ fun builtinMakeVector(
     args: List<FuncArg>,
     executor: Executor,
 ): VectorValue {
-    val k = verifyType<IntegerValue>(args.first(), "Only positive integers can be used to specify the length of a vector")
+    val k =
+        verifyType<IntegerValue>(args.first(), "Only positive integers can be used to specify the length of a vector")
     if (k.value <= 0) {
         throw SchemeError(
             "Type Mismatch",

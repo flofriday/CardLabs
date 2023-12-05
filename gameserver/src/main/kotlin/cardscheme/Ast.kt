@@ -251,7 +251,12 @@ class LetNode(val rec: Boolean, val star: Boolean, val bindings: List<VariableBi
     ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) +
-            "LetNode: (rec: $rec, star: $star)\n" + bindings.map { b -> b.name.dump(indent + 1) + b.init.dump(indent + 1) } + body.dump(indent + 1)
+            "LetNode: (rec: $rec, star: $star)\n" +
+            bindings.map {
+                    b ->
+                b.name.dump(indent + 1) + b.init.dump(indent + 1)
+            } +
+            body.dump(indent + 1)
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
