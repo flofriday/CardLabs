@@ -48,8 +48,8 @@ export default function Slider({ totalRoundNumber }: Props): JSX.Element {
   };
 
   return (
-    <div>
-      <div className="flex items-center mb-4">
+    <div className="flex w-full items-center space-x-5">
+      <div className="flex items-center">
         <label
           htmlFor="slider-input"
           className="mr-2 text-text text-4xl font-bold"
@@ -61,17 +61,17 @@ export default function Slider({ totalRoundNumber }: Props): JSX.Element {
           type="text"
           value={inputText}
           onChange={handleInputChange}
-          onKeyPress={handleInputKeyPress}
-          className="px-4 py-3 w-14 h-14 text-4xl bg-secondary text-text rounded-md hover:bg-primary hover:text-white"
+          onKeyUp={handleInputKeyPress}
+          className="px-4 py-3 w-14 h-14 text-4xl bg-text text-primary rounded-md hover:bg-primary hover:text-text"
         />
       </div>
 
-      <div className="flex items-center mb-4">
+      <div className="flex w-full items-center">
         <button
-          className="px-4 py-3 w-14 h-14 text-4xl bg-secondary text-text rounded-md hover:bg-primary hover:text-white flex items-center justify-center mr-1"
+          className="px-4 py-3 h-14 text-4xl bg-secondary text-text rounded-md hover:bg-primary hover:text-white flex items-center justify-center mr-1"
           onClick={handleDecrement}
         >
-          -
+          &lt;
         </button>
 
         <input
@@ -89,7 +89,7 @@ export default function Slider({ totalRoundNumber }: Props): JSX.Element {
           className="px-4 py-3 w-14 h-14 text-4xl bg-secondary text-text rounded-md hover:bg-primary hover:text-white flex items-center justify-center ml-1"
           onClick={handleIncrement}
         >
-          +
+          &gt;
         </button>
       </div>
     </div>

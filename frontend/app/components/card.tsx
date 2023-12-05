@@ -159,7 +159,7 @@ export const CardValue = {
   },
 } as const;
 
-type CardValue_ = (typeof CardValue)[keyof typeof CardValue];
+export type CardValue_ = (typeof CardValue)[keyof typeof CardValue];
 
 interface Props {
   value: CardValue_;
