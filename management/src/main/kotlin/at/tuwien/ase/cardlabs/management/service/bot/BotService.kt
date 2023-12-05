@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.service.bot
 
+import at.tuwien.ase.cardlabs.management.config.BotConfig
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
@@ -18,7 +19,6 @@ import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.validation.validator.BotValidator
 import at.tuwien.ase.cardlabs.management.validation.validator.Validator
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -31,11 +31,9 @@ class BotService(
     private val botMapper: BotMapper,
     private val accountService: AccountService,
     private val botNameGenerator: BotNameGenerator,
-    private val botCodeRepository: BotCodeRepository
+    private val botCodeRepository: BotCodeRepository,
+    private val botConfig: BotConfig,
 ) {
-
-    @Value("\${cardlabs.elo.initial-value}")
-    private val initialEloValue = 1000
 
     /**
      * Generate a bot name
@@ -59,7 +57,7 @@ class BotService(
         bot.owner = owner
         bot.currentCode = botCreate.currentCode ?: ""
         bot.codeHistory = mutableListOf()
-        bot.eloScore = initialEloValue
+        bot.eloScore = botConfig.elo.initialValue
         bot.currentState = BotState.CREATED
         bot.defaultState = BotState.READY
 

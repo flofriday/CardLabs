@@ -2,4 +2,5 @@
 "",false,"The name can not be empty or blank","Test the not empty rule"
 "a",false,"The name must have length [5, 30]","Test the min length rule"
 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",false,"The name must have length [5, 30]","Test the max length rule"
+"AAAAAAAAAA",false,"The name needs to be a bot name","Test the bot validator rule"
 "Xennixos",true,"","Test successful validation"

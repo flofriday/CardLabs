@@ -1,9 +1,12 @@
 package at.tuwien.ase.cardlabs.management.validation.validator
 
+import at.tuwien.ase.cardlabs.management.ApplicationContextProvider
+import at.tuwien.ase.cardlabs.management.config.BotConfig
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
 import at.tuwien.ase.cardlabs.management.error.ValidationException
 import at.tuwien.ase.cardlabs.management.validation.ValidationRule
+import at.tuwien.ase.cardlabs.management.validation.string.BotNameRule
 import at.tuwien.ase.cardlabs.management.validation.string.LengthRule
 import at.tuwien.ase.cardlabs.management.validation.string.NotEmptyRule
 
@@ -23,12 +26,12 @@ class BotValidator {
         fun validate(botCreate: BotCreate) {
             Validator.validate(
                 botCreate.name,
-                nameValidationRules()
+                nameValidationRules(),
             )
             botCreate.currentCode?.let {
                 Validator.validate(
                     it,
-                    codeValidationRules()
+                    codeValidationRules(),
                 )
             }
         }
@@ -43,7 +46,7 @@ class BotValidator {
             botPatch.currentCode?.let {
                 Validator.validate(
                     it,
-                    codeValidationRules()
+                    codeValidationRules(),
                 )
             }
         }
@@ -56,9 +59,11 @@ class BotValidator {
         @JvmStatic
         fun nameValidationRules(): List<ValidationRule<String>> {
             val inputName = "name"
+            val botConfig = ApplicationContextProvider.getBean(BotConfig::class.java)
             return mutableListOf(
                 NotEmptyRule(inputName),
-                LengthRule(inputName, 5, 30)
+                LengthRule(inputName, 5, 30),
+                BotNameRule(inputName, botConfig),
             )
         }
 
@@ -72,7 +77,7 @@ class BotValidator {
             val inputName = "code"
             return mutableListOf(
                 NotEmptyRule(inputName),
-                LengthRule(inputName, 1, 32768)
+                LengthRule(inputName, 1, 32768),
             )
         }
     }
