@@ -1,41 +1,44 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 interface Props {
   onPageChange: (page: number) => void;
   totalNumberOfPages: number;
 }
 
-export default function Pagination(props: Props): JSX.Element {
+export default function Pagination({
+  onPageChange,
+  totalNumberOfPages,
+}: Props): JSX.Element {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages] = useState<number>(props.totalNumberOfPages);
+  const [totalPages] = useState<number>(totalNumberOfPages);
 
   const goToPage = (page: number) => {
     setCurrentPage(page);
-    props.onPageChange(page);
+    onPageChange(page);
   };
 
   const goToFirstPage = () => {
     setCurrentPage(1);
-    props.onPageChange(1);
+    onPageChange(1);
   };
 
   const goToLastPage = () => {
     setCurrentPage(totalPages);
-    props.onPageChange(totalPages);
+    onPageChange(totalPages);
   };
 
   const goToPrevPage = () => {
     let prevPage = Math.max(currentPage - 1, 1);
     setCurrentPage(prevPage);
-    props.onPageChange(prevPage);
+    onPageChange(prevPage);
   };
 
   const goToNextPage = () => {
     let nextPage = Math.min(currentPage + 1, totalPages);
     setCurrentPage(nextPage);
-    props.onPageChange(nextPage);
+    onPageChange(nextPage);
   };
 
   const renderPageNumbers = () => {
