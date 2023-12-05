@@ -47,6 +47,10 @@ class Tokenizer() {
                 tokens.add(DoToken(Location(line, line, col - "do".length, col - 1)))
             } else if (consumeMatch("if")) {
                 tokens.add(IfToken(Location(line, line, col - "if".length, col - 1)))
+            } else if (consumeMatch("cond")) {
+                tokens.add(CondToken(Location(line, line, col - "cond".length, col - 1)))
+            } else if (consumeMatch("else")) {
+                tokens.add(ElseToken(Location(line, line, col - "else".length, col - 1)))
             } else if (consumeMatch("lambda")) {
                 tokens.add(LambdaToken(Location(line, line, col - "lambda".length, col - 1)))
             } else if (consumeMatch("letrec*")) {

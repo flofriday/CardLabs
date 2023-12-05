@@ -58,4 +58,55 @@ class ConditionalTests {
         assert(result is IntegerValue)
         Assert.assertEquals(1, (result as IntegerValue).value)
     }
+
+    @Test
+    fun conditionalWithCondTest1() {
+        val program = """(define n 0)
+    (cond ((= n 0) "zero")
+    ((= n 1) "one")
+    ((= n 2) "two")
+    (else    "other"))"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is StringValue)
+        Assert.assertEquals("zero", (result as StringValue).value)
+    }
+
+    @Test
+    fun conditionalWithCondTest2() {
+        val program = """(define n 1)
+    (cond ((= n 0) "zero")
+    ((= n 1) "one")
+    ((= n 2) "two")
+    (else    "other"))"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is StringValue)
+        Assert.assertEquals("one", (result as StringValue).value)
+    }
+
+    @Test
+    fun conditionalWithCondTest3() {
+        val program = """(define n 2)
+    (cond ((= n 0) "zero")
+    ((= n 1) "one")
+    ((= n 2) "two")
+    (else    "other"))"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is StringValue)
+        Assert.assertEquals("two", (result as StringValue).value)
+    }
+
+    @Test
+    fun conditionalWithCondTestElse() {
+        val program = """(define n 5)
+    (cond ((= n 0) "zero")
+    ((= n 1) "one")
+    ((= n 2) "two")
+    (else    "other"))"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is StringValue)
+        Assert.assertEquals("other", (result as StringValue).value)
+    }
+
+
+
 }

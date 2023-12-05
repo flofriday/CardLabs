@@ -37,3 +37,7 @@ class IfToken(location: Location) : Token(location)
 class LambdaToken(location: Location) : Token(location)
 
 class LetToken(val rec: Boolean, val star: Boolean, location: Location) : Token(location)
+
+class CondToken(location: Location) : Token(location)
+
+class ElseToken(location: Location) : Token(location)

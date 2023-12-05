@@ -80,6 +80,8 @@ class Parser {
                 return parseDo()
             } else if (peekn(2) is IfToken) {
                 return parseIf()
+            } else if (peekn(2) is CondToken) {
+                return parseCond()
             } else if (peekn(2) is LambdaToken) {
                 return parseLambda()
             } else if (peekn(2) is LetToken) {
@@ -209,6 +211,47 @@ class Parser {
         val elseExpression = parseExpression()
         val rparen = must<RParenToken>("Expected a right parenthesis here")
         return IfNode(condition, thenExpression, elseExpression, Location.merge(lparen.location, rparen.location))
+    }
+
+    /**
+     * Parse an cond expression. It is desugared to nested if expressions
+     *
+     * Spec: R7R, chapter 4.2.1
+     * (cond <clause1> <clause2> ...)
+     * where <clause> is (<test> <expression1> ...)
+     */
+    private fun parseCond(): IfNode {
+        val lparen = consume()
+        consume()
+
+        val conditionsList = SchemeList<ExpressionNode>()
+        val expressionsList = SchemeList<List<ExpressionNode>>()
+
+        var currentClause : ExpressionNode? = null
+
+        do {
+            must<LParenToken>("Expected left parenthesis here")
+            if (peek() is ElseToken) {
+                consume()
+                currentClause = BodyNode(emptyList(), parseExpressions(), lparen.location)
+                must<RParenToken>("Expected right parenthesis here")
+                break
+            }
+
+            val condition = parseExpression()
+            val thenExpressions = parseExpressions()
+            must<RParenToken>("Expected right parenthesis here")
+
+            conditionsList.addFirst(condition)
+            expressionsList.addFirst(thenExpressions)
+        } while (peek() !is RParenToken)
+        must<RParenToken>("Expected right parenthesis here")
+
+        for ((condition, thenExpressions) in conditionsList.zip(expressionsList)){
+            currentClause = IfNode(condition, BodyNode(emptyList(), thenExpressions, lparen.location), currentClause, lparen.location)
+        }
+
+        return currentClause as IfNode
     }
 
     /**
