@@ -1,0 +1,3 @@
+# name | currentCode | success | errorMessage | description
+"Xennixos",null,true,"","Test successful creation"
+"Xennixos","x = 5",true,"","Test successful creation"

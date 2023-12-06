@@ -1,0 +1,6 @@
+# username | success | errorMessage | description
+"",false,"The username can not be empty or blank","Test the not empty rule"
+"a",false,"The username must have length [4, 32]","Test the min length rule"
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",false,"The username must have length [4, 32]","Test the max length rule"
+"Xennix os",false,"The username can not contain a whitespace","Test the not contain white space rule"
+"Xennixos",true,"","Test successful validation"
