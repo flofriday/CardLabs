@@ -34,18 +34,29 @@ export default function Leaderboard(): JSX.Element {
       pageNumber,
       selectedRegion,
       LeaderBoardType.ALL_BOTS
-    ).then((entries) => {
-      setLeaderBoardEntries(entries);
-    });
+    )
+      .then((entries) => {
+        setLeaderBoardEntries(entries);
+      })
+      .catch(() => {});
   });
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (page: number): void => {
     setPageNumber(page);
 
     getLeaderBoardPage(5, page, selectedRegion, LeaderBoardType.ALL_BOTS)
       .then((entries) => {
         setLeaderBoardEntries(entries);
-        console.log(entries);
+      })
+      .catch(() => {});
+  };
+
+  const handleRegionChange = (region: RegionType): void => {
+    setSelectedRegion(region);
+
+    getLeaderBoardPage(5, pageNumber, selectedRegion, LeaderBoardType.ALL_BOTS)
+      .then((entries) => {
+        setLeaderBoardEntries(entries);
       })
       .catch(() => {});
   };
@@ -72,7 +83,7 @@ export default function Leaderboard(): JSX.Element {
         </div>
 
         <div className="w-1/4 p-12">
-          <RegionSelector />
+          <RegionSelector onRegionChange={handleRegionChange} />
         </div>
       </div>
     </div>

@@ -11,11 +11,11 @@ export default function LeaderBoardEntry({ entry }: Props): JSX.Element {
         <p
           className={`flex-1 font-bold truncate pr-2
           ${
-            entry.place == 1
+            entry.place === 1
               ? " text-gold"
-              : entry.place == 2
+              : entry.place === 2
               ? " text-silver"
-              : entry.place == 3
+              : entry.place === 3
               ? " text-bronze"
               : " text-text"
           }

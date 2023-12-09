@@ -1,4 +1,3 @@
-import test from "node:test";
 import { LeaderBoardType } from "../types/LeaderBoardType";
 import { RegionType } from "../types/RegionType";
 import { leaderBoardEntry } from "../types/leaderBoardEntry";
@@ -45,6 +44,22 @@ const testentries2: leaderBoardEntry[] = [
   { place: 10, score: 90, botName: "Bot2", userName: "User2" },
 ];
 
+const testentries3: leaderBoardEntry[] = [
+  { place: 11, score: 1, botName: "Anton", userName: "User1234" },
+  { place: 12, score: 2, botName: "Bernd", userName: "User2345" },
+  { place: 13, score: 3, botName: "Anna", userName: "User1111" },
+  { place: 14, score: 4, botName: "Lisa", userName: "User2222" },
+  { place: 15, score: 5, botName: "Kat", userName: "User2468" },
+];
+
+const error_entries: leaderBoardEntry[] = [
+  { place: 0, score: 0, botName: "0", userName: "0" },
+  { place: 0, score: 0, botName: "0", userName: "0" },
+  { place: 0, score: 0, botName: "0", userName: "0" },
+  { place: 0, score: 0, botName: "0", userName: "0" },
+  { place: 0, score: 0, botName: "0", userName: "0" },
+];
+
 export async function getGlobalTop5LeaderBoardEntries(
   regionType: RegionType
 ): Promise<leaderBoardEntry[]> {
@@ -82,10 +97,26 @@ export async function getLeaderBoardPage(
   boardType: LeaderBoardType
 ): Promise<leaderBoardEntry[]> {
   // TODO replace this with calls to the backend
-  if (pageNumber == 1) {
-    return testentries1;
+  if (regionType === RegionType.CONTINENT) {
+    if (pageNumber === 1) {
+      return testentries1;
+    } else {
+      return testentries2;
+    }
+  } else if (regionType === RegionType.COUNTRY) {
+    if (pageNumber === 1) {
+      return exampleEntries;
+    } else {
+      return exampleEntries1;
+    }
+  } else if (regionType === RegionType.GLOBAL) {
+    if (pageNumber === 1) {
+      return exampleEntries2;
+    } else {
+      return testentries3;
+    }
   } else {
-    return testentries2;
+    return error_entries;
   }
 }
 
