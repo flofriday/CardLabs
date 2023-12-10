@@ -96,27 +96,45 @@ export async function getLeaderBoardPage(
   regionType: RegionType,
   boardType: LeaderBoardType
 ): Promise<leaderBoardEntry[]> {
-  // TODO replace this with calls to the backend
-  if (regionType === RegionType.CONTINENT) {
-    if (pageNumber === 1) {
-      return testentries1;
+  if (boardType === LeaderBoardType.ALL_BOTS) {
+    const url = `api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType}`;
+
+    const response = await fetch(url, {
+      mode: "cors",
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     } else {
-      return testentries2;
-    }
-  } else if (regionType === RegionType.COUNTRY) {
-    if (pageNumber === 1) {
-      return exampleEntries;
-    } else {
-      return exampleEntries1;
-    }
-  } else if (regionType === RegionType.GLOBAL) {
-    if (pageNumber === 1) {
-      return exampleEntries2;
-    } else {
-      return testentries3;
+      return await response.json();
     }
   } else {
-    return error_entries;
+    // TODO replace this with calls to the backend
+    if (regionType === RegionType.CONTINENT) {
+      if (pageNumber === 1) {
+        return testentries1;
+      } else {
+        return testentries2;
+      }
+    } else if (regionType === RegionType.COUNTRY) {
+      if (pageNumber === 1) {
+        return exampleEntries;
+      } else {
+        return exampleEntries1;
+      }
+    } else if (regionType === RegionType.GLOBAL) {
+      if (pageNumber === 1) {
+        return exampleEntries2;
+      } else {
+        return testentries3;
+      }
+    } else {
+      return error_entries;
+    }
   }
 }
 
