@@ -7,5 +7,5 @@ data class Result(
     val botCodeId: Long,
     val oldEloScore: Long,
     val newEloScore: Long,
-    val position: Int
+    val position: Int,
 ) : Serializable

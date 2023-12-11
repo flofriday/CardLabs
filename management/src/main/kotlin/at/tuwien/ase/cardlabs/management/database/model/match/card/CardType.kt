@@ -6,5 +6,5 @@ enum class CardType {
     SKIP,
     DRAW_TWO,
     WILD,
-    WILD_DRAW_4
+    WILD_DRAW_4,
 }

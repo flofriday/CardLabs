@@ -4,5 +4,5 @@ enum class ActionType {
     INITIAL_CARD_DRAW,
     DRAW_CARD,
     PLAY_CARD,
-    SAY_UNO
+    SAY_UNO,
 }

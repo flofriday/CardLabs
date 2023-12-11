@@ -5,5 +5,5 @@ import java.io.Serializable
 data class Card(
     val type: CardType,
     val color: Color,
-    val number: Int?
+    val number: Int?,
 ) : Serializable

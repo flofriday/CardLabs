@@ -13,15 +13,21 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class GameService(
     private val gameRepository: GameRepository,
-    private val gameMapper: GameMapper
+    private val gameMapper: GameMapper,
 ) {
 
+    /**
+     * Fetch all details about a game
+     */
     @Transactional
     fun fetchAllById(user: CardLabUser, gameId: Long): Game {
         val game = findById(gameId)
         return gameMapper.map(game)
     }
 
+    /**
+     * Fetch all the logs from a game
+     */
     @Transactional
     fun fetchLogById(user: CardLabUser, gameId: Long): List<LogMessage> {
         val game = findById(gameId)

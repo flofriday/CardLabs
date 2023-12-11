@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class GameController(
-    val gameService: GameService
+    val gameService: GameService,
 ) {
 
     @GetMapping("/match/{id}/all")
@@ -30,7 +30,7 @@ class GameController(
     @GetMapping("/match/{id}/log")
     fun fetchLogById(
         @AuthenticationPrincipal user: CardLabUser,
-        @PathVariable id: Long
+        @PathVariable id: Long,
     ): ResponseEntity<List<LogMessage>> {
         val logMessages = gameService.fetchLogById(user, id)
         return ResponseEntity

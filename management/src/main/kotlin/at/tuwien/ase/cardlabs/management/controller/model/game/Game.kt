@@ -11,5 +11,5 @@ data class Game(
     val endTime: LocalDateTime,
     val actions: List<Action>,
     val results: List<Result>,
-    val logMessages: List<LogMessage>
+    val logMessages: List<LogMessage>,
 )

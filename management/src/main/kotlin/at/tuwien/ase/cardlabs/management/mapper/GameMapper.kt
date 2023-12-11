@@ -25,7 +25,7 @@ class GameMapper {
             endTime = gameDAO.endTime,
             actions = gameDAO.actions,
             results = gameDAO.results,
-            logMessages = gameDAO.logMessages
+            logMessages = gameDAO.logMessages,
         )
     }
 }
