@@ -1,8 +1,8 @@
 package at.tuwien.ase.cardlabs.management.database.model.match.card
 
 enum class Color {
-    YELLOW,
+    CYAN,
+    ORANGE,
     GREEN,
-    BLUE,
-    RED,
+    PURPLE,
 }

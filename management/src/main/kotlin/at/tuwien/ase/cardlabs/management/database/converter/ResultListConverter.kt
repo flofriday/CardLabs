@@ -5,6 +5,9 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.AttributeConverter
 
+/**
+ * Converts a list of results into a JSON or vice versa. This is used when saving data to the database.
+ */
 class ResultListConverter(private val objectMapper: ObjectMapper) : AttributeConverter<List<Result>, String> {
 
     override fun convertToDatabaseColumn(t: List<Result>): String {

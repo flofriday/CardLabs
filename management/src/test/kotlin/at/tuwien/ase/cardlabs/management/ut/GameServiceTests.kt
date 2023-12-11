@@ -58,8 +58,8 @@ class GameServiceTests {
         gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0)
         gameDAO.endTime = LocalDateTime.of(2023, 12, 11, 16, 0)
         gameDAO.actions = listOf(
-            Action(botId, ActionType.INITIAL_CARD_DRAW, Card(CardType.DRAW_TWO, Color.RED, null), null),
-            Action(botId, ActionType.DRAW_CARD, Card(CardType.NUMBER_CARD, Color.BLUE, 5), null),
+            Action(botId, ActionType.INITIAL_CARD_DRAW, Card(CardType.DRAW_TWO, Color.CYAN, null), null),
+            Action(botId, ActionType.DRAW_CARD, Card(CardType.NUMBER_CARD, Color.ORANGE, 5), null),
         )
         gameDAO.results = listOf(
             Result(botId, botCodeId, 1000, 1015, 0),
