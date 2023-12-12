@@ -82,4 +82,36 @@ class MathTests {
         assert(result is IntegerValue)
         Assert.assertEquals(5, (result as IntegerValue).value)
     }
+
+    @Test
+    fun absTest1() {
+        val program = "(abs -10)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(10, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun absTest2() {
+        val program = "(abs -44.38)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is FloatValue)
+        Assert.assertEquals(44.38f, (result as FloatValue).value)
+    }
+
+    @Test
+    fun absTest3() {
+        val program = "(abs 15)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(15, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun absTest4() {
+        val program = "(abs 15.3844)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is FloatValue)
+        Assert.assertEquals(15.3844f, (result as FloatValue).value)
+    }
 }

@@ -37,7 +37,7 @@ class Tokenizer() {
                 while (index < program.length && program[index++] != '\n') {}
             } else if (c == '#') {
                 tokens.addLast(scanPoundSign())
-            } else if (c.isDigit()) {
+            } else if (c.isDigit() || isNegativeNumber(c)) {
                 tokens.addLast(scanNumber())
             } else if (consumeMatch("begin")) {
                 tokens.add(BeginToken(Location(line, line, col - "begin".length, col - 1)))
@@ -80,6 +80,10 @@ class Tokenizer() {
         }
 
         return tokens
+    }
+
+    private fun isNegativeNumber(c: Char): Boolean {
+        return (index + 1 < program.length) && (peek() == '-') && program[index + 1].isDigit()
     }
 
     private fun isIdentifierInitial(c: Char): Boolean {
@@ -126,6 +130,10 @@ class Tokenizer() {
 
     private fun scanNumber(): Token {
         var literal = ""
+
+        if (peek() == '-') {
+            literal += consume()
+        }
 
         while (peek().isDigit()) {
             val digit = consume()
