@@ -7,7 +7,7 @@
 (make-card "red" "reverse")
 
 ; Player definition
-(define-structure player (name cardCount))
+(define-structure player (id cardCount))
 
 ; It's your turn, select a card
 ; hand is just a list of cards

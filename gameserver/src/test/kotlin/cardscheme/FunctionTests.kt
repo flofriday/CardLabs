@@ -119,4 +119,24 @@ class FunctionTests {
 
         assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
+
+    @Test
+    fun badLambdaDuplicationArguments() {
+        val program =
+            """
+            (lambda (n m n) (+ 1 1))
+            """
+                .trimIndent()
+        assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
+
+    @Test
+    fun badDefineDuplicationArguments() {
+        val program =
+            """
+            (define (f n m n) (+ 1 1))
+            """
+                .trimIndent()
+        assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
 }

@@ -57,4 +57,17 @@ class IterationTest {
         assert(result is IntegerValue)
         Assert.assertEquals(100, (result as IntegerValue).value)
     }
+
+    @Test
+    fun badVariableNameClash() {
+        val program =
+            """
+                 (do (
+                    (i 0 (+ i 1))
+                    (i 0 (+ i 1))
+                    )
+                ((>= i 100) i))
+            """.trimIndent()
+        Assert.assertThrows(SchemeError::class.java) {SchemeInterpreter().run(program)}
+    }
 }

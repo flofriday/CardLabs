@@ -213,4 +213,42 @@ class VariableTests {
         assert(result is IntegerValue)
         Assert.assertEquals(5, (result as IntegerValue).value)
     }
+
+    @Test
+    fun badLetNameClash() {
+        val program =
+            """
+            (let ((a 1) (a 2)) a)
+            """.trimIndent()
+        Assert.assertThrows(SchemeError::class.java) {SchemeInterpreter().run(program)}
+    }
+
+    @Test
+    fun LetStarNameReuse() {
+        val program =
+            """
+            (let* ((a 1) (a (+ a a))) a)
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(2, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun badLetRecNameClash() {
+        val program =
+            """
+            (letrec ((a 1) (a 2)) a)
+            """.trimIndent()
+        Assert.assertThrows(SchemeError::class.java) {SchemeInterpreter().run(program)}
+    }
+
+    @Test
+    fun badLetRecStarNameClash() {
+        val program =
+            """
+            (letrec* ((a 1) (a 2)) a)
+            """.trimIndent()
+        Assert.assertThrows(SchemeError::class.java) {SchemeInterpreter().run(program)}
+    }
 }

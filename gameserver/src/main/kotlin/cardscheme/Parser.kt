@@ -131,6 +131,7 @@ class Parser {
         val body = parseBody()
         val rparen = consume()
 
+        verifyUniqueNames(args)
         return LambdaNode(
             args,
             body,
@@ -172,6 +173,11 @@ class Parser {
 
         val body = parseBody()
         val rparen = must<RParenToken>("I expected a closing right parenthesis here.")
+
+        // Only `let*` can have duplicates in names.
+        if (!(letToken.star && !letToken.rec)) {
+            verifyUniqueNames(bindings.map { b-> b.name })
+        }
         return LetNode(letToken.rec, letToken.star, bindings, body, Location.merge(lparen.location, rparen.location))
     }
 
@@ -396,6 +402,8 @@ class Parser {
             }
 
         val end = must<RParenToken>("I expected a closing right parenthesis here.")
+
+        verifyUniqueNames(variableInitSteps.map { v -> v.name })
         return DoNode(variableInitSteps, test, body, command, Location.merge(start.location, end.location))
     }
 
@@ -440,6 +448,7 @@ class Parser {
             val body = parseBody()
             val rparen = must<RParenToken>("Expected a right parenthesis here")
 
+            verifyUniqueNames(args)
             return DefineNode(
                 IdentifierNode(functionName.value, functionName.location),
                 LambdaNode(args, body, body.location),
@@ -484,6 +493,17 @@ class Parser {
 
         val rparen = must<RParenToken>("Expected a right parenthesis here")
         return ApplicationNode(expressions, Location.merge(lparen.location, rparen.location))
+    }
+
+    private fun verifyUniqueNames(names: List<IdentifierNode>) {
+        val nameSet = HashSet<String>();
+
+        for (name in names) {
+            if (nameSet.contains(name.identifier)) {
+                throw SchemeError("Name Error","All names must be unique, however this one was already used.",name.location, null)
+            }
+            nameSet.add(name.identifier)
+        }
     }
 
     private inline fun <reified T : Token> must(error: String): T {
