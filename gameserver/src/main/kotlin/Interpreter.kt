@@ -27,28 +27,36 @@ fun main(args: Array<String>) {
 
     println("The CardScheme Interpreter")
     println("Made with ❤️ by CardLabs")
-    val interpreter = SchemeInterpreter()
+    var lineNr = 1
+    var completeProgram = ""
+    val interpreter  = SchemeInterpreter()
     while (true) {
         print(">>> ")
         var program = readln()
         if (program.trim().isEmpty()) continue
 
         try {
-            var tokens = Tokenizer().tokenize(program)
+            lineNr++
+            var tokens = Tokenizer().tokenize("\n".repeat(lineNr -2) + program)
             while (tokens.filter { t -> t is LParenToken }.size > tokens.filter { t -> t is RParenToken }.size) {
                 print("... ")
                 val newLine = readln()
                 program += "\n" + newLine
-                tokens = Tokenizer().tokenize(program)
+                lineNr++
+                tokens = Tokenizer().tokenize("\n".repeat(lineNr -2) + program)
             }
 
-            val obj = interpreter.run(program)
+            if (completeProgram.isEmpty()) {
+                completeProgram = program
+            } else {
+                completeProgram += "\n" + program
+            }
+            val obj = interpreter.run(tokens)
             if (obj != null && obj !is VoidValue) {
                 println(obj)
             }
         } catch (e: SchemeError) {
-            println()
-            e.display(program)
+            e.display(completeProgram)
         }
     }
 }

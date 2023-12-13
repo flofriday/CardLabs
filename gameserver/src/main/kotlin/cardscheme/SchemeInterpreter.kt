@@ -31,6 +31,15 @@ class SchemeInterpreter(
     }
 
     /**
+     * Executes a given program with some time and memory constraints.
+     */
+    fun run(tokens: List<Token>): SchemeValue? {
+        val ast = Parser().parse(tokens)
+        val buffer = StringBuffer()
+        return runWithTimeoutAndMemoryLimit({ Executor(env, buffer).execute(ast) })
+    }
+
+    /**
      * Executes a given function with some time and memory constraints.
      */
     fun run(
