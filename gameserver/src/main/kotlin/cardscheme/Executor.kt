@@ -84,6 +84,10 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
      * Evaluate an if expression.
      *
      * Spec: R7R, chapter 4.1.5
+     * Semantic: An if expression is evaluated as follows: first, ⟨test⟩ is evaluated. If it yields a true value
+     * (see section 6.3), then ⟨consequent⟩ is evaluated and its values are returned. Otherwise, ⟨alternate⟩ is
+     * evaluated and its values are returned. If ⟨test⟩ yields a false value and no ⟨alternate⟩ is specified,
+     * then the result of the expression is unspecified.
      */
     override fun visitedBy(node: IfNode): SchemeValue {
         val condition = node.condition.visit(this)
@@ -103,6 +107,16 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
      * Evaluate a do expression.
      *
      * Spec: R7R, chapter 4.2.4
+     * Semantic: The ⟨init⟩ expressions are evaluated (in some unspecified order), the ⟨variable⟩s are bound to fresh
+     * locations, the results of the ⟨init⟩ expressions are stored in the bindings of the ⟨variable⟩s, and then the
+     * iteration phase begins.
+     * Each iteration begins by evaluating ⟨test⟩; if the result is false (see section 6.3), then the ⟨command⟩
+     * expressions are evaluated in order for effect, the ⟨step⟩ expressions are evaluated in some unspecified order,
+     * the ⟨variable⟩s are bound to fresh locations, the results of the ⟨step⟩s are stored in the bindings of the
+     * ⟨variable⟩s, and the next iteration begins.
+     * If ⟨test⟩ evaluates to a true value, then the ⟨expression⟩s are evaluated from left to right and the values of
+     * the last ⟨expression⟩ are returned. If no ⟨expression⟩s are present, then the value of the do expression is
+     * unspecified.
      *
      */
     override fun visitedBy(node: DoNode): SchemeValue {
@@ -113,13 +127,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
             .zip(initValues)
             .map { (t, v) -> environment.put(t.identifier, v) }
 
-        while (true) {
-            if (node.test.visit(this).isTruthy()) {
-                val result = node.body?.visit(this) ?: VoidValue()
-                popEnv()
-                return result
-            }
-
+        while (!node.test.visit(this).isTruthy()) {
             if (node.command != null) {
                 node.command.visit(this)
             }
@@ -130,6 +138,10 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
                 .zip(newValues)
                 .map { (t, v) -> if (v != null) environment.put(t.identifier, v) }
         }
+
+        val result = node.body?.visit(this) ?: VoidValue()
+        popEnv()
+        return result
     }
 
     override fun visitedBy(node: BodyNode): SchemeValue {
@@ -142,7 +154,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     /**
      * Call a function in the current environment.
      *
-     * The call must ensure that the number of arguments match the functions arity.
+     * The caller must ensure that the number of arguments match the functions arity.
      */
     fun callFunction(
         func: CallableValue,

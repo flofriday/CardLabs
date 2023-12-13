@@ -9,14 +9,6 @@ import java.io.File
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
-    /*
-    var interpreter = SchemeInterpreter()
-    interpreter.run(program)
-    val turnfunc = interpreter.getglobal("turn")
-    val gamestate = magicfunction_tocreategamestate()
-    val selected_card = interpreter.call(turnfunc, gamestate)
-     */
-
     if (args.size > 1) {
         println("usage: cardscheme [FILE]")
         exitProcess(1)

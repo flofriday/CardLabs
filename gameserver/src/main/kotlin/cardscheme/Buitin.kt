@@ -162,9 +162,7 @@ fun builtinCar(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    verifyType<ListValue>(args.first(), "I expected a list here")
-    val list = args.first().value as ListValue
-
+    val list = verifyType<ListValue>(args.first(), "I expected a list here")
     if (list.values.isEmpty()) {
         throw SchemeError("Empty List", "Car can only be called on non-empty lists", args.first().location, null)
     }
@@ -183,7 +181,7 @@ fun builtinCdr(
         throw SchemeError("Empty List", "Cdr can only be called on non-empty lists", args.first().location, null)
     }
 
-    return ListValue(SchemeList(list.values.tail()))
+    return ListValue(list.values.tail())
 }
 
 /**
@@ -224,6 +222,7 @@ fun builtinMakeString(
  *
  * Spec: R7R, Chapter 6.4
  * Syntax: (cons obj1 obj2)
+ * Semantic: Returns a newly allocated pair whose car is obj1 and whose cdr is obj2.
  * */
 fun builtInCons(
     args: List<FuncArg>,
@@ -399,17 +398,6 @@ fun builtinEqual(
     args: List<FuncArg>,
     executor: Executor,
 ): BooleanValue {
-    for ((value, loc) in args) {
-        if (value.javaClass != args[0].value::class.java) {
-            throw SchemeError(
-                "Expected same type",
-                "Expected all arguments to be of the same type",
-                loc,
-                null,
-            )
-        }
-    }
-
     val result = args.map { a -> a.value }.zipWithNext { a, b -> a == b }.all { it }
     return BooleanValue(result)
 }
@@ -433,7 +421,7 @@ fun builtinStringAppend(
  *
  * Spec: R7R, Chapter 6.2.7
  * Syntax: (number->string z)
- *         (number->string z radix ) //FIXME: Not implemented
+ *         (number->string z radix ) // FIXME: Not implemented
  * */
 fun builtinNumberToString(
     args: List<FuncArg>,
@@ -448,14 +436,13 @@ fun builtinNumberToString(
  *
  * Spec: R7R, Chapter 6.2.7
  * Syntax: (string->number string)
- *         (number->string z radix ) //FIXME: Not implemented
+ *         (string->number string radix) // FIXME: Not implemented
  * */
 fun builtinStringToNumber(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    verifyType<StringValue>(args[0], "Only strings can be converted to numbers by this function")
-    val stringValue = (args[0].value as StringValue).value
+    val stringValue = verifyType<StringValue>(args[0], "Only strings can be converted to numbers by this function").value
     if (stringValue.contains(".")) {
         return FloatValue(stringValue.toFloat())
     }

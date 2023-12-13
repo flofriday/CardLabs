@@ -236,8 +236,8 @@ class LambdaNode(val params: List<IdentifierNode>, val body: BodyNode, location:
     ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) +
-            "Lambda: '${params.joinToString(", ") { a -> a.identifier }}'\n" +
-            body.dump(indent + 1)
+                "Lambda: '${params.joinToString(", ") { a -> a.identifier }}'\n" +
+                body.dump(indent + 1)
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
@@ -245,12 +245,31 @@ class LambdaNode(val params: List<IdentifierNode>, val body: BodyNode, location:
     }
 }
 
+/**
+ * A variable binding-init-step triplet.
+ *
+ * @param name of the variable.
+ * @param init the initial value assigned to it.
+ * @param step the expression assigned to the variable after each iteration.
+ */
 data class VariableInitStep(
     val name: IdentifierNode,
     val init: ExpressionNode,
     val step: ExpressionNode?,
 )
 
+/**
+ * A do loop expression.
+ *
+ * Many of the names used here are best explained by teh spec.
+ *
+ * Spec: R7R, chapter 4.2.4
+ *
+ * @param variableInitSteps the variable bindings with the step executed after each iteration.
+ * @param test to decide if the loop keeps iterating.
+ * @param body is executed and returned if test evaluates to true.
+ * @param command is executed if test is true, before the next iteration starts.
+ */
 class DoNode(
     val variableInitSteps: List<VariableInitStep>,
     val test: ExpressionNode,
@@ -301,11 +320,11 @@ class IfNode(
 ) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) +
-            "If: ${condition.dump(indent)} \n ${thenExpression.dump(indent + 1)} \n ${
-                elseExpression?.dump(
-                    indent + 1,
-                )
-            }"
+                "If:\n${condition.dump(indent)} \n${thenExpression.dump(indent + 1)} \n${
+                    elseExpression?.dump(
+                        indent + 1,
+                    )
+                }"
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {

@@ -166,7 +166,6 @@ class Parser {
         val thenExpression = parseExpression()
 
         if (peek() is RParenToken) {
-            // TODO: how to implement empty expression
             val rparen = consume()
             return IfNode(condition, thenExpression, null, Location.merge(lparen.location, rparen.location))
         }
