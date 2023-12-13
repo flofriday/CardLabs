@@ -74,7 +74,7 @@ export default function DropDown({
   };
 
   return (
-    <div className={`relative group ${className}`} ref={dropDownMenu}>
+    <div className={`relative z-10 group ${className}`} ref={dropDownMenu}>
       <button
         type="button"
         id="dropdown-button"
