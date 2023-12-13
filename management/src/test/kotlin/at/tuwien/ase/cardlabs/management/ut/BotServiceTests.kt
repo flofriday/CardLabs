@@ -2,7 +2,6 @@ package at.tuwien.ase.cardlabs.management.ut
 
 import at.tuwien.ase.cardlabs.management.TestConfig
 import at.tuwien.ase.cardlabs.management.TestHelper
-import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
@@ -35,7 +34,7 @@ internal class BotServiceTests {
     @ParameterizedTest
     @CsvFileSource(resources = ["/service/bot/bot_service_create_test_parameter.csv"])
     fun testBotCreate(name: String, currentCode: String?, success: Boolean, errorMessage: String, description: String) {
-        val account = createAccount()
+        val account = TestHelper.createAccount(accountService)
         val user = TestHelper.createUserDetails(account)
 
         val botCreate = BotCreate(
@@ -68,7 +67,7 @@ internal class BotServiceTests {
     @ParameterizedTest
     @CsvFileSource(resources = ["/service/bot/bot_service_patch_test_parameter.csv"])
     fun testBotPatch(currentCode: String?, success: Boolean, errorMessage: String, description: String) {
-        val account = createAccount()
+        val account = TestHelper.createAccount(accountService)
         val user = TestHelper.createUserDetails(account)
         val bot = createBot(user, "Tytartron", null)
 
@@ -99,7 +98,7 @@ internal class BotServiceTests {
 
     @Test
     fun whenBotCodeVersion_withValidData_expectSuccess() {
-        val account = createAccount()
+        val account = TestHelper.createAccount(accountService)
         val user = TestHelper.createUserDetails(account)
         val bot = createBot(user, "Tytartron", "x = 5")
 
@@ -110,7 +109,7 @@ internal class BotServiceTests {
 
     @Test
     fun whenBotFetchById_withValidData_expectSuccess() {
-        val account = createAccount()
+        val account = TestHelper.createAccount(accountService)
         val userDetails = TestHelper.createUserDetails(account)
         val bot = createBot(userDetails, "Tytartron", null)
 
@@ -128,7 +127,7 @@ internal class BotServiceTests {
 
     @Test
     fun whenBotFetchByAll_withValidData_expectSuccess() {
-        val account = createAccount()
+        val account = TestHelper.createAccount(accountService)
         val userDetails = TestHelper.createUserDetails(account)
         val bot1 = createBot(userDetails, "Tytartron", null)
         val bot2 = createBot(userDetails, "Neophotron", null)
@@ -142,7 +141,7 @@ internal class BotServiceTests {
 
     @Test
     fun whenBotDelete_withValidData_expectSuccess() {
-        val account = createAccount()
+        val account = TestHelper.createAccount(accountService)
         val userDetails = TestHelper.createUserDetails(account)
         val bot = createBot(userDetails, "Tytartron", null)
 
@@ -153,7 +152,7 @@ internal class BotServiceTests {
 
     @Test
     fun whenBotRankPosition_withOneBot_expectSuccess() {
-        val account = createAccount()
+        val account = TestHelper.createAccount(accountService)
         val userDetails = TestHelper.createUserDetails(account)
         val bot = createBot(userDetails, "Tytartron", null)
 
@@ -165,7 +164,7 @@ internal class BotServiceTests {
 
     @Test
     fun whenBotRankPosition_withMultipleBots_expectSuccess() {
-        val account = createAccount()
+        val account = TestHelper.createAccount(accountService)
         val userDetails = TestHelper.createUserDetails(account)
         val bot1 = createBot(userDetails, "Tytartron", null)
         val bot2 = createBot(userDetails, "Neophotron", null)
@@ -178,19 +177,6 @@ internal class BotServiceTests {
             botService.fetchRankPosition(userDetails, bot2.id!!)
         }
         assertEquals(1, result2)
-    }
-
-    private fun createAccount(): Account {
-        return TestHelper.createAccount(
-            accountService = accountService,
-            username = "test",
-            email = "test@test.com",
-            password = "PassWord123?!",
-            location = null,
-            sendScoreUpdates = false,
-            sendChangeUpdates = false,
-            sendNewsletter = false,
-        )
     }
 
     private fun createBot(user: CardLabUser, name: String, code: String?): Bot {

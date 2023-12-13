@@ -37,7 +37,7 @@ class BotDAO : AuditedEntity() {
     var ownerId: Long = -1
 
     // the bot program code
-    @Column(nullable = false)
+    @Column(nullable = false, length = 32768)
     lateinit var currentCode: String
 
     @OneToMany(mappedBy = "bot", fetch = FetchType.LAZY)

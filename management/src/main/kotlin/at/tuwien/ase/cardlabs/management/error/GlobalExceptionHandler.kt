@@ -5,6 +5,7 @@ import at.tuwien.ase.cardlabs.management.error.account.AccountExistsException
 import at.tuwien.ase.cardlabs.management.error.account.LocationNotFoundException
 import at.tuwien.ase.cardlabs.management.error.bot.BotDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.bot.BotStateException
+import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -58,6 +59,14 @@ class GlobalExceptionHandler {
     fun handleBotStateException(ex: BotStateException): ResponseEntity<String> {
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
+            .body(ex.message)
+    }
+
+    // == Game exceptions ==
+    @ExceptionHandler(GameDoesNotExistException::class)
+    fun handleGameDoesNotExitException(ex: GameDoesNotExistException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
             .body(ex.message)
     }
 
