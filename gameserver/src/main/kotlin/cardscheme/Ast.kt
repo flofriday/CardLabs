@@ -245,8 +245,25 @@ class LambdaNode(val params: List<IdentifierNode>, val body: BodyNode, location:
     }
 }
 
+/**
+ * A binding of an expression to a variable.
+ *
+ * @param name of the variable.
+ * @param init initial value of the variable.
+ */
 data class VariableBinding(val name: IdentifierNode, val init: ExpressionNode, val location: Location)
 
+/**
+ * A let node.
+ *
+ * Since let, let*, letrec and letrec* expressions look so similar they are all expressed by this expression.
+ * However, named let are not found here as they will get desugared in the parser.
+ *
+ * @param rec indicates whether this is a recursive let.
+ * @param star indicates whether this is a star let.
+ * @param bindings is the list of variable bindings.
+ * @param body is the body that gets executed once the bindings are assigned.
+ */
 class LetNode(val rec: Boolean, val star: Boolean, val bindings: List<VariableBinding>, val body: BodyNode, location: Location) :
     ExpressionNode(location) {
     override fun dump(indent: Int): String {

@@ -25,9 +25,9 @@ fun main(args: Array<String>) {
         }
     }
 
-    println("The CardLabs Scheme Interpreter")
+    println("The CardScheme Interpreter")
     println("Made with ❤️ by CardLabs")
-    var interpreter = SchemeInterpreter()
+    val interpreter = SchemeInterpreter()
     while (true) {
         print(">>> ")
         var program = readln()
