@@ -22,5 +22,11 @@
     ))
 
 ; Event: cardPicked
+; Some other player had to pick a card
 (define cardPicked (lambda (topCard player)
     ))
+
+; Event: reshuffledPile
+; The drawPile got reshuffled
+(define reshuffledPile (lambda ()
+                       ))
