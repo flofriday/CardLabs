@@ -7,13 +7,13 @@ stages:
 variables:
   FRONTEND_DIR: "frontend"
   MANAGEMENT_DIR: "management"
+  GAMESERVER_DIR: "gameserver"
 
 cache:
   paths:
     - .gradle/wrapper
     - .gradle/caches
     - ${MANAGEMENT_DIR}/build
-
 
 #########################
 ### Frontend pipeline ###
@@ -69,8 +69,30 @@ test:management:
   stage: test
   script:
     - cd ${MANAGEMENT_DIR}
-    - gradle test
+    - gradle test --info
   dependencies:
     - build:management
   allow_failure: false
   # TODO: deploy stage
+
+###########################
+### GameServer pipeline ###
+###########################
+analysis:gameserver:
+  image: amazoncorretto:21-alpine
+  stage: analysis
+  script:
+    - cd ${GAMESERVER_DIR}
+    - ./mvnw clean install
+    - ./mvnw ktlint:check
+  allow_failure: false
+
+test:gameserver:
+  image: amazoncorretto:21-alpine
+  stage: test
+  script:
+    - cd ${GAMESERVER_DIR}
+    - ./mvnw clean test
+  dependencies:
+    - analysis:gameserver
+  allow_failure: false
