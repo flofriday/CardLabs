@@ -37,7 +37,7 @@ class BotMapper(private val botCodeMapper: BotCodeMapper) {
             eloScore = botDAO.eloScore,
             currentState = botDAO.currentState,
             defaultState = botDAO.defaultState,
-            errorStateMessage = botDAO.errorStateMessage
+            errorStateMessage = botDAO.errorStateMessage,
         )
     }
 }

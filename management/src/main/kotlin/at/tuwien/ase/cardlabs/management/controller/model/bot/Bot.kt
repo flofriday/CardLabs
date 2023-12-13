@@ -14,5 +14,5 @@ data class Bot(
     val eloScore: Int,
     val currentState: BotState,
     val defaultState: BotState,
-    val errorStateMessage: String?
+    val errorStateMessage: String?,
 )

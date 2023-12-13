@@ -22,11 +22,11 @@ internal class BotValidatorTests {
         currentCode: String,
         success: Boolean,
         errorMessage: String,
-        description: String
+        description: String,
     ) {
         val botCreate = BotCreate(
             name = name,
-            currentCode = currentCode
+            currentCode = currentCode,
         )
         if (success) {
             assertDoesNotThrow {
@@ -44,7 +44,7 @@ internal class BotValidatorTests {
     @CsvFileSource(resources = ["/validator/bot/bot_validator_patch_test_parameter.csv"])
     fun testBotPatchValidator(currentCode: String, success: Boolean, errorMessage: String, description: String) {
         val botPatch = BotPatch(
-            currentCode = currentCode
+            currentCode = currentCode,
         )
         if (success) {
             assertDoesNotThrow {

@@ -33,5 +33,5 @@ enum class BotState {
     /**
      * The state while there is an error such as that the code validation didn't succeed
      */
-    ERROR
+    ERROR,
 }
