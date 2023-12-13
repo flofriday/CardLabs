@@ -1,3 +1,5 @@
+; This example is a simple mandelbrot renderer that prints the mandelbrot to stdout
+
 ; Since card scheme doesn't have complex numbers we are building our own here
 (define (make-cplx re im)
   (vector re im))
@@ -37,17 +39,15 @@
 
 ; The iterative function deciding for each point wether or not it is in the set and and printing the desired character.
 (define (mandelbrot c)
-  (define  i (do ((i 0 (+ i 1))
+  (define i (do ((i 0 (+ i 1))
                   (z (make-cplx 0 0) (cplx-add c (cplx-square z))))
-                  ((or (>= i 64) (>= (cplx-abs z) 2)) i) ))
-  (if (< i 64) (display (mod-ten i)) (display " "))
-  )
-
+              ((or (>= i 64) (>= (cplx-abs z) 2)) i) ))
+  (if (< i 64) (display (modulo i 10)) (display " ")) )
 
 ; Iterate over all fields x and y fields we want to fill.
 (do ((y 0 (+ y 1)))
   ((>= y 28))
   (do ((x 0 (+ x 1)))
     ((>= x 80))
-      (mandelbrot (xy-to-cplx x y)))
+    (mandelbrot (xy-to-cplx x y)))
   (newline))

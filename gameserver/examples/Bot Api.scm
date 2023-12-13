@@ -1,3 +1,5 @@
+; The current API for the Bots.
+
 ; Card definition
 (define-structure card (color symbol))
 

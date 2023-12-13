@@ -1,17 +1,16 @@
-# Cardscheme
+# Gameserver
 
-The scheme interpreter for CardLabs.
+The server executing the bots.
+
+This folder also includes CardScheme, a custom interpreter for CardLabs.
 
 ## Build it yourself
 
 You need a Java 21 JDK inatalled.
 
 ```
-# REPL
+# GameServer
 ./mvnw compile exec:java
-
-# Execute a file
-./mvnw compile exec:java  -Dexec.arguments=examples/fib.scm
 ```
 
 ## Testing, Linting and Formatting
@@ -29,4 +28,4 @@ You need a Java 21 JDK inatalled.
 
 ## Examples
 
-There are some examples in the `examples` folder.
+There are some CardScheme examples in the `examples` folder.

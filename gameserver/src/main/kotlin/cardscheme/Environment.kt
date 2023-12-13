@@ -30,7 +30,6 @@ class Environment(val enclosing: Environment?, val values: HashMap<String, Schem
         name: String,
         value: SchemeValue,
     ) {
-        // FIXME: Research if shadowing must be prevented
         values.put(name, value)
     }
 

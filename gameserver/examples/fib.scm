@@ -1,3 +1,5 @@
+; Prints the first 24 fibonacci numbers
+
 (define (fib n)
               (if (<= n 2)
                 1

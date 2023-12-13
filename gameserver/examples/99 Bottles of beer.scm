@@ -1,3 +1,6 @@
+; Prints the faomous 99-bottles of beers lyrics.
+; https://www.99-bottles-of-beer.net/lyrics.html
+
 (define (bottles-of-beer n)
   (if (= n 0)
     "No more bottles of beer on the wall, no more bottles of beer.\n"

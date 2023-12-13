@@ -12,7 +12,6 @@ class MemoryMonitor(
                     threadToInterrupt.interrupt()
                     break
                 }
-                // println("Memory usage $memoryUsage and limit $memoryLimit)")
 
                 Thread.sleep(timeoutBetweenChecks)
             }
