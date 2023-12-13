@@ -42,10 +42,19 @@ export default function EditorButtons({ save, _delete }: Props): JSX.Element {
           </div>
         </Modal>
       )}
-      <IconButton text="Compile" type={ButtonIcon.COMPILE} />
-      <IconButton onClick={save} text="Save" type={ButtonIcon.SAVE} />
-      <IconButton text="Test Bot" type={ButtonIcon.TEST} />
-      <IconButton text="Rank Bot" type={ButtonIcon.RANK} />
+      <IconButton
+        text="Compile"
+        type={ButtonIcon.COMPILE}
+        id="button_compile_bot"
+      />
+      <IconButton
+        onClick={save}
+        text="Save"
+        type={ButtonIcon.SAVE}
+        id="button_save_bot"
+      />
+      <IconButton text="Test Bot" type={ButtonIcon.TEST} id="button_test_bot" />
+      <IconButton text="Rank Bot" type={ButtonIcon.RANK} id="button_rank_bot" />
       <DropDown
         defaultValue="Current"
         className="w-36"
@@ -58,6 +67,7 @@ export default function EditorButtons({ save, _delete }: Props): JSX.Element {
         }}
         text="Delete"
         type={ButtonIcon.DELETE}
+        id="button_delete_bot"
       />
     </div>
   );
