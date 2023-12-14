@@ -10,7 +10,7 @@ abstract class SchemeValue {
     /**
      * Determines wether or not a value is considerd as "true".
      *
-     * Spec: R7R, chapter 6.3
+     * Spec: R7RS, chapter 6.3
      * Of all the Scheme values, only #f counts as false in conditional
      * expressions. All other Scheme values, including #t, count as true.
      */
@@ -220,7 +220,7 @@ data class ListValue(val values: SchemeList<SchemeValue>) : SchemeValue() {
 /**
  * A vector data structure.
  *
- * Spec: R7R, chapter 6.8
+ * Spec: R7RS, chapter 6.8
  */
 data class VectorValue(val values: MutableList<SchemeValue>) : SchemeValue() {
     override fun toString(): String {

@@ -17,7 +17,6 @@ data class SchemeError(val header: String, val reason: String, val location: Loc
         println()
         if (location != null) {
             if (location.startline == location.endline) {
-                println(location)
                 val line = program.lines().get(location.startline - 1)
                 print(grey)
                 print("%03d| ".format(location.startline) + line)

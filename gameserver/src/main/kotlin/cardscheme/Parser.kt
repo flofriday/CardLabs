@@ -105,7 +105,7 @@ class Parser {
     /**
      * Parse a lambda expression.
      *
-     * Spec: R7R, chapter 4.1.4
+     * Spec: R7RS, chapter 4.1.4
      * (lambda <formals> <body>)
      *
      * FIXME: Incomplete, varargs missing.
@@ -142,7 +142,7 @@ class Parser {
     /**
      * Parse let expression.
      *
-     * Spec: R7R, chapter 4.2.2
+     * Spec: R7RS, chapter 4.2.2
      * (let ((<variable> <init>) ...) <body>)
      * (let* ((<variable> <init>) ...) <body>)
      * (letrec ((<variable> <init>) ...) <body>)
@@ -203,7 +203,7 @@ class Parser {
     /**
      * Parse an if expression.
      *
-     * Spec: R7R, chapter 4.1.5
+     * Spec: R7RS, chapter 4.1.5
      * (if <test> <consequent> <alternate>)
      * (if <test> <consequent>)
      */
@@ -227,7 +227,7 @@ class Parser {
     /**
      * Parse an cond expression. It is desugared to nested if expressions
      *
-     * Spec: R7R, chapter 4.2.1
+     * Spec: R7RS, chapter 4.2.1
      * (cond <clause1> <clause2> ...)
      * where <clause> is (<test> <expression1> ...)
      */
@@ -268,7 +268,7 @@ class Parser {
     /**
      * A quote expression (with a single quote).
      *
-     * Spec: R7R, chapter 4.1.2
+     * Spec: R7RS, chapter 4.1.2
      * '<datum>
      *
      * This parser automatically desugars the syntax to an application
@@ -288,7 +288,7 @@ class Parser {
     /**
      * A quote expression (with the keyword).
      *
-     * Spec: R7R, chapter 4.1.2
+     * Spec: R7RS, chapter 4.1.2
      * (quote <datum>)
      *
      * This parser automatically desugars the syntax to an application
@@ -310,7 +310,7 @@ class Parser {
     /**
      * A vector expression
      *
-     * Spec: R7R, chapter 6.8
+     * Spec: R7RS, chapter 6.8
      * #(<expression> ...)
      *
      * This parser automatically desugars the syntax to an application.
@@ -331,7 +331,7 @@ class Parser {
     /**
      * Parse a begin expression.
      *
-     * Spec: R7R, chapter 4.2.3
+     * Spec: R7RS, chapter 4.2.3
      * (begin <expression or definition> ...)
      * (begin <expression1> <expression2> ...)
      *
@@ -354,7 +354,7 @@ class Parser {
     /**
      * Parse a do loop.
      *
-     * Spec: R7R, chapter 4.2.4
+     * Spec: R7RS, chapter 4.2.4
      * (do ((<variable1> <init1> <step1>) ...)
      *      (<test> <expression> ...)
      * <command> ...)
@@ -410,7 +410,7 @@ class Parser {
     /**
      * Parse a definition.
      *
-     * Spec: R7R, chapter 5.3
+     * Spec: R7RS, chapter 5.3
      * (define <variable> <expression>)
      * (define (<variable> <formals>) <body>)
      * (define (<variable> . <formal>) <body>)
@@ -462,7 +462,7 @@ class Parser {
     /**
      * Parse a set! expression.
      *
-     * Spec: R7R, chapter 4.16
+     * Spec: R7RS, chapter 4.16
      * (set! <variable> <expression>)
      *
      */
@@ -480,7 +480,7 @@ class Parser {
     /**
      * Parse a application of a procedure (aka function call).
      *
-     * Spec: R7R, chapter 4.1.3
+     * Spec: R7RS, chapter 4.1.3
      * (<operator> <operator1> ...)
      */
     private fun parseApplication(): ApplicationNode {

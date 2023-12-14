@@ -105,7 +105,7 @@ fun builtinDiv(
  *
  * The abs procedure returns the absolute value of its argument.
  *
- * Spec: R7R, chapter 6.2.6
+ * Spec: R7RS, chapter 6.2.6
  * Syntax: (abs x)
  */
 fun builtinAbs(
@@ -121,7 +121,7 @@ fun builtinAbs(
  *
  * Returns the principal square root of z
  *
- * Spec: R7R, chapter 6.2.6
+ * Spec: R7RS, chapter 6.2.6
  * Syntax: (sqrt z)
  *
  * NOTE: We intentionally deviate from the standard here and consider it an error calling the function with negative
@@ -187,7 +187,7 @@ fun builtinCdr(
 /**
  * Built in string length
  *
- * Spec: R7R, Chapter 6.7
+ * Spec: R7RS, Chapter 6.7
  * Syntax: (string-length string)
  * */
 fun builtinStringLength(
@@ -201,7 +201,7 @@ fun builtinStringLength(
 /**
  * Built in make string
  *
- * Spec: R7R, Chapter 6.7
+ * Spec: R7RS, Chapter 6.7
  * Syntax: (make-string k)
  *         (make-string k char )
  * */
@@ -220,7 +220,7 @@ fun builtinMakeString(
 /**
  * Built in cons (returns a new pair with two elements obj1 as car and ob2 as cdr)
  *
- * Spec: R7R, Chapter 6.4
+ * Spec: R7RS, Chapter 6.4
  * Syntax: (cons obj1 obj2)
  * Semantic: Returns a newly allocated pair whose car is obj1 and whose cdr is obj2.
  * */
@@ -241,7 +241,7 @@ fun builtInCons(
 /**
  * Built in append for lists
  *
- * Spec: R7R, Chapter 6.4
+ * Spec: R7RS, Chapter 6.4
  * Syntax: (append list ...)
  * */
 fun builtInAppend(
@@ -270,7 +270,7 @@ fun builtInAppend(
 /**
  * Built in length for lists
  *
- * Spec: R7R, Chapter 6.4
+ * Spec: R7RS, Chapter 6.4
  * Syntax: (length list)
  * */
 fun builtInLength(
@@ -284,7 +284,7 @@ fun builtInLength(
 /**
  * Built in map
  *
- * Spec: R7R, Chapter 6.10
+ * Spec: R7RS, Chapter 6.10
  * Syntax: (map proc list1 list2 ...)
  * */
 fun builtinMap(
@@ -411,7 +411,7 @@ fun builtinEqual(
 /**
  * Built in string append
  *
- * Spec: R7R, Chapter 6.7
+ * Spec: R7RS, Chapter 6.7
  * Syntax: (string-append string ...)
  * */
 fun builtinStringAppend(
@@ -425,7 +425,7 @@ fun builtinStringAppend(
 /**
  * Built in number to string conversion
  *
- * Spec: R7R, Chapter 6.2.7
+ * Spec: R7RS, Chapter 6.2.7
  * Syntax: (number->string z)
  *         (number->string z radix ) // FIXME: Not implemented
  * */
@@ -440,7 +440,7 @@ fun builtinNumberToString(
 /**
  * Built in string to number conversion
  *
- * Spec: R7R, Chapter 6.2.7
+ * Spec: R7RS, Chapter 6.2.7
  * Syntax: (string->number string)
  *         (string->number string radix) // FIXME: Not implemented
  * */
@@ -515,7 +515,7 @@ fun builtinGreaterEqual(
 /**
  * Built in logical and
  *
- * Spec: R7R, Chapter 4.2.1
+ * Spec: R7RS, Chapter 4.2.1
  * */
 fun builtinAnd(
     args: List<FuncArg>,
@@ -535,7 +535,7 @@ fun builtinAnd(
 /**
  * Built in logical or
  *
- * Spec: R7R, Chapter 4.2.1
+ * Spec: R7RS, Chapter 4.2.1
  * */
 fun builtinOr(
     args: List<FuncArg>,
@@ -555,7 +555,7 @@ fun builtinOr(
 /**
  * Built in logical not
  *
- * Spec: R7R, Chapter 6.3
+ * Spec: R7RS, Chapter 6.3
  * */
 fun builtinNot(
     args: List<FuncArg>,

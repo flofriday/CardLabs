@@ -319,7 +319,7 @@ data class VariableInitStep(
  *
  * Many of the names used here are best explained by teh spec.
  *
- * Spec: R7R, chapter 4.2.4
+ * Spec: R7RS, chapter 4.2.4
  *
  * @param variableInitSteps the variable bindings with the step executed after each iteration.
  * @param test to decide if the loop keeps iterating.

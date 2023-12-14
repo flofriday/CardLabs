@@ -83,7 +83,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     /**
      * Evaluate a let expression.
      *
-     * Spec: R7R, chapter 4.2.2
+     * Spec: R7RS, chapter 4.2.2
      * The init are evaluated in the current environment
      * (in some unspecified order), the variable are
      * bound to fresh locations holding the results, the body is
@@ -105,7 +105,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     /**
      * Evaluate a let* expression.
      *
-     * Spec: R7R, chapter 4.2.4
+     * Spec: R7RS, chapter 4.2.4
      * The let* binding construct is similar to let,
      * but the bindings are performed sequentially from left to
      * right, and the region of a binding indicated by (variable
@@ -130,7 +130,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     /**
      * Evaluate a letrec expression.
      *
-     * Spec: R7R, chapter 4.2.4
+     * Spec: R7RS, chapter 4.2.4
      * The variables are bound to fresh locations
      * holding unspecified values, the inits are evaluated in the
      * resulting environment (in some unspecified order), each
@@ -155,7 +155,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     /**
      * Evaluate a letrec* expression.
      *
-     * Spec: R7R, chapter 4.2.4
+     * Spec: R7RS, chapter 4.2.4
      * The variables are bound to fresh locations,
      * each variable is assigned in left-to-right
      * order to the result of evaluating the
@@ -195,7 +195,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     /**
      * Evaluating a set! expression.
      *
-     * Spec: R7R, chapter 4.1.6
+     * Spec: R7RS, chapter 4.1.6
      * Expression is evaluated, and the resulting
      * value is stored in the location to which variable is bound.
      */
@@ -212,7 +212,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     /**
      * Evaluate an if expression.
      *
-     * Spec: R7R, chapter 4.1.5
+     * Spec: R7RS, chapter 4.1.5
      * Semantic: An if expression is evaluated as follows: first, ⟨test⟩ is evaluated. If it yields a true value
      * (see section 6.3), then ⟨consequent⟩ is evaluated and its values are returned. Otherwise, ⟨alternate⟩ is
      * evaluated and its values are returned. If ⟨test⟩ yields a false value and no ⟨alternate⟩ is specified,
@@ -235,7 +235,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     /**
      * Evaluate a do expression.
      *
-     * Spec: R7R, chapter 4.2.4
+     * Spec: R7RS, chapter 4.2.4
      * Semantic: The ⟨init⟩ expressions are evaluated (in some unspecified order), the ⟨variable⟩s are bound to fresh
      * locations, the results of the ⟨init⟩ expressions are stored in the bindings of the ⟨variable⟩s, and then the
      * iteration phase begins.
