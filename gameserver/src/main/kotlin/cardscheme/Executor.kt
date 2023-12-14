@@ -71,6 +71,10 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
         return res
     }
 
+    override fun visitedBy(node: SymbolNode): SchemeValue {
+        return SymbolValue(node.name)
+    }
+
     override fun visitedBy(node: DefineNode) {
         val value = node.body.visit(this)
         environment.put(node.name.identifier, value)

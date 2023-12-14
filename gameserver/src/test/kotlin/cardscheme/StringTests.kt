@@ -68,6 +68,22 @@ class StringTests {
     }
 
     @Test
+    fun symbolToString() {
+        val program = """(symbol->string 'test)"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is StringValue)
+        Assert.assertEquals("test", (result as StringValue).value)
+    }
+
+    @Test
+    fun stringToSymbol() {
+        val program = """(string->symbol "paul")"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is SymbolValue)
+        Assert.assertEquals("paul", (result as SymbolValue).value)
+    }
+
+    @Test
     fun stringLength() {
         val program = """(string-length "AB")"""
         val result = SchemeInterpreter().run(program)

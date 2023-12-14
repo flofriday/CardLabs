@@ -39,34 +39,8 @@ class Tokenizer() {
                 tokens.addLast(scanPoundSign())
             } else if (c.isDigit() || isNegativeNumber(c)) {
                 tokens.addLast(scanNumber())
-            } else if (consumeMatch("begin")) {
-                tokens.add(BeginToken(Location(line, line, col - "begin".length, col - 1)))
-            } else if (consumeMatch("define")) {
-                tokens.add(DefineToken(Location(line, line, col - "define".length, col - 1)))
-            } else if (consumeMatch("do")) {
-                tokens.add(DoToken(Location(line, line, col - "do".length, col - 1)))
-            } else if (consumeMatch("if")) {
-                tokens.add(IfToken(Location(line, line, col - "if".length, col - 1)))
-            } else if (consumeMatch("cond")) {
-                tokens.add(CondToken(Location(line, line, col - "cond".length, col - 1)))
-            } else if (consumeMatch("else")) {
-                tokens.add(ElseToken(Location(line, line, col - "else".length, col - 1)))
-            } else if (consumeMatch("lambda")) {
-                tokens.add(LambdaToken(Location(line, line, col - "lambda".length, col - 1)))
-            } else if (consumeMatch("letrec*")) {
-                tokens.add(LetToken(true, true, Location(line, line, col - "letrec*".length, col - 1)))
-            } else if (consumeMatch("letrec")) {
-                tokens.add(LetToken(true, false, Location(line, line, col - "letrec".length, col - 1)))
-            } else if (consumeMatch("let*")) {
-                tokens.add(LetToken(false, true, Location(line, line, col - "let*".length, col - 1)))
-            } else if (consumeMatch("let")) {
-                tokens.add(LetToken(false, false, Location(line, line, col - "let".length, col - 1)))
-            } else if (consumeMatch("quote")) {
-                tokens.add(QuoteToken(Location(line, line, col - "quote".length, col - 1)))
-            } else if (consumeMatch("set!")) {
-                tokens.add(SetToken(Location(line, line, col - "set!".length, col - 1)))
             } else if (isIdentifierInitial(c)) {
-                tokens.addLast(scanIdentifier())
+                tokens.addLast(scanIdentifierKeyword())
             } else if (c.isWhitespace()) {
                 consume()
             } else {
@@ -112,7 +86,7 @@ class Tokenizer() {
         return isIdentifierInitial(c) || c == '.' || c.isDigit()
     }
 
-    private fun scanIdentifier(): IdentifierToken {
+    private fun scanIdentifierKeyword(): Token {
         val initial = consume()
         var literal: String = initial.toString()
 
@@ -125,7 +99,23 @@ class Tokenizer() {
             literal += consume()
         }
 
-        return IdentifierToken(literal, Location(line, line, col - literal.length, col - 1))
+        val location = Location(line, line, col - literal.length, col - 1)
+        return when(literal) {
+        "begin" ->  BeginToken(location)
+        "define" ->  DefineToken(location)
+        "do" ->  DoToken(location)
+        "if" ->  IfToken(location)
+        "cond" ->  CondToken(location)
+        "else" ->  ElseToken(location)
+        "lambda" ->  LambdaToken(location)
+        "letrec*" ->  LetToken(true, true, location)
+        "letrec" ->  LetToken(true, false, location)
+        "let*" ->  LetToken(false, true, location)
+        "let" ->  LetToken(false, false, location)
+        "quote" ->  QuoteToken(location)
+        "set!" ->  SetToken(location)
+            else ->  IdentifierToken(literal, location)
+        }
     }
 
     private fun scanNumber(): Token {

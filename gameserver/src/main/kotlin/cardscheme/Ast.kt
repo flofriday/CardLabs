@@ -196,6 +196,24 @@ class IdentifierNode(val identifier: String, location: Location) : ExpressionNod
 }
 
 /**
+ * A symbol.
+ *
+ * A symbol literal, this doesn't quite exist in syntax, but we desugar quote syntax in the parser and this just makes
+ * sense.
+ *
+ * @param name the name of the symbol.
+ */
+class SymbolNode(val name: String, location: Location) : ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) + "Symbol: '$name'\n"
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visitedBy(this)
+    }
+}
+
+/**
  * A body of a lambda, let etc.
  *
  * In general this can also be used if multiple expressions need to be evaluated sequentially.
@@ -401,6 +419,8 @@ interface ExpressionVisitor<T> {
     fun visitedBy(node: CharNode): T
 
     fun visitedBy(node: IdentifierNode): T
+
+    fun visitedBy(node: SymbolNode): T
 
     fun visitedBy(node: ApplicationNode): T
 

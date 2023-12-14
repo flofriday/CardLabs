@@ -1,5 +1,6 @@
 package cardscheme
 
+
 fun injectBuiltin(environment: Environment) {
     environment.put("+", NativeFuncValue("+", Arity(2, Int.MAX_VALUE), ::builtinPlus))
     environment.put("-", NativeFuncValue("-", Arity(2, Int.MAX_VALUE), ::builtinMinus))
@@ -38,8 +39,13 @@ fun injectBuiltin(environment: Environment) {
     environment.put("string-append", NativeFuncValue("string-append", Arity(0, Int.MAX_VALUE), ::builtinStringAppend))
     environment.put("string->number", NativeFuncValue("string->number", Arity(1, 1), ::builtinStringToNumber))
     environment.put("number->string", NativeFuncValue("number->string", Arity(1, 1), ::builtinNumberToString))
+    environment.put("symbol->string", NativeFuncValue("symbol->string", Arity(1, 1), ::builtinSymbolToString))
+    environment.put("string->symbol", NativeFuncValue("string->symbol", Arity(1, 1), ::builtinStringToSymbol))
     environment.put("string-length", NativeFuncValue("string-length", Arity(1, 1), ::builtinStringLength))
     environment.put("make-string", NativeFuncValue("make-string", Arity(1, 2), ::builtinMakeString))
+
+    environment.put("symbol?", NativeFuncValue("symbol?", Arity(1, 1), ::builtinIsSymbol))
+    environment.put("symbol=?", NativeFuncValue("symbol=?", Arity(2, Int.MAX_VALUE), ::builtinSymbolEqual))
 
     environment.put("display", NativeFuncValue("display", Arity(1, 1), ::builtinDisplay))
     environment.put("newline", NativeFuncValue("newline", Arity(0, 0), ::builtinNewline))
@@ -437,6 +443,8 @@ fun builtinNumberToString(
     return StringValue(args[0].value.toString())
 }
 
+
+
 /**
  * Built in string to number conversion
  *
@@ -454,6 +462,66 @@ fun builtinStringToNumber(
     }
 
     return IntegerValue(stringValue.toInt())
+}
+
+/**
+ * Built in symbol to string conversion
+ *
+ * Spec: R7RS, Chapter 6.5
+ * Syntax: (symbol->string symbol)
+ * Semantics: Returns the name of symbol as a string, but without adding escapes.
+ * */
+fun builtinSymbolToString(
+    args: List<FuncArg>,
+    executor: Executor,
+): StringValue {
+    verifyType<SymbolValue>(args[0], "Only symbols can be converted to string by this function")
+    return StringValue(args[0].value.toString())
+}
+
+/**
+ * Built in string to symbol conversion
+ *
+ * Spec: R7RS, Chapter 6.5
+ * Syntax: (string->symbol string)
+ * Semantics: Returns the symbol whose name is string. This procedure can create symbols with names containing
+ * special characters that would require escaping when written, but does not interpret escapes in its input.
+ */
+fun builtinStringToSymbol(
+    args: List<FuncArg>,
+    executor: Executor,
+): SymbolValue {
+    val string = verifyType<StringValue>(args[0], "Only strings can be converted to symbols by this function")
+    return SymbolValue(string.value)
+}
+
+/**
+ * Built in check for symbol
+ *
+ * Spec: R7RS, Chapter 6.5
+ * Syntax: (symbol? obj)
+ * Semantics: Returns #t if obj is a symbol, otherwise returns #f.
+ */
+fun builtinIsSymbol(
+    args: List<FuncArg>,
+    executor: Executor,
+): BooleanValue {
+    return BooleanValue(args.first().value is SymbolValue)
+}
+
+/**
+ * Built in equality for symbols
+ *
+ * Spec: R7RS, Chapter 6.5
+ * Syntax: (symbol=? symbol1 symbol2 symbol3 ...)
+ * Semantics: Returns #t if all the arguments are symbols and all have the same names in the sense of string=?.
+ */
+fun builtinSymbolEqual(
+args: List<FuncArg>,
+executor: Executor,
+): BooleanValue {
+    val symbols = verifyAllType<SymbolValue>(args, "I expected all arguments to be symbols")
+    return BooleanValue(symbols.zipWithNext { a, b -> a.value == b.value }. all { t -> t })
 }
 
 fun builtinSmallerEqual(

@@ -204,6 +204,18 @@ data class CharacterValue(val value: Char) : SchemeValue() {
     }
 }
 
+data class SymbolValue(val value: String) : SchemeValue() {
+    override fun toString(): String {
+        return value
+    }
+
+    override fun typeName(): String {
+        return "<#symbol>"
+    }
+}
+
+
+
 // FIXME: We probably call quite often cdr (tail) on the list but from what
 // I can see we can only implement that in Java in O(n) even though that should
 // be quite easy to do in O(1). So we probably need to write our own.
