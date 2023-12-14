@@ -275,14 +275,23 @@ class Parser {
      *
      * FIXME: The parser doesn't match the spec
      */
-    private fun parseSingleQuote(): ApplicationNode {
+    private fun parseSingleQuote(): ExpressionNode {
         val token = consume() as SingleQuoteToken
-        must<LParenToken>("Quoted List must be followed my left parenthesis")
-        val expressionNodes = parseExpressions()
-        val rparen = consume()
 
-        expressionNodes.addFirst(IdentifierNode("list", token.location))
-        return ApplicationNode(expressionNodes, Location.merge(token.location, rparen.location))
+        if (peek() is LParenToken) {
+            consume()
+            val expressionNodes = parseExpressions()
+            val rparen = consume()
+
+            expressionNodes.addFirst(IdentifierNode("list", token.location))
+            return ApplicationNode(expressionNodes, Location.merge(token.location, rparen.location))
+        } else if (peek() is IdentifierToken) {
+            val identifier = consume() as IdentifierToken
+            return SymbolNode(identifier.value, identifier.location)
+        } else {
+            println(tokens)
+            TODO("Better quote syntax not implemented")
+        }
     }
 
     /**
@@ -295,16 +304,24 @@ class Parser {
      *
      * FIXME: The parser doesn't match the spec
      */
-    private fun parseQuote(): ApplicationNode {
+    private fun parseQuote(): ExpressionNode {
         val quoteToken = consume()
         consume()
-        must<LParenToken>("Quoted List must be followed my left parenthesis")
+
+       if (peek() is LParenToken)  {
+           consume()
         val expressionNodes = parseExpressions()
         consume()
-        val rparen = must<RParenToken>("Expected a right parenthesis here")
-
+        val rparen = must<RParenToken>("Expected a closing right parenthesis here")
         expressionNodes.addFirst(IdentifierNode("list", quoteToken.location))
         return ApplicationNode(expressionNodes, Location.merge(quoteToken.location, rparen.location))
+       } else if (peek() is IdentifierToken) {
+           val identifier = consume() as IdentifierToken
+           val rparen = must<RParenToken>("Expected a closing right parenthesis here")
+           return SymbolNode(identifier.value, identifier.location)
+       } else {
+           TODO("Better quote syntax not implemented")
+       }
     }
 
     /**

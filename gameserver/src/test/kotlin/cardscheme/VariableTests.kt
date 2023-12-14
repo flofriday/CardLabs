@@ -251,4 +251,17 @@ class VariableTests {
             """.trimIndent()
         Assert.assertThrows(SchemeError::class.java) {SchemeInterpreter().run(program)}
     }
+
+    @Test
+    fun variablePrefixKeyword() {
+        // There was a bug in the lexer where a prefix in a variable created wrong tokens.
+        val program =
+            """
+            (define dog 1)            ; do keyword
+            (define beginning 0)      ;begin keyword
+            (define beforedoafter 4)  ;do keyword
+            (define prefixdo 4)       ;do keyword
+            """.trimIndent()
+        SchemeInterpreter().run(program)
+    }
 }
