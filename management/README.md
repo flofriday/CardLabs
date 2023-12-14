@@ -25,3 +25,11 @@ To execute the different pipeline stages currently simply executing the commands
 .\gradlew.bat test --info
 ```
 Note: in the `build/reports/test` directory there is a `index.html` file that contains details about the test execution
+
+## Logging guidelines
+### In endpoints
+Use `.info` in endpoints.
+### In services
+Use `.debug` in main methods such as `create` and `.trace` in side methods such as `findById`.
+### Examples
+Examples for these guidelines can be seen in the `AccountController` and `AccountService` class.
