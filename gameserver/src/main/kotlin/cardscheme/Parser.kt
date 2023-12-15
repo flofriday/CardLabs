@@ -88,6 +88,8 @@ class Parser {
                 return parseLet()
             } else if (peekn(2) is SetToken) {
                 return parseSet()
+            } else if (peekn(2) is DefineToken) {
+                throw SchemeError("Misplaced Define", "Define cannot occur here.", peekn(2).location, null)
             }
             return parseApplication()
         }
