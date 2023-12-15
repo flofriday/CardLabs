@@ -1,6 +1,5 @@
 package cardscheme
 
-
 fun injectBuiltin(environment: Environment) {
     environment.put("+", NativeFuncValue("+", Arity(2, Int.MAX_VALUE), ::builtinPlus))
     environment.put("-", NativeFuncValue("-", Arity(2, Int.MAX_VALUE), ::builtinMinus))
@@ -443,8 +442,6 @@ fun builtinNumberToString(
     return StringValue(args[0].value.toString())
 }
 
-
-
 /**
  * Built in string to number conversion
  *
@@ -517,11 +514,11 @@ fun builtinIsSymbol(
  * Semantics: Returns #t if all the arguments are symbols and all have the same names in the sense of string=?.
  */
 fun builtinSymbolEqual(
-args: List<FuncArg>,
-executor: Executor,
+    args: List<FuncArg>,
+    executor: Executor,
 ): BooleanValue {
     val symbols = verifyAllType<SymbolValue>(args, "I expected all arguments to be symbols")
-    return BooleanValue(symbols.zipWithNext { a, b -> a.value == b.value }. all { t -> t })
+    return BooleanValue(symbols.zipWithNext { a, b -> a.value == b.value }.all { t -> t })
 }
 
 fun builtinSmallerEqual(

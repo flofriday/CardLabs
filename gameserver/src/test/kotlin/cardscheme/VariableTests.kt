@@ -220,11 +220,11 @@ class VariableTests {
             """
             (let ((a 1) (a 2)) a)
             """.trimIndent()
-        Assert.assertThrows(SchemeError::class.java) {SchemeInterpreter().run(program)}
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 
     @Test
-    fun LetStarNameReuse() {
+    fun letStarNameReuse() {
         val program =
             """
             (let* ((a 1) (a (+ a a))) a)
@@ -240,7 +240,7 @@ class VariableTests {
             """
             (letrec ((a 1) (a 2)) a)
             """.trimIndent()
-        Assert.assertThrows(SchemeError::class.java) {SchemeInterpreter().run(program)}
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 
     @Test
@@ -249,7 +249,7 @@ class VariableTests {
             """
             (letrec* ((a 1) (a 2)) a)
             """.trimIndent()
-        Assert.assertThrows(SchemeError::class.java) {SchemeInterpreter().run(program)}
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 
     @Test

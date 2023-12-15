@@ -3,7 +3,6 @@ package cardscheme
 import org.junit.Assert
 import org.junit.Test
 
-
 class SymbolTests {
     @Test
     fun symbolFromQuote() {
@@ -52,5 +51,4 @@ class SymbolTests {
         assert(result is BooleanValue)
         Assert.assertEquals(false, (result as BooleanValue).value)
     }
-
 }

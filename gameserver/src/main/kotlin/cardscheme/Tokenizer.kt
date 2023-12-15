@@ -37,7 +37,7 @@ class Tokenizer() {
                 while (index < program.length && program[index++] != '\n') {}
             } else if (c == '#') {
                 tokens.addLast(scanPoundSign())
-            } else if (c.isDigit() || isNegativeNumber(c)) {
+            } else if (c.isDigit() || isNumber(c)) {
                 tokens.addLast(scanNumber())
             } else if (isIdentifierInitial(c)) {
                 tokens.addLast(scanIdentifierKeyword())
@@ -56,8 +56,8 @@ class Tokenizer() {
         return tokens
     }
 
-    private fun isNegativeNumber(c: Char): Boolean {
-        return (index + 1 < program.length) && (peek() == '-') && program[index + 1].isDigit()
+    private fun isNumber(c: Char): Boolean {
+        return (index + 1 < program.length) && (peek() == '+' || peek() == '-') && program[index + 1].isDigit()
     }
 
     private fun isIdentifierInitial(c: Char): Boolean {
@@ -100,28 +100,28 @@ class Tokenizer() {
         }
 
         val location = Location(line, line, col - literal.length, col - 1)
-        return when(literal) {
-        "begin" ->  BeginToken(location)
-        "define" ->  DefineToken(location)
-        "do" ->  DoToken(location)
-        "if" ->  IfToken(location)
-        "cond" ->  CondToken(location)
-        "else" ->  ElseToken(location)
-        "lambda" ->  LambdaToken(location)
-        "letrec*" ->  LetToken(true, true, location)
-        "letrec" ->  LetToken(true, false, location)
-        "let*" ->  LetToken(false, true, location)
-        "let" ->  LetToken(false, false, location)
-        "quote" ->  QuoteToken(location)
-        "set!" ->  SetToken(location)
-            else ->  IdentifierToken(literal, location)
+        return when (literal) {
+            "begin" -> BeginToken(location)
+            "define" -> DefineToken(location)
+            "do" -> DoToken(location)
+            "if" -> IfToken(location)
+            "cond" -> CondToken(location)
+            "else" -> ElseToken(location)
+            "lambda" -> LambdaToken(location)
+            "letrec*" -> LetToken(true, true, location)
+            "letrec" -> LetToken(true, false, location)
+            "let*" -> LetToken(false, true, location)
+            "let" -> LetToken(false, false, location)
+            "quote" -> QuoteToken(location)
+            "set!" -> SetToken(location)
+            else -> IdentifierToken(literal, location)
         }
     }
 
     private fun scanNumber(): Token {
         var literal = ""
 
-        if (peek() == '-') {
+        if (peek() == '+' || peek() == '-') {
             literal += consume()
         }
 

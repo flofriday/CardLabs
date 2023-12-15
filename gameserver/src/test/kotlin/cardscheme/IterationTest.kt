@@ -62,12 +62,12 @@ class IterationTest {
     fun badVariableNameClash() {
         val program =
             """
-                 (do (
-                    (i 0 (+ i 1))
-                    (i 0 (+ i 1))
-                    )
-                ((>= i 100) i))
+             (do (
+                (i 0 (+ i 1))
+                (i 0 (+ i 1))
+                )
+            ((>= i 100) i))
             """.trimIndent()
-        Assert.assertThrows(SchemeError::class.java) {SchemeInterpreter().run(program)}
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
 }

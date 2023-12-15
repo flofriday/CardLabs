@@ -254,8 +254,8 @@ class LambdaNode(val params: List<IdentifierNode>, val body: BodyNode, location:
     ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) +
-                "Lambda: '${params.joinToString(", ") { a -> a.identifier }}'\n" +
-                body.dump(indent + 1)
+            "Lambda: '${params.joinToString(", ") { a -> a.identifier }}'\n" +
+            body.dump(indent + 1)
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
@@ -394,11 +394,11 @@ class IfNode(
 ) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) +
-                "If:\n${condition.dump(indent)} \n${thenExpression.dump(indent + 1)} \n${
-                    elseExpression?.dump(
-                        indent + 1,
-                    )
-                }"
+            "If:\n${condition.dump(indent)} \n${thenExpression.dump(indent + 1)} \n${
+                elseExpression?.dump(
+                    indent + 1,
+                )
+            }"
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {

@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
     println("Made with ❤️ by CardLabs")
     var lineNr = 1
     var completeProgram = ""
-    val interpreter  = SchemeInterpreter()
+    val interpreter = SchemeInterpreter()
     while (true) {
         print(">>> ")
         var program = readln()
@@ -37,13 +37,13 @@ fun main(args: Array<String>) {
 
         try {
             lineNr++
-            var tokens = Tokenizer().tokenize("\n".repeat(lineNr -2) + program)
+            var tokens = Tokenizer().tokenize("\n".repeat(lineNr - 2) + program)
             while (tokens.filter { t -> t is LParenToken }.size > tokens.filter { t -> t is RParenToken }.size) {
                 print("... ")
                 val newLine = readln()
                 program += "\n" + newLine
                 lineNr++
-                tokens = Tokenizer().tokenize("\n".repeat(lineNr -2) + program)
+                tokens = Tokenizer().tokenize("\n".repeat(lineNr - 3) + program)
             }
 
             if (completeProgram.isEmpty()) {

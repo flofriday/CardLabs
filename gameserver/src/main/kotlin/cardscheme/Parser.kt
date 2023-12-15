@@ -176,7 +176,7 @@ class Parser {
 
         // Only `let*` can have duplicates in names.
         if (!(letToken.star && !letToken.rec)) {
-            verifyUniqueNames(bindings.map { b-> b.name })
+            verifyUniqueNames(bindings.map { b -> b.name })
         }
         return LetNode(letToken.rec, letToken.star, bindings, body, Location.merge(lparen.location, rparen.location))
     }
@@ -259,10 +259,125 @@ class Parser {
         must<RParenToken>("Expected right parenthesis here")
 
         for ((condition, thenExpressions) in conditionsList.zip(expressionsList)) {
-            currentClause = IfNode(condition, BodyNode(emptyList(), thenExpressions, lparen.location), currentClause, lparen.location)
+            currentClause =
+                IfNode(
+                    condition,
+                    BodyNode(emptyList(), thenExpressions, lparen.location),
+                    currentClause,
+                    lparen.location,
+                )
         }
 
         return currentClause as IfNode
+    }
+
+    /**
+     * The parser behaves differently in a quoted environment
+     */
+    private fun parseQuotedExpression(): ExpressionNode {
+        val token = peek()
+        return when (token) {
+            is LParenToken -> {
+                val lparen = consume()
+                val expressionNodes = mutableListOf<ExpressionNode>()
+                while (peek() !is RParenToken) {
+                    expressionNodes.addLast(parseQuotedExpression())
+                }
+                val rparen = consume()
+
+                expressionNodes.addFirst(IdentifierNode("list", lparen.location))
+                ApplicationNode(expressionNodes, Location.merge(lparen.location, rparen.location))
+            }
+
+            is IdentifierToken -> {
+                consume()
+                SymbolNode(token.value, token.location)
+            }
+
+            is BeginToken -> {
+                consume()
+                SymbolNode("begin", token.location)
+            }
+
+            is CondToken -> {
+                consume()
+                SymbolNode("cond", token.location)
+            }
+
+            is DefineToken -> {
+                consume()
+                SymbolNode("define", token.location)
+            }
+
+            is SetToken -> {
+                consume()
+                SymbolNode("set!", token.location)
+            }
+
+            is DoToken -> {
+                consume()
+                SymbolNode("do", token.location)
+            }
+
+            is IfToken -> {
+                consume()
+                SymbolNode("if", token.location)
+            }
+
+            is LambdaToken -> {
+                consume()
+                SymbolNode("lambda", token.location)
+            }
+
+            is LetToken -> {
+                consume()
+                SymbolNode(token.display(), token.location)
+            }
+
+            is ElseToken -> {
+                consume()
+                SymbolNode("else", token.location)
+            }
+
+            is QuoteToken -> {
+                consume()
+                SymbolNode("quote", token.location)
+            }
+
+            is BooleanToken -> {
+                consume()
+                return BoolNode(token.value, token.location)
+            }
+
+            is IntegerToken -> {
+                consume()
+                return IntNode(token.value, token.location)
+            }
+
+            is FloatToken -> {
+                consume()
+                return FloatNode(token.value, token.location)
+            }
+
+            is CharToken -> {
+                consume()
+                return CharNode(token.value, token.location)
+            }
+
+            is StringToken -> {
+                consume()
+                return StringNode(token.value, token.location)
+            }
+
+            else -> {
+                throw SchemeError(
+                    "Unexpected Token",
+                    "While reading the sourcecode I got confused here",
+                    token.location,
+                    null,
+                )
+            }
+        }
     }
 
     /**
@@ -277,21 +392,7 @@ class Parser {
      */
     private fun parseSingleQuote(): ExpressionNode {
         val token = consume() as SingleQuoteToken
-
-        if (peek() is LParenToken) {
-            consume()
-            val expressionNodes = parseExpressions()
-            val rparen = consume()
-
-            expressionNodes.addFirst(IdentifierNode("list", token.location))
-            return ApplicationNode(expressionNodes, Location.merge(token.location, rparen.location))
-        } else if (peek() is IdentifierToken) {
-            val identifier = consume() as IdentifierToken
-            return SymbolNode(identifier.value, identifier.location)
-        } else {
-            println(tokens)
-            TODO("Better quote syntax not implemented")
-        }
+        return parseQuotedExpression()
     }
 
     /**
@@ -305,23 +406,12 @@ class Parser {
      * FIXME: The parser doesn't match the spec
      */
     private fun parseQuote(): ExpressionNode {
-        val quoteToken = consume()
-        consume()
+        val lparen = consume()
+        val quote = consume()
 
-       if (peek() is LParenToken)  {
-           consume()
-        val expressionNodes = parseExpressions()
-        consume()
+        val expr = parseQuotedExpression()
         val rparen = must<RParenToken>("Expected a closing right parenthesis here")
-        expressionNodes.addFirst(IdentifierNode("list", quoteToken.location))
-        return ApplicationNode(expressionNodes, Location.merge(quoteToken.location, rparen.location))
-       } else if (peek() is IdentifierToken) {
-           val identifier = consume() as IdentifierToken
-           val rparen = must<RParenToken>("Expected a closing right parenthesis here")
-           return SymbolNode(identifier.value, identifier.location)
-       } else {
-           TODO("Better quote syntax not implemented")
-       }
+        return expr
     }
 
     /**
@@ -399,7 +489,11 @@ class Parser {
         val body =
             if (peek() !is RParenToken) {
                 val bodyExpressions = parseExpressions()
-                BodyNode(listOf(), bodyExpressions, Location.merge(bodyExpressions.first().location, bodyExpressions.last().location))
+                BodyNode(
+                    listOf(),
+                    bodyExpressions,
+                    Location.merge(bodyExpressions.first().location, bodyExpressions.last().location),
+                )
             } else {
                 null
             }
@@ -472,7 +566,12 @@ class Parser {
                 Location.merge(lparen.location, rparen.location),
             )
         } else {
-            throw SchemeError("Unexpected Token", "I expected either an identifier or a left parenthesis here.", peek().location, null)
+            throw SchemeError(
+                "Unexpected Token",
+                "I expected either an identifier or a left parenthesis here.",
+                peek().location,
+                null,
+            )
         }
     }
 
@@ -491,7 +590,11 @@ class Parser {
         val expression = parseExpression()
         val rparen = must<RParenToken>("I expected a closing right parenthesis here.")
 
-        return SetNode(IdentifierNode(name.value, name.location), expression, Location.merge(lparen.location, rparen.location))
+        return SetNode(
+            IdentifierNode(name.value, name.location),
+            expression,
+            Location.merge(lparen.location, rparen.location),
+        )
     }
 
     /**
@@ -513,11 +616,16 @@ class Parser {
     }
 
     private fun verifyUniqueNames(names: List<IdentifierNode>) {
-        val nameSet = HashSet<String>();
+        val nameSet = HashSet<String>()
 
         for (name in names) {
             if (nameSet.contains(name.identifier)) {
-                throw SchemeError("Name Error","All names must be unique, however this one was already used.",name.location, null)
+                throw SchemeError(
+                    "Name Error",
+                    "All names must be unique, however this one was already used.",
+                    name.location,
+                    null,
+                )
             }
             nameSet.add(name.identifier)
         }
@@ -532,21 +640,36 @@ class Parser {
 
     private fun peek(): Token {
         if (index >= tokens.size) {
-            throw SchemeError("Unexpected end of file", "I was in the middle of reading something but the file just ended.", null, null)
+            throw SchemeError(
+                "Unexpected end of file",
+                "I was in the middle of reading something but the file just ended.",
+                null,
+                null,
+            )
         }
         return tokens[index]
     }
 
     private fun peekn(n: Int): Token {
         if (index + n - 1 >= tokens.size) {
-            throw SchemeError("Unexpected end of file", "I was in the middle of reading something but the file just ended.", null, null)
+            throw SchemeError(
+                "Unexpected end of file",
+                "I was in the middle of reading something but the file just ended.",
+                null,
+                null,
+            )
         }
         return tokens[index + n - 1]
     }
 
     private fun consume(): Token {
         if (index >= tokens.size) {
-            throw SchemeError("Unexpected end of file", "I was in the middle of reading something but the file just ended.", null, null)
+            throw SchemeError(
+                "Unexpected end of file",
+                "I was in the middle of reading something but the file just ended.",
+                null,
+                null,
+            )
         }
         index++
         return tokens[index - 1]

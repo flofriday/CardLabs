@@ -92,6 +92,7 @@ data class IntegerValue(val value: Int) : NumberValue() {
                     FloatValue(this.value.toFloat() / other.value)
                 }
             }
+
             is FloatValue -> FloatValue(this.value / other.value)
             else -> TODO("Unsoported type")
         }
@@ -213,8 +214,6 @@ data class SymbolValue(val value: String) : SchemeValue() {
         return "<#symbol>"
     }
 }
-
-
 
 // FIXME: We probably call quite often cdr (tail) on the list but from what
 // I can see we can only implement that in Java in O(n) even though that should

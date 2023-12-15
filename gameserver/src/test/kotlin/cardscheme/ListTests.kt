@@ -86,7 +86,10 @@ lst""",
 
         result = interpreter.run("(append lst (list 3 4))")
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(1), IntegerValue(2), IntegerValue(3), IntegerValue(4)), (result as ListValue).values.toList())
+        assertEquals(
+            listOf(IntegerValue(1), IntegerValue(2), IntegerValue(3), IntegerValue(4)),
+            (result as ListValue).values.toList(),
+        )
 
         result = interpreter.run("lst")
         assert(result is ListValue)
@@ -107,5 +110,79 @@ lst""",
         result = interpreter.run("(length lst)")
         assert(result is IntegerValue)
         assertEquals(2, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun quotedNestedListTest() {
+        val program = "'(1 (2 3))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        assertEquals(
+            ListValue(
+                SchemeList(
+                    listOf(
+                        IntegerValue(1),
+                        ListValue(SchemeList(listOf(IntegerValue(2), IntegerValue(3)))),
+                    ),
+                ),
+            ),
+            result as ListValue,
+        )
+    }
+
+    @Test
+    fun quotedListOfManyLiterals() {
+        val program = """'(1 3.14 #t #f "text" #\c)"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        assertEquals(
+            ListValue(
+                SchemeList(
+                    listOf(
+                        IntegerValue(1),
+                        FloatValue(3.14.toFloat()),
+                        BooleanValue(true),
+                        BooleanValue(false),
+                        StringValue("text"),
+                        CharacterValue('c'),
+                    ),
+                ),
+            ),
+            result as ListValue,
+        )
+    }
+
+    @Test
+    fun quotedListOfSymbol() {
+        val program = """'(display 34)"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        assertEquals(
+            ListValue(
+                SchemeList(
+                    listOf(
+                        SymbolValue("display"),
+                        IntegerValue(34),
+                    ),
+                ),
+            ),
+            result as ListValue,
+        )
+    }
+
+    @Test
+    fun quotedListOfKeywords() {
+        val program = """'(begin cond define do else if lambda let let* letrec letrec* set! quote)"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        assertEquals(
+            ListValue(
+                SchemeList(
+                    "begin cond define do else if lambda let let* letrec letrec* set! quote".split(" ")
+                        .map { kw -> SymbolValue(kw) },
+                ),
+            ),
+            result as ListValue,
+        )
     }
 }
