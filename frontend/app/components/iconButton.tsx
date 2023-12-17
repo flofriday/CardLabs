@@ -4,7 +4,9 @@ interface Props {
   text: string;
   type: ButtonIcon;
   onClick?: () => void;
-  id: string;
+  id?: string;
+  width?: string;
+  hover?: string;
 }
 
 export enum ButtonIcon {
@@ -13,6 +15,8 @@ export enum ButtonIcon {
   TEST = "test.svg",
   RANK = "rank.svg",
   DELETE = "delete.svg",
+  EDIT = "compile.svg",
+  INFO = "info.svg",
 }
 
 export default function IconButton({
@@ -20,11 +24,13 @@ export default function IconButton({
   type,
   onClick = () => {},
   id,
+  width = "w-36",
+  hover = "hover:bg-primary",
 }: Props): JSX.Element {
   return (
     <button
       onClick={onClick}
-      className="btn text-text py-2 w-36 rounded-full shadow-md text-lg outline outline-1 align-middle inline-flex items-center justify-start hover:bg-primary"
+      className={`btn text-text py-2 ${width}  rounded-full shadow-md text-lg outline outline-1 align-middle inline-flex items-center justify-start ${hover}`}
       id={id}
     >
       <Image
