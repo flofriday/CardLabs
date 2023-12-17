@@ -4,8 +4,13 @@ import { useState } from "react";
 import IconButton, { ButtonIcon } from "../components/iconButton";
 import { IoClose } from "react-icons/io5";
 import Modal from "../components/modal";
+import { Bot } from "../services/BotService";
 
-export default function BotCard(): JSX.Element {
+interface Props {
+  bot: Bot;
+}
+
+export default function BotCard({ bot }: Props): JSX.Element {
   const [name, setName] = useState("Example Name");
   const [score, setScore] = useState(1804);
   const [rankGlobal, setRankGlobal] = useState(541);

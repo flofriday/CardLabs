@@ -1,5 +1,6 @@
 import { getCookie } from "cookies-next";
 import { toast } from "react-toastify";
+import { Page } from "../types/contentPage";
 
 export async function getNewBotName(): Promise<string> {
   const jwt = getCookie("auth_token");
@@ -152,4 +153,36 @@ export async function deleteBot(id: number): Promise<boolean> {
   toast.success("Bot deleted!");
 
   return true;
+}
+
+export async function getAllBots(
+  pageNumber: number,
+  pageSize: number
+): Promise<Page<Bot>> {
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch(
+    "/api/bot?" +
+      new URLSearchParams({
+        pageNumber: pageNumber.toString(),
+        pageSize: pageSize.toString(),
+      }).toString(),
+    {
+      mode: "cors",
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + jwt,
+      },
+    }
+  );
+
+  if (response.status !== 200) {
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
+    throw new EvalError(); // TODO change this
+  }
+
+  return (await response.json()) as Page<Bot>;
 }
