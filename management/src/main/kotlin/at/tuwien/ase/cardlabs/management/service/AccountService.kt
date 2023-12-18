@@ -33,7 +33,7 @@ class AccountService(
 
     @Transactional
     fun create(account: Account): Account {
-        logger.debug("Attempting to create an account with the username ${account.username} and email ${account.email}")
+        logger.debug("Attempting to create an account with the username ${account.username}")
         Helper.requireNull(account.id, "The id must not be set")
 
         AccountValidator.validateAccountCreate(account)
@@ -58,14 +58,12 @@ class AccountService(
         acc.sendChangeUpdates = account.sendChangeUpdates
         acc.sendScoreUpdates = account.sendScoreUpdates
         acc.sendNewsletter = account.sendNewsletter
-        val result = accountMapper.map(accountRepository.save(acc))
-        logger.debug("Created an account with the username ${account.username} and email ${account.email}")
-        return result
+        return accountMapper.map(accountRepository.save(acc))
     }
 
     @Transactional
-    fun update(user: CardLabUser, accountUpdate: AccountUpdate) {
-        logger.debug("Attempting to update the account with the id ${user.id}")
+    fun update(user: CardLabUser, accountUpdate: AccountUpdate): Account {
+        logger.debug("User ${user.id} attempts to update its account")
         Helper.requireNonNull(user, "No authentication provided")
         val account = findByUsername(user.username) ?: throw AccountNotFoundException("Account could not be found")
 
@@ -78,40 +76,35 @@ class AccountService(
         account.sendScoreUpdates = accountUpdate.sendScoreUpdates
         account.sendChangeUpdates = accountUpdate.sendChangeUpdates
 
-        accountRepository.save(account)
-        logger.debug("Updated the account with the id ${user.id}")
+        return accountMapper.map(accountRepository.save(account))
     }
 
     @Transactional
-    fun delete(user: CardLabUser, id: Long) {
-        logger.debug("Attempting to delete an account with the id $id")
+    fun delete(user: CardLabUser, accountId: Long) {
+        logger.debug("User ${user.id} attempts to delete the account $accountId")
         Helper.requireNonNull(user, "No authentication provided")
-        Helper.requireNonNull(id, "Cannot delete an account with the id null")
-        if (user.id != id) {
+        Helper.requireNonNull(accountId, "Cannot delete an account with the id null")
+        if (user.id != accountId) {
             throw UnauthorizedException("Can't delete an account other than yourself")
         }
 
-        val accountDao = findById(id)
+        val accountDao = findById(accountId)
         if (accountDao != null) {
             accountDao.deleted = Instant.now()
-            logger.debug("Deleted the account with the id $id")
-        } else {
-            logger.debug("Failed deleting the account with the id $id as it does not exist")
         }
     }
 
     fun getUser(username: String): Account {
+        logger.debug("")
         val account = findByUsername(username) ?: throw AccountNotFoundException("Account could not be found")
         return accountMapper.map(account)
     }
 
     fun findById(id: Long): AccountDAO? {
-        logger.trace("Attempting to fetch an account with the id $id")
         return accountRepository.findByIdAndDeletedIsNull(id)
     }
 
     fun findByUsername(username: String?): AccountDAO? {
-        logger.trace("Attempting to fetch an account with the username $username")
         if (username == null) {
             return null
         }
@@ -119,12 +112,10 @@ class AccountService(
     }
 
     fun findLocation(name: String): LocationDAO? {
-        logger.trace("Attempting to fetch a location with the name $name")
         return locationRepository.findByName(name)
     }
 
     fun findByEmail(email: String?): AccountDAO? {
-        logger.trace("Attempting to fetch an account with the email $email")
         if (email == null) {
             return null
         }

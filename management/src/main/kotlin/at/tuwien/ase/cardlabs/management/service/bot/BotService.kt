@@ -19,6 +19,7 @@ import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.validation.validator.BotValidator
 import at.tuwien.ase.cardlabs.management.validation.validator.Validator
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -35,6 +36,8 @@ class BotService(
     private val botConfig: BotConfig,
 ) {
 
+    private final val logger = LoggerFactory.getLogger(javaClass)
+
     /**
      * Generate a bot name
      */
@@ -47,6 +50,7 @@ class BotService(
      */
     @Transactional
     fun create(user: CardLabUser, botCreate: BotCreate): Bot {
+        logger.debug("User ${user.id} attempts to create a bot with name ${botCreate.name}")
         val owner = accountService.findById(user.id)
             ?: throw AccountDoesNotExistException("An account with the id ${user.id} doesn't exist")
 
@@ -69,6 +73,7 @@ class BotService(
      */
     @Transactional
     fun patch(user: CardLabUser, botId: Long, botPatch: BotPatch): Bot {
+        logger.debug("User ${user.id} attempts to patch the bot $botId")
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
         if (bot.owner.id != user.id) {
@@ -87,6 +92,7 @@ class BotService(
      */
     @Transactional
     fun createCodeVersion(user: CardLabUser, botId: Long) {
+        logger.debug("User ${user.id} attempts to create a code version for the bot $botId")
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
         if (bot.owner.id != user.id) {
@@ -120,6 +126,7 @@ class BotService(
      */
     @Transactional
     fun fetch(user: CardLabUser, botId: Long): Bot {
+        logger.debug("User ${user.id} attempts to fetch the bot $botId")
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
@@ -135,6 +142,7 @@ class BotService(
      */
     @Transactional
     fun fetchAll(user: CardLabUser, pageable: Pageable): Page<Bot> {
+        logger.debug("User ${user.id} attempts to fetch all its bots with pageable $pageable")
         return botRepository.findByOwnerIdAndDeletedIsNull(user.id, pageable)
             .map(botMapper::map)
     }
@@ -144,6 +152,7 @@ class BotService(
      */
     @Transactional
     fun delete(user: CardLabUser, botId: Long) {
+        logger.debug("User ${user.id} attempts to delete the bot $botId")
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
@@ -159,6 +168,7 @@ class BotService(
      */
     @Transactional
     fun fetchRankPosition(user: CardLabUser, botId: Long): Long {
+        logger.debug("User ${user.id} attempts to fetch global bot rank for bot $botId")
         findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 

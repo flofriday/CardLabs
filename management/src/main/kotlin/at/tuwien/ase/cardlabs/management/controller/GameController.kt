@@ -21,7 +21,7 @@ class GameController(
         @AuthenticationPrincipal user: CardLabUser,
         @PathVariable id: Long,
     ): ResponseEntity<Game> {
-        val game = gameService.fetchAllById(user, id)
+        val game = gameService.fetchById(user, id)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(game)

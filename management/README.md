@@ -2,7 +2,8 @@
 ### Local development
 To execute the management locally on your machine, you must create a new IntelliJ Spring Boot configuration. Here 
 you use as SDK `Java 21`, as module `gameserver.main` as boot class
-`at.tuwien.ase.cardlabs.gameserver.GameserverApplication` and as active profile `local`.
+`at.tuwien.ase.cardlabs.gameserver.GameserverApplication` and as active profile `local`. <br/>
+If the output should include debug output, then add the profile `debug` to active profiles.
 
 ### Run the pipeline jobs
 To execute the different pipeline stages currently simply executing the commands is the easiest. Please refer to the
