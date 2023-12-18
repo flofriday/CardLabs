@@ -1,6 +1,5 @@
 package at.tuwien.ase.cardlabs.management.controller
 
-import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.LocationService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus

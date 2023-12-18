@@ -141,7 +141,7 @@ internal class AccountServiceTests {
             TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
 
         assertDoesNotThrow {
-            accountService.delete(userDetailsAccount, userDetailsAccount.id!!)
+            accountService.delete(userDetailsAccount, userDetailsAccount.id)
         }
     }
 

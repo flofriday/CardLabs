@@ -176,12 +176,20 @@ class BotService(
         return botRepository.findBotRankPosition(botId)
     }
 
+    @Transactional
+    fun fetchByState(botState: BotState): List<Bot> {
+        logger.debug("Attempting to fetch all bots with the state $botState")
+        return botRepository.findByCurrentStateAndDeletedIsNull(botState)
+            .map(botMapper::map)
+            .toList()
+    }
+
     private fun findById(botId: Long): BotDAO? {
         return botRepository.findByIdAndDeletedIsNull(botId)
     }
 
     // Assume that botCodeId is set for every item
     private fun getLatestCodeVersion(codeHistory: MutableList<BotCodeDAO>): BotCodeDAO? {
-        return codeHistory.maxByOrNull { it.botCodeId!! }
+        return codeHistory.maxByOrNull { it.id!! }
     }
 }

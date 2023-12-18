@@ -1,12 +1,14 @@
 package at.tuwien.ase.cardlabs.management.database.repository
 
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotDAO
+import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.util.stream.Stream
 
 /**
  * Bot entities for which the deleted field is not null are viewed as deleted entities
@@ -33,4 +35,6 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
         """
     )
     fun findBotRankPosition(@Param("botId") botId: Long): Long
+
+    fun findByCurrentStateAndDeletedIsNull(botState: BotState): Stream<BotDAO>
 }
