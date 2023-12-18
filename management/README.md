@@ -27,9 +27,28 @@ To execute the different pipeline stages currently simply executing the commands
 Note: in the `build/reports/test` directory there is a `index.html` file that contains details about the test execution
 
 ## Logging guidelines
-### In endpoints
-Use `.info` in endpoints.
-### In services
-Use `.debug` in main methods such as `create` and `.trace` in side methods such as `findById`.
+### Log Message Level
+Use the `.info` logging level that initializes a new process such as when a REST call is handled or the matchmaking
+logic is executed. <br/>
+The first level in the subprocess uses the `.debug` logging level. Any other logging messages use the `.trace` logging
+level excluding the use cases for `.warn` and `.error`
+### Log Message
+(a) Don't ever log sensitive information such as passwords. <br/>
+(b) The log messages are in English. <br/>
+(c) Add context to log messages. Otherwise they are useless. <br/>
+(d) Log in machine parsable format. <br/>
+(e) Log in human readable format.
+### How to add context
+(a) When a process contains a unique caller such as a user, then this should always be logged using its unique
+identifier and stating the caller type. <br/>
+(b) When a process modifies data such as creating a user or deleting a user, then the unique identifier of the modified
+data should be logged. <br/>
+(c) Add the current state in which the process is when the log message is created. Examples are 'Creating' or 'Created'
+for either indicating that something should be created and something has been created respectively.
 ### Examples
-Examples for these guidelines can be seen in the `AccountController` and `AccountService` class.
+```
+"Attempting to create an account with the username ${account.username}"
+"User ${user.id} attempts to create a bot with name ${botCreate.name}"
+"User ${user.id} attempts to patch the bot $botId"
+"User ${user.id} attempts to delete the bot $botId"
+```
