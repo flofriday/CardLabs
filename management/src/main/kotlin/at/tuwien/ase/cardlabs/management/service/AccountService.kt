@@ -94,8 +94,12 @@ class AccountService(
         }
     }
 
+    fun getUser(user: CardLabUser): Account {
+        logger.debug("User ${user.id} attempts to fetch its account information")
+        return getUser(user.username)
+    }
+
     fun getUser(username: String): Account {
-        logger.debug("")
         val account = findByUsername(username) ?: throw AccountNotFoundException("Account could not be found")
         return accountMapper.map(account)
     }
