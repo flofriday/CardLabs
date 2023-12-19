@@ -2,7 +2,9 @@ package at.tuwien.ase.cardlabs.management.matchmaker
 
 import at.tuwien.ase.cardlabs.management.config.MatchmakerConfig
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
+import org.springframework.stereotype.Component
 
+@Component
 class MatchmakerAlgorithm(private val matchmakerConfig: MatchmakerConfig) {
 
     data class MatchmakerAlgorithmResult(
@@ -44,6 +46,14 @@ class MatchmakerAlgorithm(private val matchmakerConfig: MatchmakerConfig) {
             }
         }
 
+        if (tempCluster.isNotEmpty()) {
+            if (tempCluster.size >= matchmakerConfig.matchSize.min) {
+                clusters.add(tempCluster)
+            } else {
+                unassignedBots.addAll(tempCluster)
+            }
+        }
+
         return MatchmakerAlgorithmResult(
             matches = clusters,
             unassignedBots = unassignedBots,
@@ -53,10 +63,7 @@ class MatchmakerAlgorithm(private val matchmakerConfig: MatchmakerConfig) {
     private fun isWithinEloRange(cluster: List<Bot>, bot: Bot): Boolean {
         if (cluster.isEmpty()) return true
         val maxElo = cluster.maxOf { it.eloScore }
-        val minElo = maxElo - 0.2 * maxElo
-        if (bot.eloScore < minElo || bot.eloScore > maxElo) {
-            return false
-        }
-        return true
+        val minElo = maxElo - matchmakerConfig.matchSkillDifference.relativeEloDifference * maxElo
+        return !(bot.eloScore < minElo || bot.eloScore > maxElo)
     }
 }
