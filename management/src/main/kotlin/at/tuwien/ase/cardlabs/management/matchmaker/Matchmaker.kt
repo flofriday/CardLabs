@@ -30,11 +30,12 @@ class Matchmaker(
         }
 
         val result = matchmakerAlgorithm.createMatches(queuedBots)
+        val assignedBots = queuedBots.size - result.unassignedBots.size
         logger.debug(
-            "Created ${result.matches.size} matches containing in total ${queuedBots.size - result.unassignedBots.size} of ${queuedBots.size} queued bots with the following match sizes ${
-                clusterToString(
-                    result.matches,
-                )
+            "Created ${result.matches.size} matches containing in total $assignedBots of ${queuedBots.size} queued bots with the following match sizes ${
+            clusterToString(
+                result.matches,
+            )
             }.",
         )
 
