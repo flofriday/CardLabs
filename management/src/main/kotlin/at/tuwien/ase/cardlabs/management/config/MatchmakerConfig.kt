@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties(prefix = "cardlabs.matchmaker")
 data class MatchmakerConfig(
     val matchSize: MatchSize,
-//    val matchSkillDifference: MatchSkillDifference,
+    val matchSkillDifference: MatchSkillDifference,
 )
 
 data class MatchSize(
@@ -14,8 +14,5 @@ data class MatchSize(
 )
 
 data class MatchSkillDifference(
-    val optimalMaxAbsolute: Int, // The optimal max elo skill difference between the best and worst player
-    val optimalMaxRelative: Int,
-    val hardMaxAbsolute: Int,
-    val hardMaxRelative: Int,
+    val relativeEloDifference: Double
 )
