@@ -288,7 +288,7 @@ class Parser {
                 val rparen = consume()
 
                 expressionNodes.addFirst(IdentifierNode("list", lparen.location))
-                ApplicationNode(expressionNodes, Location.merge(lparen.location, rparen.location))
+                ApplicationNode(expressionNodes, false, Location.merge(lparen.location, rparen.location))
             }
 
             is IdentifierToken -> {
@@ -434,7 +434,7 @@ class Parser {
         val rparen = must<RParenToken>("Expected a right parenthesis here")
 
         expressionNodes.addFirst(IdentifierNode("vector", pound.location))
-        return ApplicationNode(expressionNodes, Location.merge(pound.location, rparen.location))
+        return ApplicationNode(expressionNodes, false, Location.merge(pound.location, rparen.location))
     }
 
     /**
@@ -614,7 +614,7 @@ class Parser {
         }
 
         val rparen = must<RParenToken>("Expected a right parenthesis here")
-        return ApplicationNode(expressions, Location.merge(lparen.location, rparen.location))
+        return ApplicationNode(expressions, false, Location.merge(lparen.location, rparen.location))
     }
 
     private fun verifyUniqueNames(names: List<IdentifierNode>) {

@@ -26,6 +26,7 @@ class SchemeInterpreter(
     fun run(program: String): SchemeValue? {
         val tokens = Tokenizer().tokenize(program)
         val ast = Parser().parse(tokens)
+        Resolver().resolve(ast)
         val buffer = StringBuffer()
         return runWithTimeoutAndMemoryLimit({ Executor(env, buffer).execute(ast) })
     }
@@ -35,6 +36,7 @@ class SchemeInterpreter(
      */
     fun run(tokens: List<Token>): SchemeValue? {
         val ast = Parser().parse(tokens)
+        Resolver().resolve(ast)
         val buffer = StringBuffer()
         return runWithTimeoutAndMemoryLimit({ Executor(env, buffer).execute(ast) })
     }

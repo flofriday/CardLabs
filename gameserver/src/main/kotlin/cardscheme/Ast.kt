@@ -66,7 +66,7 @@ abstract class StatementNode(location: Location) : AstNode(location) {
  * @param expressions the expressions making up the call where the first one will (hopefully)
  *   evaluate to a procedure.
  */
-class ApplicationNode(val expressions: List<ExpressionNode>, location: Location) :
+class ApplicationNode(val expressions: List<ExpressionNode>, var isLast: Boolean = false, location: Location) :
     ExpressionNode(location) {
     override fun dump(indent: Int): String {
         var out = getIndentation(indent) + "Application\n"
@@ -282,13 +282,18 @@ data class VariableBinding(val name: IdentifierNode, val init: ExpressionNode, v
  * @param bindings is the list of variable bindings.
  * @param body is the body that gets executed once the bindings are assigned.
  */
-class LetNode(val rec: Boolean, val star: Boolean, val bindings: List<VariableBinding>, val body: BodyNode, location: Location) :
+class LetNode(
+    val rec: Boolean,
+    val star: Boolean,
+    val bindings: List<VariableBinding>,
+    val body: BodyNode,
+    location: Location,
+) :
     ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) +
             "LetNode: (rec: $rec, star: $star)\n" +
-            bindings.map {
-                    b ->
+            bindings.map { b ->
                 b.name.dump(indent + 1) + b.init.dump(indent + 1)
             } +
             body.dump(indent + 1)

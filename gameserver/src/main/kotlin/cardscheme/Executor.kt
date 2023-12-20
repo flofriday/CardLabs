@@ -1,8 +1,12 @@
 package cardscheme
 
+data class TailCallInfo(val func: FuncValue, val args: List<FuncArg>)
+
 class Executor(var environment: Environment, val buffer: StringBuffer) :
     ExpressionVisitor<SchemeValue>,
     StatementVisitor<Unit> {
+    private var tailCallInfo: TailCallInfo? = null
+
     /**
      * On error the internal environment may be messed up and repeated calls will result in a faulty execution.
      */
@@ -81,7 +85,12 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     }
 
     override fun visitedBy(node: LambdaNode): FuncValue {
-        return FuncValue(node.params.map { a -> a.identifier }, Arity(node.params.size, node.params.size), node.body, environment)
+        return FuncValue(
+            node.params.map { a -> a.identifier },
+            Arity(node.params.size, node.params.size),
+            node.body,
+            environment,
+        )
     }
 
     /**
@@ -302,7 +311,29 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
             // environment for the CONTENT of the lambda function
             pushEnv()
             func.params.zip(args).map { (name, arg) -> environment.put(name, arg.value) }
-            val result = func.body.visit(this)
+            var result = func.body.visit(this)
+
+            // Tail call optimization
+            // To unwind the call stack, visit doesn't evaluate them so we need to do this now here.
+            var currentFunc = func
+            while (tailCallInfo != null) {
+                val tfunc = tailCallInfo!!.func
+                val targs = tailCallInfo!!.args
+                tailCallInfo = null
+
+                if (tfunc !== currentFunc) {
+                    // Clear the environment if the functions aren't equal, however if they are
+                    // than we can keep as the syntax of scheme doesn't allow that variables are
+                    // leaked between iteration.
+                    popEnv()
+                    pushEnv()
+                }
+
+                currentFunc = tfunc
+                tfunc.params.zip(targs).map { (name, arg) -> environment.put(name, arg.value) }
+                result = tfunc.body.visit(this)
+            }
+
             popEnv()
             environment = old
             return result
@@ -324,7 +355,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
             )
         }
 
-        if (!func.arity.inside(node.expressions.size -1)) {
+        if (!func.arity.inside(node.expressions.size - 1)) {
             val message =
                 if (func.arity.min == func.arity.max) {
                     "The function expects ${func.arity.min} arguments, but you provided ${node.expressions.size - 1}"
@@ -336,6 +367,13 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
         }
 
         val args = node.expressions.drop(1).map { e -> FuncArg(e.visit(this), e.location) }
+
+        // Tail call optimization
+        if (node.isLast && func is FuncValue) {
+            this.tailCallInfo = TailCallInfo(func, args)
+            return VoidValue()
+        }
+
         try {
             return callFunction(func, args)
         } catch (e: SchemeError) {

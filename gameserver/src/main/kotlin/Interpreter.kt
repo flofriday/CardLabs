@@ -1,4 +1,3 @@
-
 import cardscheme.LParenToken
 import cardscheme.RParenToken
 import cardscheme.SchemeError
@@ -16,13 +15,15 @@ fun main(args: Array<String>) {
 
     if (args.size == 1) {
         val program = File(args.get(0)).readText()
+        val startime = System.currentTimeMillis()
         try {
             SchemeInterpreter().run(program)
-            exitProcess(0)
         } catch (e: SchemeError) {
             e.display(program)
             exitProcess(1)
         }
+        println("Executed in: ${System.currentTimeMillis() - startime}ms")
+        exitProcess(0)
     }
 
     println("The CardScheme Interpreter")
