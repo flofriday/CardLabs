@@ -1,7 +1,7 @@
-package at.tuwien.ase.cardlabs.management.database.model.match.action
+package at.tuwien.ase.cardlabs.management.database.model.game.action
 
-import at.tuwien.ase.cardlabs.management.database.model.match.card.Card
-import at.tuwien.ase.cardlabs.management.database.model.match.card.Color
+import at.tuwien.ase.cardlabs.management.database.model.game.card.Card
+import at.tuwien.ase.cardlabs.management.database.model.game.card.Color
 import java.io.Serializable
 
 data class Action(

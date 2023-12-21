@@ -2,22 +2,27 @@ package at.tuwien.ase.cardlabs.management.matchmaker
 
 import at.tuwien.ase.cardlabs.management.config.MatchmakerConfig
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
+import at.tuwien.ase.cardlabs.management.controller.model.game.GameCreate
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
+import at.tuwien.ase.cardlabs.management.service.game.GameService
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class Matchmaker(
     private val botService: BotService,
     private val matchmakerConfig: MatchmakerConfig,
     private val matchmakerAlgorithm: MatchmakerAlgorithm,
+    private val gameService: GameService,
 ) {
 
     private final val logger = LoggerFactory.getLogger(javaClass)
 
     @Scheduled(initialDelay = 5000L, fixedDelay = 5000L)
+    @Transactional
     fun scheduleFixedDelayTask() {
         logger.debug("Creating matches")
         val queuedBots = botService.fetchByState(BotState.QUEUED)
@@ -39,7 +44,12 @@ class Matchmaker(
             }.",
         )
 
-        // TODO: create the match objects
+        val gameCreates = mutableListOf<GameCreate>()
+        for (bots in result.matches) {
+            gameCreates.add(GameCreate())
+        }
+        gameService.save(gameCreates)
+
         // TODO: add the matches to the RabbitMQ
         // TODO: update bot database state
     }

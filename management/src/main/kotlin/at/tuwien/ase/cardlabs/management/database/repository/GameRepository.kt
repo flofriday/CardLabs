@@ -1,6 +1,6 @@
 package at.tuwien.ase.cardlabs.management.database.repository
 
-import at.tuwien.ase.cardlabs.management.database.model.match.GameDAO
+import at.tuwien.ase.cardlabs.management.database.model.game.GameDAO
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 

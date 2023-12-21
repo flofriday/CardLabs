@@ -2,15 +2,16 @@ package at.tuwien.ase.cardlabs.management.it
 
 import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.controller.model.game.Game
-import at.tuwien.ase.cardlabs.management.database.model.match.GameDAO
-import at.tuwien.ase.cardlabs.management.database.model.match.action.Action
-import at.tuwien.ase.cardlabs.management.database.model.match.action.ActionType
-import at.tuwien.ase.cardlabs.management.database.model.match.card.Card
-import at.tuwien.ase.cardlabs.management.database.model.match.card.CardType
-import at.tuwien.ase.cardlabs.management.database.model.match.card.Color
-import at.tuwien.ase.cardlabs.management.database.model.match.log.DebugLogMessage
-import at.tuwien.ase.cardlabs.management.database.model.match.log.SystemLogMessage
-import at.tuwien.ase.cardlabs.management.database.model.match.result.Result
+import at.tuwien.ase.cardlabs.management.database.model.game.GameDAO
+import at.tuwien.ase.cardlabs.management.database.model.game.GameState
+import at.tuwien.ase.cardlabs.management.database.model.game.action.Action
+import at.tuwien.ase.cardlabs.management.database.model.game.action.ActionType
+import at.tuwien.ase.cardlabs.management.database.model.game.card.Card
+import at.tuwien.ase.cardlabs.management.database.model.game.card.CardType
+import at.tuwien.ase.cardlabs.management.database.model.game.card.Color
+import at.tuwien.ase.cardlabs.management.database.model.game.log.DebugLogMessage
+import at.tuwien.ase.cardlabs.management.database.model.game.log.SystemLogMessage
+import at.tuwien.ase.cardlabs.management.database.model.game.result.Result
 import at.tuwien.ase.cardlabs.management.database.repository.GameRepository
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -78,6 +79,7 @@ class GameIntegrationTests {
             SystemLogMessage(0, "Test message for system"),
             DebugLogMessage(0, "Test message for debug", botId),
         )
+        gameDAO.gameState = GameState.CREATED
         val gameId = gameRepository.save(gameDAO).id!!
 
         val result = mockMvc.perform(
@@ -99,6 +101,7 @@ class GameIntegrationTests {
         assertEquals(gameDAO.logMessages.size, response.logMessages.size)
         assertEquals(gameDAO.logMessages[0], response.logMessages[0])
         assertEquals(gameDAO.logMessages[1], response.logMessages[1])
+        assertEquals(gameDAO.gameState, response.gameState)
     }
 
     @Test
@@ -135,6 +138,7 @@ class GameIntegrationTests {
             SystemLogMessage(0, "Test message for system"),
             DebugLogMessage(0, "Test message for debug", botId),
         )
+        gameDAO.gameState = GameState.CREATED
         val gameId = gameRepository.save(gameDAO).id!!
 
         val result = mockMvc.perform(
@@ -156,5 +160,6 @@ class GameIntegrationTests {
         assertEquals(gameDAO.logMessages.size, response.logMessages.size)
         assertEquals(gameDAO.logMessages[0], response.logMessages[0])
         assertEquals(gameDAO.logMessages[1], response.logMessages[1])
+        assertEquals(gameDAO.gameState, response.gameState)
     }
 }

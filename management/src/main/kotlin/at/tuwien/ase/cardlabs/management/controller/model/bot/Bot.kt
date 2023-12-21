@@ -15,4 +15,9 @@ data class Bot(
     val currentState: BotState,
     val defaultState: BotState,
     val errorStateMessage: String?,
-)
+) {
+
+    fun getLatestCodeVersion(): BotCode? {
+        return codeHistory.maxByOrNull { it.id!! }
+    }
+}
