@@ -1,6 +1,6 @@
 package at.tuwien.ase.cardlabs.management.database.converter
 
-import at.tuwien.ase.cardlabs.management.database.model.match.action.Action
+import at.tuwien.ase.cardlabs.management.database.model.game.action.Action
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.AttributeConverter

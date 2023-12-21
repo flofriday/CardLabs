@@ -1,7 +1,7 @@
 package at.tuwien.ase.cardlabs.management.mapper
 
 import at.tuwien.ase.cardlabs.management.controller.model.game.Game
-import at.tuwien.ase.cardlabs.management.database.model.match.GameDAO
+import at.tuwien.ase.cardlabs.management.database.model.game.GameDAO
 import org.springframework.stereotype.Component
 
 @Component
@@ -15,6 +15,7 @@ class GameMapper {
         gameDAO.actions = game.actions
         gameDAO.results = game.results
         gameDAO.logMessages = game.logMessages
+        gameDAO.gameState = game.gameState
         return gameDAO
     }
 
@@ -26,6 +27,7 @@ class GameMapper {
             actions = gameDAO.actions,
             results = gameDAO.results,
             logMessages = gameDAO.logMessages,
+            gameState = gameDAO.gameState,
         )
     }
 }

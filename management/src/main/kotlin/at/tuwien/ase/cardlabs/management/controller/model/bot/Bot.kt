@@ -18,4 +18,9 @@ data class Bot(
     val created: Instant?,
     val updated: Instant?,
     val errorStateMessage: String?,
-)
+) {
+
+    fun getLatestCodeVersion(): BotCode? {
+        return codeHistory.maxByOrNull { it.id!! }
+    }
+}

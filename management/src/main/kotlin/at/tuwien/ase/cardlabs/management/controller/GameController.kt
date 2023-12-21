@@ -1,9 +1,9 @@
 package at.tuwien.ase.cardlabs.management.controller
 
 import at.tuwien.ase.cardlabs.management.controller.model.game.Game
-import at.tuwien.ase.cardlabs.management.database.model.match.log.LogMessage
+import at.tuwien.ase.cardlabs.management.database.model.game.log.LogMessage
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
-import at.tuwien.ase.cardlabs.management.service.match.GameService
+import at.tuwien.ase.cardlabs.management.service.game.GameService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

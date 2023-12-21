@@ -13,12 +13,12 @@ class MatchmakerAlgorithm(private val matchmakerConfig: MatchmakerConfig) {
     )
 
     fun createMatches(bots: List<Bot>): MatchmakerAlgorithmResult {
-        val sortedBots = bots.sortedBy { it.eloScore }
+        val sortedBots = bots.sortedByDescending { it.eloScore }
         val clusters = mutableListOf<List<Bot>>()
         val unassignedBots = mutableListOf<Bot>()
         var tempCluster = mutableListOf<Bot>()
 
-        for (bot in sortedBots.reversed()) {
+        for (bot in sortedBots) {
             if (tempCluster.isEmpty()) {
                 tempCluster.add(bot)
                 if (tempCluster.size == matchmakerConfig.matchSize.max) {

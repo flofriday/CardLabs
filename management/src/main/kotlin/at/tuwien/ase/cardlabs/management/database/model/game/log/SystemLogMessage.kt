@@ -1,4 +1,4 @@
-package at.tuwien.ase.cardlabs.management.database.model.match.log
+package at.tuwien.ase.cardlabs.management.database.model.game.log
 
 class SystemLogMessage(
     round: Long,

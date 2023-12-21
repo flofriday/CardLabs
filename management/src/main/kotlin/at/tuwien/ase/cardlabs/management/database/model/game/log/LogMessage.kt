@@ -1,4 +1,4 @@
-package at.tuwien.ase.cardlabs.management.database.model.match.log
+package at.tuwien.ase.cardlabs.management.database.model.game.log
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
