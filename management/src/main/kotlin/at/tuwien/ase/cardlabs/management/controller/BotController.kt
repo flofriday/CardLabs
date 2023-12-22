@@ -5,6 +5,7 @@ import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
+import at.tuwien.ase.cardlabs.management.util.Region
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
@@ -70,8 +71,9 @@ class BotController(
     fun rankPosition(
         @AuthenticationPrincipal user: CardLabUser,
         @PathVariable id: Long,
+        @RequestParam(required = true) region: Region,
     ): ResponseEntity<Long> {
-        val rank = botService.fetchRankPosition(user, id)
+        val rank = botService.fetchRankPosition(user, id, region)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(rank)
@@ -79,8 +81,8 @@ class BotController(
 
     @GetMapping("/bot/{id}")
     fun fetch(
-        @AuthenticationPrincipal user: CardLabUser,
-        @PathVariable id: Long,
+            @AuthenticationPrincipal user: CardLabUser,
+            @PathVariable id: Long,
     ): ResponseEntity<Bot> {
         val result = botService.fetch(user, id)
         return ResponseEntity

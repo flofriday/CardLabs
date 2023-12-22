@@ -17,6 +17,7 @@ import at.tuwien.ase.cardlabs.management.error.bot.BotStateException
 import at.tuwien.ase.cardlabs.management.mapper.BotMapper
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
+import at.tuwien.ase.cardlabs.management.util.Region
 import at.tuwien.ase.cardlabs.management.validation.validator.BotValidator
 import at.tuwien.ase.cardlabs.management.validation.validator.Validator
 import org.springframework.data.domain.Page
@@ -158,11 +159,18 @@ class BotService(
      * Fetch the current rank position of a bot
      */
     @Transactional
-    fun fetchRankPosition(user: CardLabUser, botId: Long): Long {
+    fun fetchRankPosition(user: CardLabUser, botId: Long, region: Region): Long {
         findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
-        return botRepository.findBotRankPosition(botId)
+        if (region == Region.CONTINENT){
+            return botRepository.findBotRankPositionContinent(botId)
+        }else if (region == Region.COUNTRY){
+            return botRepository.findBotRankPositionCountry(botId)
+        }else{
+            return botRepository.findBotRankPosition(botId)
+        }
+
     }
 
     private fun findById(botId: Long): BotDAO? {

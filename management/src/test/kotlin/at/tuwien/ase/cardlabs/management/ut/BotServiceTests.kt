@@ -10,6 +10,7 @@ import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
+import at.tuwien.ase.cardlabs.management.util.Region
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -158,7 +159,7 @@ internal class BotServiceTests {
         val bot = createBot(userDetails, "Tytartron", null)
 
         val result = assertDoesNotThrow {
-            botService.fetchRankPosition(userDetails, bot.id!!)
+            botService.fetchRankPosition(userDetails, bot.id!!, Region.GLOBAL)
         }
         assertEquals(1, result)
     }
@@ -171,11 +172,11 @@ internal class BotServiceTests {
         val bot2 = createBot(userDetails, "Neophotron", null)
 
         val result1 = assertDoesNotThrow {
-            botService.fetchRankPosition(userDetails, bot1.id!!)
+            botService.fetchRankPosition(userDetails, bot1.id!!, Region.GLOBAL)
         }
         assertEquals(1, result1)
         val result2 = assertDoesNotThrow {
-            botService.fetchRankPosition(userDetails, bot2.id!!)
+            botService.fetchRankPosition(userDetails, bot2.id!!, Region.GLOBAL)
         }
         assertEquals(1, result2)
     }
