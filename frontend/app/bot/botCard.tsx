@@ -6,6 +6,7 @@ import { IoClose } from "react-icons/io5";
 import Modal from "../components/modal";
 import { Bot, getBotRank } from "../services/BotService";
 import { RegionType } from "../types/RegionType";
+import Link from "next/link";
 
 interface Props {
   bot: Bot;
@@ -98,23 +99,29 @@ export default function BotCard({ bot }: Props): JSX.Element {
           <h3>{updatedDate}</h3>
         </div>
         <div className="flex justify-center space-x-4 mt-4">
-          <IconButton
-            text="Info"
-            type={ButtonIcon.INFO}
-            width={"w-24"}
-            hover="hover:bg-primary_highlight"
-          />
-          <IconButton
-            text="Rank Bot"
-            type={ButtonIcon.RANK}
-            hover="hover:bg-primary_highlight"
-          />
-          <IconButton
-            text="Edit"
-            type={ButtonIcon.EDIT}
-            width={"w-24"}
-            hover="hover:bg-primary_highlight"
-          />
+          <Link href={"/"}>
+            <IconButton
+              text="Info"
+              type={ButtonIcon.INFO}
+              width={"w-24"}
+              hover="hover:bg-primary_highlight"
+            />
+          </Link>
+          <Link href={"/"}>
+            <IconButton
+              text="Rank Bot"
+              type={ButtonIcon.RANK}
+              hover="hover:bg-primary_highlight"
+            />
+          </Link>
+          <Link href={"/bot/editor/" + bot.id}>
+            <IconButton
+              text="Edit"
+              type={ButtonIcon.EDIT}
+              width={"w-24"}
+              hover="hover:bg-primary_highlight"
+            />
+          </Link>
         </div>
       </div>
     </>

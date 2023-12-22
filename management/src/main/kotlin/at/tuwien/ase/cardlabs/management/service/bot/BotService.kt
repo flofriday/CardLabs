@@ -79,6 +79,7 @@ class BotService(
         BotValidator.validate(botPatch)
 
         botPatch.currentCode?.let { bot.currentCode = it }
+        bot.codeUpdated = Instant.now()
 
         return botMapper.map(bot)
     }
