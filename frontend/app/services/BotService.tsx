@@ -14,9 +14,7 @@ export async function getNewBotName(): Promise<string> {
   });
 
   if (response.status !== 200) {
-    toast.error(
-      "An error occurred. Please try again later. If the error persists, please contact the support."
-    );
+    toast.error("An error occurred. Please try again later.");
     throw new EvalError(); // TODO change this
   }
 
@@ -48,9 +46,7 @@ export async function createBot(
     const data = await response.json();
     return data.id;
   } else {
-    toast.error(
-      "An error occurred. Please try again later. If the error persists, please contact the support."
-    );
+    toast.error("An error occurred. Please try again later.");
     throw new EvalError(); // TODO change this
   }
 }
@@ -89,9 +85,7 @@ export async function getBot(id: number): Promise<Bot> {
   });
 
   if (response.status !== 200) {
-    toast.error(
-      "An error occurred. Please try again later. If the error persists, please contact the support."
-    );
+    toast.error("An error occurred. Please try again later.");
     throw new EvalError(); // TODO change this
   }
 
@@ -123,9 +117,7 @@ export async function saveBot(
     toast.success("Code saved");
     return true;
   } else {
-    toast.error(
-      "An error occurred. Please try again later. If the error persists, please contact the support."
-    );
+    toast.error("An error occurred. Please try again later.");
     return false;
   }
 }
@@ -143,9 +135,7 @@ export async function deleteBot(id: number): Promise<boolean> {
   });
 
   if (response.status !== 200) {
-    toast.error(
-      "An error occurred. Please try again later. If the error persists, please contact the support."
-    );
+    toast.error("An error occurred. Please try again later.");
     throw new EvalError(); // TODO change this
   }
 
