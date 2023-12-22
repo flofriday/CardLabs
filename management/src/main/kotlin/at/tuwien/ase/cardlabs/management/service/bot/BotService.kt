@@ -173,6 +173,8 @@ class BotService(
 
     }
 
+
+
     private fun findById(botId: Long): BotDAO? {
         return botRepository.findByIdAndDeletedIsNull(botId)
     }
