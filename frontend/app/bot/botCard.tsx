@@ -17,8 +17,8 @@ export default function BotCard({ bot }: Props): JSX.Element {
   const [rankGlobal, setRankGlobal] = useState(-1);
   const [rankContinent, setRankContinent] = useState(-1);
   const [rankCountry, setRankCountry] = useState(-1);
-  const [createdDate, setCreatedDate] = useState("-1");
-  const [updatedDate, setUpdatedDate] = useState("-1");
+  const [createdDate, setCreatedDate] = useState(bot.created.toLocaleString());
+  const [updatedDate, setUpdatedDate] = useState(bot.updated.toLocaleString());
   const [deleteModalVisibility, setDeleteAccountModalVisiblity] =
     useState(false);
 

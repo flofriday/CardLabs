@@ -76,6 +76,8 @@ export interface Bot {
   currentState: BotState;
   defaultState: BotState;
   errorStateMessage: string;
+  updated: Date;
+  created: Date;
 }
 
 export async function getBot(id: number): Promise<Bot> {
@@ -99,6 +101,8 @@ export async function getBot(id: number): Promise<Bot> {
 
   // TODO add error handling
   const bot = (await response.json()) as Bot;
+  bot.created = new Date(bot.created);
+  bot.updated = new Date(bot.updated);
   return bot;
 }
 
@@ -185,7 +189,14 @@ export async function getAllBots(
     throw new EvalError(); // TODO change this
   }
 
-  return (await response.json()) as Page<Bot>;
+  const page = (await response.json()) as Page<Bot>;
+
+  for (let i = 0; i < page.content.length; i++) {
+    page.content[i].created = new Date(page.content[i].created);
+    page.content[i].updated = new Date(page.content[i].updated);
+  }
+
+  return page;
 }
 
 export async function getBotRank(
