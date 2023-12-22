@@ -39,4 +39,15 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
     fun findBotRankPosition(@Param("botId") botId: Long): Long
 
     fun findByCurrentStateAndDeletedIsNull(botState: BotState): Stream<BotDAO>
+
+    @Modifying
+    @Transactional
+    @Query(
+        """
+            UPDATE BotDAO b 
+                SET b.currentState = :newState 
+                WHERE b.id IN :botIds
+        """
+    )
+    fun updateMultipleBotState(botIds: List<Long>, newState: BotState): Int
 }
