@@ -192,6 +192,12 @@ class BotService(
             .toList()
     }
 
+    @Transactional
+    fun updateMultipleBotState(botIds: List<Long>, newState: BotState): Int {
+        logger.debug("Attempting to update for the bots $botIds to $newState")
+        return botRepository.updateMultipleBotState(botIds, newState)
+    }
+
     private fun findById(botId: Long): BotDAO? {
         return botRepository.findByIdAndDeletedIsNull(botId)
     }

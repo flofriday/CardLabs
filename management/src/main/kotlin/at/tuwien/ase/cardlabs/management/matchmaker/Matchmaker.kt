@@ -45,13 +45,14 @@ class Matchmaker(
         )
 
         val gameCreates = mutableListOf<GameCreate>()
+        val playingBotIds = result.matches.flatMap { innerList -> innerList.map { bot -> bot.id!! } }
         for (bots in result.matches) {
             gameCreates.add(GameCreate())
         }
         gameService.save(gameCreates)
+        botService.updateMultipleBotState(playingBotIds, BotState.PLAYING)
 
         // TODO: add the matches to the RabbitMQ
-        // TODO: update bot database state
     }
 
     private fun clusterToString(clusters: List<List<Bot>>): String {
