@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 
 function saveNewBot(
   name: string,
-  code: string | null,
+  code: string,
   setId: (id: number) => void,
   router: any
 ): void {
@@ -30,7 +30,7 @@ function saveNewBot(
     .catch(() => {});
 }
 
-function saveBot(id: number, code: string | null): void {
+function saveBot(id: number, code: string): void {
   _saveBot(id, code)
     .then(() => {})
     .catch(() => {});
@@ -78,9 +78,9 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
         <EditorButtons
           save={() => {
             if (_id == null) {
-              saveNewBot(name, code ?? null, setId, router);
+              saveNewBot(name, code ?? "", setId, router);
             } else {
-              saveBot(_id, code ?? null);
+              saveBot(_id, code ?? "");
             }
           }}
           _delete={() => {

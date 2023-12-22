@@ -23,7 +23,7 @@ export async function getNewBotName(): Promise<string> {
 
 export async function createBot(
   name: string,
-  currentCode: string | null
+  currentCode: string
 ): Promise<number> {
   const jwt = getCookie("auth_token");
 
@@ -96,7 +96,7 @@ export async function getBot(id: number): Promise<Bot> {
 
 export async function saveBot(
   id: number,
-  currentCode: string | null
+  currentCode: string
 ): Promise<boolean> {
   const jwt = getCookie("auth_token");
 
