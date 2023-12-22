@@ -13,6 +13,7 @@ class JwtHelper {
 
         lateinit var secretKey: String
 
+        @JvmStatic
         fun generateToken(authentication: Authentication): String {
             val userDetails = authentication.principal as CardLabUser
             val now = Date()
@@ -30,6 +31,7 @@ class JwtHelper {
                 .compact()
         }
 
+        @JvmStatic
         fun validateToken(token: String): Boolean {
             val claims = Jwts.parser()
                 .setSigningKey(secretKey)
@@ -39,6 +41,7 @@ class JwtHelper {
             return !isTokenExpired(claims)
         }
 
+        @JvmStatic
         fun getUsernameFromToken(token: String): String {
             return Jwts.parser()
                 .setSigningKey(secretKey)
@@ -47,6 +50,7 @@ class JwtHelper {
                 .subject
         }
 
+        @JvmStatic
         private fun isTokenExpired(claims: Claims): Boolean {
             val expiration: Date = claims.expiration
             return expiration.before(Date())
