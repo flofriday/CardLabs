@@ -64,5 +64,5 @@ class BotDAO : AuditedEntity() {
 
     @CreationTimestamp
     @Column(nullable = false)
-    var codeUpdated: Instant? = null;
+    var codeUpdated: Instant? = null
 }

@@ -164,17 +164,14 @@ class BotService(
         findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
-        if (region == Region.CONTINENT){
+        if (region == Region.CONTINENT) {
             return botRepository.findBotRankPositionContinent(botId)
-        }else if (region == Region.COUNTRY){
+        } else if (region == Region.COUNTRY) {
             return botRepository.findBotRankPositionCountry(botId)
-        }else{
+        } else {
             return botRepository.findBotRankPosition(botId)
         }
-
     }
-
-
 
     private fun findById(botId: Long): BotDAO? {
         return botRepository.findByIdAndDeletedIsNull(botId)

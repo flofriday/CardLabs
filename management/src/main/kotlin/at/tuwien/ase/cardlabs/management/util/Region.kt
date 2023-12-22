@@ -1,7 +1,7 @@
 package at.tuwien.ase.cardlabs.management.util
 
-enum class Region{
+enum class Region {
     GLOBAL,
     CONTINENT,
-    COUNTRY
+    COUNTRY,
 }

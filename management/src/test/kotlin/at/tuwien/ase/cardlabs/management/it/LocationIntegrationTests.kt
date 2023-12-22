@@ -57,7 +57,7 @@ class LocationIntegrationTests {
             .andReturn()
         val jsonResponseString = result.response.contentAsString
         val response = jacksonObjectMapper().readValue<List<String>>(jsonResponseString)
-        assertEquals(countries.stream().map { f ->f.first }.toList(), response)
+        assertEquals(countries.stream().map { f -> f.first }.toList(), response)
     }
 
     @Test
@@ -73,7 +73,7 @@ class LocationIntegrationTests {
             .andReturn()
         val jsonResponseString = result.response.contentAsString
         val response = jacksonObjectMapper().readValue<List<String>>(jsonResponseString)
-        assertEquals(countries.stream().map { f ->f.first }.toList(), response)
+        assertEquals(countries.stream().map { f -> f.first }.toList(), response)
     }
 
     private fun getAuthenticationToken(username: String, password: String): String {

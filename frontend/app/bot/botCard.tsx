@@ -40,7 +40,11 @@ export default function BotCard({ bot }: Props): JSX.Element {
         setRankCountry(r);
       })
       .catch(() => {});
-  }, [bot.id]);
+    setName(bot.name);
+    setScore(bot.eloScore);
+    setCreatedDate(bot.created.toLocaleString());
+    setUpdatedDate(bot.updated.toLocaleString());
+  }, [bot.id, bot.name, bot.eloScore, bot.created, bot.updated]);
   return (
     <>
       {deleteModalVisibility && (

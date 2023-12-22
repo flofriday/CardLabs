@@ -81,8 +81,8 @@ class BotController(
 
     @GetMapping("/bot/{id}")
     fun fetch(
-            @AuthenticationPrincipal user: CardLabUser,
-            @PathVariable id: Long,
+        @AuthenticationPrincipal user: CardLabUser,
+        @PathVariable id: Long,
     ): ResponseEntity<Bot> {
         val result = botService.fetch(user, id)
         return ResponseEntity
