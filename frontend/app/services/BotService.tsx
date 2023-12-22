@@ -1,6 +1,7 @@
 import { getCookie } from "cookies-next";
 import { toast } from "react-toastify";
 import { Page } from "../types/contentPage";
+import { RegionType } from "../types/RegionType";
 
 export async function getNewBotName(): Promise<string> {
   const jwt = getCookie("auth_token");
@@ -185,4 +186,37 @@ export async function getAllBots(
   }
 
   return (await response.json()) as Page<Bot>;
+}
+
+export async function getBotRank(
+  botId: number,
+  region: RegionType
+): Promise<number> {
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch(
+    "/api/bot/" +
+      botId +
+      "/rank?" +
+      new URLSearchParams({
+        region: region.toString().toUpperCase(),
+      }).toString(),
+    {
+      mode: "cors",
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + jwt,
+      },
+    }
+  );
+
+  if (response.status !== 200) {
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
+    throw new EvalError(); // TODO change this
+  }
+
+  return (await response.json()) as number;
 }

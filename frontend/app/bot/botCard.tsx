@@ -1,26 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import IconButton, { ButtonIcon } from "../components/iconButton";
 import { IoClose } from "react-icons/io5";
 import Modal from "../components/modal";
-import { Bot } from "../services/BotService";
+import { Bot, getBotRank } from "../services/BotService";
+import { RegionType } from "../types/RegionType";
 
 interface Props {
   bot: Bot;
 }
 
 export default function BotCard({ bot }: Props): JSX.Element {
-  const [name, setName] = useState("Example Name");
-  const [score, setScore] = useState(1804);
-  const [rankGlobal, setRankGlobal] = useState(541);
-  const [rankContinent, setRankContinent] = useState(210);
-  const [rankCountry, setRankCountry] = useState(30);
-  const [createdDate, setCreatedDate] = useState("01.02.2024");
-  const [updatedDate, setUpdatedDate] = useState("03.02.2024");
+  const [name, setName] = useState(bot.name);
+  const [score, setScore] = useState(bot.eloScore);
+  const [rankGlobal, setRankGlobal] = useState(-1);
+  const [rankContinent, setRankContinent] = useState(-1);
+  const [rankCountry, setRankCountry] = useState(-1);
+  const [createdDate, setCreatedDate] = useState("-1");
+  const [updatedDate, setUpdatedDate] = useState("-1");
   const [deleteModalVisibility, setDeleteAccountModalVisiblity] =
     useState(false);
 
+  useEffect(() => {
+    getBotRank(bot.id, RegionType.GLOBAL)
+      .then((r) => {
+        setRankGlobal(r);
+      })
+      .catch(() => {});
+    getBotRank(bot.id, RegionType.CONTINENT)
+      .then((r) => {
+        setRankContinent(r);
+      })
+      .catch(() => {});
+
+    getBotRank(bot.id, RegionType.COUNTRY)
+      .then((r) => {
+        setRankCountry(r);
+      })
+      .catch(() => {});
+  }, [bot.id]);
   return (
     <>
       {deleteModalVisibility && (
