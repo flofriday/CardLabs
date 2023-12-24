@@ -1,10 +1,9 @@
 package at.tuwien.ase.cardlabs.management.database.model.game.log
 
 class DebugLogMessage(
-    round: Long,
     message: String,
     val botId: Long,
-) : LogMessage(round, message) {
+) : LogMessage(message) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

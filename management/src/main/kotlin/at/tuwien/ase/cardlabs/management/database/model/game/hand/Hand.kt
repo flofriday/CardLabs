@@ -1,10 +1,9 @@
-package at.tuwien.ase.cardlabs.management.database.model.game.action
+package at.tuwien.ase.cardlabs.management.database.model.game.hand
 
 import at.tuwien.ase.cardlabs.management.database.model.game.card.Card
 import java.io.Serializable
 
-data class Action(
+data class Hand(
     val botId: Long,
-    val type: ActionType,
-    val card: Card,
+    val cards: List<Card>
 ) : Serializable

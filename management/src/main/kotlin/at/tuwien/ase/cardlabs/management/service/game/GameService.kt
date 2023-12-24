@@ -39,7 +39,7 @@ class GameService(
     fun fetchLogById(user: CardLabUser, gameId: Long): List<LogMessage> {
         logger.debug("User ${user.id} attempts to fetch the logs of the game $gameId")
         val game = findById(gameId)
-        return game.logMessages
+        return game.rounds.flatMap { it.logMessages }
     }
 
     /**
@@ -52,9 +52,8 @@ class GameService(
             val dao = GameDAO()
             dao.startTime = LocalDateTime.now()
             dao.endTime = dao.startTime
-            dao.actions = emptyList()
-            dao.results = emptyList()
-            dao.logMessages = emptyList()
+            dao.winningBotId = null
+            dao.rounds = emptyList()
             dao.gameState = GameState.CREATED
             gameDaos.add(dao)
         }

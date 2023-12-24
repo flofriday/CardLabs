@@ -12,9 +12,8 @@ class GameMapper {
         gameDAO.id = game.id
         gameDAO.startTime = game.startTime
         gameDAO.endTime = game.endTime
-        gameDAO.actions = game.actions
-        gameDAO.results = game.results
-        gameDAO.logMessages = game.logMessages
+        gameDAO.winningBotId = game.winningBotId
+        gameDAO.rounds = game.rounds
         gameDAO.gameState = game.gameState
         return gameDAO
     }
@@ -24,9 +23,8 @@ class GameMapper {
             id = gameDAO.id,
             startTime = gameDAO.startTime,
             endTime = gameDAO.endTime,
-            actions = gameDAO.actions,
-            results = gameDAO.results,
-            logMessages = gameDAO.logMessages,
+            winningBotId = gameDAO.winningBotId,
+            rounds = gameDAO.rounds,
             gameState = gameDAO.gameState,
         )
     }
