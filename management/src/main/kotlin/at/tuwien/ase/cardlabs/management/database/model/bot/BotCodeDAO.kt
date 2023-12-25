@@ -30,6 +30,6 @@ class BotCodeDAO : AuditedEntity() {
     var botId: Long = -1
 
     // the bot program code
-    @Column(nullable = false)
+    @Column(nullable = false, length = 32768)
     lateinit var code: String
 }
