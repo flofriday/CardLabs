@@ -1,5 +1,6 @@
 import { getCookie } from "cookies-next";
 import { toast } from "react-toastify";
+import { MatchOverviewEntryType } from "../types/MatchOverviewEntryType";
 
 export async function getNewBotName(): Promise<string> {
   const jwt = getCookie("auth_token");
@@ -142,4 +143,71 @@ export async function deleteBot(id: number): Promise<boolean> {
   toast.success("Bot deleted!");
 
   return true;
+}
+
+export async function getBotMatchOverviewPage(
+  numberOfEntriesPerPage: number,
+  pageNumber: number
+): Promise<MatchOverviewEntryType[]> {
+  /* TODO change this to the correct endpoint in the backend
+  const url = `api/bot/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}`;
+
+  const response = await fetch(url, {
+    mode: "cors",
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  } else {
+    return await response.json();
+  }
+  */
+  return [
+    {
+      gameDate: new Date("2023-01-01T12:00:00"),
+      place: 1,
+      scoreDevelopment: 1500,
+      botVersion: "v1.0",
+      gameId: 12345,
+    },
+    {
+      gameDate: new Date("2023-01-02T15:30:00"),
+      place: 2,
+      scoreDevelopment: 1450,
+      botVersion: "v1.1",
+      gameId: 67890,
+    },
+    {
+      gameDate: new Date("2023-01-03T18:45:00"),
+      place: 3,
+      scoreDevelopment: 1600,
+      botVersion: "v1.2",
+      gameId: 112233,
+    },
+    {
+      gameDate: new Date("2023-01-04T10:15:00"),
+      place: 4,
+      scoreDevelopment: 1400,
+      botVersion: "v1.3",
+      gameId: 445566,
+    },
+    {
+      gameDate: new Date("2023-01-05T20:00:00"),
+      place: 5,
+      scoreDevelopment: 1550,
+      botVersion: "v1.4",
+      gameId: 778899,
+    },
+  ];
+}
+
+export async function getTotalNumberOfBotMatchOverviewPages(
+  entriesPerPage: number
+): Promise<number> {
+  // TODO replace this with calls to the backend
+  return 2;
 }
