@@ -1,54 +1,57 @@
 package cardscheme
 
 fun injectBuiltin(environment: Environment) {
-    environment.put("+", NativeFuncValue("+", Arity(2, Int.MAX_VALUE), ::builtinPlus))
-    environment.put("-", NativeFuncValue("-", Arity(2, Int.MAX_VALUE), ::builtinMinus))
-    environment.put("*", NativeFuncValue("*", Arity(2, Int.MAX_VALUE), ::builtinMul))
-    environment.put("/", NativeFuncValue("/", Arity(2, Int.MAX_VALUE), ::builtinDiv))
-    environment.put("floor-remainder", NativeFuncValue("floor-remainder", Arity(2, 2), ::builtinFloorRemainder))
-    environment.put("modulo", NativeFuncValue("modulo", Arity(2, 2), ::builtinFloorRemainder))
-    environment.put("abs", NativeFuncValue("abs", Arity(1, 1), ::builtinAbs))
-    environment.put("sqrt", NativeFuncValue("sqrt", Arity(1, 1), ::builtinSqrt))
+    environment.put("+", NativeFuncValue("+", Arity(2, Int.MAX_VALUE, false), ::builtinPlus))
+    environment.put("-", NativeFuncValue("-", Arity(2, Int.MAX_VALUE, false), ::builtinMinus))
+    environment.put("*", NativeFuncValue("*", Arity(2, Int.MAX_VALUE, false), ::builtinMul))
+    environment.put("/", NativeFuncValue("/", Arity(2, Int.MAX_VALUE, false), ::builtinDiv))
+    environment.put("floor-remainder", NativeFuncValue("floor-remainder", Arity(2, 2, false), ::builtinFloorRemainder))
+    environment.put("modulo", NativeFuncValue("modulo", Arity(2, 2, false), ::builtinFloorRemainder))
+    environment.put("abs", NativeFuncValue("abs", Arity(1, 1, false), ::builtinAbs))
+    environment.put("sqrt", NativeFuncValue("sqrt", Arity(1, 1, false), ::builtinSqrt))
 
-    environment.put("=", NativeFuncValue("=", Arity(2, Int.MAX_VALUE), ::builtinEqual))
-    environment.put("<", NativeFuncValue("<", Arity(2, Int.MAX_VALUE), ::builtinSmaller))
-    environment.put("<=", NativeFuncValue("<=", Arity(2, Int.MAX_VALUE), ::builtinSmallerEqual))
-    environment.put(">", NativeFuncValue(">", Arity(2, Int.MAX_VALUE), ::builtinGreater))
-    environment.put(">=", NativeFuncValue(">=", Arity(2, Int.MAX_VALUE), ::builtinGreaterEqual))
+    environment.put("=", NativeFuncValue("=", Arity(2, Int.MAX_VALUE, false), ::builtinEqual))
+    environment.put("<", NativeFuncValue("<", Arity(2, Int.MAX_VALUE, false), ::builtinSmaller))
+    environment.put("<=", NativeFuncValue("<=", Arity(2, Int.MAX_VALUE, false), ::builtinSmallerEqual))
+    environment.put(">", NativeFuncValue(">", Arity(2, Int.MAX_VALUE, false), ::builtinGreater))
+    environment.put(">=", NativeFuncValue(">=", Arity(2, Int.MAX_VALUE, false), ::builtinGreaterEqual))
 
-    environment.put("and", NativeFuncValue("and", Arity(0, Int.MAX_VALUE), ::builtinAnd))
-    environment.put("or", NativeFuncValue("or", Arity(0, Int.MAX_VALUE), ::builtinOr))
-    environment.put("not", NativeFuncValue("not", Arity(1, 1), ::builtinNot))
+    environment.put("and", NativeFuncValue("and", Arity(0, Int.MAX_VALUE, false), ::builtinAnd))
+    environment.put("or", NativeFuncValue("or", Arity(0, Int.MAX_VALUE, false), ::builtinOr))
+    environment.put("not", NativeFuncValue("not", Arity(1, 1, false), ::builtinNot))
 
-    environment.put("list", NativeFuncValue("list", Arity(0, Int.MAX_VALUE), ::builtinList))
-    environment.put("car", NativeFuncValue("car", Arity(1, 1), ::builtinCar))
-    environment.put("cdr", NativeFuncValue("cdr", Arity(1, 1), ::builtinCdr))
-    environment.put("map", NativeFuncValue("map", Arity(2, Int.MAX_VALUE), ::builtinMap))
-    environment.put("cons", NativeFuncValue("cons", Arity(2, 2), ::builtInCons))
-    environment.put("append", NativeFuncValue("append", Arity(0, Int.MAX_VALUE), ::builtInAppend))
-    environment.put("length", NativeFuncValue("length", Arity(1, 1), ::builtInLength))
+    environment.put("list", NativeFuncValue("list", Arity(0, Int.MAX_VALUE, false), ::builtinList))
+    environment.put("car", NativeFuncValue("car", Arity(1, 1, false), ::builtinCar))
+    environment.put("cdr", NativeFuncValue("cdr", Arity(1, 1, false), ::builtinCdr))
+    environment.put("map", NativeFuncValue("map", Arity(2, Int.MAX_VALUE, false), ::builtinMap))
+    environment.put("cons", NativeFuncValue("cons", Arity(2, 2, false), ::builtInCons))
+    environment.put("append", NativeFuncValue("append", Arity(0, Int.MAX_VALUE, false), ::builtInAppend))
+    environment.put("length", NativeFuncValue("length", Arity(1, 1, false), ::builtInLength))
 
-    environment.put("vector", NativeFuncValue("vector", Arity(1, Int.MAX_VALUE), ::builtinVector))
-    environment.put("vector?", NativeFuncValue("vector?", Arity(1, 1), ::builtinIsVector))
-    environment.put("make-vector", NativeFuncValue("make-vector", Arity(1, 2), ::builtinMakeVector))
-    environment.put("vector-length", NativeFuncValue("vector-length", Arity(1, 1), ::builtinVectorLength))
-    environment.put("vector-ref", NativeFuncValue("vector-ref", Arity(2, 2), ::builtinVectorRef))
-    environment.put("vector-set!", NativeFuncValue("vector-set!", Arity(3, 3), ::builtinVectorSet))
+    environment.put("vector", NativeFuncValue("vector", Arity(1, Int.MAX_VALUE, false), ::builtinVector))
+    environment.put("vector?", NativeFuncValue("vector?", Arity(1, 1, false), ::builtinIsVector))
+    environment.put("make-vector", NativeFuncValue("make-vector", Arity(1, 2, false), ::builtinMakeVector))
+    environment.put("vector-length", NativeFuncValue("vector-length", Arity(1, 1, false), ::builtinVectorLength))
+    environment.put("vector-ref", NativeFuncValue("vector-ref", Arity(2, 2, false), ::builtinVectorRef))
+    environment.put("vector-set!", NativeFuncValue("vector-set!", Arity(3, 3, false), ::builtinVectorSet))
 
-    environment.put("string-append", NativeFuncValue("string-append", Arity(0, Int.MAX_VALUE), ::builtinStringAppend))
-    environment.put("string->number", NativeFuncValue("string->number", Arity(1, 1), ::builtinStringToNumber))
-    environment.put("number->string", NativeFuncValue("number->string", Arity(1, 1), ::builtinNumberToString))
-    environment.put("symbol->string", NativeFuncValue("symbol->string", Arity(1, 1), ::builtinSymbolToString))
-    environment.put("string->symbol", NativeFuncValue("string->symbol", Arity(1, 1), ::builtinStringToSymbol))
-    environment.put("string-length", NativeFuncValue("string-length", Arity(1, 1), ::builtinStringLength))
-    environment.put("make-string", NativeFuncValue("make-string", Arity(1, 2), ::builtinMakeString))
+    environment.put(
+        "string-append",
+        NativeFuncValue("string-append", Arity(0, Int.MAX_VALUE, false), ::builtinStringAppend),
+    )
+    environment.put("string->number", NativeFuncValue("string->number", Arity(1, 1, false), ::builtinStringToNumber))
+    environment.put("number->string", NativeFuncValue("number->string", Arity(1, 1, false), ::builtinNumberToString))
+    environment.put("symbol->string", NativeFuncValue("symbol->string", Arity(1, 1, false), ::builtinSymbolToString))
+    environment.put("string->symbol", NativeFuncValue("string->symbol", Arity(1, 1, false), ::builtinStringToSymbol))
+    environment.put("string-length", NativeFuncValue("string-length", Arity(1, 1, false), ::builtinStringLength))
+    environment.put("make-string", NativeFuncValue("make-string", Arity(1, 2, false), ::builtinMakeString))
 
-    environment.put("symbol?", NativeFuncValue("symbol?", Arity(1, 1), ::builtinIsSymbol))
-    environment.put("symbol=?", NativeFuncValue("symbol=?", Arity(2, Int.MAX_VALUE), ::builtinSymbolEqual))
+    environment.put("symbol?", NativeFuncValue("symbol?", Arity(1, 1, false), ::builtinIsSymbol))
+    environment.put("symbol=?", NativeFuncValue("symbol=?", Arity(2, Int.MAX_VALUE, false), ::builtinSymbolEqual))
 
-    environment.put("display", NativeFuncValue("display", Arity(1, 1), ::builtinDisplay))
-    environment.put("newline", NativeFuncValue("newline", Arity(0, 0), ::builtinNewline))
-    environment.put("cool", NativeFuncValue("cool", Arity(0, 0), ::builtinCool))
+    environment.put("display", NativeFuncValue("display", Arity(1, 1, false), ::builtinDisplay))
+    environment.put("newline", NativeFuncValue("newline", Arity(0, 0, false), ::builtinNewline))
+    environment.put("cool", NativeFuncValue("cool", Arity(0, 0, false), ::builtinCool))
 }
 
 inline fun <reified T : SchemeValue> verifyType(
@@ -453,7 +456,8 @@ fun builtinStringToNumber(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    val stringValue = verifyType<StringValue>(args[0], "Only strings can be converted to numbers by this function").value
+    val stringValue =
+        verifyType<StringValue>(args[0], "Only strings can be converted to numbers by this function").value
     if (stringValue.contains(".")) {
         return FloatValue(stringValue.toFloat())
     }

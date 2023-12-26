@@ -219,6 +219,12 @@ data class SymbolValue(val value: String) : SchemeValue() {
 // I can see we can only implement that in Java in O(n) even though that should
 // be quite easy to do in O(1). So we probably need to write our own.
 data class ListValue(val values: SchemeList<SchemeValue>) : SchemeValue() {
+    constructor(valueList: List<SchemeValue>) : this(SchemeList(valueList)) {
+    }
+
+    constructor(vararg valueList: SchemeValue) : this(SchemeList(valueList.toList())) {
+    }
+
     override fun toString(): String {
         return "(" + values.joinToString(" ") { value -> value.toString() } + ")"
     }
@@ -243,8 +249,12 @@ data class VectorValue(val values: MutableList<SchemeValue>) : SchemeValue() {
     }
 }
 
-data class Arity(val min: Int, val max: Int) {
+data class Arity(val min: Int, val max: Int, val isVarArg: Boolean) {
     fun inside(n: Int): Boolean {
+        if (isVarArg) {
+            return n >= min
+        }
+
         return n in min..max
     }
 }

@@ -151,6 +151,23 @@ class VariableTests {
         Assert.assertEquals(5, (result as IntegerValue).value)
     }
 
+    /*
+        Adapted from: https://en.wikipedia.org/wiki/Scheme_(programming_language)#Block_structure
+     */
+    @Test
+    fun letStarSequentualBindingFromWikipedia() {
+        val program =
+            """
+            (let* ((var1 10)
+                    (var2 (+ var1 12)))
+              var2
+              )
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(22, (result as IntegerValue).value)
+    }
+
     @Test
     fun simpleLetStarNestedInLet() {
         val program =

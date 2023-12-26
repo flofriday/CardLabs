@@ -108,34 +108,44 @@ class Parser {
      * Parse a lambda expression.
      *
      * Spec: R7RS, chapter 4.1.4
-     * (lambda <formals> <body>)
-     *
-     * FIXME: Incomplete, varargs missing.
+     * (lambda (<variable>...) <body>)
+     * (lambda <variable> <body>)
+     * (lambda (<variable1>... <variableN> . <variableN+1>) <body>)
      */
     private fun parseLambda(): LambdaNode {
         val lparen = consume()
         consume()
 
-        val args = mutableListOf<IdentifierNode>()
+        val params = mutableListOf<IdentifierNode>()
+        var isVarArg = false
 
         if (peek() is IdentifierToken) {
             val token = consume() as IdentifierToken
-            args.addLast(IdentifierNode(token.value, token.location))
+            isVarArg = true
+            params.addLast(IdentifierNode(token.value, token.location))
         } else if (peek() is LParenToken) {
             consume()
-            while (peek() !is RParenToken) {
-                val token = must<IdentifierToken>("I expected an identifier here")
-                args.addLast(IdentifierNode(token.value, token.location))
+            while (peek() is IdentifierToken) {
+                val token = must<IdentifierToken>("I expected an identifier here.")
+                params.addLast(IdentifierNode(token.value, token.location))
             }
-            consume()
+            if (peek() is DotToken) {
+                consume()
+                val lastParam = must<IdentifierToken>("After the dot I expected an identifier here.")
+                params.addLast(IdentifierNode(lastParam.value, lastParam.location))
+                isVarArg = true
+            }
+
+            must<RParenToken>("I expected a closing right parenthesis here.")
         }
 
         val body = parseBody()
         val rparen = consume()
 
-        verifyUniqueNames(args)
+        verifyUniqueNames(params)
         return LambdaNode(
-            args,
+            params,
+            isVarArg,
             body,
             Location.merge(lparen.location, rparen.location),
         )
@@ -526,12 +536,10 @@ class Parser {
      * Spec: R7RS, chapter 5.3
      * (define <variable> <expression>)
      * (define (<variable> <formals>) <body>)
-     * (define (<variable> . <formal>) <body>)
+     * (define (<variable> . <variable>) <body>)
      *
      * Since the last two forms are just syntactic sugar for a define of the first form with a nested lambda this parser
      * de-sugars it.
-     *
-     * FIXME: Implement the varargs form.
      */
     private fun parseDefine(): DefineNode {
         val lparen = consume()
@@ -547,16 +555,26 @@ class Parser {
                 body,
                 Location.merge(lparen.location, rparen.location),
             )
-        } else if (peek() is LParenToken) {
+        }
+
+        if (peek() is LParenToken) {
             consume()
             val functionName = must<IdentifierToken>("Expected an identifier here")
 
             val args = mutableListOf<IdentifierNode>()
-            while (peek() !is RParenToken) {
+            var isVarArg = false
+
+            while (peek() is IdentifierToken) {
                 val arg = must<IdentifierToken>("Expected an identifier here")
                 args.addLast(IdentifierNode(arg.value, arg.location))
             }
-            consume()
+            if (peek() is DotToken) {
+                consume()
+                val arg = must<IdentifierToken>("Expected an identifier here")
+                args.addLast(IdentifierNode(arg.value, arg.location))
+                isVarArg = true
+            }
+            must<RParenToken>("Expected a right parenthesis here")
 
             val body = parseBody()
             val rparen = must<RParenToken>("Expected a right parenthesis here")
@@ -564,17 +582,17 @@ class Parser {
             verifyUniqueNames(args)
             return DefineNode(
                 IdentifierNode(functionName.value, functionName.location),
-                LambdaNode(args, body, body.location),
+                LambdaNode(args, isVarArg, body, body.location),
                 Location.merge(lparen.location, rparen.location),
             )
-        } else {
-            throw SchemeError(
-                "Unexpected Token",
-                "I expected either an identifier or a left parenthesis here.",
-                peek().location,
-                null,
-            )
         }
+
+        throw SchemeError(
+            "Unexpected Token",
+            "I expected either an identifier or a left parenthesis here.",
+            peek().location,
+            null,
+        )
     }
 
     /**

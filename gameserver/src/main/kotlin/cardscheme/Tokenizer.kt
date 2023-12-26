@@ -25,6 +25,9 @@ class Tokenizer() {
             } else if (c == '\'') {
                 tokens.add(SingleQuoteToken(Location(line, line, col, col)))
                 consume()
+            } else if (c == '.') {
+                tokens.add(DotToken(Location(line, line, col, col)))
+                consume()
             } else if (c == '"') {
                 tokens.addLast(scanString())
             } else if (c == '\n') {
@@ -34,7 +37,8 @@ class Tokenizer() {
             } else if (c == ';') {
                 col = 1
                 line++
-                while (index < program.length && program[index++] != '\n') {}
+                while (index < program.length && program[index++] != '\n') {
+                }
             } else if (c == '#') {
                 tokens.addLast(scanPoundSign())
             } else if (c.isDigit() || isNumber(c)) {
@@ -170,7 +174,12 @@ class Tokenizer() {
         if (peek().isLetter()) {
             return CharToken(consume(), Location(line, line, col - 2, col - 1))
         } else {
-            throw SchemeError("Unknown Character", "This does not seem to be a character", Location(line, line, col - 2, col - 1), null)
+            throw SchemeError(
+                "Unknown Character",
+                "This does not seem to be a character",
+                Location(line, line, col - 2, col - 1),
+                null,
+            )
         }
     }
 

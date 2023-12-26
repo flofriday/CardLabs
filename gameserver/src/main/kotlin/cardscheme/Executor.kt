@@ -87,7 +87,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
     override fun visitedBy(node: LambdaNode): FuncValue {
         return FuncValue(
             node.params.map { a -> a.identifier },
-            Arity(node.params.size, node.params.size),
+            Arity(if (node.isVarArg) node.params.size - 1 else node.params.size, node.params.size, node.isVarArg),
             node.body,
             environment,
         )
@@ -293,6 +293,25 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
         return node.expressions.map { e -> e.visit(this) }.last()
     }
 
+    private fun insertArguments(
+        func: FuncValue,
+        args: List<FuncArg>,
+    ) {
+        // If not a var-args function, just insert them all
+        if (!func.arity.isVarArg) {
+            func.params.zip(args).map { (name, arg) -> environment.put(name, arg.value) }
+            return
+        }
+
+        // For var-args first insert all 1-1 mappings
+        func.params.dropLast(1).zip(args).map { (name, arg) -> environment.put(name, arg.value) }
+
+        // Then bundle all other into a list and bind them to the last variable
+        val name = func.params.last()
+        val list = ListValue(SchemeList(args.drop(func.params.size - 1).map { a -> a.value }))
+        environment.put(name, list)
+    }
+
     /**
      * Call a function in the current environment.
      *
@@ -310,7 +329,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
             environment = func.env
             // environment for the CONTENT of the lambda function
             pushEnv()
-            func.params.zip(args).map { (name, arg) -> environment.put(name, arg.value) }
+            insertArguments(func, args)
             var result = func.body.visit(this)
 
             // Tail call optimization
@@ -330,7 +349,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
                 }
 
                 currentFunc = tfunc
-                tfunc.params.zip(targs).map { (name, arg) -> environment.put(name, arg.value) }
+                insertArguments(tfunc, targs)
                 result = tfunc.body.visit(this)
             }
 

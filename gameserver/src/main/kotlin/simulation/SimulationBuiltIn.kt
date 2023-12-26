@@ -8,12 +8,12 @@ import kotlin.random.Random
  */
 fun injectSimulationBuiltin(environment: Environment) {
     // Matching Logic
-    environment.put("matches-card?", NativeFuncValue("matches-card?", Arity(2, 2), ::builtinMatchesCard))
-    environment.put("matching-cards", NativeFuncValue("matching-cards", Arity(2, 2), ::builtinMatchingCards))
+    environment.put("matches-card?", NativeFuncValue("matches-card?", Arity(2, 2, false), ::builtinMatchesCard))
+    environment.put("matching-cards", NativeFuncValue("matching-cards", Arity(2, 2, false), ::builtinMatchingCards))
 
     // Random functions
-    environment.put("random", NativeFuncValue("random", Arity(0, 0), ::builtinRandom))
-    environment.put("random-choice", NativeFuncValue("random-choice", Arity(1, 1), ::builtinRandomChoice))
+    environment.put("random", NativeFuncValue("random", Arity(0, 0, false), ::builtinRandom))
+    environment.put("random-choice", NativeFuncValue("random-choice", Arity(1, 1, false), ::builtinRandomChoice))
 }
 
 fun verifyCard(arg: FuncArg): Card {

@@ -39,7 +39,7 @@ class AdvancedTests {
 
         val program =
             """
-            (define fib (lambda n
+            (define fib (lambda (n)
                 (if (< n 3)
                     1
                     (+ (fib (- n 1)) (fib (- n 2)))

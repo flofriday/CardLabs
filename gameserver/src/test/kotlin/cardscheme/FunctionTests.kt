@@ -7,7 +7,7 @@ import org.junit.Test
 class FunctionTests {
     @Test
     fun simpleLambda() {
-        val program = "((lambda a (+ a a)) 4)"
+        val program = "((lambda (a) (+ a a)) 4)"
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
         Assert.assertEquals(8, (result as IntegerValue).value)
@@ -64,8 +64,8 @@ class FunctionTests {
         val program =
             """
             (define f 
-                (lambda a
-                    (lambda x (+ a x))))
+                (lambda (a)
+                    (lambda (x) (+ a x))))
                     
             ((f 1) 41)
             """.trimIndent()
@@ -138,5 +138,160 @@ class FunctionTests {
             """
                 .trimIndent()
         assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
+
+    @Test
+    fun lambdaShorthandMultipleVarargs() {
+        val program =
+            """
+            ((lambda xs xs) 1 2 3)
+            """
+                .trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is SchemeValue)
+        Assert.assertEquals(ListValue(intArrayOf(1, 2, 3).map { i -> IntegerValue(i) }), (result as ListValue))
+    }
+
+    @Test
+    fun lambdaShorthandSingleVararg() {
+        val program =
+            """
+            ((lambda xs xs) 42)
+            """
+                .trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is SchemeValue)
+        Assert.assertEquals(ListValue(IntegerValue(42)), (result as ListValue))
+    }
+
+    @Test
+    fun lambdaShorthandNoArgument() {
+        val program =
+            """
+            ((lambda xs xs))
+            """
+                .trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is SchemeValue)
+        Assert.assertEquals(ListValue(), (result as ListValue))
+    }
+
+    @Test
+    fun lambdaWithMultipleVararg() {
+        val program =
+            """
+            ((lambda (a b . ns) (list a b ns)) 1 2 3 4 5 6)
+            """
+                .trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is SchemeValue)
+        Assert.assertEquals(
+            ListValue(
+                IntegerValue(1),
+                IntegerValue(2),
+                ListValue(IntegerValue(3), IntegerValue(4), IntegerValue(5), IntegerValue(6)),
+            ),
+            (result as ListValue),
+        )
+    }
+
+    @Test
+    fun lambdaWithNoVararg() {
+        val program =
+            """
+            ((lambda (a b . ns) (list a b ns)) 1 2)
+            """
+                .trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is SchemeValue)
+        Assert.assertEquals(
+            ListValue(
+                IntegerValue(1),
+                IntegerValue(2),
+                ListValue(),
+            ),
+            (result as ListValue),
+        )
+    }
+
+    @Test
+    fun lambdaWithTooFewArgs() {
+        val program =
+            """
+            ((lambda (a b . ns) (list a b ns)) 1)
+            """
+                .trimIndent()
+        assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
+
+    @Test
+    fun defineWithMultipleVararg() {
+        val program =
+            """
+            (define (f a b . ns) (list a b ns))
+            (f 1 2 3 4 5 6)
+            """
+                .trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is SchemeValue)
+        Assert.assertEquals(
+            ListValue(
+                IntegerValue(1),
+                IntegerValue(2),
+                ListValue(IntegerValue(3), IntegerValue(4), IntegerValue(5), IntegerValue(6)),
+            ),
+            (result as ListValue),
+        )
+    }
+
+    @Test
+    fun defineWithNoVararg() {
+        val program =
+            """
+            (define (f a b . ns) (list a b ns))
+            (f 1 2)
+            """
+                .trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is SchemeValue)
+        Assert.assertEquals(
+            ListValue(
+                IntegerValue(1),
+                IntegerValue(2),
+                ListValue(),
+            ),
+            (result as ListValue),
+        )
+    }
+
+    @Test
+    fun defineWithTooFewArgs() {
+        val program =
+            """
+            (define (f a b . ns) (list a b ns))
+            (f 1)
+            """
+                .trimIndent()
+        assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
+
+    @Test
+    fun defineWithJustVarargs() {
+        val program =
+            """
+            (define (f . ns) ns)
+            (f 1 2 3)
+            """
+                .trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is SchemeValue)
+        Assert.assertEquals(
+            ListValue(
+                IntegerValue(1),
+                IntegerValue(2),
+                IntegerValue(3),
+            ),
+            (result as ListValue),
+        )
     }
 }

@@ -248,13 +248,15 @@ class BodyNode(
  * Lambdas evaluate to a procedure (aka function).
  *
  * @param params are the names to which the arguments upon calling get bound.
+ * @param isVarArg weather or not this function can accept indefinite many arguments.
  * @param body of the function.
  */
-class LambdaNode(val params: List<IdentifierNode>, val body: BodyNode, location: Location) :
+class LambdaNode(val params: List<IdentifierNode>, val isVarArg: Boolean, val body: BodyNode, location: Location) :
     ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) +
-            "Lambda: '${params.joinToString(", ") { a -> a.identifier }}'\n" +
+            "Lambda: '${params.joinToString(", ") { a -> a.identifier }}'" +
+            (if (isVarArg) " (vararg)" else "") + "\n" +
             body.dump(indent + 1)
     }
 

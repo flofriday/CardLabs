@@ -32,6 +32,8 @@ class SetToken(location: Location) : Token(location)
 
 class DoToken(location: Location) : Token(location)
 
+class DotToken(location: Location) : Token(location)
+
 class IfToken(location: Location) : Token(location)
 
 class LambdaToken(location: Location) : Token(location)
