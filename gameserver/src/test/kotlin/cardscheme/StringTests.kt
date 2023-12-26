@@ -6,6 +6,22 @@ import org.junit.Test
 
 class StringTests {
     @Test
+    fun isStringOnString() {
+        val program = """(string? "flo")"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isStringOnInt() {
+        val program = """(string? 34)"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
     fun stringAppend() {
         val program = """(string-append "abc" "efg")"""
         val result = SchemeInterpreter().run(program)

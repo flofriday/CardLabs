@@ -314,13 +314,22 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
 
     /**
      * Call a function in the current environment.
-     *
-     * The caller must ensure that the number of arguments match the functions arity.
      */
     fun callFunction(
         func: CallableValue,
         args: List<FuncArg>,
     ): SchemeValue {
+        if (!func.arity.inside(args.size)) {
+            val message =
+                if (func.arity.min == func.arity.max) {
+                    "The function expects ${func.arity.min} arguments, but you provided ${args.size}"
+                } else {
+                    "The function expects between ${func.arity.min} and ${func.arity.max} arguments, " +
+                        "but you provided ${args.size}"
+                }
+            throw SchemeError("Invalid number of arguments", message, null, null)
+        }
+
         if (func is NativeFuncValue) {
             return func.func(args, this)
         } else if (func is FuncValue) {
@@ -372,17 +381,6 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
                 node.expressions.first().location,
                 if (node.expressions.size >= 3 && func is NumberValue) infixTip else null,
             )
-        }
-
-        if (!func.arity.inside(node.expressions.size - 1)) {
-            val message =
-                if (func.arity.min == func.arity.max) {
-                    "The function expects ${func.arity.min} arguments, but you provided ${node.expressions.size - 1}"
-                } else {
-                    "The function expects between ${func.arity.min} and ${func.arity.max} arguments, " +
-                        "but you provided ${node.expressions.size - 1}"
-                }
-            throw SchemeError("Invalid number of arguments", message, node.location, null)
         }
 
         val args = node.expressions.drop(1).map { e -> FuncArg(e.visit(this), e.location) }

@@ -125,4 +125,32 @@ No more bottles of beer on the wall, no more bottles of beer.""",
             outputStreamCapture.toString().trim(),
         )
     }
+
+    /**
+     * Example from Wikipedia:
+     * https://en.wikipedia.org/wiki/Scheme_(programming_language)#Redefinition_of_standard_procedures
+     */
+    @Test
+    fun extendPlusToConcatStrings() {
+        val program =
+            """
+            (set! +
+                  (let ((original+ +))
+                    (lambda args
+                      (apply (if (or (null? args) (string? (car args)))
+                                 string-append
+                                 original+)
+                             args))))
+            """.trimIndent()
+        val interpreter = SchemeInterpreter()
+        interpreter.run(program)
+
+        var result = interpreter.run("""(+ 1 2 3)""")
+        assert(result is IntegerValue)
+        Assert.assertEquals(6, (result as IntegerValue).value)
+
+        result = interpreter.run("""(+ "1" "2" "3")""")
+        assert(result is StringValue)
+        Assert.assertEquals("123", (result as StringValue).value)
+    }
 }

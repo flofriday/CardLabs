@@ -20,13 +20,16 @@ fun injectBuiltin(environment: Environment) {
     environment.put("or", NativeFuncValue("or", Arity(0, Int.MAX_VALUE, false), ::builtinOr))
     environment.put("not", NativeFuncValue("not", Arity(1, 1, false), ::builtinNot))
 
+    environment.put("null?", NativeFuncValue("null?", Arity(0, Int.MAX_VALUE, false), ::builtinIsNull))
     environment.put("list", NativeFuncValue("list", Arity(0, Int.MAX_VALUE, false), ::builtinList))
     environment.put("car", NativeFuncValue("car", Arity(1, 1, false), ::builtinCar))
     environment.put("cdr", NativeFuncValue("cdr", Arity(1, 1, false), ::builtinCdr))
-    environment.put("map", NativeFuncValue("map", Arity(2, Int.MAX_VALUE, false), ::builtinMap))
     environment.put("cons", NativeFuncValue("cons", Arity(2, 2, false), ::builtInCons))
     environment.put("append", NativeFuncValue("append", Arity(0, Int.MAX_VALUE, false), ::builtInAppend))
     environment.put("length", NativeFuncValue("length", Arity(1, 1, false), ::builtInLength))
+
+    environment.put("apply", NativeFuncValue("apply", Arity(2, Int.MAX_VALUE, false), ::builtinApply))
+    environment.put("map", NativeFuncValue("map", Arity(2, Int.MAX_VALUE, false), ::builtinMap))
 
     environment.put("vector", NativeFuncValue("vector", Arity(1, Int.MAX_VALUE, false), ::builtinVector))
     environment.put("vector?", NativeFuncValue("vector?", Arity(1, 1, false), ::builtinIsVector))
@@ -35,6 +38,7 @@ fun injectBuiltin(environment: Environment) {
     environment.put("vector-ref", NativeFuncValue("vector-ref", Arity(2, 2, false), ::builtinVectorRef))
     environment.put("vector-set!", NativeFuncValue("vector-set!", Arity(3, 3, false), ::builtinVectorSet))
 
+    environment.put("string?", NativeFuncValue("string?", Arity(1, 1, false), ::builtinIsString))
     environment.put(
         "string-append",
         NativeFuncValue("string-append", Arity(0, Int.MAX_VALUE, false), ::builtinStringAppend),
@@ -157,6 +161,25 @@ fun builtinFloorRemainder(
 ): IntegerValue {
     val arguments = verifyAllType<IntegerValue>(args, "Only integers are allowed for modulo")
     return IntegerValue(arguments[0].value % arguments[1].value)
+}
+
+/**
+ * Checks if the object is an empty list.
+ *
+ * Spec: R7RS, chapter 6.4
+ * Syntax: (null? obj)
+ * Semantic: Returns #t if obj is the empty list, otherwise returns #f.
+ */
+fun builtinIsNull(
+    args: List<FuncArg>,
+    executor: Executor,
+): BooleanValue {
+    val obj = args.first().value
+    if (obj !is ListValue) {
+        return BooleanValue(false)
+    }
+
+    return BooleanValue(obj.values.isEmpty())
 }
 
 fun builtinList(
@@ -289,7 +312,27 @@ fun builtInLength(
 }
 
 /**
- * Built in map
+ * Built in apply function.
+ *
+ * Spec: R7RS, Chapter 6.10
+ * Syntax: (apply proc arg1 ... args)
+ * Semantics: The apply procedure calls proc with the elements of the list (append (list arg1 ...) args) as the
+ * actual arguments.
+ */
+fun builtinApply(
+    args: List<FuncArg>,
+    executor: Executor,
+): SchemeValue {
+    val func = verifyType<CallableValue>(args.first(), "I expected a function here")
+    val arguments = args.drop(1).dropLast(1).toMutableList()
+    val list = verifyType<ListValue>(args.last(), "I expected this to be a list")
+    arguments += list.values.map { v -> FuncArg(v, null) }
+
+    return executor.callFunction(func, arguments)
+}
+
+/**
+ * Built in map function.
  *
  * Spec: R7RS, Chapter 6.10
  * Syntax: (map proc list1 list2 ...)
@@ -301,6 +344,7 @@ fun builtinMap(
     val func = verifyType<CallableValue>(args.first(), "The first argument must be a procedure")
     val lists = verifyAllType<ListValue>(args.drop(1), "All arguments after the first one must be lists")
 
+    // Custom error, for better readability
     if (!func.arity.inside(lists.size)) {
         val message =
             if (func.arity.min == func.arity.max) {
@@ -413,6 +457,20 @@ fun builtinEqual(
 ): BooleanValue {
     val result = args.map { a -> a.value }.zipWithNext { a, b -> a == b }.all { it }
     return BooleanValue(result)
+}
+
+/**
+ * Built in is string
+ *
+ * Spec: R7RS, Chapter 6.7
+ * Syntax: (string? obj)
+ * Semantics: Returns #t if obj is a string, otherwise returns #f.
+ * */
+fun builtinIsString(
+    args: List<FuncArg>,
+    executor: Executor,
+): BooleanValue {
+    return BooleanValue(args.first().value is StringValue)
 }
 
 /**

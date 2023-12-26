@@ -173,4 +173,70 @@ lst""",
             result as ListValue,
         )
     }
+
+    @Test
+    fun isNullOnEmptyList() {
+        val program = "(null? '())"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isNullOnFullList() {
+        val program = "(null? '(1 2 3))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isNullOnZero() {
+        val program = "(null? 0)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun applyListToBuiltin() {
+        val program = "(apply + '(1 2 3 4))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        assertEquals(10, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun applyListToUserFunction() {
+        val program =
+            """
+            (define (f a b) (+ a b))
+            (apply f '(2 8))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        assertEquals(10, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun applyListToUserVarargFunction() {
+        val program =
+            """
+            (define (f . ns) (car ns))
+            (apply f '(2 8))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        assertEquals(2, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun badApplyListToFunctionWithTooFewArguments() {
+        val program =
+            """
+            (define (f a b c d) (car ns))
+            (apply f '(2 8 5))
+            """.trimIndent()
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
 }
