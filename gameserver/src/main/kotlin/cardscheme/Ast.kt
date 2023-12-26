@@ -295,8 +295,9 @@ class LetNode(
     override fun dump(indent: Int): String {
         return getIndentation(indent) +
             "LetNode: (rec: $rec, star: $star)\n" +
-            bindings.map { b ->
-                b.name.dump(indent + 1) + b.init.dump(indent + 1)
+            getIndentation(indent + 1) + "Bindings:\n" +
+            bindings.joinToString("\n") { b ->
+                b.name.dump(indent + 2) + b.init.dump(indent + 2)
             } +
             body.dump(indent + 1)
     }

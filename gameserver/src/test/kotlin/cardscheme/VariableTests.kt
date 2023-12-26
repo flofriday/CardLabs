@@ -281,4 +281,19 @@ class VariableTests {
             """.trimIndent()
         SchemeInterpreter().run(program)
     }
+
+    @Test
+    fun namedLetLoop() {
+        val program =
+            """
+            (let loop ((n 1))
+              (if (> n 10)
+                '()
+                (cons n
+                  (loop (+ n 1)))))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        Assert.assertEquals(ListValue((1..10).map { i -> IntegerValue(i) }), (result as ListValue))
+    }
 }

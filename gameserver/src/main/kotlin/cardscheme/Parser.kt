@@ -160,11 +160,19 @@ class Parser {
      * (letrec ((<variable> <init>) ...) <body>)
      * (letrec* ((<variable> <init>) ...) <body>)
      *
-     * FIXME: At the moment it doesn't handle the named-let syntax (let <variable> ((<variable> <init>) ...) <body>)
+     * Spec: R7RS, chapter 4.2.4
+     * (let <variable> <bindings> <body>)
+     * Note: also often called "named let", which we desugar here
      */
     private fun parseLet(): LetNode {
         val lparen = consume()
         val letToken = consume() as LetToken
+        var namedToken: IdentifierToken? = null
+
+        // Named let
+        if (!letToken.star && !letToken.rec && peek() is IdentifierToken) {
+            namedToken = consume() as IdentifierToken
+        }
 
         val bindings = mutableListOf<VariableBinding>()
         must<LParenToken>("I expected a opening left parenthesis here.")
@@ -190,7 +198,40 @@ class Parser {
         if (!(letToken.star && !letToken.rec)) {
             verifyUniqueNames(bindings.map { b -> b.name })
         }
-        return LetNode(letToken.rec, letToken.star, bindings, body, Location.merge(lparen.location, rparen.location))
+
+        // Normal lets
+        if (namedToken == null) {
+            return LetNode(
+                letToken.rec,
+                letToken.star,
+                bindings,
+                body,
+                Location.merge(lparen.location, rparen.location),
+            )
+        }
+
+        // Named let
+        val location = Location.merge(lparen.location, rparen.location)
+        val namedNode = IdentifierNode(namedToken.value, namedToken.location)
+        return LetNode(
+            true, // must be recursive as the generated function can call itself
+            false,
+            mutableListOf(
+                VariableBinding(
+                    namedNode,
+                    LambdaNode(bindings.map { b -> b.name }, false, body, location),
+                    namedToken.location,
+                ),
+            ),
+            BodyNode(
+                listOf(),
+                mutableListOf(
+                    LetNode(false, false, bindings, body, location),
+                ),
+                location,
+            ),
+            location,
+        )
     }
 
     private fun parseBody(): BodyNode {
