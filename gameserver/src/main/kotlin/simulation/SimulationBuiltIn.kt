@@ -55,7 +55,7 @@ fun builtinMatchingCards(
     val matchingCards =
         second.filter { c -> first.match(c) }
             .map { c -> encodeCard(c) }
-    return ListValue(SchemeList(matchingCards))
+    return ListValue(matchingCards)
 }
 
 /**

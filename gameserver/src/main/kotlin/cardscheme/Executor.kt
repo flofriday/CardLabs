@@ -308,7 +308,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
 
         // Then bundle all other into a list and bind them to the last variable
         val name = func.params.last()
-        val list = ListValue(SchemeList(args.drop(func.params.size - 1).map { a -> a.value }))
+        val list = ListValue(args.drop(func.params.size - 1).map { a -> a.value })
         environment.put(name, list)
     }
 

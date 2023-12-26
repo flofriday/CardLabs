@@ -29,7 +29,11 @@ class Simulation {
             }
 
             if (!player.interpreter.env.has("turn")) {
-                throw DisqualificationError(player.bot.id, "The bot doesn't implement the required turn function.", null)
+                throw DisqualificationError(
+                    player.bot.id,
+                    "The bot doesn't implement the required turn function.",
+                    null,
+                )
             }
 
             // FIXME: Verify arity of the function
@@ -93,15 +97,16 @@ class Simulation {
                 throw DisqualificationError(player.bot.id, "`turn` isn't a function but a `${func.typeName()}`", null)
             }
 
-            val players = this.players.map { p -> VectorValue(mutableListOf(StringValue(p.bot.name), IntegerValue(p.hand.size))) }
+            val players =
+                this.players.map { p -> VectorValue(mutableListOf(StringValue(p.bot.name), IntegerValue(p.hand.size))) }
 
             result =
                 player.interpreter.run(
                     func,
                     listOf(
                         encodeCard(topCard),
-                        ListValue(SchemeList(player.hand.map { c -> encodeCard(c) })),
-                        ListValue(SchemeList(players)),
+                        ListValue(player.hand.map { c -> encodeCard(c) }),
+                        ListValue(players),
                     ),
                 )
         } catch (e: SchemeError) {
@@ -112,7 +117,11 @@ class Simulation {
         val playedCard = decodeCard(result!!)
 
         if (!player.hand.remove(playedCard)) {
-            throw DisqualificationError(player.bot.id, "The bot tried to play a card it doesn't hold: $playedCard", null)
+            throw DisqualificationError(
+                player.bot.id,
+                "The bot tried to play a card it doesn't hold: $playedCard",
+                null,
+            )
         }
 
         if (!topCard.match(playedCard)) {

@@ -76,10 +76,12 @@ lst""",
         assert(result is ListValue)
         assertEquals(listOf(IntegerValue(1), IntegerValue(2)), (result as ListValue).values.toList())
 
+        // Prepend to a copy of the list
         result = interpreter.run("(cons 0 lst)")
         assert(result is ListValue)
         assertEquals(listOf(IntegerValue(0), IntegerValue(1), IntegerValue(2)), (result as ListValue).values.toList())
 
+        // Ensure the list hasn't changed
         result = interpreter.run("lst")
         assert(result is ListValue)
         assertEquals(listOf(IntegerValue(1), IntegerValue(2)), (result as ListValue).values.toList())
@@ -119,12 +121,8 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                SchemeList(
-                    listOf(
-                        IntegerValue(1),
-                        ListValue(SchemeList(listOf(IntegerValue(2), IntegerValue(3)))),
-                    ),
-                ),
+                IntegerValue(1),
+                ListValue(IntegerValue(2), IntegerValue(3)),
             ),
             result as ListValue,
         )
@@ -137,16 +135,12 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                SchemeList(
-                    listOf(
-                        IntegerValue(1),
-                        FloatValue(3.14.toFloat()),
-                        BooleanValue(true),
-                        BooleanValue(false),
-                        StringValue("text"),
-                        CharacterValue('c'),
-                    ),
-                ),
+                IntegerValue(1),
+                FloatValue(3.14.toFloat()),
+                BooleanValue(true),
+                BooleanValue(false),
+                StringValue("text"),
+                CharacterValue('c'),
             ),
             result as ListValue,
         )
@@ -159,12 +153,8 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                SchemeList(
-                    listOf(
-                        SymbolValue("display"),
-                        IntegerValue(34),
-                    ),
-                ),
+                SymbolValue("display"),
+                IntegerValue(34),
             ),
             result as ListValue,
         )
@@ -177,10 +167,8 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                SchemeList(
-                    "begin cond define do else if lambda let let* letrec letrec* set! quote".split(" ")
-                        .map { kw -> SymbolValue(kw) },
-                ),
+                "begin cond define do else if lambda let let* letrec letrec* set! quote".split(" ")
+                    .map { kw -> SymbolValue(kw) },
             ),
             result as ListValue,
         )

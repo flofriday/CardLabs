@@ -163,7 +163,7 @@ fun builtinList(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    return ListValue(SchemeList(args.map { a -> a.value }))
+    return ListValue(args.map { a -> a.value })
 }
 
 fun builtinCar(
@@ -242,8 +242,7 @@ fun builtInCons(
         return ListValue(list)
     }
 
-    val list = SchemeList(listOf(args[0].value, args[1].value))
-    return ListValue(list)
+    return ListValue(args[0].value, args[1].value)
 }
 
 /**
@@ -257,7 +256,7 @@ fun builtInAppend(
     executor: Executor,
 ): ListValue {
     if (args.isEmpty()) {
-        return ListValue(SchemeList())
+        return ListValue()
     }
     val allArgsButLast = verifyAllType<ListValue>(args.dropLast(1), "Expected this to be a list")
     val newList = SchemeList<SchemeValue>()
@@ -312,7 +311,7 @@ fun builtinMap(
         throw SchemeError("Invalid number of arguments", message, null, null)
     }
 
-    val values = SchemeList<SchemeValue>()
+    val values = mutableListOf<SchemeValue>()
     val iterators = lists.map { l -> l.values.iterator() }
     while (iterators.all { i -> i.hasNext() }) {
         val iterationArgs = iterators.map { i -> FuncArg(i.next(), null) }
