@@ -199,6 +199,30 @@ lst""",
     }
 
     @Test
+    fun isPairOnList() {
+        val program = "(pair? '(1 2 3))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isPairOnEmptyList() {
+        val program = "(pair? '())"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isPairOnInt() {
+        val program = "(pair? 20)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
     fun applyListToBuiltin() {
         val program = "(apply + '(1 2 3 4))"
         val result = SchemeInterpreter().run(program)

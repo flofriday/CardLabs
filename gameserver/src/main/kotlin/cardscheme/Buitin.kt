@@ -9,18 +9,28 @@ fun injectBuiltin(environment: Environment) {
     environment.put("modulo", NativeFuncValue("modulo", Arity(2, 2, false), ::builtinFloorRemainder))
     environment.put("abs", NativeFuncValue("abs", Arity(1, 1, false), ::builtinAbs))
     environment.put("sqrt", NativeFuncValue("sqrt", Arity(1, 1, false), ::builtinSqrt))
+    environment.put("max", NativeFuncValue("max", Arity(1, Int.MAX_VALUE, false), ::builtinMax))
+    environment.put("min", NativeFuncValue("min", Arity(1, Int.MAX_VALUE, false), ::builtinMin))
 
-    environment.put("=", NativeFuncValue("=", Arity(2, Int.MAX_VALUE, false), ::builtinEqual))
+    environment.put("zero?", NativeFuncValue("zero?", Arity(1, 1, false), ::builtinIsZero))
+    environment.put("positive?", NativeFuncValue("positive?", Arity(1, 1, false), ::builtinIsPositive))
+    environment.put("negative?", NativeFuncValue("negative?", Arity(1, 1, false), ::builtinIsNegative))
+    environment.put("odd?", NativeFuncValue("odd?", Arity(1, 1, false), ::builtinIsOdd))
+    environment.put("even?", NativeFuncValue("even?", Arity(1, 1, false), ::builtinIsEven))
+    environment.put("=", NativeFuncValue("=", Arity(2, Int.MAX_VALUE, false), ::builtinNumericalEqual))
     environment.put("<", NativeFuncValue("<", Arity(2, Int.MAX_VALUE, false), ::builtinSmaller))
     environment.put("<=", NativeFuncValue("<=", Arity(2, Int.MAX_VALUE, false), ::builtinSmallerEqual))
     environment.put(">", NativeFuncValue(">", Arity(2, Int.MAX_VALUE, false), ::builtinGreater))
     environment.put(">=", NativeFuncValue(">=", Arity(2, Int.MAX_VALUE, false), ::builtinGreaterEqual))
 
+    environment.put("equal?", NativeFuncValue("equal?", Arity(2, Int.MAX_VALUE, false), ::builtinIsEqual))
+
     environment.put("and", NativeFuncValue("and", Arity(0, Int.MAX_VALUE, false), ::builtinAnd))
     environment.put("or", NativeFuncValue("or", Arity(0, Int.MAX_VALUE, false), ::builtinOr))
     environment.put("not", NativeFuncValue("not", Arity(1, 1, false), ::builtinNot))
 
-    environment.put("null?", NativeFuncValue("null?", Arity(0, Int.MAX_VALUE, false), ::builtinIsNull))
+    environment.put("pair?", NativeFuncValue("pair?", Arity(1, 1, false), ::builtinIsPair))
+    environment.put("null?", NativeFuncValue("null?", Arity(1, 1, false), ::builtinIsNull))
     environment.put("list", NativeFuncValue("list", Arity(0, Int.MAX_VALUE, false), ::builtinList))
     environment.put("car", NativeFuncValue("car", Arity(1, 1, false), ::builtinCar))
     environment.put("cdr", NativeFuncValue("cdr", Arity(1, 1, false), ::builtinCdr))
@@ -155,12 +165,136 @@ fun builtinSqrt(
     return n.sqrt()
 }
 
+/**
+ * Builtin zero? function.
+ *
+ * Spec: R7RS, chapter 6.2.6
+ * Syntax: (zero? n)
+ * Semantic: Returns true if x is zero.
+ */
+fun builtinIsZero(
+    args: List<FuncArg>,
+    executor: Executor,
+): BooleanValue {
+    val n = verifyType<NumberValue>(args.first(), "Only numbers can be tested for zero")
+    return n.numEqual(IntegerValue(0))
+}
+
+/**
+ * Builtin positive? function.
+ *
+ * Spec: R7RS, chapter 6.2.6
+ * Syntax: (positive? n)
+ * Semantic: Returns true if x is positive, not including zero.
+ */
+fun builtinIsPositive(
+    args: List<FuncArg>,
+    executor: Executor,
+): BooleanValue {
+    val n = verifyType<NumberValue>(args.first(), "Only numbers can be tested for positivity")
+    return IntegerValue(0).smallerThan(n)
+}
+
+/**
+ * Builtin negative? function.
+ *
+ * Spec: R7RS, chapter 6.2.6
+ * Syntax: (negative? x)
+ * Semantics: Returns true if x is negative, not including zero
+ */
+fun builtinIsNegative(
+    args: List<FuncArg>,
+    executor: Executor,
+): BooleanValue {
+    val n = verifyType<NumberValue>(args.first(), "Only numbers can be tested for negativity")
+    return n.smallerThan(IntegerValue(0))
+}
+
+/**
+ * Builtin even? function.
+ *
+ * Spec: R7RS, chapter 6.2.6
+ * Syntax: (even? n)
+ * Semantics: Returns true if n is even. n must be an integer.
+ */
+fun builtinIsEven(
+    args: List<FuncArg>,
+    executor: Executor,
+): BooleanValue {
+    val n = verifyType<IntegerValue>(args.first(), "Only integers can be tested for even")
+    return BooleanValue(n.value % 2 == 0)
+}
+
+/**
+ * Builtin odd? function.
+ *
+ * Spec: R7RS, chapter 6.2.6
+ * Syntax: (XX n)
+ * Semantics: Returns true if n is odd. n must be an integer.
+ */
+fun builtinIsOdd(
+    args: List<FuncArg>,
+    executor: Executor,
+): BooleanValue {
+    val n = verifyType<IntegerValue>(args.first(), "Only integers can be tested for odd")
+    return BooleanValue(n.value % 2 != 0)
+}
+
+/**
+ * Builtin max function.
+ *
+ * Spec: R7RS, chapter 6.2.6
+ * Syntax: (max arg1 arg2...)
+ * Semantics: Returns the maximum of their arguments
+ */
+fun builtinMax(
+    args: List<FuncArg>,
+    executor: Executor,
+): NumberValue {
+    val numbers = verifyAllType<NumberValue>(args, "Only numbers are allowed for max")
+    return numbers.reduce { acc, n -> if (n.smallerThan(acc).value) acc else n }
+}
+
+/**
+ * Builtin min function.
+ *
+ * Spec: R7RS, chapter 6.2.6
+ * Syntax: (min arg1 arg2...)
+ * Semantics: Returns the minimum of their arguments
+ */
+fun builtinMin(
+    args: List<FuncArg>,
+    executor: Executor,
+): NumberValue {
+    val numbers = verifyAllType<NumberValue>(args, "Only numbers are allowed for min")
+    return numbers.reduce { acc, n -> if (acc.smallerThan(n).value) acc else n }
+}
+
 fun builtinFloorRemainder(
     args: List<FuncArg>,
     executor: Executor,
 ): IntegerValue {
     val arguments = verifyAllType<IntegerValue>(args, "Only integers are allowed for modulo")
     return IntegerValue(arguments[0].value % arguments[1].value)
+}
+
+/**
+ * Checks if the object is a non-empty list.
+ *
+ * Spec: R7RS, chapter 6.4
+ * Syntax: (pair? obj)
+ * Semantic: Returns #t if obj is a non-empty list, otherwise returns #f.
+ */
+fun builtinIsPair(
+    args: List<FuncArg>,
+    executor: Executor,
+): BooleanValue {
+    val obj = args.first().value
+    if (obj !is ListValue) {
+        return BooleanValue(false)
+    }
+
+    return BooleanValue(!obj.values.isEmpty())
 }
 
 /**
@@ -451,7 +585,20 @@ fun builtinVectorSet(
     return VoidValue()
 }
 
-fun builtinEqual(
+fun builtinNumericalEqual(
+    args: List<FuncArg>,
+    executor: Executor,
+): BooleanValue {
+    try {
+        val numbers = verifyAllType<NumberValue>(args, "Only numbers can be compared with `=`")
+        val result = numbers.zipWithNext { a, b -> a.numEqual(b) }.all { b -> b.value }
+        return BooleanValue(result)
+    } catch (e: SchemeError) {
+        throw SchemeError(e.header, e.reason, e.location, e.tip ?: "You can use `equal?` to compare other types.")
+    }
+}
+
+fun builtinIsEqual(
     args: List<FuncArg>,
     executor: Executor,
 ): BooleanValue {
@@ -591,7 +738,7 @@ fun builtinSmallerEqual(
     val result =
         args
             .map { a -> a.value as NumberValue }
-            .zipWithNext { a, b -> a.smallerThan(b).value || a == b }
+            .zipWithNext { a, b -> a.smallerThan(b).value || a.numEqual(b).value }
             .all { it }
     return BooleanValue(result)
 }
@@ -619,7 +766,7 @@ fun builtinGreater(
     val result =
         args
             .map { a -> a.value as NumberValue }
-            .zipWithNext { a, b -> a.smallerThan(b).value || a == b }
+            .zipWithNext { a, b -> a.smallerThan(b).value || a.numEqual(b).value }
             .none { it }
     return BooleanValue(result)
 }
@@ -633,7 +780,7 @@ fun builtinGreaterEqual(
     val result =
         args
             .map { a -> a.value as NumberValue }
-            .zipWithNext { a, b -> !a.smallerThan(b).value || a == b }
+            .zipWithNext { a, b -> !a.smallerThan(b).value || a.numEqual(b).value }
             .all { it }
     return BooleanValue(result)
 }

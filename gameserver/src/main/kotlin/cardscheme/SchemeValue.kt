@@ -51,6 +51,9 @@ abstract class NumberValue() : SchemeValue() {
 
     abstract fun div(other: NumberValue): NumberValue
 
+    // Numerical equality
+    abstract fun numEqual(other: NumberValue): BooleanValue
+
     abstract fun smallerThan(other: NumberValue): BooleanValue
 
     abstract fun abs(): NumberValue
@@ -94,6 +97,14 @@ data class IntegerValue(val value: Int) : NumberValue() {
             }
 
             is FloatValue -> FloatValue(this.value / other.value)
+            else -> TODO("Unsoported type")
+        }
+    }
+
+    override fun numEqual(other: NumberValue): BooleanValue {
+        return when (other) {
+            is IntegerValue -> BooleanValue(this.value == other.value)
+            is FloatValue -> BooleanValue(this.value.toFloat() == other.value)
             else -> TODO("Unsoported type")
         }
     }
@@ -152,6 +163,14 @@ data class FloatValue(val value: Float) : NumberValue() {
         return when (other) {
             is IntegerValue -> FloatValue(this.value / other.value)
             is FloatValue -> FloatValue(this.value / other.value)
+            else -> TODO("Unsoported type")
+        }
+    }
+
+    override fun numEqual(other: NumberValue): BooleanValue {
+        return when (other) {
+            is IntegerValue -> BooleanValue(this.value == other.value.toFloat())
+            is FloatValue -> BooleanValue(this.value == other.value)
             else -> TODO("Unsoported type")
         }
     }

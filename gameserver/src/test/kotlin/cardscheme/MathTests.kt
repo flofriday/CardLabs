@@ -114,4 +114,52 @@ class MathTests {
         assert(result is FloatValue)
         Assert.assertEquals(15.3844f, (result as FloatValue).value)
     }
+
+    @Test
+    fun maxOnInts() {
+        val program = "(max 1 2 3)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(3, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun maxOnSingleInt() {
+        val program = "(max 42)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(42, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun maxOnFloats() {
+        val program = "(max 1.0  42.42 31.141516)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is FloatValue)
+        Assert.assertEquals(42.42f, (result as FloatValue).value)
+    }
+
+    @Test
+    fun minOnInts() {
+        val program = "(min 1 2 3)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(1, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun minOnSingleInt() {
+        val program = "(min 42)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(42, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun minOnFloats() {
+        val program = "(min 1.0  42.42 31.141516)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is FloatValue)
+        Assert.assertEquals(1.0f, (result as FloatValue).value)
+    }
 }

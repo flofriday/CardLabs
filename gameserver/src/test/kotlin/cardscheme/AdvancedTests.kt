@@ -174,4 +174,124 @@ No more bottles of beer on the wall, no more bottles of beer.""",
         assert(result is ListValue)
         Assert.assertEquals(ListValue((0..9).map { i -> IntegerValue(i * i) }), (result as ListValue))
     }
+
+    /**
+     * Example from Wikipedia
+     * https://en.wikipedia.org/wiki/Scheme_(programming_language)#Block_structure
+     */
+    @Test
+    fun hofstadterMaleFemaleSequence() {
+        val program =
+            """
+            (define (hofstadter-male-female n)
+              (letrec ((female (lambda (n)
+                                 (if (= n 0)
+                                   1
+                                   (- n (male (female (- n 1)))))))
+                        (male (lambda (n)
+                                (if (= n 0)
+                                  0
+                                  (- n (female (male (- n 1))))))))
+                (let loop ((i 0))
+                  (if (> i n)
+                    '()
+                    (cons (cons (female i)
+                            (male i))
+                      (loop (+ i 1)))))))
+
+            (equal?
+              (hofstadter-male-female 8)
+              '((1 0) (1 0) (2 1) (2 2) (3 2) (3 3) (4 4) (5 4) (5 5)))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    /**
+     * Example from the Scheme Cookbook:
+     * https://cookbook.scheme.org/find-depth-of-list/
+     */
+    @Test
+    fun depthOfNestedList() {
+        val program =
+            """
+            (define (depth a)
+              (if (pair? a)
+                (+ 1 (apply max (map depth a)))
+                0))
+
+            (depth '(a (b (c d (e)))))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(IntegerValue(4), (result as IntegerValue))
+    }
+
+    /**
+     * Example from the Scheme Cookbook:
+     * https://cookbook.scheme.org/create-k-combinations-from-list/
+     */
+    @Test
+    fun combinationOfList() {
+        val program =
+            """
+            (define (combine3 n set rest)
+              (letrec
+                ((tails-of
+                   (lambda (set)
+                     (cond ((null? set)
+                             '())
+                       (else
+                         (cons set (tails-of (cdr set)))))))
+                  (combinations
+                    (lambda (n set)
+                      (cond
+                        ((zero? n)
+                          '())
+                        ((= 1 n)
+                          (map list set))
+                        (else
+                          (apply append
+                            (map (lambda (tail)
+                                   (map (lambda (sub)
+                                          (cons (car tail) sub))
+                                     (combinations (- n 1) (rest tail))))
+                              (tails-of set))))))))
+                (combinations n set)))
+
+            ;; create k-combination without repetion
+            (define (combine n set)
+              (combine3 n set cdr))
+
+            ;; create k-combination with repetition
+            (define (combine* n set)
+              (combine3 n set (lambda (x) x)))
+            """.trimIndent()
+
+        val interpreter = SchemeInterpreter()
+        interpreter.run(program)
+
+        var result =
+            interpreter.run(
+                """
+                (equal? 
+                    (combine 2 '(a b c))
+                    '((a b) (a c) (b c)))
+                """.trimIndent(),
+            )
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+
+        result =
+            interpreter.run(
+                """
+                (equal? 
+                    (combine* 2 '(a b c))
+                    '((a a) (a b) (a c) (b b) (b c) (c c)))
+                """.trimIndent(),
+            )
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
 }
