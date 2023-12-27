@@ -29,8 +29,10 @@ class AdvancedTests {
                 (display 2)
                 (display (+ 1 2)))
             """.trimIndent()
-        SchemeInterpreter().run(program)
-        Assert.assertEquals("123", outputStreamCapture.toString().trim())
+        val outputBuffer = StringBuilder()
+        SchemeInterpreter(outputBuffer).run(program)
+        Assert.assertEquals("", outputStreamCapture.toString().trim())
+        Assert.assertEquals("123", outputBuffer.toString())
     }
 
     @Test
@@ -82,7 +84,8 @@ class AdvancedTests {
 
     @Test
     fun bottlesOfBeerTest() {
-        val interpreter = SchemeInterpreter()
+        val outputBuffer = StringBuilder()
+        val interpreter = SchemeInterpreter(outputBuffer)
 
         val program =
             """
@@ -122,7 +125,7 @@ Take one down and pass it around, 1 bottle of beer on the wall.
 Take one down and pass it around, 0 bottles of beer on the wall.
 
 No more bottles of beer on the wall, no more bottles of beer.""",
-            outputStreamCapture.toString().trim(),
+            outputBuffer.toString().trim(),
         )
     }
 

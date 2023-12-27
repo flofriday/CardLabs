@@ -2,7 +2,7 @@ package cardscheme
 
 data class TailCallInfo(val func: FuncValue, val args: List<FuncArg>)
 
-class Executor(var environment: Environment, val buffer: StringBuffer) :
+class Executor(var environment: Environment, val outputBuffer: StringBuilder) :
     ExpressionVisitor<SchemeValue>,
     StatementVisitor<Unit> {
     private var tailCallInfo: TailCallInfo? = null
@@ -407,5 +407,9 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
         val tmp = environment
         environment = environment.enclosing!!
         return tmp
+    }
+
+    fun print(output: Any) {
+        outputBuffer.append(output)
     }
 }
