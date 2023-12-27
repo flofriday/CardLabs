@@ -319,4 +319,45 @@ lst""",
             ), (result as ListValue)
         )
     }
+
+    @Test
+    fun reverseFlatList() {
+        val program =
+            """
+            (reverse '(a b c))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        assertEquals(
+            ListValue(
+                SymbolValue("c"),
+                SymbolValue("b"),
+                SymbolValue("a"),
+            ), (result as ListValue)
+        )
+    }
+
+    @Test
+    fun reverseNestedList() {
+        val program =
+            """
+            (reverse '(a (b c) d (e (f))))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        assertEquals(
+            ListValue(
+                ListValue(
+                    SymbolValue("e"),
+                    ListValue(SymbolValue("f"))
+                ),
+                SymbolValue("d"),
+                ListValue(
+                    SymbolValue("b"),
+                    SymbolValue("c"),
+                ),
+                SymbolValue("a"),
+            ), (result as ListValue)
+        )
+    }
 }

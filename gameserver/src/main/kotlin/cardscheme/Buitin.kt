@@ -39,6 +39,7 @@ fun injectBuiltin(environment: Environment) {
     environment.put("cons", NativeFuncValue("cons", Arity(2, 2, false), ::builtInCons))
     environment.put("append", NativeFuncValue("append", Arity(0, Int.MAX_VALUE, false), ::builtInAppend))
     environment.put("length", NativeFuncValue("length", Arity(1, 1, false), ::builtInLength))
+    environment.put("reverse", NativeFuncValue("reverse", Arity(1, 1, false), ::builtInReverse))
 
     environment.put("apply", NativeFuncValue("apply", Arity(2, Int.MAX_VALUE, false), ::builtinApply))
     environment.put("map", NativeFuncValue("map", Arity(2, Int.MAX_VALUE, false), ::builtinMap))
@@ -486,6 +487,21 @@ fun builtInLength(
 ): IntegerValue {
     val arg = verifyType<ListValue>(args.first(), "Expected a list here")
     return IntegerValue(arg.values.size)
+}
+
+/**
+ * Built in reverse for lists.
+ *
+ * Spec: R7RS, Chapter 6.4
+ * Syntax: (reverse list)
+ * Semantics: Returns a newly allocated list consisting of the elements of list in reverse order.
+ */
+fun builtInReverse(
+    args: List<FuncArg>,
+    executor: Executor,
+): ListValue {
+    val arg = verifyType<ListValue>(args.first(), "Expected a list here")
+    return ListValue(arg.values.reversed())
 }
 
 /**
