@@ -297,4 +297,126 @@ No more bottles of beer on the wall, no more bottles of beer.""",
         assert(result is BooleanValue)
         Assert.assertEquals(true, (result as BooleanValue).value)
     }
+
+    /**
+     * Example from the Scheme Cookbook:
+     * https://cookbook.scheme.org/find-index-of-element-in-list/
+     */
+    @Test
+    fun indexInList() {
+        val program =
+            """
+            ; You have a list and a procedure and you want to find the first index for an element for
+            ; which the procedure returns true.
+            (define (list-index fn list)
+              (let iter ((list list) (index 0))
+                (if (null? list)
+                  -1
+                  (let ((item (car list)))
+                    (if (fn item)
+                      index
+                      (iter (cdr list) (+ index 1)))))))
+
+            (define g10 (lambda (x) (> x 10)))
+            (list-index g10 '(1 2 3 4 10 11 12 13 14))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(IntegerValue(5), (result as IntegerValue))
+    }
+
+    /**
+     * Example from the Scheme Cookbook:
+     * https://cookbook.scheme.org/join-list-of-strings-with-delimiter/
+     */
+    @Test
+    fun stringJoinWithLoop() {
+        val program =
+            """
+            (define (string-join lst delimiter)
+              (if (null? lst) ""
+                              (let loop ((result (car lst)) (lst (cdr lst)))
+                                (if (null? lst)
+                                  result
+                                  (loop (string-append result delimiter (car lst))
+                                    (cdr lst))))))
+
+            (string-join '("foo" "bar" "baz") ":")
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is StringValue)
+        Assert.assertEquals(StringValue("foo:bar:baz"), (result as StringValue))
+    }
+
+    /**
+     * Example from the Scheme Cookbook:
+     * https://cookbook.scheme.org/remove-element-from-list/
+     */
+    @Test
+    fun removeElementsFromList() {
+        val program = """
+        (define (remove fn lst)
+          (let loop ((lst lst) (result '()))
+            (if (null? lst)
+              (reverse result)
+              (let ((item (car lst)))
+                (loop (cdr lst)
+                  (if (fn item) result (cons item result)))))))
+
+        (define g10 (lambda (x) (> x 10)))
+
+        (remove g10 '(1 2 3 4 10 11 12 13 14))
+        """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        Assert.assertEquals(ListValue(listOf(1, 2, 3, 4, 10).map { i -> IntegerValue(i) }), (result as ListValue))
+    }
+
+    /**
+     * Example from the Scheme Cookbook:
+     * https://cookbook.scheme.org/compute-pascals-triangle/
+     */
+    @Test
+    fun pascalsTriangle() {
+        val program = """
+        (define (map-iota proc limit)
+          (let loop ((i 0) (result '()))
+            (if (< i limit)
+              (loop (+ i 1) (cons (proc i) result))
+              (reverse result))))
+
+        (define (pascal n k)
+          (cond ((or (= k 0) (= k n))
+                  1)
+            ((< 0 k n)
+              (+ (pascal (- n 1) (- k 1))
+                (pascal (- n 1) k)))
+            (else
+              (error "Bad indexes" n k))))
+
+        (define (pascal-row n)
+          (map-iota (lambda (k) (pascal n k))
+            (+ n 1)))
+
+        (define (pascal-triangle number-of-rows)
+          (map-iota pascal-row number-of-rows))
+
+        (equal?
+          (pascal-triangle 10)
+          '((1)
+            (1 1)
+            (1 2 1)
+            (1 3 3 1)
+            (1 4 6 4 1)
+            (1 5 10 10 5 1)
+            (1 6 15 20 15 6 1)
+            (1 7 21 35 35 21 7 1)
+            (1 8 28 56 70 56 28 8 1)
+            (1 9 36 84 126 126 84 36 9 1))
+        ) 
+        """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
 }
