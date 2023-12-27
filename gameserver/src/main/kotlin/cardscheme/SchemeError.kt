@@ -23,10 +23,13 @@ data class SchemeError(val header: String, val reason: String, val location: Loc
                 output.append("%03d| ".format(location.startline) + line)
                 output.append(reset + "\n")
                 output.append(
-                    " ".repeat(5 + location.startcol - 1) + red + "^".repeat(
-                        location.endcol + 1 - location
-                            .startcol,
-                    ) + reset + "\n",
+                    " ".repeat(5 + location.startcol - 1) + red +
+                        "^".repeat(
+                            location.endcol + 1 -
+                                location
+                                    .startcol,
+                        ) +
+                        reset + "\n",
                 )
             } else {
                 output.append(grey)

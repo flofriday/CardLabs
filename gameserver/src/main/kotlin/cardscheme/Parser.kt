@@ -214,7 +214,8 @@ class Parser {
         val location = Location.merge(lparen.location, rparen.location)
         val namedNode = IdentifierNode(namedToken.value, namedToken.location)
         return LetNode(
-            true, // must be recursive as the generated function can call itself
+            true,
+            // must be recursive as the generated function can call itself
             false,
             mutableListOf(
                 VariableBinding(
