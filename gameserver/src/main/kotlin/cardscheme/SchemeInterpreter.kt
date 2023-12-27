@@ -1,6 +1,5 @@
 package cardscheme
 
-import MemoryMonitor
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorService
@@ -10,6 +9,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 class SchemeInterpreter(
+    private val outputBuffer: StringBuilder = StringBuilder(),
     private val timeLimitInSeconds: Long = 2,
     private val memoryLimit: Long = 1024 * 1024 * 1024,
     private val timeoutBetweenChecks: Long = 100,
@@ -25,10 +25,7 @@ class SchemeInterpreter(
      */
     fun run(program: String): SchemeValue? {
         val tokens = Tokenizer().tokenize(program)
-        val ast = Parser().parse(tokens)
-        Resolver().resolve(ast)
-        val buffer = StringBuffer()
-        return runWithTimeoutAndMemoryLimit({ Executor(env, buffer).execute(ast) })
+        return run(tokens)
     }
 
     /**
@@ -37,8 +34,7 @@ class SchemeInterpreter(
     fun run(tokens: List<Token>): SchemeValue? {
         val ast = Parser().parse(tokens)
         Resolver().resolve(ast)
-        val buffer = StringBuffer()
-        return runWithTimeoutAndMemoryLimit({ Executor(env, buffer).execute(ast) })
+        return runWithTimeoutAndMemoryLimit({ Executor(env, outputBuffer).execute(ast) })
     }
 
     /**
@@ -48,8 +44,7 @@ class SchemeInterpreter(
         func: CallableValue,
         args: List<SchemeValue>,
     ): SchemeValue? {
-        val buffer = StringBuffer()
-        return runWithTimeoutAndMemoryLimit({ Executor(env, buffer).execute(func, args) })
+        return runWithTimeoutAndMemoryLimit({ Executor(env, outputBuffer).execute(func, args) })
     }
 
     private fun runWithTimeoutAndMemoryLimit(function: () -> SchemeValue?): SchemeValue? {

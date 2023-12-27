@@ -2,8 +2,26 @@ package cardscheme
 
 import org.junit.Assert
 import org.junit.Test
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 class SecurityTests {
+    @Test
+    fun writingToStdoutShouldNotWork() {
+        val outputStreamCapture = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStreamCapture))
+        val program =
+            """
+            (begin
+                (display 1)
+                (display 2)
+                (display (+ 1 2)))
+            """.trimIndent()
+        SchemeInterpreter().run(program)
+        Assert.assertEquals("", outputStreamCapture.toString().trim())
+        System.setOut(System.out)
+    }
+
     @Test
     fun openFileShouldFail() {
         val program = """(open-input-file "Readme.md")"""

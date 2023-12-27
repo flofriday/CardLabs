@@ -22,7 +22,7 @@ abstract class SchemeValue {
     }
 }
 
-class VoidValue() : SchemeValue() {
+class VoidValue : SchemeValue() {
     override fun toString(): String {
         return "<#void>"
     }

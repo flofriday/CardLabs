@@ -844,9 +844,9 @@ fun builtinDisplay(
     val arg = args[0].value
 
     if (arg is StringValue) {
-        print(arg.toPureString())
+        executor.printToBuffer(arg.toPureString())
     } else {
-        print(arg)
+        executor.printToBuffer(arg)
     }
 
     return VoidValue()
@@ -856,7 +856,7 @@ fun builtinNewline(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    println()
+    executor.printToBuffer("\n")
     return VoidValue()
 }
 
@@ -864,6 +864,6 @@ fun builtinCool(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    println("cool")
+    executor.printToBuffer("cool\n")
     return VoidValue()
 }

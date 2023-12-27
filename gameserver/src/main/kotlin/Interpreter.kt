@@ -6,6 +6,7 @@ import cardscheme.Tokenizer
 import cardscheme.VoidValue
 import java.io.File
 import kotlin.system.exitProcess
+import kotlin.text.StringBuilder
 
 fun main(args: Array<String>) {
     if (args.size > 1) {
@@ -13,13 +14,14 @@ fun main(args: Array<String>) {
         exitProcess(1)
     }
 
+    // Input file was provided --> print to stdout
     if (args.size == 1) {
         val program = File(args.get(0)).readText()
         val startime = System.currentTimeMillis()
         try {
             SchemeInterpreter().run(program)
         } catch (e: SchemeError) {
-            e.display(program)
+            print(e.format(program))
             exitProcess(1)
         }
         println("Executed in: ${System.currentTimeMillis() - startime}ms")
@@ -30,7 +32,8 @@ fun main(args: Array<String>) {
     println("Made with ❤️ by CardLabs")
     var lineNr = 1
     var completeProgram = ""
-    val interpreter = SchemeInterpreter()
+    val outputBuffer = StringBuilder()
+    val interpreter = SchemeInterpreter(outputBuffer)
     while (true) {
         print(">>> ")
         var program = readln()
@@ -56,8 +59,12 @@ fun main(args: Array<String>) {
             if (obj != null && obj !is VoidValue) {
                 println(obj)
             }
+            if (outputBuffer.isNotEmpty()) {
+                println(outputBuffer.toString())
+                outputBuffer.clear()
+            }
         } catch (e: SchemeError) {
-            e.display(completeProgram)
+            print(e.format(completeProgram))
         }
     }
 }
