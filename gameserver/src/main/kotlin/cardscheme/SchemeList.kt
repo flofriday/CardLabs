@@ -22,11 +22,20 @@ class SchemeList<T>() : MutableCollection<T> {
         size = 0
     }
 
+    fun setHead(obj: T) {
+        node!!.value = obj
+    }
+
     fun tail(): SchemeList<T> {
         if (node == null) {
             return SchemeList<T>()
         }
         return SchemeList<T>(node!!.next, size - 1)
+    }
+
+    fun setTail(other: SchemeList<T>) {
+        node!!.next = other.node
+        size = other.size + 1
     }
 
     override fun addAll(elements: Collection<T>): Boolean {
@@ -63,7 +72,8 @@ class SchemeList<T>() : MutableCollection<T> {
         for (value in this) {
             if (!elements.contains(value)) {
                 hasRemoved = true
-                while (remove(value)) {}
+                while (remove(value)) {
+                }
             }
         }
         return hasRemoved

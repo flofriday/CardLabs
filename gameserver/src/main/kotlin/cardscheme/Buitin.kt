@@ -34,6 +34,8 @@ fun injectBuiltin(environment: Environment) {
     environment.put("list", NativeFuncValue("list", Arity(0, Int.MAX_VALUE, false), ::builtinList))
     environment.put("car", NativeFuncValue("car", Arity(1, 1, false), ::builtinCar))
     environment.put("cdr", NativeFuncValue("cdr", Arity(1, 1, false), ::builtinCdr))
+    environment.put("set-car!", NativeFuncValue("set-car!", Arity(2, 2, false), ::builtinSetCar))
+    environment.put("set-cdr!", NativeFuncValue("set-cdr!", Arity(2, 2, false), ::builtinSetCdr))
     environment.put("cons", NativeFuncValue("cons", Arity(2, 2, false), ::builtInCons))
     environment.put("append", NativeFuncValue("append", Arity(0, Int.MAX_VALUE, false), ::builtInAppend))
     environment.put("length", NativeFuncValue("length", Arity(1, 1, false), ::builtInLength))
@@ -347,6 +349,47 @@ fun builtinCdr(
     }
 
     return ListValue(list.values.tail())
+}
+
+/**
+ * Builtin set-car! function.
+ *
+ * Spec: R7RS, chapter 6.4
+ * Syntax: (set-car! pair obj)
+ * Semantics: Stores obj in the car field of pair.
+ */
+fun builtinSetCar(
+    args: List<FuncArg>,
+    executor: Executor,
+): SchemeValue {
+    val list = verifyType<ListValue>(args.first(), "I expected a list here")
+    if (list.values.isEmpty()) {
+        throw SchemeError("Invalid Argument", "The list to `set-car!` cannot be empty", args.first().location, null)
+    }
+    val obj = args[1].value
+    list.values.setHead(obj)
+    return VoidValue()
+}
+
+/**
+ * Builtin set-cdr! function.
+ *
+ * Spec: R7RS, chapter 6.4
+ * Syntax: (set-cdr! pair obj)
+ * Semantics: Stores obj in the cdr field of pair.
+ */
+fun builtinSetCdr(
+    args: List<FuncArg>,
+    executor: Executor,
+): SchemeValue {
+    val list = verifyType<ListValue>(args.first(), "I expected a list here")
+    if (list.values.isEmpty()) {
+        throw SchemeError("Invalid Argument", "The list to `set-cdr!` cannot be empty", args.first().location, null)
+    }
+    val obj = args[1].value
+    val objList = if (obj is ListValue) obj else ListValue(obj)
+    list.values.setTail(objList.values)
+    return VoidValue()
 }
 
 /**

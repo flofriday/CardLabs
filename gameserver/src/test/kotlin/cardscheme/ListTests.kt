@@ -263,4 +263,60 @@ lst""",
             """.trimIndent()
         Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
+
+    @Test
+    fun setCarOfList() {
+        val program =
+            """
+            (define l '(1 2 3))
+            (set-car! l 'a)
+            l
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        assertEquals(
+            ListValue(
+                SymbolValue("a"),
+                IntegerValue(2),
+                IntegerValue(3)
+            ), (result as ListValue)
+        )
+    }
+
+    @Test
+    fun setCdrOfListToSymbol() {
+        val program =
+            """
+            (define l '(1 2 3))
+            (set-cdr! l 'a)
+            l
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        assertEquals(
+            ListValue(
+                IntegerValue(1),
+                SymbolValue("a"),
+            ), (result as ListValue)
+        )
+    }
+
+    @Test
+    fun setCdrOfListToList() {
+        val program =
+            """
+            (define l '(1 2 3))
+            (set-cdr! l '(a b))
+            l
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        assertEquals(
+            ListValue(
+                IntegerValue(1),
+                SymbolValue("a"),
+                SymbolValue("b"),
+            ), (result as ListValue)
+        )
+    }
 }
