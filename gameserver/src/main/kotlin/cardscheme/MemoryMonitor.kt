@@ -1,3 +1,5 @@
+package cardscheme
+
 class MemoryMonitor(
     private val threadToInterrupt: Thread,
     private val memoryLimit: Long,

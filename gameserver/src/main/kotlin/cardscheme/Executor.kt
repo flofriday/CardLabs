@@ -409,7 +409,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder) :
         return tmp
     }
 
-    fun print(output: Any) {
+    fun printToBuffer(output: Any) {
         outputBuffer.append(output)
     }
 }
