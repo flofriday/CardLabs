@@ -227,7 +227,7 @@ class Parser {
             BodyNode(
                 listOf(),
                 mutableListOf(
-                    LetNode(false, false, bindings, body, location),
+                    ApplicationNode(listOf(namedNode) + bindings.map { b -> b.init }, false, location),
                 ),
                 location,
             ),
