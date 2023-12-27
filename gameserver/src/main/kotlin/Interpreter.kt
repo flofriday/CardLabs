@@ -18,12 +18,15 @@ fun main(args: Array<String>) {
     if (args.size == 1) {
         val program = File(args.get(0)).readText()
         val startime = System.currentTimeMillis()
+        val outBuffer = StringBuilder()
+        val interpreter = SchemeInterpreter(outBuffer)
         try {
-            SchemeInterpreter().run(program)
+            interpreter.run(program)
         } catch (e: SchemeError) {
             print(e.format(program))
             exitProcess(1)
         }
+        println(outBuffer.toString())
         println("Executed in: ${System.currentTimeMillis() - startime}ms")
         exitProcess(0)
     }
