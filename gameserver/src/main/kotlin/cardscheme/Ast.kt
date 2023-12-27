@@ -69,7 +69,7 @@ abstract class StatementNode(location: Location) : AstNode(location) {
 class ApplicationNode(val expressions: List<ExpressionNode>, var isLast: Boolean = false, location: Location) :
     ExpressionNode(location) {
     override fun dump(indent: Int): String {
-        var out = getIndentation(indent) + "Application\n"
+        var out = getIndentation(indent) + "Application (isLast=$isLast)\n"
         for (child in expressions) {
             out += child.dump(indent + 1)
         }
@@ -402,7 +402,7 @@ class IfNode(
 ) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) +
-            "If:\n${condition.dump(indent)} \n${thenExpression.dump(indent + 1)} \n${
+            "If:\n${condition.dump(indent + 1)} \n${thenExpression.dump(indent + 1)} \n${
                 elseExpression?.dump(
                     indent + 1,
                 )

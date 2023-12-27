@@ -334,8 +334,10 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
             return func.func(args, this)
         } else if (func is FuncValue) {
             val old = environment
+
             // environment for the lambda function
             environment = func.env
+
             // environment for the CONTENT of the lambda function
             pushEnv()
             insertArguments(func, args)
@@ -354,6 +356,7 @@ class Executor(var environment: Environment, val buffer: StringBuffer) :
                     // than we can keep as the syntax of scheme doesn't allow that variables are
                     // leaked between iteration.
                     popEnv()
+                    environment = tfunc.env
                     pushEnv()
                 }
 

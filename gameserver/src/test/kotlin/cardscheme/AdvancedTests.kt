@@ -153,4 +153,25 @@ No more bottles of beer on the wall, no more bottles of beer.""",
         assert(result is StringValue)
         Assert.assertEquals("123", (result as StringValue).value)
     }
+
+    /**
+     * Example from Wikipedia:
+     * https://en.wikipedia.org/wiki/Scheme_(programming_language)#Proper_tail_recursion
+     */
+    @Test
+    fun listOfSquares() {
+        val program =
+            """
+            (define (list-of-squares n)
+                (let loop ((i n) (res '()))
+                    (if (< i 0)
+                        res
+                        (loop (- i 1) (cons (* i i) res)))))
+
+            (list-of-squares 9)
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        Assert.assertEquals(ListValue((0..9).map { i -> IntegerValue(i * i) }), (result as ListValue))
+    }
 }

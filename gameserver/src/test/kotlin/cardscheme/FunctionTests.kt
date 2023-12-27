@@ -294,4 +294,40 @@ class FunctionTests {
             (result as ListValue),
         )
     }
+
+    @Test
+    fun tailCallSkipTest() {
+        // At some point the tail call optimization skipped some calls in this code.
+        val program =
+            """
+            (define x 0)
+            (let loop ((n 1))
+              (if (> n 10)
+                '()
+                (begin
+                  (set! x n)
+                  (loop (+ n 1)))))
+
+            x 
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(IntegerValue(10), result as IntegerValue)
+    }
+
+    @Test
+    fun tailCallCorrectEnv() {
+        // There was a bug at one point where tail call wouldn't activate the correct environment causing `n` not be
+        // found in the closure.
+        val program =
+            """
+            (define f (let ((n 42)) (lambda (a) (+ a n))))
+
+            (define main (lambda () (f 1)))
+            (main)
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(IntegerValue(43), result as IntegerValue)
+    }
 }
