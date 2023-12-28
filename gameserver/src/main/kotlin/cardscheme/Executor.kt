@@ -2,10 +2,11 @@ package cardscheme
 
 data class TailCallInfo(val func: FuncValue, val args: List<FuncArg>)
 
-class Executor(var environment: Environment, val outputBuffer: StringBuilder) :
+class Executor(var environment: Environment, val outputBuffer: StringBuilder, val instructionLimit: Long) :
     ExpressionVisitor<SchemeValue>,
     StatementVisitor<Unit> {
     private var tailCallInfo: TailCallInfo? = null
+    private val securityMonitor = SecurityMonitor(instructionLimit)
 
     /**
      * On error the internal environment may be messed up and repeated calls will result in a faulty execution.
@@ -43,26 +44,32 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder) :
     }
 
     override fun visitedBy(node: BoolNode): SchemeValue {
+        securityMonitor.step(node)
         return BooleanValue(node.value)
     }
 
     override fun visitedBy(node: IntNode): IntegerValue {
+        securityMonitor.step(node)
         return IntegerValue(node.value)
     }
 
     override fun visitedBy(node: FloatNode): SchemeValue {
+        securityMonitor.step(node)
         return FloatValue(node.value)
     }
 
     override fun visitedBy(node: StringNode): SchemeValue {
+        securityMonitor.step(node)
         return StringValue(node.value)
     }
 
     override fun visitedBy(node: CharNode): SchemeValue {
+        securityMonitor.step(node)
         return CharacterValue(node.value)
     }
 
     override fun visitedBy(node: IdentifierNode): SchemeValue {
+        securityMonitor.step(node)
         val res = environment.get(node.identifier)
         if (res == null) {
             throw SchemeError(
@@ -76,15 +83,18 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder) :
     }
 
     override fun visitedBy(node: SymbolNode): SchemeValue {
+        securityMonitor.step(node)
         return SymbolValue(node.name)
     }
 
     override fun visitedBy(node: DefineNode) {
+        securityMonitor.step(node)
         val value = node.body.visit(this)
         environment.put(node.name.identifier, value)
     }
 
     override fun visitedBy(node: LambdaNode): FuncValue {
+        securityMonitor.step(node)
         return FuncValue(
             node.params.map { a -> a.identifier },
             Arity(if (node.isVarArg) node.params.size - 1 else node.params.size, node.params.size, node.isVarArg),
@@ -193,6 +203,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder) :
     }
 
     override fun visitedBy(node: LetNode): SchemeValue {
+        securityMonitor.step(node)
         if (!node.star && !node.rec) {
             return evalLet(node)
         } else if (node.star && !node.rec) {
@@ -213,6 +224,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder) :
      * value is stored in the location to which variable is bound.
      */
     override fun visitedBy(node: SetNode): SchemeValue {
+        securityMonitor.step(node)
         val value = node.expression.visit(this)
         try {
             environment.update(node.name.identifier, value)
@@ -232,6 +244,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder) :
      * then the result of the expression is unspecified.
      */
     override fun visitedBy(node: IfNode): SchemeValue {
+        securityMonitor.step(node)
         val condition = node.condition.visit(this)
 
         if (condition.isTruthy()) {
@@ -262,6 +275,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder) :
      *
      */
     override fun visitedBy(node: DoNode): SchemeValue {
+        securityMonitor.step(node)
         val initValues = node.variableInitSteps.map { t -> t.init.visit(this) }
         pushEnv()
         node.variableInitSteps
@@ -287,6 +301,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder) :
     }
 
     override fun visitedBy(node: BodyNode): SchemeValue {
+        securityMonitor.step(node)
         for (d in node.definitions) {
             d.visit(this)
         }
@@ -373,6 +388,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder) :
     }
 
     override fun visitedBy(node: ApplicationNode): SchemeValue {
+        securityMonitor.step(node)
         val func = node.expressions.first().visit(this)
 
         if (func !is CallableValue) {

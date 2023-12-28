@@ -1,6 +1,6 @@
 package cardscheme
 
-class TimeoutMonitor(private val instructionLimit: Long) {
+class SecurityMonitor(private val instructionLimit: Long) {
     private var instructionCount = 0
     fun step(node: AstNode) {
         instructionCount++

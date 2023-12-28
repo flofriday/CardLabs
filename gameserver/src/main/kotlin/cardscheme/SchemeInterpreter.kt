@@ -1,18 +1,13 @@
 package cardscheme
 
-import java.util.concurrent.Callable
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
-
 class SchemeInterpreter(
     private val outputBuffer: StringBuilder = StringBuilder(),
-    private val timeLimitInSeconds: Long = 2,
+    /* private val timeLimitInSeconds: Long = 2,
     private val memoryLimit: Long = 1024 * 1024 * 1024,
     private val timeoutBetweenChecks: Long = 100,
+    */
+    private val instructionLimit: Long = 100000,
+    private val memoryLimit: Long = 1024 * 1024 * 1024,
 ) {
     var env = Environment(null, HashMap())
 
@@ -34,7 +29,7 @@ class SchemeInterpreter(
     fun run(tokens: List<Token>): SchemeValue? {
         val ast = Parser().parse(tokens)
         Resolver().resolve(ast)
-        return runWithTimeoutAndMemoryLimit({ Executor(env, outputBuffer).execute(ast) })
+        return Executor(env, outputBuffer, instructionLimit).execute(ast)
     }
 
     /**
@@ -44,9 +39,10 @@ class SchemeInterpreter(
         func: CallableValue,
         args: List<SchemeValue>,
     ): SchemeValue? {
-        return runWithTimeoutAndMemoryLimit({ Executor(env, outputBuffer).execute(func, args) })
+        return Executor(env, outputBuffer, instructionLimit).execute(func, args)
     }
 
+    /*
     private fun runWithTimeoutAndMemoryLimit(function: () -> SchemeValue?): SchemeValue? {
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
         val memoryMonitorThread = Thread(MemoryMonitor(Thread.currentThread(), memoryLimit, timeoutBetweenChecks))
@@ -88,4 +84,5 @@ class SchemeInterpreter(
             executor.shutdownNow()
         }
     }
+    */
 }
