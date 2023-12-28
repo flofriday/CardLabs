@@ -2,11 +2,10 @@ package cardscheme
 
 data class TailCallInfo(val func: FuncValue, val args: List<FuncArg>)
 
-class Executor(var environment: Environment, val outputBuffer: StringBuilder, val instructionLimit: Long) :
+class Executor(var environment: Environment, val outputBuffer: StringBuilder, val schemeSecurityMonitor: SchemeSecurityMonitor) :
     ExpressionVisitor<SchemeValue>,
     StatementVisitor<Unit> {
     private var tailCallInfo: TailCallInfo? = null
-    private val securityMonitor = SecurityMonitor(instructionLimit)
 
     /**
      * On error the internal environment may be messed up and repeated calls will result in a faulty execution.
@@ -44,32 +43,32 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
     }
 
     override fun visitedBy(node: BoolNode): SchemeValue {
-        securityMonitor.step(node)
-        return BooleanValue(node.value)
+        schemeSecurityMonitor.step(node)
+        return BooleanValue(node.value, schemeSecurityMonitor)
     }
 
     override fun visitedBy(node: IntNode): IntegerValue {
-        securityMonitor.step(node)
-        return IntegerValue(node.value)
+        schemeSecurityMonitor.step(node)
+        return IntegerValue(node.value, schemeSecurityMonitor)
     }
 
     override fun visitedBy(node: FloatNode): SchemeValue {
-        securityMonitor.step(node)
-        return FloatValue(node.value)
+        schemeSecurityMonitor.step(node)
+        return FloatValue(node.value, schemeSecurityMonitor)
     }
 
     override fun visitedBy(node: StringNode): SchemeValue {
-        securityMonitor.step(node)
-        return StringValue(node.value)
+        schemeSecurityMonitor.step(node)
+        return StringValue(node.value, schemeSecurityMonitor)
     }
 
     override fun visitedBy(node: CharNode): SchemeValue {
-        securityMonitor.step(node)
-        return CharacterValue(node.value)
+        schemeSecurityMonitor.step(node)
+        return CharacterValue(node.value, schemeSecurityMonitor)
     }
 
     override fun visitedBy(node: IdentifierNode): SchemeValue {
-        securityMonitor.step(node)
+        schemeSecurityMonitor.step(node)
         val res = environment.get(node.identifier)
         if (res == null) {
             throw SchemeError(
@@ -83,23 +82,24 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
     }
 
     override fun visitedBy(node: SymbolNode): SchemeValue {
-        securityMonitor.step(node)
-        return SymbolValue(node.name)
+        schemeSecurityMonitor.step(node)
+        return SymbolValue(node.name, schemeSecurityMonitor)
     }
 
     override fun visitedBy(node: DefineNode) {
-        securityMonitor.step(node)
+        schemeSecurityMonitor.step(node)
         val value = node.body.visit(this)
         environment.put(node.name.identifier, value)
     }
 
     override fun visitedBy(node: LambdaNode): FuncValue {
-        securityMonitor.step(node)
+        schemeSecurityMonitor.step(node)
         return FuncValue(
             node.params.map { a -> a.identifier },
             Arity(if (node.isVarArg) node.params.size - 1 else node.params.size, node.params.size, node.isVarArg),
             node.body,
             environment,
+            schemeSecurityMonitor,
         )
     }
 
@@ -166,7 +166,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
      */
     private fun evalLetRec(node: LetNode): SchemeValue {
         pushEnv()
-        node.bindings.forEach { b -> environment.put(b.name.identifier, VoidValue()) }
+        node.bindings.forEach { b -> environment.put(b.name.identifier, VoidValue(schemeSecurityMonitor)) }
         val values = node.bindings.map { b -> b.init.visit(this) }
         node.bindings.map { b -> b.name.identifier }.zip(values).forEach { (n, v) -> environment.update(n, v) }
         val result = node.body.visit(this)
@@ -191,7 +191,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
      */
     private fun evalLetRecStar(node: LetNode): SchemeValue {
         pushEnv()
-        node.bindings.forEach { b -> environment.put(b.name.identifier, VoidValue()) }
+        node.bindings.forEach { b -> environment.put(b.name.identifier, VoidValue(schemeSecurityMonitor)) }
         for (binding in node.bindings) {
             val value = binding.init.visit(this)
             environment.update(binding.name.identifier, value)
@@ -203,7 +203,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
     }
 
     override fun visitedBy(node: LetNode): SchemeValue {
-        securityMonitor.step(node)
+        schemeSecurityMonitor.step(node)
         if (!node.star && !node.rec) {
             return evalLet(node)
         } else if (node.star && !node.rec) {
@@ -224,14 +224,14 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
      * value is stored in the location to which variable is bound.
      */
     override fun visitedBy(node: SetNode): SchemeValue {
-        securityMonitor.step(node)
+        schemeSecurityMonitor.step(node)
         val value = node.expression.visit(this)
         try {
             environment.update(node.name.identifier, value)
         } catch (e: SchemeError) {
             throw SchemeError(e.header, e.reason, node.name.location, e.tip)
         }
-        return VoidValue()
+        return VoidValue(schemeSecurityMonitor)
     }
 
     /**
@@ -244,7 +244,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
      * then the result of the expression is unspecified.
      */
     override fun visitedBy(node: IfNode): SchemeValue {
-        securityMonitor.step(node)
+        schemeSecurityMonitor.step(node)
         val condition = node.condition.visit(this)
 
         if (condition.isTruthy()) {
@@ -255,7 +255,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
             return node.elseExpression.visit(this)
         }
 
-        return VoidValue()
+        return VoidValue(schemeSecurityMonitor)
     }
 
     /**
@@ -275,7 +275,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
      *
      */
     override fun visitedBy(node: DoNode): SchemeValue {
-        securityMonitor.step(node)
+        schemeSecurityMonitor.step(node)
         val initValues = node.variableInitSteps.map { t -> t.init.visit(this) }
         pushEnv()
         node.variableInitSteps
@@ -295,13 +295,13 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
                 .map { (t, v) -> if (v != null) environment.put(t.identifier, v) }
         }
 
-        val result = node.body?.visit(this) ?: VoidValue()
+        val result = node.body?.visit(this) ?: VoidValue(schemeSecurityMonitor)
         popEnv()
         return result
     }
 
     override fun visitedBy(node: BodyNode): SchemeValue {
-        securityMonitor.step(node)
+        schemeSecurityMonitor.step(node)
         for (d in node.definitions) {
             d.visit(this)
         }
@@ -323,7 +323,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
 
         // Then bundle all other into a list and bind them to the last variable
         val name = func.params.last()
-        val list = ListValue(args.drop(func.params.size - 1).map { a -> a.value })
+        val list = ListValue(args.drop(func.params.size - 1).map { a -> a.value }, schemeSecurityMonitor)
         environment.put(name, list)
     }
 
@@ -388,7 +388,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
     }
 
     override fun visitedBy(node: ApplicationNode): SchemeValue {
-        securityMonitor.step(node)
+        schemeSecurityMonitor.step(node)
         val func = node.expressions.first().visit(this)
 
         if (func !is CallableValue) {
@@ -407,7 +407,7 @@ class Executor(var environment: Environment, val outputBuffer: StringBuilder, va
         // Tail call optimization
         if (node.isLast && func is FuncValue) {
             this.tailCallInfo = TailCallInfo(func, args)
-            return VoidValue()
+            return VoidValue(schemeSecurityMonitor)
         }
 
         try {

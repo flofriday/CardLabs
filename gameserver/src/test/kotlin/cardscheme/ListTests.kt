@@ -10,7 +10,7 @@ class ListTests {
         val program = "(quote (1 2 3))"
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(1), IntegerValue(2), IntegerValue(3)), (result as ListValue).values.toList())
+        assertEquals(listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)), (result as ListValue).values.toList())
     }
 
     @Test
@@ -18,7 +18,7 @@ class ListTests {
         val program = "'(1 2 3)"
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(1), IntegerValue(2), IntegerValue(3)), (result as ListValue).values.toList())
+        assertEquals(listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)), (result as ListValue).values.toList())
     }
 
     @Test
@@ -27,7 +27,7 @@ class ListTests {
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
         assertEquals(
-            listOf(IntegerValue(1), IntegerValue(4), IntegerValue(9), IntegerValue(16), IntegerValue(25)),
+            listOf(IntegerValue(1, null), IntegerValue(4, null), IntegerValue(9, null), IntegerValue(16, null), IntegerValue(25, null)),
             (result as ListValue).values.toList(),
         )
     }
@@ -37,7 +37,7 @@ class ListTests {
         val program = "(map + '(1 2 3) '(4 5 6 7))"
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(5), IntegerValue(7), IntegerValue(9)), (result as ListValue).values.toList())
+        assertEquals(listOf(IntegerValue(5, null), IntegerValue(7, null), IntegerValue(9, null)), (result as ListValue).values.toList())
     }
 
     @Test
@@ -62,7 +62,7 @@ class ListTests {
         val program = "(cdr (list 1 2 3))"
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(2), IntegerValue(3)), (result as ListValue).values.toList())
+        assertEquals(listOf(IntegerValue(2, null), IntegerValue(3, null)), (result as ListValue).values.toList())
     }
 
     @Test
@@ -74,28 +74,28 @@ class ListTests {
 lst""",
             )
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(1), IntegerValue(2)), (result as ListValue).values.toList())
+        assertEquals(listOf(IntegerValue(1, null), IntegerValue(2, null)), (result as ListValue).values.toList())
 
         // Prepend to a copy of the list
         result = interpreter.run("(cons 0 lst)")
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(0), IntegerValue(1), IntegerValue(2)), (result as ListValue).values.toList())
+        assertEquals(listOf(IntegerValue(0, null), IntegerValue(1, null), IntegerValue(2, null)), (result as ListValue).values.toList())
 
         // Ensure the list hasn't changed
         result = interpreter.run("lst")
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(1), IntegerValue(2)), (result as ListValue).values.toList())
+        assertEquals(listOf(IntegerValue(1, null), IntegerValue(2, null)), (result as ListValue).values.toList())
 
         result = interpreter.run("(append lst (list 3 4))")
         assert(result is ListValue)
         assertEquals(
-            listOf(IntegerValue(1), IntegerValue(2), IntegerValue(3), IntegerValue(4)),
+            listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null), IntegerValue(4, null)),
             (result as ListValue).values.toList(),
         )
 
         result = interpreter.run("lst")
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(1), IntegerValue(2)), (result as ListValue).values.toList())
+        assertEquals(listOf(IntegerValue(1, null), IntegerValue(2, null)), (result as ListValue).values.toList())
 
         result = interpreter.run("(car lst)")
         assert(result is IntegerValue)
@@ -103,7 +103,7 @@ lst""",
 
         result = interpreter.run("(cdr lst)")
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(2)), (result as ListValue).values.toList())
+        assertEquals(listOf(IntegerValue(2, null)), (result as ListValue).values.toList())
 
         result = interpreter.run("(cdr (cdr lst))")
         assert(result is ListValue)
@@ -121,8 +121,9 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                IntegerValue(1),
-                ListValue(IntegerValue(2), IntegerValue(3)),
+                null,
+                IntegerValue(1, null),
+                ListValue(null, IntegerValue(2, null), IntegerValue(3, null)),
             ),
             result as ListValue,
         )
@@ -135,12 +136,13 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                IntegerValue(1),
-                FloatValue(3.14.toFloat()),
-                BooleanValue(true),
-                BooleanValue(false),
-                StringValue("text"),
-                CharacterValue('c'),
+                null,
+                IntegerValue(1, null),
+                FloatValue(3.14.toFloat(), null),
+                BooleanValue(true, null),
+                BooleanValue(false, null),
+                StringValue("text", null),
+                CharacterValue('c', null),
             ),
             result as ListValue,
         )
@@ -153,8 +155,9 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                SymbolValue("display"),
-                IntegerValue(34),
+                null,
+                SymbolValue("display", null),
+                IntegerValue(34, null),
             ),
             result as ListValue,
         )
@@ -168,7 +171,8 @@ lst""",
         assertEquals(
             ListValue(
                 "begin cond define do else if lambda let let* letrec letrec* set! quote".split(" ")
-                    .map { kw -> SymbolValue(kw) },
+                    .map { kw -> SymbolValue(kw, null) },
+                null,
             ),
             result as ListValue,
         )
@@ -276,10 +280,12 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                SymbolValue("a"),
-                IntegerValue(2),
-                IntegerValue(3)
-            ), (result as ListValue)
+                null,
+                SymbolValue("a", null),
+                IntegerValue(2, null),
+                IntegerValue(3, null),
+            ),
+            (result as ListValue),
         )
     }
 
@@ -295,9 +301,11 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                IntegerValue(1),
-                SymbolValue("a"),
-            ), (result as ListValue)
+                null,
+                IntegerValue(1, null),
+                SymbolValue("a", null),
+            ),
+            (result as ListValue),
         )
     }
 
@@ -313,10 +321,12 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                IntegerValue(1),
-                SymbolValue("a"),
-                SymbolValue("b"),
-            ), (result as ListValue)
+                null,
+                IntegerValue(1, null),
+                SymbolValue("a", null),
+                SymbolValue("b", null),
+            ),
+            (result as ListValue),
         )
     }
 
@@ -330,10 +340,12 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                SymbolValue("c"),
-                SymbolValue("b"),
-                SymbolValue("a"),
-            ), (result as ListValue)
+                null,
+                SymbolValue("c", null),
+                SymbolValue("b", null),
+                SymbolValue("a", null),
+            ),
+            (result as ListValue),
         )
     }
 
@@ -347,17 +359,21 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
+                null,
                 ListValue(
-                    SymbolValue("e"),
-                    ListValue(SymbolValue("f"))
+                    null,
+                    SymbolValue("e", null),
+                    ListValue(null, SymbolValue("f", null)),
                 ),
-                SymbolValue("d"),
+                SymbolValue("d", null),
                 ListValue(
-                    SymbolValue("b"),
-                    SymbolValue("c"),
+                    null,
+                    SymbolValue("b", null),
+                    SymbolValue("c", null),
                 ),
-                SymbolValue("a"),
-            ), (result as ListValue)
+                SymbolValue("a", null),
+            ),
+            (result as ListValue),
         )
     }
 }

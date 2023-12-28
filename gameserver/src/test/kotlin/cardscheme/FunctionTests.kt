@@ -149,7 +149,7 @@ class FunctionTests {
                 .trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is SchemeValue)
-        Assert.assertEquals(ListValue(intArrayOf(1, 2, 3).map { i -> IntegerValue(i) }), (result as ListValue))
+        Assert.assertEquals(ListValue(intArrayOf(1, 2, 3).map { i -> IntegerValue(i, null) }, null), (result as ListValue))
     }
 
     @Test
@@ -161,7 +161,7 @@ class FunctionTests {
                 .trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is SchemeValue)
-        Assert.assertEquals(ListValue(IntegerValue(42)), (result as ListValue))
+        Assert.assertEquals(ListValue(null, IntegerValue(42, null)), (result as ListValue))
     }
 
     @Test
@@ -173,7 +173,7 @@ class FunctionTests {
                 .trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is SchemeValue)
-        Assert.assertEquals(ListValue(), (result as ListValue))
+        Assert.assertEquals(ListValue(null), (result as ListValue))
     }
 
     @Test
@@ -187,9 +187,10 @@ class FunctionTests {
         assert(result is SchemeValue)
         Assert.assertEquals(
             ListValue(
-                IntegerValue(1),
-                IntegerValue(2),
-                ListValue(IntegerValue(3), IntegerValue(4), IntegerValue(5), IntegerValue(6)),
+                null,
+                IntegerValue(1, null),
+                IntegerValue(2, null),
+                ListValue(null, IntegerValue(3, null), IntegerValue(4, null), IntegerValue(5, null), IntegerValue(6, null)),
             ),
             (result as ListValue),
         )
@@ -206,9 +207,10 @@ class FunctionTests {
         assert(result is SchemeValue)
         Assert.assertEquals(
             ListValue(
-                IntegerValue(1),
-                IntegerValue(2),
-                ListValue(),
+                null,
+                IntegerValue(1, null),
+                IntegerValue(2, null),
+                ListValue(null),
             ),
             (result as ListValue),
         )
@@ -236,9 +238,10 @@ class FunctionTests {
         assert(result is SchemeValue)
         Assert.assertEquals(
             ListValue(
-                IntegerValue(1),
-                IntegerValue(2),
-                ListValue(IntegerValue(3), IntegerValue(4), IntegerValue(5), IntegerValue(6)),
+                null,
+                IntegerValue(1, null),
+                IntegerValue(2, null),
+                ListValue(null, IntegerValue(3, null), IntegerValue(4, null), IntegerValue(5, null), IntegerValue(6, null)),
             ),
             (result as ListValue),
         )
@@ -256,9 +259,10 @@ class FunctionTests {
         assert(result is SchemeValue)
         Assert.assertEquals(
             ListValue(
-                IntegerValue(1),
-                IntegerValue(2),
-                ListValue(),
+                null,
+                IntegerValue(1, null),
+                IntegerValue(2, null),
+                ListValue(null),
             ),
             (result as ListValue),
         )
@@ -287,9 +291,10 @@ class FunctionTests {
         assert(result is SchemeValue)
         Assert.assertEquals(
             ListValue(
-                IntegerValue(1),
-                IntegerValue(2),
-                IntegerValue(3),
+                null,
+                IntegerValue(1, null),
+                IntegerValue(2, null),
+                IntegerValue(3, null),
             ),
             (result as ListValue),
         )
@@ -312,7 +317,7 @@ class FunctionTests {
             """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
-        Assert.assertEquals(IntegerValue(10), result as IntegerValue)
+        Assert.assertEquals(IntegerValue(10, null), result as IntegerValue)
     }
 
     @Test
@@ -328,6 +333,6 @@ class FunctionTests {
             """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
-        Assert.assertEquals(IntegerValue(43), result as IntegerValue)
+        Assert.assertEquals(IntegerValue(43, null), result as IntegerValue)
     }
 }

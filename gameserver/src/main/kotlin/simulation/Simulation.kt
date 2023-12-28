@@ -98,15 +98,15 @@ class Simulation {
             }
 
             val players =
-                this.players.map { p -> VectorValue(mutableListOf(StringValue(p.bot.name), IntegerValue(p.hand.size))) }
+                this.players.map { p -> VectorValue(mutableListOf(StringValue(p.bot.name, null), IntegerValue(p.hand.size, null)), null) }
 
             result =
                 player.interpreter.run(
                     func,
                     listOf(
                         encodeCard(topCard),
-                        ListValue(player.hand.map { c -> encodeCard(c) }),
-                        ListValue(players),
+                        ListValue(player.hand.map { c -> encodeCard(c) }, null),
+                        ListValue(players, null),
                     ),
                 )
         } catch (e: SchemeError) {

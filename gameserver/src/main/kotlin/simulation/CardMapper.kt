@@ -16,7 +16,7 @@ fun encodeCard(card: Card): SchemeValue {
             is ChooseDrawCard -> "chooseDraw"
             else -> throw Exception("Invalid case")
         }
-    return VectorValue(mutableListOf<SchemeValue>(SymbolValue(card.color.toString().lowercase()), StringValue(type)))
+    return VectorValue(mutableListOf<SchemeValue>(SymbolValue(card.color.toString().lowercase(), null), StringValue(type, null)), null)
 }
 
 fun decodeCard(value: SchemeValue): Card {

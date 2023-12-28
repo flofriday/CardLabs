@@ -175,7 +175,7 @@ No more bottles of beer on the wall, no more bottles of beer.""",
             """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        Assert.assertEquals(ListValue((0..9).map { i -> IntegerValue(i * i) }), (result as ListValue))
+        Assert.assertEquals(ListValue((0..9).map { i -> IntegerValue(i * i, null) }, null), (result as ListValue))
     }
 
     /**
@@ -228,7 +228,7 @@ No more bottles of beer on the wall, no more bottles of beer.""",
             """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
-        Assert.assertEquals(IntegerValue(4), (result as IntegerValue))
+        Assert.assertEquals(IntegerValue(4, null), (result as IntegerValue))
     }
 
     /**
@@ -322,7 +322,7 @@ No more bottles of beer on the wall, no more bottles of beer.""",
             """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is IntegerValue)
-        Assert.assertEquals(IntegerValue(5), (result as IntegerValue))
+        Assert.assertEquals(IntegerValue(5, null), (result as IntegerValue))
     }
 
     /**
@@ -345,7 +345,7 @@ No more bottles of beer on the wall, no more bottles of beer.""",
             """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is StringValue)
-        Assert.assertEquals(StringValue("foo:bar:baz"), (result as StringValue))
+        Assert.assertEquals(StringValue("foo:bar:baz", null), (result as StringValue))
     }
 
     /**
@@ -369,7 +369,7 @@ No more bottles of beer on the wall, no more bottles of beer.""",
         """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        Assert.assertEquals(ListValue(listOf(1, 2, 3, 4, 10).map { i -> IntegerValue(i) }), (result as ListValue))
+        Assert.assertEquals(ListValue(listOf(1, 2, 3, 4, 10).map { i -> IntegerValue(i, null) }, null), (result as ListValue))
     }
 
     /**
@@ -500,36 +500,43 @@ No more bottles of beer on the wall, no more bottles of beer.""",
         assert(result is ListValue)
         Assert.assertEquals(
             ListValue(
-                ListValue(listOf(1, 2, 3).map { i -> IntegerValue(i) }),
-                ListValue(listOf(2, 3, 4).map { i -> IntegerValue(i) }),
-                ListValue(listOf(3, 2, 1).map { i -> IntegerValue(i) }),
-            ), (result as ListValue)
+                null,
+                ListValue(listOf(1, 2, 3).map { i -> IntegerValue(i, null) }, null),
+                ListValue(listOf(2, 3, 4).map { i -> IntegerValue(i, null) }, null),
+                ListValue(listOf(3, 2, 1).map { i -> IntegerValue(i, null) }, null),
+            ),
+            (result as ListValue),
         )
 
         result = interpreter.run("(matrix-mul M1 '((2 3 1) (1 2 1) (1 3 1)))")
         assert(result is ListValue)
         Assert.assertEquals(
             ListValue(
-                ListValue(listOf(7, 16, 6).map { i -> IntegerValue(i) }),
-                ListValue(listOf(11, 24, 9).map { i -> IntegerValue(i) }),
-                ListValue(listOf(9, 16, 6).map { i -> IntegerValue(i) }),
-            ), (result as ListValue)
+                null,
+                ListValue(listOf(7, 16, 6).map { i -> IntegerValue(i, null) }, null),
+                ListValue(listOf(11, 24, 9).map { i -> IntegerValue(i, null) }, null),
+                ListValue(listOf(9, 16, 6).map { i -> IntegerValue(i, null) }, null),
+            ),
+            (result as ListValue),
         )
 
         result = interpreter.run("(matrix-sum M1 M2)")
         assert(result is ListValue)
         Assert.assertEquals(
             ListValue(
-                ListValue(listOf(2, 2, 3).map { i -> IntegerValue(i) }),
-                ListValue(listOf(2, 4, 4).map { i -> IntegerValue(i) }),
-                ListValue(listOf(3, 2, 2).map { i -> IntegerValue(i) }),
-            ), (result as ListValue)
+                null,
+                ListValue(listOf(2, 2, 3).map { i -> IntegerValue(i, null) }, null),
+                ListValue(listOf(2, 4, 4).map { i -> IntegerValue(i, null) }, null),
+                ListValue(listOf(3, 2, 2).map { i -> IntegerValue(i, null) }, null),
+            ),
+            (result as ListValue),
         )
 
         result = interpreter.run("(matrix-vector-mul '(2 3 1) M1)")
         assert(result is ListValue)
         Assert.assertEquals(
-            ListValue(listOf(11, 15, 19).map { i -> IntegerValue(i) }), (result as ListValue)
+            ListValue(listOf(11, 15, 19).map { i -> IntegerValue(i, null) }, null),
+            (result as ListValue),
         )
     }
 }

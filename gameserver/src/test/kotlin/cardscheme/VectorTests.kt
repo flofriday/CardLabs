@@ -9,7 +9,7 @@ class VectorTests {
         val program = "(vector 1 2 3)"
         val result = SchemeInterpreter().run(program)
         assert(result is VectorValue)
-        assertEquals(listOf(IntegerValue(1), IntegerValue(2), IntegerValue(3)), (result as VectorValue).values)
+        assertEquals(listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)), (result as VectorValue).values)
     }
 
     @Test
@@ -17,7 +17,7 @@ class VectorTests {
         val program = "#(1 2 3)"
         val result = SchemeInterpreter().run(program)
         assert(result is VectorValue)
-        assertEquals(listOf(IntegerValue(1), IntegerValue(2), IntegerValue(3)), (result as VectorValue).values)
+        assertEquals(listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)), (result as VectorValue).values)
     }
 
     @Test
@@ -49,7 +49,7 @@ class VectorTests {
         val program = "(make-vector 3 42)"
         val result = SchemeInterpreter().run(program)
         assert(result is VectorValue)
-        assertEquals(listOf(IntegerValue(42), IntegerValue(42), IntegerValue(42)), (result as VectorValue).values)
+        assertEquals(listOf(IntegerValue(42, null), IntegerValue(42, null), IntegerValue(42, null)), (result as VectorValue).values)
     }
 
     @Test

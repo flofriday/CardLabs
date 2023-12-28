@@ -7,9 +7,10 @@ class SchemeInterpreter(
     private val timeoutBetweenChecks: Long = 100,
     */
     private val instructionLimit: Long = 100000,
-    private val memoryLimit: Long = 1024 * 1024 * 1024,
+    private val memoryLimit: Long = 1024 * 1024,
 ) {
     var env = Environment(null, HashMap())
+    val schemeSecurityMonitor = SchemeSecurityMonitor(instructionLimit, memoryLimit)
 
     init {
         injectBuiltin(env)
@@ -29,7 +30,7 @@ class SchemeInterpreter(
     fun run(tokens: List<Token>): SchemeValue? {
         val ast = Parser().parse(tokens)
         Resolver().resolve(ast)
-        return Executor(env, outputBuffer, instructionLimit).execute(ast)
+        return Executor(env, outputBuffer, schemeSecurityMonitor).execute(ast)
     }
 
     /**
@@ -39,7 +40,7 @@ class SchemeInterpreter(
         func: CallableValue,
         args: List<SchemeValue>,
     ): SchemeValue? {
-        return Executor(env, outputBuffer, instructionLimit).execute(func, args)
+        return Executor(env, outputBuffer, schemeSecurityMonitor).execute(func, args)
     }
 
     /*

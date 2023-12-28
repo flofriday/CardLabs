@@ -39,7 +39,7 @@ fun builtinMatchesCard(
     val first = verifyCard(args[0])
     val second = verifyCard(args[1])
 
-    return BooleanValue(first.match(second))
+    return BooleanValue(first.match(second), executor.schemeSecurityMonitor)
 }
 
 /**
@@ -55,7 +55,7 @@ fun builtinMatchingCards(
     val matchingCards =
         second.filter { c -> first.match(c) }
             .map { c -> encodeCard(c) }
-    return ListValue(matchingCards)
+    return ListValue(matchingCards, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -65,7 +65,7 @@ fun builtinRandom(
     args: List<FuncArg>,
     executor: Executor,
 ): FloatValue {
-    return FloatValue(Random.nextFloat())
+    return FloatValue(Random.nextFloat(), executor.schemeSecurityMonitor)
 }
 
 /**

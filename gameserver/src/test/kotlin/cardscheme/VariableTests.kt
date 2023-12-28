@@ -294,6 +294,6 @@ class VariableTests {
             """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        Assert.assertEquals(ListValue((1..10).map { i -> IntegerValue(i) }), (result as ListValue))
+        Assert.assertEquals(ListValue((1..10).map { i -> IntegerValue(i, null) }, null), (result as ListValue))
     }
 }

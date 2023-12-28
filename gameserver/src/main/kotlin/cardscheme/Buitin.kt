@@ -157,7 +157,7 @@ fun builtinSqrt(
     executor: Executor,
 ): NumberValue {
     val n = verifyType<NumberValue>(args.first(), "Only numbers can have an square roots")
-    if (n.smallerThan(IntegerValue(0)).value) {
+    if (n.smallerThan(IntegerValue(0, executor.schemeSecurityMonitor)).value) {
         throw SchemeError(
             "Invalid argument",
             "You can only calculate the square route of positive numbers in cardscheme, but the value was $n.",
@@ -180,7 +180,7 @@ fun builtinIsZero(
     executor: Executor,
 ): BooleanValue {
     val n = verifyType<NumberValue>(args.first(), "Only numbers can be tested for zero")
-    return n.numEqual(IntegerValue(0))
+    return n.numEqual(IntegerValue(0, executor.schemeSecurityMonitor))
 }
 
 /**
@@ -195,7 +195,7 @@ fun builtinIsPositive(
     executor: Executor,
 ): BooleanValue {
     val n = verifyType<NumberValue>(args.first(), "Only numbers can be tested for positivity")
-    return IntegerValue(0).smallerThan(n)
+    return IntegerValue(0, executor.schemeSecurityMonitor).smallerThan(n)
 }
 
 /**
@@ -210,7 +210,7 @@ fun builtinIsNegative(
     executor: Executor,
 ): BooleanValue {
     val n = verifyType<NumberValue>(args.first(), "Only numbers can be tested for negativity")
-    return n.smallerThan(IntegerValue(0))
+    return n.smallerThan(IntegerValue(0, executor.schemeSecurityMonitor))
 }
 
 /**
@@ -225,7 +225,7 @@ fun builtinIsEven(
     executor: Executor,
 ): BooleanValue {
     val n = verifyType<IntegerValue>(args.first(), "Only integers can be tested for even")
-    return BooleanValue(n.value % 2 == 0)
+    return BooleanValue(n.value % 2 == 0, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -240,7 +240,7 @@ fun builtinIsOdd(
     executor: Executor,
 ): BooleanValue {
     val n = verifyType<IntegerValue>(args.first(), "Only integers can be tested for odd")
-    return BooleanValue(n.value % 2 != 0)
+    return BooleanValue(n.value % 2 != 0, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -278,7 +278,7 @@ fun builtinFloorRemainder(
     executor: Executor,
 ): IntegerValue {
     val arguments = verifyAllType<IntegerValue>(args, "Only integers are allowed for modulo")
-    return IntegerValue(arguments[0].value % arguments[1].value)
+    return IntegerValue(arguments[0].value % arguments[1].value, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -294,10 +294,10 @@ fun builtinIsPair(
 ): BooleanValue {
     val obj = args.first().value
     if (obj !is ListValue) {
-        return BooleanValue(false)
+        return BooleanValue(false, executor.schemeSecurityMonitor)
     }
 
-    return BooleanValue(!obj.values.isEmpty())
+    return BooleanValue(!obj.values.isEmpty(), executor.schemeSecurityMonitor)
 }
 
 /**
@@ -313,17 +313,17 @@ fun builtinIsNull(
 ): BooleanValue {
     val obj = args.first().value
     if (obj !is ListValue) {
-        return BooleanValue(false)
+        return BooleanValue(false, executor.schemeSecurityMonitor)
     }
 
-    return BooleanValue(obj.values.isEmpty())
+    return BooleanValue(obj.values.isEmpty(), executor.schemeSecurityMonitor)
 }
 
 fun builtinList(
     args: List<FuncArg>,
     executor: Executor,
 ): SchemeValue {
-    return ListValue(args.map { a -> a.value })
+    return ListValue(args.map { a -> a.value }, executor.schemeSecurityMonitor)
 }
 
 fun builtinCar(
@@ -349,7 +349,7 @@ fun builtinCdr(
         throw SchemeError("Empty List", "Cdr can only be called on non-empty lists", args.first().location, null)
     }
 
-    return ListValue(list.values.tail())
+    return ListValue(list.values.tail(), executor.schemeSecurityMonitor)
 }
 
 /**
@@ -369,7 +369,7 @@ fun builtinSetCar(
     }
     val obj = args[1].value
     list.values.setHead(obj)
-    return VoidValue()
+    return VoidValue(executor.schemeSecurityMonitor)
 }
 
 /**
@@ -388,9 +388,9 @@ fun builtinSetCdr(
         throw SchemeError("Invalid Argument", "The list to `set-cdr!` cannot be empty", args.first().location, null)
     }
     val obj = args[1].value
-    val objList = if (obj is ListValue) obj else ListValue(obj)
+    val objList = if (obj is ListValue) obj else ListValue(executor.schemeSecurityMonitor, obj)
     list.values.setTail(objList.values)
-    return VoidValue()
+    return VoidValue(executor.schemeSecurityMonitor)
 }
 
 /**
@@ -404,7 +404,7 @@ fun builtinStringLength(
     executor: Executor,
 ): IntegerValue {
     val arg = verifyType<StringValue>(args.first(), "I expected a string here")
-    return IntegerValue(arg.value.length)
+    return IntegerValue(arg.value.length, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -419,11 +419,11 @@ fun builtinMakeString(
     executor: Executor,
 ): StringValue {
     val count = verifyType<IntegerValue>(args.first(), "I expected a integer here")
-    var character: CharacterValue = CharacterValue('\n')
+    var character: CharacterValue = CharacterValue('\n', executor.schemeSecurityMonitor)
     if (args.size > 1) {
         character = verifyType<CharacterValue>(args[1], "I expected a character here")
     }
-    return StringValue(character.value.toString().repeat(count.value))
+    return StringValue(character.value.toString().repeat(count.value), executor.schemeSecurityMonitor)
 }
 
 /**
@@ -440,10 +440,10 @@ fun builtInCons(
     if (args[1].value is ListValue) {
         val list = SchemeList((args[1].value as ListValue).values)
         list.addFirst(args[0].value)
-        return ListValue(list)
+        return ListValue(list, executor.schemeSecurityMonitor)
     }
 
-    return ListValue(args[0].value, args[1].value)
+    return ListValue(executor.schemeSecurityMonitor, args[0].value, args[1].value)
 }
 
 /**
@@ -457,7 +457,7 @@ fun builtInAppend(
     executor: Executor,
 ): ListValue {
     if (args.isEmpty()) {
-        return ListValue()
+        return ListValue(executor.schemeSecurityMonitor)
     }
     val allArgsButLast = verifyAllType<ListValue>(args.dropLast(1), "Expected this to be a list")
     val newList = SchemeList<SchemeValue>()
@@ -472,7 +472,7 @@ fun builtInAppend(
         newList.add(args.last().value)
     }
 
-    return ListValue(newList)
+    return ListValue(newList, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -486,7 +486,7 @@ fun builtInLength(
     executor: Executor,
 ): IntegerValue {
     val arg = verifyType<ListValue>(args.first(), "Expected a list here")
-    return IntegerValue(arg.values.size)
+    return IntegerValue(arg.values.size, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -501,7 +501,7 @@ fun builtInReverse(
     executor: Executor,
 ): ListValue {
     val arg = verifyType<ListValue>(args.first(), "Expected a list here")
-    return ListValue(arg.values.reversed())
+    return ListValue(arg.values.reversed(), executor.schemeSecurityMonitor)
 }
 
 /**
@@ -554,21 +554,21 @@ fun builtinMap(
         val iterationArgs = iterators.map { i -> FuncArg(i.next(), null) }
         values.add(executor.callFunction(func, iterationArgs))
     }
-    return ListValue(values)
+    return ListValue(values, executor.schemeSecurityMonitor)
 }
 
 fun builtinVector(
     args: List<FuncArg>,
     executor: Executor,
 ): VectorValue {
-    return VectorValue(args.map { a -> a.value }.toMutableList())
+    return VectorValue(args.map { a -> a.value }.toMutableList(), executor.schemeSecurityMonitor)
 }
 
 fun builtinIsVector(
     args: List<FuncArg>,
     executor: Executor,
 ): BooleanValue {
-    return BooleanValue(args.first().value is VectorValue)
+    return BooleanValue(args.first().value is VectorValue, executor.schemeSecurityMonitor)
 }
 
 fun builtinMakeVector(
@@ -590,9 +590,9 @@ fun builtinMakeVector(
         if (args.size == 2) {
             args[1].value
         } else {
-            VoidValue()
+            VoidValue(executor.schemeSecurityMonitor)
         }
-    return VectorValue((1..k.value).map { filler }.toMutableList())
+    return VectorValue((1..k.value).map { filler }.toMutableList(), executor.schemeSecurityMonitor)
 }
 
 fun builtinVectorLength(
@@ -600,7 +600,7 @@ fun builtinVectorLength(
     executor: Executor,
 ): IntegerValue {
     val vec = verifyType<VectorValue>(args.first(), "Only vectors are expected here")
-    return IntegerValue(vec.values.size)
+    return IntegerValue(vec.values.size, executor.schemeSecurityMonitor)
 }
 
 fun builtinVectorRef(
@@ -641,7 +641,7 @@ fun builtinVectorSet(
 
     vec.values[k.value] = obj
 
-    return VoidValue()
+    return VoidValue(executor.schemeSecurityMonitor)
 }
 
 fun builtinNumericalEqual(
@@ -651,7 +651,7 @@ fun builtinNumericalEqual(
     try {
         val numbers = verifyAllType<NumberValue>(args, "Only numbers can be compared with `=`")
         val result = numbers.zipWithNext { a, b -> a.numEqual(b) }.all { b -> b.value }
-        return BooleanValue(result)
+        return BooleanValue(result, executor.schemeSecurityMonitor)
     } catch (e: SchemeError) {
         throw SchemeError(e.header, e.reason, e.location, e.tip ?: "You can use `equal?` to compare other types.")
     }
@@ -662,7 +662,7 @@ fun builtinIsEqual(
     executor: Executor,
 ): BooleanValue {
     val result = args.map { a -> a.value }.zipWithNext { a, b -> a == b }.all { it }
-    return BooleanValue(result)
+    return BooleanValue(result, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -676,7 +676,7 @@ fun builtinIsString(
     args: List<FuncArg>,
     executor: Executor,
 ): BooleanValue {
-    return BooleanValue(args.first().value is StringValue)
+    return BooleanValue(args.first().value is StringValue, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -690,7 +690,7 @@ fun builtinStringAppend(
     executor: Executor,
 ): StringValue {
     verifyAllType<StringValue>(args, "Only strings can be appended")
-    return StringValue(args.joinToString("") { a -> (a.value as StringValue).value })
+    return StringValue(args.joinToString("") { a -> (a.value as StringValue).value }, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -705,7 +705,7 @@ fun builtinNumberToString(
     executor: Executor,
 ): StringValue {
     verifyType<NumberValue>(args[0], "Only numbers can be converted to string by this function")
-    return StringValue(args[0].value.toString())
+    return StringValue(args[0].value.toString(), executor.schemeSecurityMonitor)
 }
 
 /**
@@ -722,10 +722,10 @@ fun builtinStringToNumber(
     val stringValue =
         verifyType<StringValue>(args[0], "Only strings can be converted to numbers by this function").value
     if (stringValue.contains(".")) {
-        return FloatValue(stringValue.toFloat())
+        return FloatValue(stringValue.toFloat(), executor.schemeSecurityMonitor)
     }
 
-    return IntegerValue(stringValue.toInt())
+    return IntegerValue(stringValue.toInt(), executor.schemeSecurityMonitor)
 }
 
 /**
@@ -740,7 +740,7 @@ fun builtinSymbolToString(
     executor: Executor,
 ): StringValue {
     verifyType<SymbolValue>(args[0], "Only symbols can be converted to string by this function")
-    return StringValue(args[0].value.toString())
+    return StringValue(args[0].value.toString(), executor.schemeSecurityMonitor)
 }
 
 /**
@@ -756,7 +756,7 @@ fun builtinStringToSymbol(
     executor: Executor,
 ): SymbolValue {
     val string = verifyType<StringValue>(args[0], "Only strings can be converted to symbols by this function")
-    return SymbolValue(string.value)
+    return SymbolValue(string.value, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -770,7 +770,7 @@ fun builtinIsSymbol(
     args: List<FuncArg>,
     executor: Executor,
 ): BooleanValue {
-    return BooleanValue(args.first().value is SymbolValue)
+    return BooleanValue(args.first().value is SymbolValue, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -785,7 +785,7 @@ fun builtinSymbolEqual(
     executor: Executor,
 ): BooleanValue {
     val symbols = verifyAllType<SymbolValue>(args, "I expected all arguments to be symbols")
-    return BooleanValue(symbols.zipWithNext { a, b -> a.value == b.value }.all { t -> t })
+    return BooleanValue(symbols.zipWithNext { a, b -> a.value == b.value }.all { t -> t }, executor.schemeSecurityMonitor)
 }
 
 fun builtinSmallerEqual(
@@ -799,7 +799,7 @@ fun builtinSmallerEqual(
             .map { a -> a.value as NumberValue }
             .zipWithNext { a, b -> a.smallerThan(b).value || a.numEqual(b).value }
             .all { it }
-    return BooleanValue(result)
+    return BooleanValue(result, executor.schemeSecurityMonitor)
 }
 
 fun builtinSmaller(
@@ -813,7 +813,7 @@ fun builtinSmaller(
             .map { a -> a.value as NumberValue }
             .zipWithNext { a, b -> a.smallerThan(b) }
             .all { it.value }
-    return BooleanValue(result)
+    return BooleanValue(result, executor.schemeSecurityMonitor)
 }
 
 fun builtinGreater(
@@ -827,7 +827,7 @@ fun builtinGreater(
             .map { a -> a.value as NumberValue }
             .zipWithNext { a, b -> a.smallerThan(b).value || a.numEqual(b).value }
             .none { it }
-    return BooleanValue(result)
+    return BooleanValue(result, executor.schemeSecurityMonitor)
 }
 
 fun builtinGreaterEqual(
@@ -841,7 +841,7 @@ fun builtinGreaterEqual(
             .map { a -> a.value as NumberValue }
             .zipWithNext { a, b -> !a.smallerThan(b).value || a.numEqual(b).value }
             .all { it }
-    return BooleanValue(result)
+    return BooleanValue(result, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -854,11 +854,11 @@ fun builtinAnd(
     executor: Executor,
 ): SchemeValue {
     if (args.isEmpty()) {
-        return BooleanValue(true)
+        return BooleanValue(true, executor.schemeSecurityMonitor)
     }
     for (arg in args) {
         if (!arg.value.isTruthy()) {
-            return BooleanValue(false)
+            return BooleanValue(false, executor.schemeSecurityMonitor)
         }
     }
     return args.last().value
@@ -874,14 +874,14 @@ fun builtinOr(
     executor: Executor,
 ): SchemeValue {
     if (args.isEmpty()) {
-        return BooleanValue(false)
+        return BooleanValue(false, executor.schemeSecurityMonitor)
     }
     for (arg in args) {
         if (arg.value.isTruthy()) {
             return arg.value
         }
     }
-    return BooleanValue(false)
+    return BooleanValue(false, executor.schemeSecurityMonitor)
 }
 
 /**
@@ -893,7 +893,7 @@ fun builtinNot(
     args: List<FuncArg>,
     executor: Executor,
 ): BooleanValue {
-    return BooleanValue(!args[0].value.isTruthy())
+    return BooleanValue(!args[0].value.isTruthy(), executor.schemeSecurityMonitor)
 }
 
 fun builtinDisplay(
@@ -908,7 +908,7 @@ fun builtinDisplay(
         executor.printToBuffer(arg)
     }
 
-    return VoidValue()
+    return VoidValue(executor.schemeSecurityMonitor)
 }
 
 fun builtinNewline(
@@ -916,7 +916,7 @@ fun builtinNewline(
     executor: Executor,
 ): SchemeValue {
     executor.printToBuffer("\n")
-    return VoidValue()
+    return VoidValue(executor.schemeSecurityMonitor)
 }
 
 fun builtinCool(
@@ -924,5 +924,5 @@ fun builtinCool(
     executor: Executor,
 ): SchemeValue {
     executor.printToBuffer("cool\n")
-    return VoidValue()
+    return VoidValue(executor.schemeSecurityMonitor)
 }
