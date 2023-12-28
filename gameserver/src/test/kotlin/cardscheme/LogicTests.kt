@@ -25,7 +25,10 @@ class LogicTests {
         val program = "(and 1 2 '(1 2 3 4 5) '(1 2 3))"
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        Assert.assertEquals(listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)), (result as ListValue).values.toList())
+        Assert.assertEquals(
+            listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)),
+            (result as ListValue).values.toList(),
+        )
     }
 
     @Test

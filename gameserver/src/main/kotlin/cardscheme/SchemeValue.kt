@@ -5,7 +5,6 @@ package cardscheme
 import kotlin.math.absoluteValue
 
 abstract class SchemeValue {
-
     abstract override fun toString(): String
 
     abstract fun typeName(): String
@@ -26,7 +25,6 @@ abstract class SchemeValue {
 }
 
 class VoidValue(val schemeSecurityMonitor: SchemeSecurityMonitor?) : SchemeValue() {
-
     init {
         schemeSecurityMonitor?.allocate()
     }
@@ -76,7 +74,6 @@ data class BooleanValue(val value: Boolean, val schemeSecurityMonitor: SchemeSec
 }
 
 abstract class NumberValue() : SchemeValue() {
-
     abstract fun add(other: NumberValue): NumberValue
 
     abstract fun sub(other: NumberValue): NumberValue
@@ -96,7 +93,6 @@ abstract class NumberValue() : SchemeValue() {
 }
 
 data class IntegerValue(val value: Int, val schemeSecurityMonitor: SchemeSecurityMonitor?) : NumberValue() {
-
     init {
         schemeSecurityMonitor?.allocate()
     }
@@ -278,7 +274,6 @@ data class FloatValue(val value: Float, val schemeSecurityMonitor: SchemeSecurit
 }
 
 data class StringValue(val value: String, val schemeSecurityMonitor: SchemeSecurityMonitor?) : SchemeValue() {
-
     init {
         schemeSecurityMonitor?.allocate()
     }
@@ -321,6 +316,7 @@ data class CharacterValue(val value: Char, val schemeSecurityMonitor: SchemeSecu
     protected fun finalize() {
         schemeSecurityMonitor?.free()
     }
+
     override fun toString(): String {
         return "#\\$value"
     }
@@ -351,6 +347,7 @@ data class SymbolValue(val value: String, val schemeSecurityMonitor: SchemeSecur
     protected fun finalize() {
         schemeSecurityMonitor?.free()
     }
+
     override fun toString(): String {
         return value
     }
@@ -377,7 +374,6 @@ data class SymbolValue(val value: String, val schemeSecurityMonitor: SchemeSecur
 // I can see we can only implement that in Java in O(n) even though that should
 // be quite easy to do in O(1). So we probably need to write our own.
 data class ListValue(val values: SchemeList<SchemeValue>, val schemeSecurityMonitor: SchemeSecurityMonitor?) : SchemeValue() {
-
     init {
         schemeSecurityMonitor?.allocate(values.size.toLong())
     }
@@ -385,10 +381,16 @@ data class ListValue(val values: SchemeList<SchemeValue>, val schemeSecurityMoni
     protected fun finalize() {
         schemeSecurityMonitor?.free()
     }
-    constructor(valueList: List<SchemeValue>, schemeSecurityMonitor: SchemeSecurityMonitor?) : this(SchemeList(valueList), schemeSecurityMonitor) {
+    constructor(
+        valueList: List<SchemeValue>,
+        schemeSecurityMonitor: SchemeSecurityMonitor?,
+    ) : this(SchemeList(valueList), schemeSecurityMonitor) {
     }
 
-    constructor(schemeSecurityMonitor: SchemeSecurityMonitor?, vararg valueList: SchemeValue) : this(SchemeList(valueList.toList()), schemeSecurityMonitor) {
+    constructor(schemeSecurityMonitor: SchemeSecurityMonitor?, vararg valueList: SchemeValue) : this(
+        SchemeList(valueList.toList()),
+        schemeSecurityMonitor,
+    ) {
     }
 
     override fun toString(): String {
@@ -426,6 +428,7 @@ data class VectorValue(val values: MutableList<SchemeValue>, val schemeSecurityM
     protected fun finalize() {
         schemeSecurityMonitor?.free()
     }
+
     override fun toString(): String {
         return "#(" + values.joinToString(" ") { value -> value.toString() } + ")"
     }
@@ -467,7 +470,6 @@ data class FuncValue(
     val env: Environment,
     val schemeSecurityMonitor: SchemeSecurityMonitor,
 ) : CallableValue(arity) {
-
     init {
         schemeSecurityMonitor.allocate()
     }
@@ -515,7 +517,6 @@ data class NativeFuncValue(
     override val arity: Arity,
     val func: (List<FuncArg>, Executor) -> SchemeValue,
 ) : CallableValue(arity) {
-
     override fun toString(): String {
         return "<Native Function $name>"
     }

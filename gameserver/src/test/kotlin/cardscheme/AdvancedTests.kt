@@ -354,19 +354,20 @@ No more bottles of beer on the wall, no more bottles of beer.""",
      */
     @Test
     fun removeElementsFromList() {
-        val program = """
-        (define (remove fn lst)
-          (let loop ((lst lst) (result '()))
-            (if (null? lst)
-              (reverse result)
-              (let ((item (car lst)))
-                (loop (cdr lst)
-                  (if (fn item) result (cons item result)))))))
+        val program =
+            """
+            (define (remove fn lst)
+              (let loop ((lst lst) (result '()))
+                (if (null? lst)
+                  (reverse result)
+                  (let ((item (car lst)))
+                    (loop (cdr lst)
+                      (if (fn item) result (cons item result)))))))
 
-        (define g10 (lambda (x) (> x 10)))
+            (define g10 (lambda (x) (> x 10)))
 
-        (remove g10 '(1 2 3 4 10 11 12 13 14))
-        """.trimIndent()
+            (remove g10 '(1 2 3 4 10 11 12 13 14))
+            """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
         Assert.assertEquals(ListValue(listOf(1, 2, 3, 4, 10).map { i -> IntegerValue(i, null) }, null), (result as ListValue))
@@ -378,43 +379,44 @@ No more bottles of beer on the wall, no more bottles of beer.""",
      */
     @Test
     fun pascalsTriangle() {
-        val program = """
-        (define (map-iota proc limit)
-          (let loop ((i 0) (result '()))
-            (if (< i limit)
-              (loop (+ i 1) (cons (proc i) result))
-              (reverse result))))
+        val program =
+            """
+            (define (map-iota proc limit)
+              (let loop ((i 0) (result '()))
+                (if (< i limit)
+                  (loop (+ i 1) (cons (proc i) result))
+                  (reverse result))))
 
-        (define (pascal n k)
-          (cond ((or (= k 0) (= k n))
-                  1)
-            ((< 0 k n)
-              (+ (pascal (- n 1) (- k 1))
-                (pascal (- n 1) k)))
-            (else
-              (error "Bad indexes" n k))))
+            (define (pascal n k)
+              (cond ((or (= k 0) (= k n))
+                      1)
+                ((< 0 k n)
+                  (+ (pascal (- n 1) (- k 1))
+                    (pascal (- n 1) k)))
+                (else
+                  (error "Bad indexes" n k))))
 
-        (define (pascal-row n)
-          (map-iota (lambda (k) (pascal n k))
-            (+ n 1)))
+            (define (pascal-row n)
+              (map-iota (lambda (k) (pascal n k))
+                (+ n 1)))
 
-        (define (pascal-triangle number-of-rows)
-          (map-iota pascal-row number-of-rows))
+            (define (pascal-triangle number-of-rows)
+              (map-iota pascal-row number-of-rows))
 
-        (equal?
-          (pascal-triangle 10)
-          '((1)
-            (1 1)
-            (1 2 1)
-            (1 3 3 1)
-            (1 4 6 4 1)
-            (1 5 10 10 5 1)
-            (1 6 15 20 15 6 1)
-            (1 7 21 35 35 21 7 1)
-            (1 8 28 56 70 56 28 8 1)
-            (1 9 36 84 126 126 84 36 9 1))
-        ) 
-        """.trimIndent()
+            (equal?
+              (pascal-triangle 10)
+              '((1)
+                (1 1)
+                (1 2 1)
+                (1 3 3 1)
+                (1 4 6 4 1)
+                (1 5 10 10 5 1)
+                (1 6 15 20 15 6 1)
+                (1 7 21 35 35 21 7 1)
+                (1 8 28 56 70 56 28 8 1)
+                (1 9 36 84 126 126 84 36 9 1))
+            ) 
+            """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is BooleanValue)
         Assert.assertEquals(true, (result as BooleanValue).value)
@@ -426,73 +428,74 @@ No more bottles of beer on the wall, no more bottles of beer.""",
      */
     @Test
     fun matrixMultiplication() {
-        val program = """
-        (define (make-matrix n)
-          (let outter ((i n) (result '()))
-            (if (= i 0)
-                result
-                (outter (- i 1)
-                        (cons
-                         (let inner ((j n) (row '()))
-                           (if (= j 0)
-                               row
-                               (inner (- j 1) (cons (if (= i j) 1 0) row))))
-                         result)))))
+        val program =
+            """
+            (define (make-matrix n)
+              (let outter ((i n) (result '()))
+                (if (= i 0)
+                    result
+                    (outter (- i 1)
+                            (cons
+                             (let inner ((j n) (row '()))
+                               (if (= j 0)
+                                   row
+                                   (inner (- j 1) (cons (if (= i j) 1 0) row))))
+                             result)))))
 
-        (define (nth list n)
-          (let loop ((n n) (result list))
-            (if (= n 0)
-                (car result)
-                (loop (- n 1)
-                      (cdr result)))))
+            (define (nth list n)
+              (let loop ((n n) (result list))
+                (if (= n 0)
+                    (car result)
+                    (loop (- n 1)
+                          (cdr result)))))
 
-        (define matrix-row nth)
+            (define matrix-row nth)
 
-        (define (matrix-col M n)
-          (let loop ((i (length M)) (result '()))
-            (if (= i 0)
-                result
-                (loop (- i 1)
-                      (cons (nth (nth M (- i 1)) n) result)))))
+            (define (matrix-col M n)
+              (let loop ((i (length M)) (result '()))
+                (if (= i 0)
+                    result
+                    (loop (- i 1)
+                          (cons (nth (nth M (- i 1)) n) result)))))
 
-        (define (matrix-mul N M)
-          (let outter ((i (length N)) (result '()))
-            (if (= i 0)
-                result
-                (outter (- i 1)
-                        (cons
-                         (let inner ((j (length (car M))) (row '()))
-                           (if (= j 0)
-                               row
-                               (inner
-                                (- j 1)
-                                (cons (reduce + (map *
-                                                     (matrix-row N (- i 1))
-                                                     (matrix-col M (- j 1))))
-                                      row))))
-                       result)))))
+            (define (matrix-mul N M)
+              (let outter ((i (length N)) (result '()))
+                (if (= i 0)
+                    result
+                    (outter (- i 1)
+                            (cons
+                             (let inner ((j (length (car M))) (row '()))
+                               (if (= j 0)
+                                   row
+                                   (inner
+                                    (- j 1)
+                                    (cons (reduce + (map *
+                                                         (matrix-row N (- i 1))
+                                                         (matrix-col M (- j 1))))
+                                          row))))
+                           result)))))
 
-        (define (reduce fun lst)
-          (let loop ((result (car lst)) (lst (cdr lst)))
-            (if (null? lst)
-                result
-                (loop (fun result (car lst)) (cdr lst)))))
+            (define (reduce fun lst)
+              (let loop ((result (car lst)) (lst (cdr lst)))
+                (if (null? lst)
+                    result
+                    (loop (fun result (car lst)) (cdr lst)))))
 
-        (define (matrix-vector-mul v M)
-          (car (matrix-mul (list v) M)))
+            (define (matrix-vector-mul v M)
+              (car (matrix-mul (list v) M)))
 
-        (define (matrix-transpose M)
-          (let loop ((M M) (result '()))
-            (if (null? (car M))
-                result
-                (loop (map cdr M) (append result (list (map car M)))))))
+            (define (matrix-transpose M)
+              (let loop ((M M) (result '()))
+                (if (null? (car M))
+                    result
+                    (loop (map cdr M) (append result (list (map car M)))))))
 
-        (define (matrix-sum N M)
-          (map (lambda (nrow mrow) (map + nrow mrow)) N M))        
-          
-        (define M1 '((1 2 3) (2 3 4) (3 2 1)))
-        (define M2 (make-matrix 3))
-        """.trimIndent()
+            (define (matrix-sum N M)
+              (map (lambda (nrow mrow) (map + nrow mrow)) N M))        
+              
+            (define M1 '((1 2 3) (2 3 4) (3 2 1)))
+            (define M2 (make-matrix 3))
+            """.trimIndent()
         val interpreter = SchemeInterpreter()
         interpreter.run(program)
 
