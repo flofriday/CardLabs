@@ -23,6 +23,7 @@ fun main(args: Array<String>) {
         try {
             interpreter.run(program)
         } catch (e: SchemeError) {
+            println(outBuffer.toString())
             print(e.format(program))
             exitProcess(1)
         }
@@ -67,6 +68,8 @@ fun main(args: Array<String>) {
                 outputBuffer.clear()
             }
         } catch (e: SchemeError) {
+            println(outputBuffer.toString())
+            outputBuffer.clear()
             print(e.format(completeProgram))
         }
     }
