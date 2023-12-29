@@ -40,6 +40,7 @@ fun injectBuiltin(environment: Environment) {
     environment.put("append", NativeFuncValue("append", Arity(0, Int.MAX_VALUE, false), ::builtInAppend))
     environment.put("length", NativeFuncValue("length", Arity(1, 1, false), ::builtInLength))
     environment.put("reverse", NativeFuncValue("reverse", Arity(1, 1, false), ::builtInReverse))
+    environment.put("assoc", NativeFuncValue("assoc", Arity(2, 3, false), ::builtInAssoc))
 
     environment.put("apply", NativeFuncValue("apply", Arity(2, Int.MAX_VALUE, false), ::builtinApply))
     environment.put("map", NativeFuncValue("map", Arity(2, Int.MAX_VALUE, false), ::builtinMap))
@@ -505,6 +506,70 @@ fun builtInReverse(
 }
 
 /**
+ * Builtin assoc functions.
+ *
+ * Spec: R7RS, Chapter 6.4
+ * Syntax: (assoc obj alist)
+ *         (assoc obj alist compare)
+ * Semantics: Finds the first pair in alist whose car field
+ * is obj, and returns that pair. If no pair in alist has obj
+ * as its car, then #f (not the empty list) is returned. assoc
+ * uses compare if given and equal? otherwise.
+ * Note: alist must be a list of lists.
+ */
+fun builtInAssoc(
+    args: List<FuncArg>,
+    executor: Executor,
+): SchemeValue {
+    val obj = args[0]
+    val list = verifyType<ListValue>(args[1], "Expected a list here")
+    val compare: CallableValue? =
+        if (args.size != 3) null else verifyType<CallableValue>(args[2], "The compare argument must be a function")
+
+    for (innerList in list.values) {
+        if (innerList !is ListValue) {
+            throw SchemeError(
+                "Type Mismatch",
+                "assoc expects a list of lists, but here one element in the list was ${innerList.typeName()}",
+                args[1].location,
+                null
+            )
+        }
+        if (innerList.values.isEmpty()) {
+            throw SchemeError(
+                "Type Mismatch",
+                "assoc only work on a list of nonempty lists, but one item was the empty list.",
+                args[1].location,
+                null
+            )
+        }
+
+        val newArgs = listOf(obj, FuncArg(innerList.values.first(), null))
+        val compareResult = if (compare == null) {
+            builtinIsEqual(newArgs, executor)
+        } else {
+            executor.callFunction(compare, newArgs)
+        }
+
+        if (compareResult !is BooleanValue) {
+            throw SchemeError(
+                "Type Mismatch",
+                "The result function must return a boolean, but returned ${compareResult.typeName()}.",
+                args[2].location,
+                null
+            )
+        }
+
+        if (compareResult.value) {
+            return innerList
+        }
+    }
+
+    return BooleanValue(false, executor.schemeSecurityMonitor)
+}
+
+
+/**
  * Built in apply function.
  *
  * Spec: R7RS, Chapter 6.10
@@ -785,7 +850,10 @@ fun builtinSymbolEqual(
     executor: Executor,
 ): BooleanValue {
     val symbols = verifyAllType<SymbolValue>(args, "I expected all arguments to be symbols")
-    return BooleanValue(symbols.zipWithNext { a, b -> a.value == b.value }.all { t -> t }, executor.schemeSecurityMonitor)
+    return BooleanValue(
+        symbols.zipWithNext { a, b -> a.value == b.value }.all { t -> t },
+        executor.schemeSecurityMonitor
+    )
 }
 
 fun builtinSmallerEqual(

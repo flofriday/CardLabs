@@ -10,7 +10,10 @@ class ListTests {
         val program = "(quote (1 2 3))"
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)), (result as ListValue).values.toList())
+        assertEquals(
+            listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)),
+            (result as ListValue).values.toList()
+        )
     }
 
     @Test
@@ -18,7 +21,10 @@ class ListTests {
         val program = "'(1 2 3)"
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)), (result as ListValue).values.toList())
+        assertEquals(
+            listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)),
+            (result as ListValue).values.toList()
+        )
     }
 
     @Test
@@ -27,7 +33,13 @@ class ListTests {
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
         assertEquals(
-            listOf(IntegerValue(1, null), IntegerValue(4, null), IntegerValue(9, null), IntegerValue(16, null), IntegerValue(25, null)),
+            listOf(
+                IntegerValue(1, null),
+                IntegerValue(4, null),
+                IntegerValue(9, null),
+                IntegerValue(16, null),
+                IntegerValue(25, null)
+            ),
             (result as ListValue).values.toList(),
         )
     }
@@ -37,7 +49,10 @@ class ListTests {
         val program = "(map + '(1 2 3) '(4 5 6 7))"
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(5, null), IntegerValue(7, null), IntegerValue(9, null)), (result as ListValue).values.toList())
+        assertEquals(
+            listOf(IntegerValue(5, null), IntegerValue(7, null), IntegerValue(9, null)),
+            (result as ListValue).values.toList()
+        )
     }
 
     @Test
@@ -79,7 +94,10 @@ lst""",
         // Prepend to a copy of the list
         result = interpreter.run("(cons 0 lst)")
         assert(result is ListValue)
-        assertEquals(listOf(IntegerValue(0, null), IntegerValue(1, null), IntegerValue(2, null)), (result as ListValue).values.toList())
+        assertEquals(
+            listOf(IntegerValue(0, null), IntegerValue(1, null), IntegerValue(2, null)),
+            (result as ListValue).values.toList()
+        )
 
         // Ensure the list hasn't changed
         result = interpreter.run("lst")
@@ -376,4 +394,54 @@ lst""",
             (result as ListValue),
         )
     }
+
+    @Test
+    fun assocListOfSymbolLists() {
+        val program =
+            """
+            (assoc (list 'a) '(((a)) ((b)) ((c)))) 
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        assertEquals(
+            ListValue(
+                null,
+                ListValue(null, SymbolValue("a", null))
+            ),
+            (result as ListValue),
+        )
+    }
+
+    @Test
+    fun assocListOfIntLists() {
+        val program =
+            """
+            (assoc 2.0 '((1 1) (2 4) (3 9)))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        assertEquals(
+            BooleanValue(false, null),
+            (result as BooleanValue)
+        )
+    }
+
+    @Test
+    fun assocListOfIntListsAndCustomCompare() {
+        val program =
+            """
+            (assoc 2.0 '((1 1) (2 4) (3 9)) =)
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is ListValue)
+        assertEquals(
+            ListValue(
+                null,
+                IntegerValue(2, null), IntegerValue(4, null)
+            ),
+            (result as ListValue)
+        )
+    }
+
+
 }
