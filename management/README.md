@@ -4,6 +4,15 @@ To execute the management locally on your machine, you must create a new Intelli
 you use as SDK `Java 21`, as module `gameserver.main` as boot class
 `at.tuwien.ase.cardlabs.gameserver.GameserverApplication` and as active profile `local`.
 
+### Run with Docker
+
+```bash
+docker build -t management .
+docker docker run -p 8080:8080 -it management
+```
+
+The management server is now running on http://localhost:8080.
+
 ### Run the pipeline jobs
 To execute the different pipeline stages currently simply executing the commands is the easiest. Please refer to the
 `.gitlab-ci.yml` for the most update commands.
