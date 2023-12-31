@@ -1,79 +1,57 @@
 package at.tuwien.ase.cardlabs.management.matchmaker
 
+import at.tuwien.ase.cardlabs.management.database.model.game.action.ActionType
+import at.tuwien.ase.cardlabs.management.database.model.game.card.CardType
+import at.tuwien.ase.cardlabs.management.database.model.game.card.Color
 import java.io.Serializable
 import java.time.LocalDateTime
 
-
 /**
- * The message that is sent to RabbitMQ when a match has been created and is awaiting execution
+ * The message that is sent to RabbitMQ when a match has been completed
  */
 data class MatchResultQueueMessage(
     val gameId: Long,
     val startTime: LocalDateTime,
     val endTime: LocalDateTime,
     val winningBotId: Long,
-    val logMessages: List<LogMessage>,
-    val initialHand: List<Hand>,
-    val actions: List<Action>,
+    val rounds: List<Round>,
 ) : Serializable
 
-// === Log Messages ===
+data class Round(
+    val topCard: Card,
+    val drawPile: List<Card>, // Stores the top 10 cards of the pile, fewer if there a fewer on the pile
+    val hands: List<Hand>,
+    val actions: List<Action>,
+    val logMessages: List<LogMessage>,
+) : Serializable
+
+data class Hand(
+    val botId: Long,
+    val cards: List<Card>,
+) : Serializable
+
+data class Action(
+    val botId: Long,
+    val type: ActionType,
+    val card: Card,
+) : Serializable
+
+// === Log messages ===
 open class LogMessage(
-    val move: Long,
     val message: String,
 ) : Serializable
 
-class SystemLogMessage(
-    move: Long,
-    message: String,
-) : LogMessage(move, message)
-
 class DebugLogMessage(
-    move: Long,
     message: String,
     val botId: Long,
-) : LogMessage(move, message)
+) : LogMessage(message)
 
-// === Hand ===
-data class Hand(
-    val botId: Long,
-    val cards: List<Card>
-): Serializable
+class SystemLogMessage(
+    message: String,
+) : LogMessage(message)
 
-// === Action ===
-data class Action(
-    val botId: Long,
-    val move: Long,
-    val type: ActionType,
-    val card: Card,
-    val selectedColor: Color?, // This field is used to store the selected color when the card type is WILD or WILD_DRAW_4
-) : Serializable
-
-enum class ActionType {
-    INITIAL_CARD_DRAW,
-    DRAW_CARD,
-    PLAY_CARD,
-}
-
-// === Card ===
 data class Card(
     val type: CardType,
-    val color: Color?,  // This field is used to store the card color when the card type is NUMBER, REVERSE, SKIP or DRAW
+    val color: Color,
     val number: Int?,
 ) : Serializable
-
-enum class CardType {
-    NUMBER,
-    REVERSE,
-    SKIP,
-    DRAW,
-    WILD,
-    WILD_DRAW_4,
-}
-
-enum class Color {
-    CYAN,
-    ORANGE,
-    GREEN,
-    PURPLE,
-}
