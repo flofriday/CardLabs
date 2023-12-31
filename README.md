@@ -1,11 +1,10 @@
-# Bot
+# CardScheme
 
-## Bot states
+Write the best card playing bots.
 
-A brief explanation of how bot states work.
+## Run with docker compose
+```bash
+docker compose up --build
+```
 
-A bot default state is the state into which a bot is set after a match has been completed. Valid values are READY or
-QUEUED.
-
-When a bot is created, then the bot receives the state CREATED.
-A new bot version can only be released when the bot state is CREATED or READY.
+The frontend will start on localhost:3000.

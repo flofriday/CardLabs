@@ -1,0 +1,17 @@
+version: "3"
+services:
+  frontend:
+    build:
+      context: "./frontend/"
+      dockerfile: "./Dockerfile"
+    ports:
+      - "3000:3000"
+    environment:
+      - MANAGMENT_HOST=http://management:8080
+
+  management:
+    build:
+      context: "./management/"
+      dockerfile: "./Dockerfile"
+    ports:
+      - "8080:8080"
