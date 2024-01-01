@@ -7,7 +7,7 @@ import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.service.AccountService
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -28,6 +28,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AccountIntegrationTests {
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @Autowired
     private lateinit var accountRepository: AccountRepository
@@ -62,7 +65,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertNotNull(response.id)
         assertEquals("test", response.username)
@@ -86,7 +89,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertNotNull(response.id)
         assertEquals("test", response.username)
@@ -110,7 +113,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertEquals(true, response.sendScoreUpdates)
         assertEquals(false, response.sendChangeUpdates)
@@ -129,7 +132,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertEquals(false, response.sendScoreUpdates)
         assertEquals(true, response.sendChangeUpdates)
@@ -309,7 +312,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertEquals(false, response.sendScoreUpdates)
         assertEquals(false, response.sendChangeUpdates)
@@ -342,7 +345,7 @@ class AccountIntegrationTests {
             .andExpect(status().isOk)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertNotNull(response.id)
         assertEquals("test", response.username)

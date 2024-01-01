@@ -15,6 +15,7 @@ data class MatchResultQueueMessage(
     val endTime: LocalDateTime,
     val winningBotId: Long,
     val rounds: List<Round>,
+    val participatingBots: List<Long>,
 ) : Serializable
 
 data class Round(

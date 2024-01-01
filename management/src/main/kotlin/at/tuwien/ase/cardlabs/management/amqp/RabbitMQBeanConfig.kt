@@ -1,9 +1,14 @@
 package at.tuwien.ase.cardlabs.management.amqp
 
+import at.tuwien.ase.cardlabs.management.mapper.GameMapper
+import at.tuwien.ase.cardlabs.management.service.bot.BotService
+import at.tuwien.ase.cardlabs.management.service.game.GameService
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -70,5 +75,40 @@ class RabbitMQBeanConfig {
     @MatchResultQueue
     fun matchResultQueue(): Queue {
         return Queue(matchResultQueue!!)
+    }
+
+    // This code is used to register a listener for the match queue
+    /*@Bean
+    fun listenerContainerMatchQueueMessage(
+        connectionFactory: ConnectionFactory,
+        objectMapper: ObjectMapper,
+    ): SimpleMessageListenerContainer {
+        val container = SimpleMessageListenerContainer()
+        container.connectionFactory = connectionFactory
+        container.setQueueNames(matchQueue)
+        container.setMessageListener(MatchQueueRabbitMQListener(objectMapper))
+        return container
+    }*/
+
+    @Bean
+    fun listenerContainerMatchResultQueueMessage(
+        connectionFactory: ConnectionFactory,
+        objectMapper: ObjectMapper,
+        gameService: GameService,
+        gameMapper: GameMapper,
+        botService: BotService,
+    ): SimpleMessageListenerContainer {
+        val container = SimpleMessageListenerContainer()
+        container.connectionFactory = connectionFactory
+        container.setQueueNames(matchQueue)
+        container.setMessageListener(
+            MatchResultQueueRabbitMQListener(
+                objectMapper,
+                gameService,
+                gameMapper,
+                botService,
+            )
+        )
+        return container
     }
 }
