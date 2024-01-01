@@ -186,7 +186,7 @@ class BotService(
 
     @Transactional
     fun updateMultipleBotState(botIds: List<Long>, newState: BotState): Int {
-        logger.debug("Attempting to update for the bots $botIds to $newState")
+        logger.debug("Attempting to update the state for the bots $botIds to $newState")
         return botRepository.updateMultipleBotState(botIds, newState)
     }
 
