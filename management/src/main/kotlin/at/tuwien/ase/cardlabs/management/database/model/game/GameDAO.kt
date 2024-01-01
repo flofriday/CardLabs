@@ -1,12 +1,8 @@
 package at.tuwien.ase.cardlabs.management.database.model.game
 
-import at.tuwien.ase.cardlabs.management.database.converter.ActionListConverter
-import at.tuwien.ase.cardlabs.management.database.converter.LogMessageListConverter
-import at.tuwien.ase.cardlabs.management.database.converter.ResultListConverter
+import at.tuwien.ase.cardlabs.management.database.converter.RoundListConverter
 import at.tuwien.ase.cardlabs.management.database.model.AuditedEntity
-import at.tuwien.ase.cardlabs.management.database.model.game.action.Action
-import at.tuwien.ase.cardlabs.management.database.model.game.log.LogMessage
-import at.tuwien.ase.cardlabs.management.database.model.game.result.Result
+import at.tuwien.ase.cardlabs.management.database.model.game.round.Round
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
@@ -34,17 +30,12 @@ class GameDAO : AuditedEntity() {
     @Column(nullable = false)
     lateinit var endTime: LocalDateTime
 
-    @Column(nullable = false)
-    @Convert(converter = ActionListConverter::class)
-    lateinit var actions: List<Action>
+    @Column
+    var winningBotId: Long? = null
 
-    @Column(nullable = false)
-    @Convert(converter = ResultListConverter::class)
-    lateinit var results: List<Result>
-
-    @Column(nullable = false)
-    @Convert(converter = LogMessageListConverter::class)
-    lateinit var logMessages: List<LogMessage>
+    @Column(nullable = false, length = 32768)
+    @Convert(converter = RoundListConverter::class)
+    lateinit var rounds: List<Round>
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)

@@ -18,6 +18,7 @@ data class MatchResultQueueMessage(
 ) : Serializable
 
 data class Round(
+    val roundId: Long,
     val topCard: Card,
     val drawPile: List<Card>, // Stores the top 10 cards of the pile, fewer if there a fewer on the pile
     val hands: List<Hand>,
