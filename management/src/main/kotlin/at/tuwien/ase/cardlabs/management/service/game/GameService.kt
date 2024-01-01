@@ -43,6 +43,14 @@ class GameService(
     }
 
     /**
+     * Save a game
+     */
+    @Transactional
+    fun save(game: GameDAO): Game {
+        return gameMapper.map(gameRepository.save(game))
+    }
+
+    /**
      * Save all the games
      */
     @Transactional

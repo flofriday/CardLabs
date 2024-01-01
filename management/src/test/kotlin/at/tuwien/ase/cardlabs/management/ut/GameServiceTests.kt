@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.ut
 
+import at.tuwien.ase.cardlabs.management.ApplicationTest
 import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.database.model.game.GameDAO
 import at.tuwien.ase.cardlabs.management.database.model.game.GameState
@@ -20,11 +21,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
 import java.time.LocalDateTime
 
-@SpringBootTest
+@ApplicationTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class GameServiceTests {
 
@@ -93,8 +93,8 @@ class GameServiceTests {
         assertEquals(gameDAO.rounds[0].topCard, result.rounds[0].topCard)
         assertEquals(gameDAO.rounds[0].drawPile.size, result.rounds[0].drawPile.size)
         assertEquals(gameDAO.rounds[0].drawPile[0], result.rounds[0].drawPile[0])
-        assertEquals(gameDAO.rounds[0].hand.size, result.rounds[0].hand.size)
-        assertEquals(gameDAO.rounds[0].hand[0], result.rounds[0].hand[0])
+        assertEquals(gameDAO.rounds[0].hands.size, result.rounds[0].hands.size)
+        assertEquals(gameDAO.rounds[0].hands[0], result.rounds[0].hands[0])
         assertEquals(gameDAO.rounds[0].actions.size, result.rounds[0].actions.size)
         assertEquals(gameDAO.rounds[0].actions[0], result.rounds[0].actions[0])
         assertEquals(gameDAO.rounds[0].logMessages.size, result.rounds[0].logMessages.size)

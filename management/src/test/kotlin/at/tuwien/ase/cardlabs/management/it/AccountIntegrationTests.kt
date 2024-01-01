@@ -1,6 +1,7 @@
 package at.tuwien.ase.cardlabs.management.it
 
 import at.tuwien.ase.cardlabs.management.TestHelper
+import at.tuwien.ase.cardlabs.management.WebApplicationTest
 import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
@@ -8,6 +9,7 @@ import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.util.Continent
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -15,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.MockMvc
@@ -25,10 +26,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebApplicationTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AccountIntegrationTests {
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @Autowired
     private lateinit var accountRepository: AccountRepository
@@ -41,6 +45,7 @@ class AccountIntegrationTests {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
+
     private val countries: List<Pair<String, Continent>> = listOf(Pair("Austria", Continent.EUROPE), Pair("Germany", Continent.EUROPE), Pair("Japan", Continent.EUROPE))
 
     @BeforeEach
@@ -64,7 +69,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertNotNull(response.id)
         assertEquals("test", response.username)
@@ -88,7 +93,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertNotNull(response.id)
         assertEquals("test", response.username)
@@ -112,7 +117,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertEquals(true, response.sendScoreUpdates)
         assertEquals(false, response.sendChangeUpdates)
@@ -131,7 +136,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertEquals(false, response.sendScoreUpdates)
         assertEquals(true, response.sendChangeUpdates)
@@ -311,7 +316,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertEquals(false, response.sendScoreUpdates)
         assertEquals(false, response.sendChangeUpdates)
@@ -344,7 +349,7 @@ class AccountIntegrationTests {
             .andExpect(status().isOk)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertNotNull(response.id)
         assertEquals("test", response.username)

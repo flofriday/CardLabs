@@ -184,6 +184,9 @@ class BotService(
         }
     }
 
+    /**
+     * Fetch all bots by a given state
+     */
     @Transactional
     fun fetchByState(botState: BotState): List<Bot> {
         logger.debug("Attempting to fetch all bots with the state $botState")
@@ -192,10 +195,24 @@ class BotService(
             .toList()
     }
 
+    /**
+     * Update the state of multiple bots to a given state
+     */
     @Transactional
     fun updateMultipleBotState(botIds: List<Long>, newState: BotState): Int {
-        logger.debug("Attempting to update for the bots $botIds to $newState")
+        logger.debug("Attempting to update the state for the bots $botIds to $newState")
         return botRepository.updateMultipleBotState(botIds, newState)
+    }
+
+    /**
+     * Set the bots to there default state
+     */
+    @Transactional
+    fun setBotStateToDefaultState(botIds: List<Long>) {
+        logger.debug("Attempting to set the bot state to the default state for the bots $botIds")
+        for (bot in botRepository.findAllByIdInAndDeletedIsNull(botIds)) {
+            bot.currentState = bot.defaultState
+        }
     }
 
     private fun findById(botId: Long): BotDAO? {

@@ -29,6 +29,8 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
     )
     fun findByOwnerIdAndDeletedIsNull(@Param("ownerId") ownerId: Long, pageable: Pageable): Page<BotDAO>
 
+    fun findAllByIdInAndDeletedIsNull(botsIds: List<Long>): Stream<BotDAO>
+
     @Query(
         """
         SELECT COUNT(b) + 1
