@@ -16,12 +16,12 @@ export default function MatchOverviewEntry({ entry }: Props): JSX.Element {
           {entry.place}. Place
         </p>
         <p className="ml-2 text-3xl text-center">|</p>
-        <p className="flex-1 ml-2 text-xl opacity-50 text-center sm:text-base md:text-lg lg:text-xl xl:text-2xl">
+        <p className="flex-1 ml-2 text-xl opacity-50 text-center sm:text-sm md:text-base lg:text-lg xl:text-xl">
           {" "}
           Version: {entry.botVersion}
         </p>
         <p className="ml-2 text-3xl text-center">|</p>
-        <p className="flex-1 ml-2 text-xl opacity-50 text-center sm:text-base md:text-lg lg:text-xl xl:text-2xl">
+        <p className="flex-1 ml-2 text-xl opacity-50 text-center sm:text-sm md:text-base lg:text-lg xl:text-xl">
           {entry.scoreDevelopment} RP
         </p>
         <p className="mx-4 text-3xl text-center">|</p>
