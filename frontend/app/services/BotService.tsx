@@ -166,43 +166,83 @@ export async function getBotMatchOverviewPage(
     return await response.json();
   }
   */
-  return [
-    {
-      gameDate: new Date("2023-01-01T12:00:00"),
-      place: 1,
-      scoreDevelopment: 1500,
-      botVersion: "v1.0",
-      gameId: 12345,
-    },
-    {
-      gameDate: new Date("2023-01-02T15:30:00"),
-      place: 2,
-      scoreDevelopment: 1450,
-      botVersion: "v1.1",
-      gameId: 67890,
-    },
-    {
-      gameDate: new Date("2023-01-03T18:45:00"),
-      place: 3,
-      scoreDevelopment: 1600,
-      botVersion: "v1.2",
-      gameId: 112233,
-    },
-    {
-      gameDate: new Date("2023-01-04T10:15:00"),
-      place: 4,
-      scoreDevelopment: 1400,
-      botVersion: "v1.3",
-      gameId: 445566,
-    },
-    {
-      gameDate: new Date("2023-01-05T20:00:00"),
-      place: 5,
-      scoreDevelopment: 1550,
-      botVersion: "v1.4",
-      gameId: 778899,
-    },
-  ];
+  if (pageNumber == 1) {
+    return [
+      {
+        gameDate: new Date("2023-01-01T12:00:00"),
+        place: 1,
+        scoreDevelopment: 1500,
+        botVersion: "v1.0",
+        gameId: 12345,
+      },
+      {
+        gameDate: new Date("2023-01-02T15:30:00"),
+        place: 2,
+        scoreDevelopment: 1450,
+        botVersion: "v1.1",
+        gameId: 67890,
+      },
+      {
+        gameDate: new Date("2023-01-03T18:45:00"),
+        place: 3,
+        scoreDevelopment: 1600,
+        botVersion: "v1.2",
+        gameId: 112233,
+      },
+      {
+        gameDate: new Date("2023-01-04T10:15:00"),
+        place: 4,
+        scoreDevelopment: 1400,
+        botVersion: "v1.3",
+        gameId: 445566,
+      },
+      {
+        gameDate: new Date("2023-01-05T20:00:00"),
+        place: 5,
+        scoreDevelopment: 1550,
+        botVersion: "v1.4",
+        gameId: 778899,
+      },
+    ];
+  } else {
+    return [
+      {
+        gameDate: new Date("2023-01-01T12:00:00"),
+        place: 54,
+        scoreDevelopment: 1500,
+        botVersion: "v1.0",
+        gameId: 12345,
+      },
+      {
+        gameDate: new Date("2023-01-02T15:30:00"),
+        place: 56,
+        scoreDevelopment: 1450,
+        botVersion: "v1.1",
+        gameId: 67890,
+      },
+      {
+        gameDate: new Date("2023-01-03T18:45:00"),
+        place: 101,
+        scoreDevelopment: 1600,
+        botVersion: "v1.2",
+        gameId: 112233,
+      },
+      {
+        gameDate: new Date("2023-01-04T10:15:00"),
+        place: 107,
+        scoreDevelopment: 1400,
+        botVersion: "v1.3",
+        gameId: 445566,
+      },
+      {
+        gameDate: new Date("2023-01-05T20:00:00"),
+        place: 233,
+        scoreDevelopment: 1550,
+        botVersion: "v1.4",
+        gameId: 778899,
+      },
+    ];
+  }
 }
 
 export async function getTotalNumberOfBotMatchOverviewPages(

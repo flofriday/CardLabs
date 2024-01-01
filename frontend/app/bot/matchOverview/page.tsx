@@ -40,11 +40,11 @@ export default function MatchOverview(): JSX.Element {
         setMatchOverviewEntries(entries);
       })
       .catch(() => {});
-  });
+  }, [pageNumber, entriesPerPage]);
 
   return (
     <div className="flex flex-col h-full">
-      <LeftPageHeader title="Bot name" />
+      <LeftPageHeader title="Bot name" subTitle="Bot-Name" />
 
       <div className="flex flex-1 justify-center items-center pt-20">
         <div className="w-1/4 p-12">
