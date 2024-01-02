@@ -1,34 +1,42 @@
 "use client";
-import Slider from "./Slider";
-import RoundLogContainer from "./roundLogContainer";
-import Card, { CardColor, CardValue } from "../components/card";
-import BotHandsContainer from "./botHandsContainer";
+import Slider from "../Slider";
+import RoundLogContainer from "../roundLogContainer";
+import Card, { CardColor, CardValue } from "../../components/card";
+import BotHandsContainer from "../botHandsContainer";
 import { useEffect, useState } from "react";
 import {
   getLogLinesForGame,
   getRoundInfosForGame,
-} from "../services/GameService";
-import { LogLine } from "../types/LogLine";
-import { RoundInfo } from "../types/RoundInfo";
+} from "../../services/GameService";
+import { LogLine } from "../../types/LogLine";
+import { RoundInfo } from "../../types/RoundInfo";
+import { notFound } from "next/navigation";
 
 interface Props {
-  date: string;
-  place: number;
+  slug: string;
 }
 
-export default function GameDetail({ date, place }: Props): JSX.Element {
+export default function GameDetail({
+  params,
+}: {
+  params: { slug: string };
+}): JSX.Element {
+  if (isNaN(Number(params.slug))) {
+    return notFound();
+  }
+
   const [logLines, setLogLines] = useState<LogLine[]>([]);
   const [roundInfos, setRoundInfos] = useState<RoundInfo[] | undefined>(
     undefined
   );
 
   useEffect(() => {
-    getLogLinesForGame("testID")
+    getLogLinesForGame(10)
       .then((lines) => {
         setLogLines(lines);
       })
       .catch(() => {});
-    getRoundInfosForGame("testID")
+    getRoundInfosForGame(10)
       .then((roundInfos) => {
         setRoundInfos(roundInfos);
       })

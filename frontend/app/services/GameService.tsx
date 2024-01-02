@@ -1,6 +1,7 @@
 import { RoundInfo } from "../types/RoundInfo";
 import { LogLine } from "../types/LogLine";
 import { BotRoundInfo } from "../types/BotRoundInfo";
+import { toast } from "react-toastify";
 import Card, { CardColor, CardValue } from "../components/card";
 
 const logExamples: LogLine[] = [
@@ -226,13 +227,55 @@ const roundInfos: RoundInfo[] = [
 ];
 
 export async function getRoundInfosForGame(
-  gameID: string
+  gameID: number
 ): Promise<RoundInfo[]> {
   // TODO replace this with calls to the backend
-  return roundInfos;
+  //return roundInfos;
+
+  try {
+    const response = await fetch(`api/match/${gameID}/all`, {
+      mode: "cors",
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (response.status !== 200) {
+      throw new Error("Failed to fetch match log");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error("Error fetching match log:", error.message);
+    throw error;
+  }
 }
 
-export async function getLogLinesForGame(gameID: string): Promise<LogLine[]> {
+export async function getLogLinesForGame(gameID: number): Promise<LogLine[]> {
   // TODO replace this with calls to the backend
-  return logExamples;
+  //return logExamples;
+
+  //@GetMapping("/match/{gameId}/log")
+
+  try {
+    const response = await fetch(`api/match/${gameID}/log`, {
+      mode: "cors",
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (response.status !== 200) {
+      throw new Error("Failed to fetch match log");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error("Error fetching match log:", error.message);
+    throw error;
+  }
 }
