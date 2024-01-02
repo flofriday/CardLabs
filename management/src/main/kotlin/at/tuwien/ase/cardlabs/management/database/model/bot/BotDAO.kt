@@ -13,6 +13,8 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import org.hibernate.annotations.CreationTimestamp
+import java.time.Instant
 
 /**
  * A database entry representing a bot. When the deleted field from the parent class AuditedEntity is set, then the
@@ -59,4 +61,8 @@ class BotDAO : AuditedEntity() {
     // The state error message if the current bot state is ERROR
     @Column
     var errorStateMessage: String? = null
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    var codeUpdated: Instant? = null
 }

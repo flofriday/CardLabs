@@ -6,6 +6,7 @@ import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.service.AccountService
+import at.tuwien.ase.cardlabs.management.util.Continent
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -40,13 +41,14 @@ class AccountIntegrationTests {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
-    private val countries: List<String> = listOf("Austria", "Germany", "Netherlands")
+    private val countries: List<Pair<String, Continent>> = listOf(Pair("Austria", Continent.EUROPE), Pair("Germany", Continent.EUROPE), Pair("Japan", Continent.EUROPE))
 
     @BeforeEach
     fun beforeEach() {
-        for (country: String in countries) {
+        for (country: Pair<String, Continent> in countries) {
             val c = LocationDAO()
-            c.name = country
+            c.name = country.first
+            c.continent = country.second
             locationRepository.save(c)
         }
     }
