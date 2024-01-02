@@ -14,7 +14,6 @@ export default function BotOverview(): JSX.Element {
   const fetch = (): void => {
     getAllBots(page, 6)
       .then((fpage) => {
-        console.log(fpage.content);
         setBots(fpage.content);
         setNumPages(fpage.totalPages);
         if (page >= fpage.totalPages) {
@@ -26,7 +25,6 @@ export default function BotOverview(): JSX.Element {
   useEffect(() => {
     getAllBots(page, 6)
       .then((fpage) => {
-        console.log(fpage.content);
         setBots(fpage.content);
         setNumPages(fpage.totalPages);
         if (page >= fpage.totalPages) {

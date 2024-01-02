@@ -33,7 +33,7 @@ export default function BotCard({ bot, refetch }: Props): JSX.Element {
   const [rankCountry, setRankCountry] = useState(-1);
   const [createdDate, setCreatedDate] = useState(bot.created.toLocaleString());
   const [updatedDate, setUpdatedDate] = useState(bot.updated.toLocaleString());
-  const [deleteModalVisibility, setDeleteAccountModalVisiblity] =
+  const [deleteModalVisibility, setDeleteAccountModalVisibility] =
     useState(false);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export default function BotCard({ bot, refetch }: Props): JSX.Element {
             title="Delete Bot"
             modalClassName="w-3/12"
             onClose={() => {
-              setDeleteAccountModalVisiblity(false);
+              setDeleteAccountModalVisibility(false);
             }}
           >
             <div>
@@ -76,7 +76,7 @@ export default function BotCard({ bot, refetch }: Props): JSX.Element {
                   className="btn bg-accent text-text py-2 w-48 rounded-lg shadow-md text-lg"
                   onClick={() => {
                     deleteBot(bot.id, refetch);
-                    setDeleteAccountModalVisiblity(false);
+                    setDeleteAccountModalVisibility(false);
                   }}
                 >
                   Delete Bot
@@ -84,7 +84,7 @@ export default function BotCard({ bot, refetch }: Props): JSX.Element {
                 <button
                   className="btn bg-secondary text-text py-2 w-48 rounded-lg shadow-md text-lg"
                   onClick={() => {
-                    setDeleteAccountModalVisiblity(false);
+                    setDeleteAccountModalVisibility(false);
                   }}
                 >
                   Go back
@@ -98,7 +98,7 @@ export default function BotCard({ bot, refetch }: Props): JSX.Element {
         <button
           className="absolute right-3 top-2"
           onClick={() => {
-            setDeleteAccountModalVisiblity(true);
+            setDeleteAccountModalVisibility(true);
           }}
         >
           <IoClose size={40} style={{ fill: "#87153A" }} />
