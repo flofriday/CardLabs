@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 import IconButton, { ButtonIcon } from "../components/iconButton";
 import { IoClose } from "react-icons/io5";
 import Modal from "../components/modal";
-import { Bot, getBotRank } from "../services/BotService";
 import { RegionType } from "../types/RegionType";
 import Link from "next/link";
-import { deleteBot as _deleteBot } from "@/app/services/BotService";
+import {
+  deleteBot as _deleteBot,
+  Bot,
+  getBotRank,
+} from "@/app/services/BotService";
 
 interface Props {
   bot: Bot;

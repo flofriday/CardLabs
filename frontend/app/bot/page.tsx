@@ -10,17 +10,30 @@ export default function BotOverview(): JSX.Element {
   const [page, setPage] = useState(0);
   const [numPages, setNumPages] = useState(0);
   const [bots, setBots] = useState<Bot[]>([]);
-  const fetch = () => {
+
+  const fetch = (): void => {
     getAllBots(page, 6)
-      .then((page) => {
-        console.log(page.content);
-        setBots(page.content);
-        setNumPages(page.totalPages);
+      .then((fpage) => {
+        console.log(fpage.content);
+        setBots(fpage.content);
+        setNumPages(fpage.totalPages);
+        if (page >= fpage.totalPages) {
+          setPage(fpage.totalPages - 1);
+        }
       })
       .catch(() => {});
   };
   useEffect(() => {
-    fetch();
+    getAllBots(page, 6)
+      .then((fpage) => {
+        console.log(fpage.content);
+        setBots(fpage.content);
+        setNumPages(fpage.totalPages);
+        if (page >= fpage.totalPages) {
+          setPage(fpage.totalPages - 1);
+        }
+      })
+      .catch(() => {});
   }, [page]);
 
   return (
@@ -37,6 +50,7 @@ export default function BotOverview(): JSX.Element {
             setPage(p);
           }}
           totalNumberOfPages={numPages}
+          initalPage={page}
         />
       </div>
     </>

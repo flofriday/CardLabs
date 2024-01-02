@@ -5,18 +5,24 @@ import React, { useEffect, useState } from "react";
 interface Props {
   onPageChange: (page: number) => void;
   totalNumberOfPages: number;
+  initalPage: number;
 }
 
 export default function Pagination({
   onPageChange,
   totalNumberOfPages,
+  initalPage,
 }: Props): JSX.Element {
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(initalPage ?? 0);
   const [totalPages, setTotalPages] = useState<number>(totalNumberOfPages);
 
   useEffect(() => {
     setTotalPages(totalNumberOfPages);
   }, [totalNumberOfPages]);
+
+  useEffect(() => {
+    setCurrentPage(initalPage);
+  }, [initalPage]);
 
   const goToPage = (page: number): void => {
     setCurrentPage(page);
