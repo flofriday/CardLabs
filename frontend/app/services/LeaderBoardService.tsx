@@ -1,6 +1,9 @@
 import { LeaderBoardType } from "../types/LeaderBoardType";
 import { RegionType } from "../types/RegionType";
+import { Page } from "../types/contentPage";
 import { leaderBoardEntry } from "../types/leaderBoardEntry";
+import { isAuthenticated } from "./AuthenticationService";
+import { getUserInfo } from "./UserService";
 
 // TODO: Remove this as this is just mocked data to test the frontend
 const exampleEntries: leaderBoardEntry[] = [
@@ -95,9 +98,21 @@ export async function getLeaderBoardPage(
   pageNumber: number,
   regionType: RegionType,
   boardType: LeaderBoardType
-): Promise<leaderBoardEntry[]> {
+): Promise<Page<leaderBoardEntry>> {
   if (boardType === LeaderBoardType.ALL_BOTS) {
-    const url = `api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType}`;
+    let url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}`;
+
+    if (regionType != RegionType.GLOBAL) {
+      let filter = null;
+      let user = await getUserInfo();
+      filter = user.location;
+      if (filter != null) {
+        url = `${url}&filter=${filter}`;
+      } else {
+        regionType = RegionType.GLOBAL;
+        url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}`;
+      }
+    }
 
     const response = await fetch(url, {
       mode: "cors",
@@ -110,37 +125,10 @@ export async function getLeaderBoardPage(
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     } else {
-      return await response.json();
+      return (await response.json()) as Page<leaderBoardEntry>;
     }
   } else {
     // TODO replace this with calls to the backend
-    if (regionType === RegionType.CONTINENT) {
-      if (pageNumber === 1) {
-        return testentries1;
-      } else {
-        return testentries2;
-      }
-    } else if (regionType === RegionType.COUNTRY) {
-      if (pageNumber === 1) {
-        return exampleEntries;
-      } else {
-        return exampleEntries1;
-      }
-    } else if (regionType === RegionType.GLOBAL) {
-      if (pageNumber === 1) {
-        return exampleEntries2;
-      } else {
-        return testentries3;
-      }
-    } else {
-      return error_entries;
-    }
+    return {} as Page<leaderBoardEntry>;
   }
-}
-
-export async function getTotalNumberOfPages(
-  entriesPerPage: number
-): Promise<number> {
-  // TODO replace this with calls to the backend
-  return 2;
 }
