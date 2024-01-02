@@ -76,7 +76,7 @@ class Matchmaker(
                 )
             }
             val message = MatchQueueMessage(game.id!!, messageBots)
-            //rabbitTemplate.convertAndSend(matchQueue.name, message)
+            rabbitTemplate.convertAndSend(matchQueue.name, message)
             logger.debug("Sending the message '${matchQueueMessageToString(message)}' to the queue '${matchQueue.name}'")
         }
     }
