@@ -20,7 +20,7 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
         """
         SELECT b
             FROM BotDAO b
-            WHERE b.owner.id = :ownerId
+            WHERE b.owner.id = :ownerId AND b.deleted = NULL 
         """,
     )
     fun findByOwnerIdAndDeletedIsNull(@Param("ownerId") ownerId: Long, pageable: Pageable): Page<BotDAO>

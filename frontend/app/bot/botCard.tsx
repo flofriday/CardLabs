@@ -7,12 +7,22 @@ import Modal from "../components/modal";
 import { Bot, getBotRank } from "../services/BotService";
 import { RegionType } from "../types/RegionType";
 import Link from "next/link";
+import { deleteBot as _deleteBot } from "@/app/services/BotService";
 
 interface Props {
   bot: Bot;
+  refetch: () => void;
 }
 
-export default function BotCard({ bot }: Props): JSX.Element {
+function deleteBot(id: number, refetch: () => void): void {
+  _deleteBot(id)
+    .then(() => {
+      refetch();
+    })
+    .catch(() => {});
+}
+
+export default function BotCard({ bot, refetch }: Props): JSX.Element {
   const [name, setName] = useState(bot.name);
   const [score, setScore] = useState(bot.eloScore);
   const [rankGlobal, setRankGlobal] = useState(-1);
@@ -61,7 +71,10 @@ export default function BotCard({ bot }: Props): JSX.Element {
               <div className="flex justify-around pt-4">
                 <button
                   className="btn bg-accent text-text py-2 w-48 rounded-lg shadow-md text-lg"
-                  onClick={() => {}}
+                  onClick={() => {
+                    deleteBot(bot.id, refetch);
+                    setDeleteAccountModalVisiblity(false);
+                  }}
                 >
                   Delete Bot
                 </button>
