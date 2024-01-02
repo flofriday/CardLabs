@@ -13,7 +13,7 @@ import at.tuwien.ase.cardlabs.management.database.model.game.card.Color
 import at.tuwien.ase.cardlabs.management.database.model.game.hand.Hand
 import at.tuwien.ase.cardlabs.management.database.model.game.log.DebugLogMessage
 import at.tuwien.ase.cardlabs.management.database.model.game.log.SystemLogMessage
-import at.tuwien.ase.cardlabs.management.database.model.game.round.Round
+import at.tuwien.ase.cardlabs.management.database.model.game.round.Turn
 import at.tuwien.ase.cardlabs.management.database.repository.GameRepository
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -88,8 +88,8 @@ class GameIntegrationTests {
             SystemLogMessage("hello"),
             DebugLogMessage("world", botId),
         )
-        gameDAO.rounds = listOf(
-            Round(0, topCard, drawPile, hand, actions, logMessages),
+        gameDAO.turns = listOf(
+            Turn(0, topCard, drawPile, hand, actions, logMessages),
         )
         gameDAO.gameState = GameState.CREATED
         val gameId = gameRepository.save(gameDAO).id!!
@@ -106,18 +106,18 @@ class GameIntegrationTests {
         assertEquals(gameDAO.startTime, response.startTime)
         assertEquals(gameDAO.endTime, response.endTime)
         assertEquals(gameDAO.winningBotId, response.winningBotId)
-        assertEquals(gameDAO.rounds.size, response.rounds.size)
-        assertEquals(gameDAO.rounds[0].roundId, response.rounds[0].roundId)
-        assertEquals(gameDAO.rounds[0].topCard, response.rounds[0].topCard)
-        assertEquals(gameDAO.rounds[0].drawPile.size, response.rounds[0].drawPile.size)
-        assertEquals(gameDAO.rounds[0].drawPile[0], response.rounds[0].drawPile[0])
-        assertEquals(gameDAO.rounds[0].hands.size, response.rounds[0].hands.size)
-        assertEquals(gameDAO.rounds[0].hands[0], response.rounds[0].hands[0])
-        assertEquals(gameDAO.rounds[0].actions.size, response.rounds[0].actions.size)
-        assertEquals(gameDAO.rounds[0].actions[0], response.rounds[0].actions[0])
-        assertEquals(gameDAO.rounds[0].logMessages.size, response.rounds[0].logMessages.size)
-        assertEquals(gameDAO.rounds[0].logMessages[0], response.rounds[0].logMessages[0])
-        assertEquals(gameDAO.rounds[0].logMessages[1], response.rounds[0].logMessages[1])
+        assertEquals(gameDAO.turns.size, response.turns.size)
+        assertEquals(gameDAO.turns[0].roundId, response.turns[0].roundId)
+        assertEquals(gameDAO.turns[0].topCard, response.turns[0].topCard)
+        assertEquals(gameDAO.turns[0].drawPile.size, response.turns[0].drawPile.size)
+        assertEquals(gameDAO.turns[0].drawPile[0], response.turns[0].drawPile[0])
+        assertEquals(gameDAO.turns[0].hands.size, response.turns[0].hands.size)
+        assertEquals(gameDAO.turns[0].hands[0], response.turns[0].hands[0])
+        assertEquals(gameDAO.turns[0].actions.size, response.turns[0].actions.size)
+        assertEquals(gameDAO.turns[0].actions[0], response.turns[0].actions[0])
+        assertEquals(gameDAO.turns[0].logMessages.size, response.turns[0].logMessages.size)
+        assertEquals(gameDAO.turns[0].logMessages[0], response.turns[0].logMessages[0])
+        assertEquals(gameDAO.turns[0].logMessages[1], response.turns[0].logMessages[1])
         assertEquals(gameDAO.gameState, response.gameState)
     }
 
@@ -149,8 +149,8 @@ class GameIntegrationTests {
             SystemLogMessage("hello"),
             DebugLogMessage("world", botId),
         )
-        gameDAO.rounds = listOf(
-            Round(0, topCard, emptyList(), emptyList(), emptyList(), logMessages),
+        gameDAO.turns = listOf(
+            Turn(0, topCard, emptyList(), emptyList(), emptyList(), logMessages),
         )
         gameDAO.gameState = GameState.CREATED
         val gameId = gameRepository.save(gameDAO).id!!
@@ -167,12 +167,12 @@ class GameIntegrationTests {
         assertEquals(gameDAO.startTime, response.startTime)
         assertEquals(gameDAO.endTime, response.endTime)
         assertEquals(gameDAO.winningBotId, response.winningBotId)
-        assertEquals(gameDAO.rounds.size, response.rounds.size)
-        assertEquals(gameDAO.rounds[0].roundId, response.rounds[0].roundId)
-        assertEquals(gameDAO.rounds[0].topCard, response.rounds[0].topCard)
-        assertEquals(gameDAO.rounds[0].logMessages.size, response.rounds[0].logMessages.size)
-        assertEquals(gameDAO.rounds[0].logMessages[0], response.rounds[0].logMessages[0])
-        assertEquals(gameDAO.rounds[0].logMessages[1], response.rounds[0].logMessages[1])
+        assertEquals(gameDAO.turns.size, response.turns.size)
+        assertEquals(gameDAO.turns[0].roundId, response.turns[0].roundId)
+        assertEquals(gameDAO.turns[0].topCard, response.turns[0].topCard)
+        assertEquals(gameDAO.turns[0].logMessages.size, response.turns[0].logMessages.size)
+        assertEquals(gameDAO.turns[0].logMessages[0], response.turns[0].logMessages[0])
+        assertEquals(gameDAO.turns[0].logMessages[1], response.turns[0].logMessages[1])
         assertEquals(gameDAO.gameState, response.gameState)
     }
 }

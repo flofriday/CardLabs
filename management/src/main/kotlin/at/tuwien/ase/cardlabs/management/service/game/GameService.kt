@@ -10,6 +10,8 @@ import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
 import at.tuwien.ase.cardlabs.management.mapper.GameMapper
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -39,7 +41,14 @@ class GameService(
     fun fetchLogById(user: CardLabUser, gameId: Long): List<LogMessage> {
         logger.debug("User ${user.id} attempts to fetch the logs of the game $gameId")
         val game = findById(gameId)
-        return game.rounds.flatMap { it.logMessages }
+        return game.turns.flatMap { it.logMessages }
+    }
+
+    @Transactional
+    fun fetchAllGamesWithBot(user: CardLabUser, botId: Long, pageable: Pageable): Page<Game> {
+        logger.debug("User ${user.id} attempts to fetch all the game for bot $botId")
+        return gameRepository.findAllGamesWithBot(botId, pageable)
+            .map(gameMapper::map)
     }
 
     /**
@@ -61,8 +70,10 @@ class GameService(
             dao.startTime = LocalDateTime.now()
             dao.endTime = dao.startTime
             dao.winningBotId = null
-            dao.rounds = emptyList()
+            dao.disqualifiedBotId = null
+            dao.turns = emptyList()
             dao.gameState = GameState.CREATED
+            dao.participatingBots = game.participatingBots
             gameDaos.add(dao)
         }
         return gameRepository.saveAll(gameDaos)

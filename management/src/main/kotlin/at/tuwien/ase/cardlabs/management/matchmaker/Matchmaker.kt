@@ -53,7 +53,8 @@ class Matchmaker(
         val gameCreates = mutableListOf<GameCreate>()
         val playingBotIds = result.matches.flatMap { innerList -> innerList.map { bot -> bot.id!! } }
         for (bots in result.matches) {
-            gameCreates.add(GameCreate())
+            val participatingBotIds = bots.map { bot -> bot.id!! }
+            gameCreates.add(GameCreate(participatingBotIds))
         }
         val gameCreateResult = gameService.save(gameCreates)
 
@@ -75,7 +76,7 @@ class Matchmaker(
                 )
             }
             val message = MatchQueueMessage(game.id!!, messageBots)
-            rabbitTemplate.convertAndSend(matchQueue.name, message)
+            //rabbitTemplate.convertAndSend(matchQueue.name, message)
             logger.debug("Sending the message '${matchQueueMessageToString(message)}' to the queue '${matchQueue.name}'")
         }
     }

@@ -3,7 +3,7 @@ package at.tuwien.ase.cardlabs.management.mapper
 import at.tuwien.ase.cardlabs.management.matchmaker.Action
 import at.tuwien.ase.cardlabs.management.matchmaker.Card
 import at.tuwien.ase.cardlabs.management.matchmaker.Hand
-import at.tuwien.ase.cardlabs.management.matchmaker.Round
+import at.tuwien.ase.cardlabs.management.matchmaker.Turn
 import org.springframework.stereotype.Component
 
 @Component
@@ -11,14 +11,14 @@ class RoundMapper(
     private val logMessageMapper: LogMessageMapper,
 ) {
 
-    fun mapRound(round: Round): at.tuwien.ase.cardlabs.management.database.model.game.round.Round {
-        return at.tuwien.ase.cardlabs.management.database.model.game.round.Round(
-            roundId = round.roundId,
-            topCard = mapCard(round.topCard),
-            drawPile = round.drawPile.map(::mapCard).toList(),
-            hands = round.hands.map(::mapHand).toList(),
-            actions = round.actions.map(::mapAction).toList(),
-            logMessages = round.logMessages.map(logMessageMapper::mapLogMessage).toList(),
+    fun mapRound(turn: Turn): at.tuwien.ase.cardlabs.management.database.model.game.round.Turn {
+        return at.tuwien.ase.cardlabs.management.database.model.game.round.Turn(
+            roundId = turn.roundId,
+            topCard = mapCard(turn.topCard),
+            drawPile = turn.drawPile.map(::mapCard).toList(),
+            hands = turn.hands.map(::mapHand).toList(),
+            actions = turn.actions.map(::mapAction).toList(),
+            logMessages = turn.logMessages.map(logMessageMapper::mapLogMessage).toList(),
         )
     }
 

@@ -1,7 +1,7 @@
 package at.tuwien.ase.cardlabs.management.controller.model.game
 
 import at.tuwien.ase.cardlabs.management.database.model.game.GameState
-import at.tuwien.ase.cardlabs.management.database.model.game.round.Round
+import at.tuwien.ase.cardlabs.management.database.model.game.round.Turn
 import java.time.LocalDateTime
 
 data class Game(
@@ -9,6 +9,7 @@ data class Game(
     val startTime: LocalDateTime,
     val endTime: LocalDateTime,
     val winningBotId: Long?,
-    val rounds: List<Round>,
+    val disqualifiedBotId: Long?,
+    val turns: List<Turn>,
     val gameState: GameState,
 )
