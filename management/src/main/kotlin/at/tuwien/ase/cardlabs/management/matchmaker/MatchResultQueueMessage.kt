@@ -14,11 +14,12 @@ data class MatchResultQueueMessage(
     val startTime: LocalDateTime,
     val endTime: LocalDateTime,
     val winningBotId: Long,
-    val rounds: List<Round>,
+    val disqualifiedBotId: Long,
+    val turns: List<Turn>,
     val participatingBots: List<Long>,
 ) : Serializable
 
-data class Round(
+data class Turn(
     val roundId: Long,
     val topCard: Card,
     val drawPile: List<Card>, // Stores the top 10 cards of the pile, fewer if there a fewer on the pile

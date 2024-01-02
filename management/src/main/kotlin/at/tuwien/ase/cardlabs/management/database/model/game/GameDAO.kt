@@ -2,7 +2,7 @@ package at.tuwien.ase.cardlabs.management.database.model.game
 
 import at.tuwien.ase.cardlabs.management.database.converter.RoundListConverter
 import at.tuwien.ase.cardlabs.management.database.model.AuditedEntity
-import at.tuwien.ase.cardlabs.management.database.model.game.round.Round
+import at.tuwien.ase.cardlabs.management.database.model.game.round.Turn
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
@@ -33,11 +33,17 @@ class GameDAO : AuditedEntity() {
     @Column
     var winningBotId: Long? = null
 
+    @Column
+    var disqualifiedBotId: Long? = null
+
     @Column(nullable = false, length = 32768)
     @Convert(converter = RoundListConverter::class)
-    lateinit var rounds: List<Round>
+    lateinit var turns: List<Turn>
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     lateinit var gameState: GameState
+
+    @Column(nullable = false)
+    lateinit var participatingBots: List<Long>
 }
