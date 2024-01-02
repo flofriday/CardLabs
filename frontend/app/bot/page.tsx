@@ -38,7 +38,7 @@ export default function BotOverview(): JSX.Element {
 
   return (
     <>
-      <LeftPageHeader title="My Bots" margin={5} />
+      <LeftPageHeader title="My Bots" />
       <div className=" w-full flex items-center justify-center flex-col mt-28">
         <div className="mt-14 w-9/12 grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8">
           {bots.map((b, idx) => {
