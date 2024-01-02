@@ -2,7 +2,7 @@ import { Editor } from "@monaco-editor/react";
 import { useEffect, useState } from "react";
 
 interface Props {
-  onChange?: (code: string | undefined) => void;
+  onChange?: (code: string | undefined | null) => void;
   code: string | null;
 }
 
@@ -33,7 +33,8 @@ export default function CodeEditor({
   const [_code, setCode] = useState(code);
   useEffect(() => {
     setCode(code);
-  }, [code]);
+    onChange(code);
+  }, [code, onChange]);
 
   return (
     <div className="w-full h-[calc(100%_-_4rem_-_11rem)] bg-secondary">

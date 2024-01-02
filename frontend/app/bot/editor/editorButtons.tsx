@@ -27,11 +27,13 @@ export default function EditorButtons({ save, _delete }: Props): JSX.Element {
               <button
                 className="btn bg-accent text-text py-2 w-48 rounded-lg shadow-md text-lg"
                 onClick={_delete}
+                id="delete_modal_delete_button"
               >
                 Delete Bot
               </button>
               <button
                 className="btn bg-secondary text-text py-2 w-48 rounded-lg shadow-md text-lg"
+                id="delete_modal_back_button"
                 onClick={() => {
                   setDeleteModalVisability(false);
                 }}

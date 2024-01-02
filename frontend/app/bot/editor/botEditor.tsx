@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 
 function saveNewBot(
   name: string,
-  code: string | null,
+  code: string,
   setId: (id: number) => void,
   router: any
 ): void {
@@ -30,7 +30,7 @@ function saveNewBot(
     .catch(() => {});
 }
 
-function saveBot(id: number, code: string | null): void {
+function saveBot(id: number, code: string): void {
   _saveBot(id, code)
     .then(() => {})
     .catch(() => {});
@@ -51,6 +51,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   const [_id, setId] = useState<number | null>(id);
   const [name, setName] = useState("");
   const [code, setCode] = useState<string | undefined>(undefined);
+  const [saved, setSaved] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -71,16 +72,30 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
     }
   }, [_id]);
 
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent): void => {
+      if (!saved) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [saved]);
+
   return (
     <div className="w-full h-full flex">
       <LeftPageHeader title={name} subTitle="Bot-Name" />
       <div className="h-full w-11/12">
         <EditorButtons
           save={() => {
+            setSaved(true);
             if (_id == null) {
-              saveNewBot(name, code ?? null, setId, router);
+              saveNewBot(name, code ?? "", setId, router);
             } else {
-              saveBot(_id, code ?? null);
+              saveBot(_id, code ?? "");
             }
           }}
           _delete={() => {
@@ -92,7 +107,15 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
             }
           }}
         />
-        <CodeEditor code={code ?? null} onChange={setCode} />
+        <CodeEditor
+          code={code ?? null}
+          onChange={(c) => {
+            if (c !== code) {
+              setSaved(false);
+            }
+            setCode(c ?? "");
+          }}
+        />
       </div>
       <LoggingElement />
     </div>
