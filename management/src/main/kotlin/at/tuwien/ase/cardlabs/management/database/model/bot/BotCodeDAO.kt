@@ -20,10 +20,10 @@ class BotCodeDAO : AuditedEntity() {
 
     @Id
     @GeneratedValue
-    var botCodeId: Long? = null
+    var id: Long? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "bot_id", nullable = false, unique = false)
     lateinit var bot: BotDAO
 
     @Transient

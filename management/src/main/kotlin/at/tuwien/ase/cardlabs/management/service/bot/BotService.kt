@@ -19,6 +19,7 @@ import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.validation.validator.BotValidator
 import at.tuwien.ase.cardlabs.management.validation.validator.Validator
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -35,10 +36,13 @@ class BotService(
     private val botConfig: BotConfig,
 ) {
 
+    private final val logger = LoggerFactory.getLogger(javaClass)
+
     /**
      * Generate a bot name
      */
-    fun generateBotName(): String {
+    fun generateBotName(user: CardLabUser): String {
+        logger.debug("User ${user.id} attempts to generate a bot name")
         return botNameGenerator.generateBotName()
     }
 
@@ -47,6 +51,7 @@ class BotService(
      */
     @Transactional
     fun create(user: CardLabUser, botCreate: BotCreate): Bot {
+        logger.debug("User ${user.id} attempts to create a bot with the name ${botCreate.name}")
         val owner = accountService.findById(user.id)
             ?: throw AccountDoesNotExistException("An account with the id ${user.id} doesn't exist")
 
@@ -69,6 +74,7 @@ class BotService(
      */
     @Transactional
     fun patch(user: CardLabUser, botId: Long, botPatch: BotPatch): Bot {
+        logger.debug("User ${user.id} attempts to patch the bot $botId")
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
         if (bot.owner.id != user.id) {
@@ -87,6 +93,7 @@ class BotService(
      */
     @Transactional
     fun createCodeVersion(user: CardLabUser, botId: Long) {
+        logger.debug("User ${user.id} attempts to create a code version for the bot $botId")
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
         if (bot.owner.id != user.id) {
@@ -120,6 +127,7 @@ class BotService(
      */
     @Transactional
     fun fetch(user: CardLabUser, botId: Long): Bot {
+        logger.debug("User ${user.id} attempts to fetch the bot $botId")
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
@@ -135,6 +143,7 @@ class BotService(
      */
     @Transactional
     fun fetchAll(user: CardLabUser, pageable: Pageable): Page<Bot> {
+        logger.debug("User ${user.id} attempts to fetch all its bots (pageNumber=${pageable.pageNumber}, pageSize=${pageable.pageSize})")
         return botRepository.findByOwnerIdAndDeletedIsNull(user.id, pageable)
             .map(botMapper::map)
     }
@@ -144,6 +153,7 @@ class BotService(
      */
     @Transactional
     fun delete(user: CardLabUser, botId: Long) {
+        logger.debug("User ${user.id} attempts to delete the bot $botId")
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
@@ -159,10 +169,42 @@ class BotService(
      */
     @Transactional
     fun fetchRankPosition(user: CardLabUser, botId: Long): Long {
+        logger.debug("User ${user.id} attempts to fetch global bot rank for bot $botId")
         findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
         return botRepository.findBotRankPosition(botId)
+    }
+
+    /**
+     * Fetch all bots by a given state
+     */
+    @Transactional
+    fun fetchByState(botState: BotState): List<Bot> {
+        logger.debug("Attempting to fetch all bots with the state $botState")
+        return botRepository.findByCurrentStateAndDeletedIsNull(botState)
+            .map(botMapper::map)
+            .toList()
+    }
+
+    /**
+     * Update the state of multiple bots to a given state
+     */
+    @Transactional
+    fun updateMultipleBotState(botIds: List<Long>, newState: BotState): Int {
+        logger.debug("Attempting to update the state for the bots $botIds to $newState")
+        return botRepository.updateMultipleBotState(botIds, newState)
+    }
+
+    /**
+     * Set the bots to there default state
+     */
+    @Transactional
+    fun setBotStateToDefaultState(botIds: List<Long>) {
+        logger.debug("Attempting to set the bot state to the default state for the bots $botIds")
+        for (bot in botRepository.findAllByIdInAndDeletedIsNull(botIds)) {
+            bot.currentState = bot.defaultState
+        }
     }
 
     private fun findById(botId: Long): BotDAO? {
@@ -171,6 +213,6 @@ class BotService(
 
     // Assume that botCodeId is set for every item
     private fun getLatestCodeVersion(codeHistory: MutableList<BotCodeDAO>): BotCodeDAO? {
-        return codeHistory.maxByOrNull { it.botCodeId!! }
+        return codeHistory.maxByOrNull { it.id!! }
     }
 }
