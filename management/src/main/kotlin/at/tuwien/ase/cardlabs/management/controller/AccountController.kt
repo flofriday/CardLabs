@@ -1,12 +1,10 @@
 package at.tuwien.ase.cardlabs.management.controller
 
-import at.tuwien.ase.cardlabs.management.controller.model.Account
-import at.tuwien.ase.cardlabs.management.controller.model.AccountUpdate
-import at.tuwien.ase.cardlabs.management.error.AccountExistsException
-import at.tuwien.ase.cardlabs.management.error.LocationNotFoundException
-import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
+import at.tuwien.ase.cardlabs.management.controller.model.account.Account
+import at.tuwien.ase.cardlabs.management.controller.model.account.AccountUpdate
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -20,66 +18,37 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class AccountController(val accountService: AccountService) {
 
+    private final val logger = LoggerFactory.getLogger(javaClass)
+
     @PostMapping("/account")
     fun create(@RequestBody account: Account): ResponseEntity<Account> {
-        return try {
-            val result = accountService.create(account)
-            ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(result)
-        } catch (exception: LocationNotFoundException) {
-            ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .build()
-        } catch (exception: AccountExistsException) {
-            ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .build()
-        } catch (exception: IllegalArgumentException) {
-            ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .build()
-        }
+        logger.debug("Attempting to create an account with the username ${account.username}")
+        val result = accountService.create(account)
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(result)
     }
 
     @DeleteMapping("/account")
     fun delete(
         @AuthenticationPrincipal user: CardLabUser,
     ): ResponseEntity<Unit> {
-        return try {
-            accountService.delete(user)
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .build()
-        } catch (exception: UnauthorizedException) {
-            ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .build()
-        } catch (exception: IllegalArgumentException) {
-            ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .build()
-        }
+        logger.debug("User ${user.id} attempts to delete its account")
+        accountService.delete(user, user.id)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .build()
     }
 
     @GetMapping("/account")
     fun info(
         @AuthenticationPrincipal user: CardLabUser,
     ): ResponseEntity<Account> {
-        return try {
-            val result = accountService.getUser(user.username)
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .body(result)
-        } catch (exception: UnauthorizedException) {
-            ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .build()
-        } catch (exception: IllegalArgumentException) {
-            ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .build()
-        }
+        logger.info("User ${user.id} attempts to fetch its account information")
+        val result = accountService.getUser(user)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(result)
     }
 
     @PatchMapping("/account")
@@ -87,23 +56,10 @@ class AccountController(val accountService: AccountService) {
         @AuthenticationPrincipal user: CardLabUser,
         @RequestBody accountUpdate: AccountUpdate,
     ): ResponseEntity<Unit> {
-        return try {
-            accountService.update(user, accountUpdate)
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .build()
-        } catch (exception: UnauthorizedException) {
-            ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .build()
-        } catch (exception: IllegalArgumentException) {
-            ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .build()
-        } catch (exception: LocationNotFoundException) {
-            ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .build()
-        }
+        logger.debug("User ${user.id} attempts to update its account")
+        accountService.update(user, accountUpdate)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .build()
     }
 }

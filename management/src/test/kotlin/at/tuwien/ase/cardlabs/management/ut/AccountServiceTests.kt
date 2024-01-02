@@ -1,11 +1,12 @@
 package at.tuwien.ase.cardlabs.management.ut
 
+import at.tuwien.ase.cardlabs.management.ApplicationTest
 import at.tuwien.ase.cardlabs.management.TestHelper
-import at.tuwien.ase.cardlabs.management.controller.model.Account
+import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
-import at.tuwien.ase.cardlabs.management.error.AccountExistsException
+import at.tuwien.ase.cardlabs.management.error.account.AccountExistsException
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -15,9 +16,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.annotation.DirtiesContext
 
-@SpringBootTest
+@ApplicationTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 internal class AccountServiceTests {
 
     @Autowired
@@ -33,8 +35,6 @@ internal class AccountServiceTests {
 
     @BeforeEach
     fun beforeEach() {
-        accountRepository.deleteAll()
-        locationRepository.deleteAll()
         for (country: String in countries) {
             val c = LocationDAO()
             c.name = country
@@ -137,14 +137,32 @@ internal class AccountServiceTests {
     @Test
     fun whenAccountDelete_expectSuccess() {
         val account = createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
-        val userDetailsAccount = TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
+        val userDetailsAccount =
+            TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
 
         assertDoesNotThrow {
-            accountService.delete(userDetailsAccount)
+            accountService.delete(userDetailsAccount, userDetailsAccount.id)
         }
     }
 
-    private fun createAccount(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): Account {
-        return TestHelper.createAccount(accountService, username, email, password, location, sendScoreUpdates, sendChangeUpdates, sendNewsletter)
+    private fun createAccount(
+        username: String,
+        email: String,
+        password: String,
+        location: String?,
+        sendScoreUpdates: Boolean,
+        sendChangeUpdates: Boolean,
+        sendNewsletter: Boolean,
+    ): Account {
+        return TestHelper.createAccount(
+            accountService,
+            username,
+            email,
+            password,
+            location,
+            sendScoreUpdates,
+            sendChangeUpdates,
+            sendNewsletter,
+        )
     }
 }

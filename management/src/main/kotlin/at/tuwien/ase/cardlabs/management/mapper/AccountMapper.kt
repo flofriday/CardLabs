@@ -1,6 +1,6 @@
 package at.tuwien.ase.cardlabs.management.mapper
 
-import at.tuwien.ase.cardlabs.management.controller.model.Account
+import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.database.model.AccountDAO
 import org.springframework.stereotype.Component
 

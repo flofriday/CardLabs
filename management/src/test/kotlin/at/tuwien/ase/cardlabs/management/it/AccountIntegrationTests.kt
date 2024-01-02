@@ -1,13 +1,13 @@
 package at.tuwien.ase.cardlabs.management.it
 
 import at.tuwien.ase.cardlabs.management.TestHelper
-import at.tuwien.ase.cardlabs.management.controller.model.Account
+import at.tuwien.ase.cardlabs.management.WebApplicationTest
+import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
-import at.tuwien.ase.cardlabs.management.security.authentication.JwtAuthenticationResponse
 import at.tuwien.ase.cardlabs.management.service.AccountService
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -15,8 +15,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -24,9 +24,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebApplicationTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AccountIntegrationTests {
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @Autowired
     private lateinit var accountRepository: AccountRepository
@@ -43,8 +47,6 @@ class AccountIntegrationTests {
 
     @BeforeEach
     fun beforeEach() {
-        accountRepository.deleteAll()
-        locationRepository.deleteAll()
         for (country: String in countries) {
             val c = LocationDAO()
             c.name = country
@@ -63,7 +65,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertNotNull(response.id)
         assertEquals("test", response.username)
@@ -77,7 +79,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withValidAccountDataAndNotNullLocation_expectSuccess() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "PassWord1!?", "Austria", true, true, true)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "PassWord1!?", "Austria", true, true, true)
         val result = mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +89,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertNotNull(response.id)
         assertEquals("test", response.username)
@@ -100,7 +103,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withValidAccountAndSendScore_expectSuccessAndSendScoreTrue() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "PassWord1!?", "Austria", true, false, false)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "PassWord1!?", "Austria", true, false, false)
         val result = mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +113,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertEquals(true, response.sendScoreUpdates)
         assertEquals(false, response.sendChangeUpdates)
@@ -118,7 +122,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withValidAccountAndSendUpdate_expectSuccessAndSendUpdatesTrue() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "PassWord1!?", "Austria", false, true, false)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "PassWord1!?", "Austria", false, true, false)
         val result = mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -127,7 +132,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertEquals(false, response.sendScoreUpdates)
         assertEquals(true, response.sendChangeUpdates)
@@ -147,7 +152,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withPasswordThatContainsWhitespaces_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "Password12?! ", "Austria", false, true, false)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "Password12?! ", "Austria", false, true, false)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -158,7 +164,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withPasswordThatContainsNoDigit_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "Password?!", "Austria", false, true, false)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "Password?!", "Austria", false, true, false)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -169,7 +176,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withPasswordThatContainsNoUpperCaseChar_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password213?!", "Austria", false, true, false)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "password213?!", "Austria", false, true, false)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -180,7 +188,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withPasswordThatContainsNoLowerCaseChar_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "PASSWORD213?!", "Austria", false, true, false)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "PASSWORD213?!", "Austria", false, true, false)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -191,7 +200,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withInvalidEmail1_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test", "PassWord123?!", "Austria", false, true, false)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test", "PassWord123?!", "Austria", false, true, false)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -202,7 +212,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withInvalidEmail2_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.", "PassWord123?!", "Austria", false, true, false)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test.", "PassWord123?!", "Austria", false, true, false)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -213,7 +224,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withInvalidEmail3_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("test", ".test@test.com", "PassWord123?!", "Austria", false, true, false)
+        val body =
+            TestHelper.createAccountCreateJSON("test", ".test@test.com", "PassWord123?!", "Austria", false, true, false)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -224,7 +236,15 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withInvalidEmail4_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test@test.com", "PassWord123?!", "Austria", false, true, false)
+        val body = TestHelper.createAccountCreateJSON(
+            "test",
+            "test@test@test.com",
+            "PassWord123?!",
+            "Austria",
+            false,
+            true,
+            false,
+        )
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -246,7 +266,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withUsernameThatContainsWhitespaces_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("test ", "test@test.com", "PassWord123?!", "Austria", false, true, false)
+        val body =
+            TestHelper.createAccountCreateJSON("test ", "test@test.com", "PassWord123?!", "Austria", false, true, false)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -257,7 +278,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withEmptyUsername_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("", "test@test.com", "PassWord123?!", "Austria", false, true, false)
+        val body =
+            TestHelper.createAccountCreateJSON("", "test@test.com", "PassWord123?!", "Austria", false, true, false)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -268,7 +290,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withPasswordThatContainsNoSpecialChar_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "password213", "Austria", false, true, false)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "password213", "Austria", false, true, false)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -279,7 +302,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withValidAccountAndSendNewsletter_expectSuccessAndSendNewsletterTrue() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "PassWord1!?", "Austria", false, false, true)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "PassWord1!?", "Austria", false, false, true)
         val result = mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -288,7 +312,7 @@ class AccountIntegrationTests {
             .andExpect(status().isCreated)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertEquals(false, response.sendScoreUpdates)
         assertEquals(false, response.sendChangeUpdates)
@@ -321,7 +345,7 @@ class AccountIntegrationTests {
             .andExpect(status().isOk)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<Account>(jsonResponseString)
+        val response = objectMapper.readValue<Account>(jsonResponseString)
 
         assertNotNull(response.id)
         assertEquals("test", response.username)
@@ -395,7 +419,8 @@ class AccountIntegrationTests {
 
     @Test
     fun whenAccountCreate_withInvalidCountry_expectBadRequest() {
-        val body = TestHelper.createAccountCreateJSON("test", "test@test.com", "PassWord1!?", "Non-Exist", true, true, true)
+        val body =
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "PassWord1!?", "Non-Exist", true, true, true)
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -446,21 +471,28 @@ class AccountIntegrationTests {
     }
 
     private fun getAuthenticationToken(username: String, password: String): String {
-        val body = TestHelper.createAccountLoginJSON(username, password)
-        val result = mockMvc.perform(
-            post("/authentication/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body),
-        )
-            .andExpect(status().isOk)
-            .andReturn()
-        val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<JwtAuthenticationResponse>(jsonResponseString)
-        return response.jwt
+        return TestHelper.getAuthenticationToken(mockMvc, username, password)
     }
 
-    private fun createAccount(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): Account {
-        return TestHelper.createAccount(accountService, username, email, password, location, sendScoreUpdates, sendChangeUpdates, sendNewsletter)
+    private fun createAccount(
+        username: String,
+        email: String,
+        password: String,
+        location: String?,
+        sendScoreUpdates: Boolean,
+        sendChangeUpdates: Boolean,
+        sendNewsletter: Boolean,
+    ): Account {
+        return TestHelper.createAccount(
+            accountService,
+            username,
+            email,
+            password,
+            location,
+            sendScoreUpdates,
+            sendChangeUpdates,
+            sendNewsletter,
+        )
     }
 
     private fun getAccount(username: String): Account {

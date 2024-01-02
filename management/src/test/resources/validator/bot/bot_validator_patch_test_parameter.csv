@@ -1,0 +1,3 @@
+# currentCode | success | errorMessage | description
+"",false,"The code can not be empty or blank","Test the not empty rule"
+"x = 5",true,"","Test successful validation"

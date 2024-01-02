@@ -9,8 +9,59 @@ VALUES ('Switzerland');
 INSERT INTO location (name)
 VALUES ('Netherlands');
 
--- Password for the accounts: test1:pass1 test2:pass2 test3:pass3 test4:pass4
-INSERT INTO ACCOUNT (id, created, deleted, updated, email, password, send_change_updates, send_newsletter, send_score_updates, username, location) VALUES (999999999, TIMESTAMP WITH TIME ZONE '2023-11-24 11:50:04.206298+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:50:04.206298+01', 'test1@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', TRUE, FALSE, TRUE, 'test1', 'Austria');
-INSERT INTO ACCOUNT (id, created, deleted, updated, email, password, send_change_updates, send_newsletter, send_score_updates, username, location) VALUES (999999998, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:00.302842+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:00.302842+01', 'test2@email', '$2a$10$BRpCdEjDwoZMtzFY/p0dlOyu33shFmAgZ.4ufx7LzEEVTfQ7Yhnbm', FALSE, TRUE, TRUE, 'test2', 'Denmark');
-INSERT INTO ACCOUNT (id, created, deleted, updated, email, password, send_change_updates, send_newsletter, send_score_updates, username, location) VALUES (999999997, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:23.151055+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:23.151055+01', 'test3@email', '$2a$10$X1MqlGvqvzRCncIsQWmwPeVw3jGpGTbbfA9JmpmDjryZxdepGRpJe', FALSE, TRUE, FALSE, 'test3', 'Switzerland');
-INSERT INTO ACCOUNT (id, created, deleted, updated, email, password, send_change_updates, send_newsletter, send_score_updates, username, location) VALUES (999999996, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:47.996734+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:47.996734+01', 'test4@email', '$2a$10$3OruGPVHedOkqqZOlyFQgeRpYDcOGGb1J87xzZv0GAgFCW/6juLRC', FALSE, FALSE, TRUE, 'test4', 'Austria');
+-- Password for the accounts: test1:pass1 test2:pass2 test3:pass3 test4:pass4 test5:pass1
+-- Note: if the auto incrementer reaches 10000 it will result in a conflict as it does not know about these values, do not use in production
+INSERT INTO ACCOUNT
+(id, username, email, password, location, send_change_updates, send_newsletter, send_score_updates, created, updated)
+VALUES
+    (10000, 'test1', 'test1@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', 'Austria', TRUE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10001, 'test2', 'test2@email', '$2a$10$BRpCdEjDwoZMtzFY/p0dlOyu33shFmAgZ.4ufx7LzEEVTfQ7Yhnbm', 'Denmark', FALSE, TRUE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10002, 'test3', 'test3@email', '$2a$10$X1MqlGvqvzRCncIsQWmwPeVw3jGpGTbbfA9JmpmDjryZxdepGRpJe', 'Switzerland', FALSE, TRUE, FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10003, 'test4', 'test4@email', '$2a$10$3OruGPVHedOkqqZOlyFQgeRpYDcOGGb1J87xzZv0GAgFCW/6juLRC', 'Austria', FALSE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10004, 'test5', 'test5@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', 'Austria', FALSE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- Create a few default bots
+INSERT INTO BOT
+(id, name, owner_id, current_code, elo_score, current_state, default_state, created, updated)
+VALUES
+    (10000, 'Neophotron', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10001, 'Neozoros', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10002, 'Zarlonphis', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10003, 'Vextarlar', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10004, 'Xentron', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10005, 'Vexgieon', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10006, 'Krytaros', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10007, 'Raxtphis', 10000, '', 400, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10008, 'Raxtron', 10000, '', 1000, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10009, 'Neophis', 10000, '', 1050, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10010, 'Raxmekos', 10000, '', 1100, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10011, 'Kryax', 10000, '', 1150, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10012, 'Zartartron', 10000, '', 1200, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10013, 'Vexdorium', 10000, '', 1250, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10014, 'Vextarax', 10000, '', 1400, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10015, 'Xennixos', 10000, '', 1950, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10016, 'Raxtareon', 10000, '', 2000, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10017, 'Xenphotron', 10000, '', 2500, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10018, 'Krytarphis', 10000, '', 2550, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10019, 'Krylonphis', 10000, '', 2600, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10020, 'Krylonlar', 10000, '', 5000, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO BOT_CODE
+(id, bot_id, code, created, updated)
+VALUES
+    (10000, 10000, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10001, 10000, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10002, 10002, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10003, 10007, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10004, 10008, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10005, 10009, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10006, 10010, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10007, 10011, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10008, 10012, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10009, 10013, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10010, 10014, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10011, 10015, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10012, 10016, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10013, 10017, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10014, 10018, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10015, 10019, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10016, 10020, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
