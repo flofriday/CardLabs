@@ -149,7 +149,10 @@ class FunctionTests {
                 .trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is SchemeValue)
-        Assert.assertEquals(ListValue(intArrayOf(1, 2, 3).map { i -> IntegerValue(i, null) }, null), (result as ListValue))
+        Assert.assertEquals(
+            ListValue(intArrayOf(1, 2, 3).map { i -> IntegerValue(i, null) }, null),
+            (result as ListValue),
+        )
     }
 
     @Test
@@ -161,7 +164,13 @@ class FunctionTests {
                 .trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is SchemeValue)
-        Assert.assertEquals(ListValue(null, IntegerValue(42, null)), (result as ListValue))
+        Assert.assertEquals(
+            ListValue(
+                IntegerValue(42, null),
+                schemeSecurityMonitor = null,
+            ),
+            (result as ListValue),
+        )
     }
 
     @Test
@@ -173,7 +182,7 @@ class FunctionTests {
                 .trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is SchemeValue)
-        Assert.assertEquals(ListValue(null), (result as ListValue))
+        Assert.assertEquals(ListValue(schemeSecurityMonitor = null), (result as ListValue))
     }
 
     @Test
@@ -187,10 +196,16 @@ class FunctionTests {
         assert(result is SchemeValue)
         Assert.assertEquals(
             ListValue(
-                null,
                 IntegerValue(1, null),
                 IntegerValue(2, null),
-                ListValue(null, IntegerValue(3, null), IntegerValue(4, null), IntegerValue(5, null), IntegerValue(6, null)),
+                ListValue(
+                    IntegerValue(3, null),
+                    IntegerValue(4, null),
+                    IntegerValue(5, null),
+                    IntegerValue(6, null),
+                    schemeSecurityMonitor = null,
+                ),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -207,10 +222,10 @@ class FunctionTests {
         assert(result is SchemeValue)
         Assert.assertEquals(
             ListValue(
-                null,
                 IntegerValue(1, null),
                 IntegerValue(2, null),
-                ListValue(null),
+                ListValue(schemeSecurityMonitor = null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -238,10 +253,16 @@ class FunctionTests {
         assert(result is SchemeValue)
         Assert.assertEquals(
             ListValue(
-                null,
                 IntegerValue(1, null),
                 IntegerValue(2, null),
-                ListValue(null, IntegerValue(3, null), IntegerValue(4, null), IntegerValue(5, null), IntegerValue(6, null)),
+                ListValue(
+                    IntegerValue(3, null),
+                    IntegerValue(4, null),
+                    IntegerValue(5, null),
+                    IntegerValue(6, null),
+                    schemeSecurityMonitor = null,
+                ),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -259,10 +280,10 @@ class FunctionTests {
         assert(result is SchemeValue)
         Assert.assertEquals(
             ListValue(
-                null,
                 IntegerValue(1, null),
                 IntegerValue(2, null),
-                ListValue(null),
+                ListValue(schemeSecurityMonitor = null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -291,10 +312,10 @@ class FunctionTests {
         assert(result is SchemeValue)
         Assert.assertEquals(
             ListValue(
-                null,
                 IntegerValue(1, null),
                 IntegerValue(2, null),
                 IntegerValue(3, null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )

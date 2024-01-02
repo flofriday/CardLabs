@@ -275,11 +275,11 @@ data class FloatValue(val value: Float, val schemeSecurityMonitor: SchemeSecurit
 
 data class StringValue(val value: String, val schemeSecurityMonitor: SchemeSecurityMonitor?) : SchemeValue() {
     init {
-        schemeSecurityMonitor?.allocate()
+        schemeSecurityMonitor?.allocate(value.length.toLong())
     }
 
     protected fun finalize() {
-        schemeSecurityMonitor?.free()
+        schemeSecurityMonitor?.free(value.length.toLong())
     }
 
     override fun toString(): String {
@@ -341,11 +341,11 @@ data class CharacterValue(val value: Char, val schemeSecurityMonitor: SchemeSecu
 
 data class SymbolValue(val value: String, val schemeSecurityMonitor: SchemeSecurityMonitor?) : SchemeValue() {
     init {
-        schemeSecurityMonitor?.allocate()
+        schemeSecurityMonitor?.allocate(value.length.toLong())
     }
 
     protected fun finalize() {
-        schemeSecurityMonitor?.free()
+        schemeSecurityMonitor?.free(value.length.toLong())
     }
 
     override fun toString(): String {
@@ -373,25 +373,25 @@ data class SymbolValue(val value: String, val schemeSecurityMonitor: SchemeSecur
 // FIXME: We probably call quite often cdr (tail) on the list but from what
 // I can see we can only implement that in Java in O(n) even though that should
 // be quite easy to do in O(1). So we probably need to write our own.
-data class ListValue(val values: SchemeList<SchemeValue>, val schemeSecurityMonitor: SchemeSecurityMonitor?) : SchemeValue() {
+data class ListValue(val values: SchemeList<SchemeValue>, val schemeSecurityMonitor: SchemeSecurityMonitor?) :
+    SchemeValue() {
     init {
         schemeSecurityMonitor?.allocate(values.size.toLong())
     }
 
     protected fun finalize() {
-        schemeSecurityMonitor?.free()
+        schemeSecurityMonitor?.free(values.size.toLong())
     }
+
     constructor(
         valueList: List<SchemeValue>,
         schemeSecurityMonitor: SchemeSecurityMonitor?,
-    ) : this(SchemeList(valueList), schemeSecurityMonitor) {
-    }
+    ) : this(SchemeList(valueList), schemeSecurityMonitor)
 
-    constructor(schemeSecurityMonitor: SchemeSecurityMonitor?, vararg valueList: SchemeValue) : this(
+    constructor(vararg valueList: SchemeValue, schemeSecurityMonitor: SchemeSecurityMonitor?) : this(
         SchemeList(valueList.toList()),
         schemeSecurityMonitor,
-    ) {
-    }
+    )
 
     override fun toString(): String {
         return "(" + values.joinToString(" ") { value -> value.toString() } + ")"
@@ -420,13 +420,14 @@ data class ListValue(val values: SchemeList<SchemeValue>, val schemeSecurityMoni
  *
  * Spec: R7RS, chapter 6.8
  */
-data class VectorValue(val values: MutableList<SchemeValue>, val schemeSecurityMonitor: SchemeSecurityMonitor?) : SchemeValue() {
+data class VectorValue(val values: MutableList<SchemeValue>, val schemeSecurityMonitor: SchemeSecurityMonitor?) :
+    SchemeValue() {
     init {
         schemeSecurityMonitor?.allocate(values.size.toLong())
     }
 
     protected fun finalize() {
-        schemeSecurityMonitor?.free()
+        schemeSecurityMonitor?.free(values.size.toLong())
     }
 
     override fun toString(): String {
