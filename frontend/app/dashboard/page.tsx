@@ -28,7 +28,7 @@ export default function Dashboard(): JSX.Element {
             New Bot
           </Link>
           <Link
-            href="/" // TODO add link to my bots page here
+            href="/bot"
             className="btn bg-primary flex justify-center items-center h-20 py-2 w-1/4 font-bold rounded-lg shadow-md text-4xl hover:bg-primary_highlight"
           >
             My Bots
