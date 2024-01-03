@@ -35,15 +35,42 @@ const exampleEntries2: leaderBoardEntry[] = [
 export async function getGlobalTop5LeaderBoardEntries(
   regionType: RegionType
 ): Promise<leaderBoardEntry[]> {
-  // TODO replace this with calls to the backend
-  if (regionType === RegionType.GLOBAL) {
-    return exampleEntries;
-  } else if (regionType === RegionType.CONTINENT) {
-    return exampleEntries1;
-  } else if (regionType === RegionType.COUNTRY) {
-    return exampleEntries2;
+  const jwt = getCookie("auth_token");
+
+  if (jwt === undefined || jwt === null) {
+    toast.error(
+      "Leaderboard could not be loaded as the account could not be verified. Please trying logging out and logging and repeating your action."
+    );
+    return {} as leaderBoardEntry[];
+  }
+
+  let url = `/api/leaderboard/public?page=${0}&entriesPerPage=${5}&regionType=${regionType.toUpperCase()}`;
+
+  if (regionType !== RegionType.GLOBAL) {
+    let filter = null;
+    const user = await getUserInfo();
+    filter = user.location;
+    if (filter !== null) {
+      url = `${url}&filter=${filter}`;
+    } else {
+      regionType = RegionType.GLOBAL;
+      url = `/api/leaderboard/public?page=${0}&entriesPerPage=${5}&regionType=${regionType.toUpperCase()}`;
+    }
+  }
+
+  const response = await fetch(url, {
+    mode: "cors",
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
   } else {
-    return exampleEntries;
+    const leaderBoardPage = (await response.json()) as Page<leaderBoardEntry>;
+    return leaderBoardPage.content as leaderBoardEntry[];
   }
 }
 
@@ -144,4 +171,23 @@ export async function getLeaderBoardPage(
   } else {
     return {} as Page<leaderBoardEntry>;
   }
+}
+
+export async function getScoreOfGlobalFirstPlace(): Promise<number> {
+  const response = await fetch("api/leaderboard/firstPlace", {
+    mode: "cors",
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (response.status !== 200) {
+    toast.error(
+      "Could not load first place as our servers seem to be too busy. Please try again."
+    );
+    return 0;
+  }
+
+  return (await response.json()) as number;
 }

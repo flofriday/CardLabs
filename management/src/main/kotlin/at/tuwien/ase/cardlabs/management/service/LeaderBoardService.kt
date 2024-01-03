@@ -37,4 +37,8 @@ class LeaderBoardService(private val leaderBoardRepository: LeaderBoardRepositor
             return leaderBoardRepository.getPrivateLeaderBoardEntriesCountry(user.id, filter, pageable)
         }
     }
+
+    fun getScoreOfGlobalFirstPlace(): Long {
+        return leaderBoardRepository.getScoreOfGlobalFirstPlace();
+    }
 }

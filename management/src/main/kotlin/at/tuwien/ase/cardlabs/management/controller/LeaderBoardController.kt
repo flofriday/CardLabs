@@ -45,4 +45,14 @@ class LeaderBoardController(val leaderBoardService: LeaderBoardService) {
             .status(HttpStatus.OK)
             .body(resultPage)
     }
+
+    @GetMapping("/leaderboard/firstPlace")
+    fun getScoreOfGlobalFirstPlace():
+            ResponseEntity<Long> {
+        val score = leaderBoardService.getScoreOfGlobalFirstPlace()
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(score)
+    }
 }

@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { leaderBoardEntry } from "../types/leaderBoardEntry";
 import { LeaderBoardType } from "../types/LeaderBoardType";
 import { RegionType } from "../types/RegionType";
+import { getScoreOfGlobalFirstPlace } from "../services/LeaderBoardService";
 
 interface Props {
   leaderBoardType: LeaderBoardType;
@@ -13,6 +15,16 @@ export default function MiniLeaderBoardContent({
   regionType,
   entries,
 }: Props): JSX.Element {
+  const [maximalScore, setMaximalScore] = useState<number>(0);
+
+  useEffect(() => {
+    getScoreOfGlobalFirstPlace()
+      .then((s) => {
+        setMaximalScore(s);
+      })
+      .catch(() => {});
+  });
+
   let title = "";
   if (leaderBoardType === LeaderBoardType.MY_BOTS) {
     title = "My Bots - " + regionType;
@@ -35,7 +47,7 @@ export default function MiniLeaderBoardContent({
               <div className="bg-background h-4 w-full h-full ml-2flex items-center justify-center p-1">
                 <div
                   className="bg-primary_highlight h-full"
-                  style={{ width: `${entry.score}%` }}
+                  style={{ width: `${(entry.score / maximalScore) * 100}%` }}
                 />
               </div>
             </div>

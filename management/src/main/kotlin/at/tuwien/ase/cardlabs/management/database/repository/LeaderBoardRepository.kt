@@ -40,4 +40,8 @@ interface LeaderBoardRepository : PagingAndSortingRepository<BotDAO?, Long> {
     @Query("""SELECT new at.tuwien.ase.cardlabs.management.controller.model.LeaderBoardEntry((SELECT count(*) + 1 FROM BotDAO c LEFT JOIN c.owner o1 LEFT JOIN o1.location l1 WHERE c.eloScore > b.eloScore AND  l1.name = :country), b.eloScore, b.name, b.owner.username)
             FROM BotDAO b LEFT JOIN b.owner o2 LEFT JOIN o2.location l2 WHERE l2.name = :country and b.owner.id = :userId ORDER BY b.eloScore DESC""")
     fun getPrivateLeaderBoardEntriesCountry(@Param("userId") userId: Long, @Param("country") country: String, pageable: Pageable): Page<LeaderBoardEntry>
+
+    @Query("""SELECT max(b.eloScore) FROM BotDAO b""")
+    fun getScoreOfGlobalFirstPlace(): Long
+
 }
