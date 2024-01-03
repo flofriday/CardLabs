@@ -77,15 +77,47 @@ export async function getGlobalTop5LeaderBoardEntries(
 export async function getMyTop5LeaderBoardEntries(
   regionType: RegionType
 ): Promise<leaderBoardEntry[]> {
-  // TODO replace this with calls to the backend
-  if (regionType === RegionType.GLOBAL) {
-    return exampleEntries;
-  } else if (regionType === RegionType.CONTINENT) {
-    return exampleEntries1;
-  } else if (regionType === RegionType.COUNTRY) {
-    return exampleEntries2;
+  const user = await getUserInfo();
+  let url = `/api/leaderboard/private?page=${0}&entriesPerPage=${5}&regionType=${regionType.toUpperCase()}&userId=${
+    user.id
+  }`;
+
+  const jwt = getCookie("auth_token");
+
+  if (jwt === undefined || jwt === null) {
+    toast.error(
+      "Leaderboard could not be loaded as the account could not be verified. Please trying logging out and logging and repeating your action."
+    );
+    return {} as leaderBoardEntry[];
+  }
+
+  if (regionType !== RegionType.GLOBAL) {
+    let filter = null;
+    filter = user.location;
+    if (filter !== null) {
+      url = `${url}&filter=${filter}`;
+    } else {
+      regionType = RegionType.GLOBAL;
+      url = `/api/leaderboard/private?page=${0}&entriesPerPage=${5}&regionType=${regionType.toUpperCase()}&userId=${
+        user.id
+      }`;
+    }
+  }
+
+  const response = await fetch(url, {
+    mode: "cors",
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
   } else {
-    return exampleEntries;
+    const leaderBoardPage = (await response.json()) as Page<leaderBoardEntry>;
+    return leaderBoardPage.content as leaderBoardEntry[];
   }
 }
 
