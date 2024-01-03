@@ -1,16 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RegionType } from "../types/RegionType";
+import { getCookie } from "cookies-next";
 
 interface Props {
   onRegionChange: (region: RegionType) => void;
 }
 
 export default function RegionSelector({ onRegionChange }: Props): JSX.Element {
-  const [selectedRegion, setSelectedRegion] = useState<RegionType>(
-    RegionType.GLOBAL
-  );
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [, setSelectedRegion] = useState<RegionType>(RegionType.GLOBAL);
+
+  useEffect(() => {
+    const isUserLoggedIn =
+      getCookie("auth_token") != null && getCookie("auth_token") != undefined;
+    setLoggedIn(isUserLoggedIn);
+  }, []);
 
   const updateEntriesAccordingToRegion = (region: RegionType): void => {
     setSelectedRegion(region);
@@ -29,22 +35,27 @@ export default function RegionSelector({ onRegionChange }: Props): JSX.Element {
         >
           Global
         </button>
-        <button
-          className="btn bg-primary py-2 font-bold rounded-lg shadow-md text-4xl  hover:bg-primary_highlight"
-          onClick={() => {
-            updateEntriesAccordingToRegion(RegionType.CONTINENT);
-          }}
-        >
-          Continent
-        </button>
-        <button
-          className="btn bg-primary py-2 font-bold rounded-lg shadow-md text-4xl  hover:bg-primary_highlight"
-          onClick={() => {
-            updateEntriesAccordingToRegion(RegionType.COUNTRY);
-          }}
-        >
-          Country
-        </button>
+
+        {loggedIn && (
+          <>
+            <button
+              className="btn bg-primary py-2 font-bold rounded-lg shadow-md text-4xl  hover:bg-primary_highlight"
+              onClick={() => {
+                updateEntriesAccordingToRegion(RegionType.CONTINENT);
+              }}
+            >
+              Continent
+            </button>
+            <button
+              className="btn bg-primary py-2 font-bold rounded-lg shadow-md text-4xl  hover:bg-primary_highlight"
+              onClick={() => {
+                updateEntriesAccordingToRegion(RegionType.COUNTRY);
+              }}
+            >
+              Country
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ export default function Leaderboard(): JSX.Element {
 
   useEffect(() => {
     getLeaderBoardPage(
-      5,
+      entriesPerPage,
       pageNumber,
       selectedRegion,
       LeaderBoardType.ALL_BOTS
