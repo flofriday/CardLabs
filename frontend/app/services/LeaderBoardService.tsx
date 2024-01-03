@@ -69,18 +69,18 @@ export async function getLeaderBoardPage(
 ): Promise<Page<leaderBoardEntry>> {
   if (boardType === LeaderBoardType.ALL_BOTS) {
     const loggedIn =
-      getCookie("auth_token") != null && getCookie("auth_token") != undefined;
+      getCookie("auth_token") !== null && getCookie("auth_token") !== undefined;
 
     let url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}`;
 
-    if (loggedIn === false) {
+    if (!loggedIn) {
       regionType = RegionType.GLOBAL;
       url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}`;
-    } else if (regionType != RegionType.GLOBAL) {
+    } else if (regionType !== RegionType.GLOBAL) {
       let filter = null;
-      let user = await getUserInfo();
+      const user = await getUserInfo();
       filter = user.location;
-      if (filter != null) {
+      if (filter !== null) {
         url = `${url}&filter=${filter}`;
       } else {
         regionType = RegionType.GLOBAL;

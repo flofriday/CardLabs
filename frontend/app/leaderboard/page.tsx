@@ -26,10 +26,12 @@ export default function Leaderboard(): JSX.Element {
       pageNumber,
       selectedRegion,
       LeaderBoardType.ALL_BOTS
-    ).then((p) => {
-      setLeaderBoardEntries(p.content);
-      setTotalPages(p.totalPages);
-    });
+    )
+      .then((p) => {
+        setLeaderBoardEntries(p.content);
+        setTotalPages(p.totalPages);
+      })
+      .catch(() => {});
   }, [pageNumber, selectedRegion]);
 
   return (

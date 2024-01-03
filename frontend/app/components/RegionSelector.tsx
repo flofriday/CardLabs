@@ -14,7 +14,7 @@ export default function RegionSelector({ onRegionChange }: Props): JSX.Element {
 
   useEffect(() => {
     const isUserLoggedIn =
-      getCookie("auth_token") != null && getCookie("auth_token") != undefined;
+      getCookie("auth_token") !== null && getCookie("auth_token") !== undefined;
     setLoggedIn(isUserLoggedIn);
   }, []);
 
