@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { LeaderBoardType } from "../types/LeaderBoardType";
 import { RegionType } from "../types/RegionType";
 import { Page } from "../types/contentPage";
@@ -65,7 +66,8 @@ export async function getLeaderBoardPage(
   numberOfEntriesPerPage: number,
   pageNumber: number,
   regionType: RegionType,
-  boardType: LeaderBoardType
+  boardType: LeaderBoardType,
+  userId?: number
 ): Promise<Page<leaderBoardEntry>> {
   if (boardType === LeaderBoardType.ALL_BOTS) {
     const loggedIn =
@@ -102,17 +104,26 @@ export async function getLeaderBoardPage(
       return (await response.json()) as Page<leaderBoardEntry>;
     }
   } else if (boardType === LeaderBoardType.MY_BOTS) {
-    let url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}`;
+    let url = `/api/leaderboard/private?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}&userId=${userId}`;
 
-    if (regionType != RegionType.GLOBAL) {
+    const jwt = getCookie("auth_token");
+
+    if (jwt === undefined || jwt === null) {
+      toast.error(
+        "Leaderboard could not be loaded as the account could not be verified. Please trying logging out and logging and repeating your action."
+      );
+      return {} as Page<leaderBoardEntry>;
+    }
+
+    if (regionType !== RegionType.GLOBAL) {
       let filter = null;
-      let user = await getUserInfo();
+      const user = await getUserInfo();
       filter = user.location;
-      if (filter != null) {
+      if (filter !== null) {
         url = `${url}&filter=${filter}`;
       } else {
         regionType = RegionType.GLOBAL;
-        url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}`;
+        url = `/api/leaderboard/private?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}&userId=${userId}`;
       }
     }
 
@@ -121,6 +132,7 @@ export async function getLeaderBoardPage(
       method: "GET",
       headers: {
         Accept: "application/json",
+        Authorization: "Bearer " + jwt,
       },
     });
 

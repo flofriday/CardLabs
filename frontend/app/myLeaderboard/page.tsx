@@ -10,8 +10,10 @@ import { leaderBoardEntry } from "../types/leaderBoardEntry";
 import { getLeaderBoardPage } from "../services/LeaderBoardService";
 import { RegionType } from "../types/RegionType";
 import { LeaderBoardType } from "../types/LeaderBoardType";
+import React from "react";
+import { getUserInfo } from "../services/UserService";
 
-export default function Leaderboard(): JSX.Element {
+export default function MyLeaderboard(): JSX.Element {
   const entriesPerPage = 5;
   const [leaderBoardEntries, setLeaderBoardEntries] = useState<
     leaderBoardEntry[]
@@ -19,13 +21,23 @@ export default function Leaderboard(): JSX.Element {
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(2);
   const [selectedRegion, setSelectedRegion] = useState(RegionType.GLOBAL);
+  const [userId, setUserId] = useState(-1);
+
+  useEffect(() => {
+    getUserInfo()
+      .then((u) => {
+        setUserId(u.id);
+      })
+      .catch(() => {});
+  });
 
   useEffect(() => {
     getLeaderBoardPage(
       entriesPerPage,
       pageNumber,
       selectedRegion,
-      LeaderBoardType.ALL_BOTS
+      LeaderBoardType.MY_BOTS,
+      userId
     )
       .then((p) => {
         setLeaderBoardEntries(p.content);
