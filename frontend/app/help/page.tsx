@@ -1,13 +1,38 @@
+"use client";
+
 import LeftPageHeader from "../components/leftPageHeader";
 import TextItem from "../components/textItem";
 import Robot, { RobotType } from "../components/robot";
+import Markdown from "react-markdown";
+import React, { useState, useEffect } from "react";
+
 export default function Help(): JSX.Element {
+  const [markdownContent, setMarkdownContent] = useState("");
+
+  useEffect(() => {
+    const fetchMarkdown = async () => {
+      try {
+        const response = await fetch("./cardScheme.md");
+        const content = await response.text();
+        setMarkdownContent(content);
+      } catch (error) {
+        console.error("Error fetching Markdown file:", error);
+      }
+    };
+    fetchMarkdown();
+  });
+
   return (
     <div>
       <LeftPageHeader title="Help" />
 
       <Robot type={RobotType.QUESTIONMARK} />
       <div className="flex flex-col justify-center items-center pt-52 space-y-6 pb-11">
+        <TextItem title="Programming Language - CardScheme">
+          <Markdown className="prose prose-invert max-w-none">
+            {markdownContent}
+          </Markdown>
+        </TextItem>
         <TextItem title="Programming language">
           In order to code your bot you have to use the programming language XY.
           Here are some websites to get additional help for the language:

@@ -13,6 +13,25 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            'code::before': {
+              content: '&nbsp;&nbsp;',
+            },
+            'code::after': {
+              content: '&nbsp;&nbsp;',
+            },
+            code: {
+              background: 'rgb(0 0 0 / 50%)',
+              wordWrap: 'break-word',
+              boxDecorationBreak: 'clone',
+              padding: '.1rem .3rem .2rem',
+              borderRadius: '.2rem',
+            }
+          }
+        }
+      }
     },
     colors: {
       background: "#2D2E3A",
@@ -28,6 +47,8 @@ const config: Config = {
       success: "#5CBC8E",
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 };
 export default config;
