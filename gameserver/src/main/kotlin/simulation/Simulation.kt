@@ -142,7 +142,7 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
                 this.players.map { p ->
                     VectorValue(
                         mutableListOf(
-                            StringValue(p.bot.name, null),
+                            StringValue(p.bot.id.toString(), null),
                             IntegerValue(p.hand.size, null)
                         ), null
                     )

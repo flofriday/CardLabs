@@ -1,3 +1,3 @@
 package simulation.models
 
-data class Bot(val id: Long, val name: String, val code: String)
+data class Bot(val id: Long, val botCodeId: Long, val code: String)
