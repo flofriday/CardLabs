@@ -12,7 +12,7 @@ class ListTests {
         assert(result is ListValue)
         assertEquals(
             listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)),
-            (result as ListValue).values.toList()
+            (result as ListValue).values.toList(),
         )
     }
 
@@ -23,7 +23,7 @@ class ListTests {
         assert(result is ListValue)
         assertEquals(
             listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)),
-            (result as ListValue).values.toList()
+            (result as ListValue).values.toList(),
         )
     }
 
@@ -38,7 +38,7 @@ class ListTests {
                 IntegerValue(4, null),
                 IntegerValue(9, null),
                 IntegerValue(16, null),
-                IntegerValue(25, null)
+                IntegerValue(25, null),
             ),
             (result as ListValue).values.toList(),
         )
@@ -51,7 +51,7 @@ class ListTests {
         assert(result is ListValue)
         assertEquals(
             listOf(IntegerValue(5, null), IntegerValue(7, null), IntegerValue(9, null)),
-            (result as ListValue).values.toList()
+            (result as ListValue).values.toList(),
         )
     }
 
@@ -96,7 +96,7 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             listOf(IntegerValue(0, null), IntegerValue(1, null), IntegerValue(2, null)),
-            (result as ListValue).values.toList()
+            (result as ListValue).values.toList(),
         )
 
         // Ensure the list hasn't changed
@@ -139,9 +139,13 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                null,
                 IntegerValue(1, null),
-                ListValue(null, IntegerValue(2, null), IntegerValue(3, null)),
+                ListValue(
+                    IntegerValue(2, null),
+                    IntegerValue(3, null),
+                    schemeSecurityMonitor = null,
+                ),
+                schemeSecurityMonitor = null,
             ),
             result as ListValue,
         )
@@ -154,13 +158,13 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                null,
                 IntegerValue(1, null),
                 FloatValue(3.14.toFloat(), null),
                 BooleanValue(true, null),
                 BooleanValue(false, null),
                 StringValue("text", null),
                 CharacterValue('c', null),
+                schemeSecurityMonitor = null,
             ),
             result as ListValue,
         )
@@ -173,9 +177,9 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                null,
                 SymbolValue("display", null),
                 IntegerValue(34, null),
+                schemeSecurityMonitor = null,
             ),
             result as ListValue,
         )
@@ -298,10 +302,10 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                null,
                 SymbolValue("a", null),
                 IntegerValue(2, null),
                 IntegerValue(3, null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -319,9 +323,9 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                null,
                 IntegerValue(1, null),
                 SymbolValue("a", null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -339,10 +343,10 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                null,
                 IntegerValue(1, null),
                 SymbolValue("a", null),
                 SymbolValue("b", null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -358,10 +362,10 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                null,
                 SymbolValue("c", null),
                 SymbolValue("b", null),
                 SymbolValue("a", null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -377,19 +381,19 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                null,
                 ListValue(
-                    null,
                     SymbolValue("e", null),
-                    ListValue(null, SymbolValue("f", null)),
+                    ListValue(SymbolValue("f", null), schemeSecurityMonitor = null),
+                    schemeSecurityMonitor = null,
                 ),
                 SymbolValue("d", null),
                 ListValue(
-                    null,
                     SymbolValue("b", null),
                     SymbolValue("c", null),
+                    schemeSecurityMonitor = null,
                 ),
                 SymbolValue("a", null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -405,8 +409,8 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                null,
-                ListValue(null, SymbolValue("a", null))
+                ListValue(SymbolValue("a", null), schemeSecurityMonitor = null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -422,7 +426,7 @@ lst""",
         assert(result is BooleanValue)
         assertEquals(
             BooleanValue(false, null),
-            (result as BooleanValue)
+            (result as BooleanValue),
         )
     }
 
@@ -436,12 +440,11 @@ lst""",
         assert(result is ListValue)
         assertEquals(
             ListValue(
-                null,
-                IntegerValue(2, null), IntegerValue(4, null)
+                IntegerValue(2, null),
+                IntegerValue(4, null),
+                schemeSecurityMonitor = null,
             ),
-            (result as ListValue)
+            (result as ListValue),
         )
     }
-
-
 }

@@ -370,7 +370,10 @@ No more bottles of beer on the wall, no more bottles of beer.""",
             """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is ListValue)
-        Assert.assertEquals(ListValue(listOf(1, 2, 3, 4, 10).map { i -> IntegerValue(i, null) }, null), (result as ListValue))
+        Assert.assertEquals(
+            ListValue(listOf(1, 2, 3, 4, 10).map { i -> IntegerValue(i, null) }, null),
+            (result as ListValue),
+        )
     }
 
     /**
@@ -503,10 +506,10 @@ No more bottles of beer on the wall, no more bottles of beer.""",
         assert(result is ListValue)
         Assert.assertEquals(
             ListValue(
-                null,
                 ListValue(listOf(1, 2, 3).map { i -> IntegerValue(i, null) }, null),
                 ListValue(listOf(2, 3, 4).map { i -> IntegerValue(i, null) }, null),
                 ListValue(listOf(3, 2, 1).map { i -> IntegerValue(i, null) }, null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -515,10 +518,10 @@ No more bottles of beer on the wall, no more bottles of beer.""",
         assert(result is ListValue)
         Assert.assertEquals(
             ListValue(
-                null,
                 ListValue(listOf(7, 16, 6).map { i -> IntegerValue(i, null) }, null),
                 ListValue(listOf(11, 24, 9).map { i -> IntegerValue(i, null) }, null),
                 ListValue(listOf(9, 16, 6).map { i -> IntegerValue(i, null) }, null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )
@@ -527,10 +530,10 @@ No more bottles of beer on the wall, no more bottles of beer.""",
         assert(result is ListValue)
         Assert.assertEquals(
             ListValue(
-                null,
                 ListValue(listOf(2, 2, 3).map { i -> IntegerValue(i, null) }, null),
                 ListValue(listOf(2, 4, 4).map { i -> IntegerValue(i, null) }, null),
                 ListValue(listOf(3, 2, 2).map { i -> IntegerValue(i, null) }, null),
+                schemeSecurityMonitor = null,
             ),
             (result as ListValue),
         )

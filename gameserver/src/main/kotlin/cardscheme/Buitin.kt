@@ -389,7 +389,7 @@ fun builtinSetCdr(
         throw SchemeError("Invalid Argument", "The list to `set-cdr!` cannot be empty", args.first().location, null)
     }
     val obj = args[1].value
-    val objList = if (obj is ListValue) obj else ListValue(executor.schemeSecurityMonitor, obj)
+    val objList = if (obj is ListValue) obj else ListValue(obj, schemeSecurityMonitor = executor.schemeSecurityMonitor)
     list.values.setTail(objList.values)
     return VoidValue(executor.schemeSecurityMonitor)
 }
@@ -444,7 +444,7 @@ fun builtInCons(
         return ListValue(list, executor.schemeSecurityMonitor)
     }
 
-    return ListValue(executor.schemeSecurityMonitor, args[0].value, args[1].value)
+    return ListValue(args[0].value, args[1].value, schemeSecurityMonitor = executor.schemeSecurityMonitor)
 }
 
 /**
@@ -458,7 +458,7 @@ fun builtInAppend(
     executor: Executor,
 ): ListValue {
     if (args.isEmpty()) {
-        return ListValue(executor.schemeSecurityMonitor)
+        return ListValue(schemeSecurityMonitor = executor.schemeSecurityMonitor)
     }
     val allArgsButLast = verifyAllType<ListValue>(args.dropLast(1), "Expected this to be a list")
     val newList = SchemeList<SchemeValue>()
@@ -532,7 +532,7 @@ fun builtInAssoc(
                 "Type Mismatch",
                 "assoc expects a list of lists, but here one element in the list was ${innerList.typeName()}",
                 args[1].location,
-                null
+                null,
             )
         }
         if (innerList.values.isEmpty()) {
@@ -540,7 +540,7 @@ fun builtInAssoc(
                 "Type Mismatch",
                 "assoc only work on a list of nonempty lists, but one item was the empty list.",
                 args[1].location,
-                null
+                null,
             )
         }
 
@@ -556,7 +556,7 @@ fun builtInAssoc(
                 "Type Mismatch",
                 "The result function must return a boolean, but returned ${compareResult.typeName()}.",
                 args[2].location,
-                null
+                null,
             )
         }
 
@@ -567,7 +567,6 @@ fun builtInAssoc(
 
     return BooleanValue(false, executor.schemeSecurityMonitor)
 }
-
 
 /**
  * Built in apply function.
@@ -852,7 +851,7 @@ fun builtinSymbolEqual(
     val symbols = verifyAllType<SymbolValue>(args, "I expected all arguments to be symbols")
     return BooleanValue(
         symbols.zipWithNext { a, b -> a.value == b.value }.all { t -> t },
-        executor.schemeSecurityMonitor
+        executor.schemeSecurityMonitor,
     )
 }
 
