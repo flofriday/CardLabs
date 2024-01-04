@@ -1,4 +1,4 @@
-import simulation.Bot
+import simulation.models.Bot
 import simulation.Simulation
 
 fun main(args: Array<String>) {
@@ -26,6 +26,7 @@ fun main(args: Array<String>) {
             """.trimIndent(),
         )
 
-    val simulation = Simulation()
-    simulation.run(listOf(bot1, bot2))
+    val simulation = Simulation(0, listOf(bot1, bot2))
+    val result = simulation.run()
+    println(result)
 }

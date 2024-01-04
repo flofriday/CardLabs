@@ -1,90 +1,91 @@
 package simulation
 
 import org.junit.Test
+import simulation.models.*
 
 class CardTests {
     // NumberCards
     @Test
     fun equalNumberCardMatch() {
-        val a = NumberCard(Color.RED, 1)
-        val b = NumberCard(Color.RED, 1)
+        val a = Card(CardType.NUMBER_CARD, Color.ORANGE, 1)
+        val b = Card(CardType.NUMBER_CARD, Color.ORANGE, 1)
         assert(a.match(b))
     }
 
     @Test
     fun sameColorNumberCardMatch() {
-        val a = NumberCard(Color.RED, 1)
-        val b = NumberCard(Color.RED, 3)
+        val a = Card(CardType.NUMBER_CARD, Color.ORANGE, 1)
+        val b = Card(CardType.NUMBER_CARD, Color.ORANGE, 3)
         assert(a.match(b))
     }
 
     @Test
     fun samNumberNumberCardMatch() {
-        val a = NumberCard(Color.RED, 1)
-        val b = NumberCard(Color.BLUE, 1)
+        val a = Card(CardType.NUMBER_CARD, Color.ORANGE, 1)
+        val b = Card(CardType.NUMBER_CARD, Color.CYAN, 1)
         assert(a.match(b))
     }
 
     @Test
     fun differentNumberCardNotMatch() {
-        val a = NumberCard(Color.RED, 1)
-        val b = NumberCard(Color.BLUE, 7)
+        val a = Card(CardType.NUMBER_CARD, Color.ORANGE, 1)
+        val b = Card(CardType.NUMBER_CARD, Color.CYAN, 7)
         assert(!a.match(b))
     }
 
     @Test
     fun sameColorColorCardAndSkipCardMatch() {
-        val a = NumberCard(Color.YELLOW, 1)
-        val b = SkipCard(Color.YELLOW)
+        val a = Card(CardType.NUMBER_CARD, Color.PURPLE, 1)
+        val b = Card(CardType.SKIP, Color.PURPLE, null)
         assert(a.match(b))
     }
 
     @Test
     fun differentColorColorCardAndSkipCardNotMatch() {
-        val a = NumberCard(Color.YELLOW, 1)
-        val b = SkipCard(Color.GREEN)
+        val a = Card(CardType.NUMBER_CARD, Color.PURPLE, 1)
+        val b = Card(CardType.SKIP, Color.GREEN, null)
         assert(!a.match(b))
     }
 
     @Test
     fun sameColorColorCardAndSwitchCardMatch() {
-        val a = NumberCard(Color.YELLOW, 1)
-        val b = SwitchCard(Color.YELLOW)
+        val a = Card(CardType.NUMBER_CARD, Color.PURPLE, 1)
+        val b = Card(CardType.SWITCH, Color.PURPLE, null)
         assert(a.match(b))
     }
 
     @Test
     fun differentColorColorCardAndSwitchCardNotMatch() {
-        val a = NumberCard(Color.YELLOW, 1)
-        val b = SwitchCard(Color.GREEN)
+        val a = Card(CardType.NUMBER_CARD, Color.PURPLE, 1)
+        val b = Card(CardType.SWITCH, Color.GREEN, null)
         assert(!a.match(b))
     }
 
     @Test
     fun sameColorColorCardAndPlusCardMatch() {
-        val a = NumberCard(Color.YELLOW, 1)
-        val b = DrawCard(Color.YELLOW)
+        val a = Card(CardType.NUMBER_CARD, Color.PURPLE, 1)
+        val b = Card(CardType.DRAW_TWO, Color.PURPLE, null)
         assert(a.match(b))
     }
 
     @Test
     fun differentColorColorCardAndPlusCardNotMatch() {
-        val a = NumberCard(Color.YELLOW, 1)
-        val b = DrawCard(Color.GREEN)
+        val a = Card(CardType.NUMBER_CARD, Color.PURPLE, 1)
+        val b = Card(CardType.DRAW_TWO, Color.GREEN, null)
         assert(!a.match(b))
     }
 
     @Test
-    fun differentColorColorCardAndChooseDrawCardMatch() {
-        val a = NumberCard(Color.YELLOW, 1)
-        val b = ChooseDrawCard(Color.GREEN)
+    fun differentColorColorCardAndChooseDRAW_TWOCardMatch() {
+        val a = Card(CardType.NUMBER_CARD, Color.PURPLE, 1)
+        val b = Card(CardType.CHOOSE_DRAW, Color.GREEN, null)
         assert(a.match(b))
     }
 
     @Test
     fun differentColorColorCardAndChooseCardMatch() {
-        val a = NumberCard(Color.YELLOW, 1)
-        val b = ChooseCard(Color.GREEN)
+        val a = Card(CardType.NUMBER_CARD, Color.PURPLE, 1)
+        val b = Card(CardType.CHOOSE, Color.GREEN, null)
         assert(a.match(b))
     }
 
@@ -92,108 +93,108 @@ class CardTests {
 
     @Test
     fun equalSwitchCardMatch() {
-        val a = SwitchCard(Color.YELLOW)
-        val b = SwitchCard(Color.YELLOW)
+        val a = Card(CardType.SWITCH, Color.PURPLE, null)
+        val b = Card(CardType.SWITCH, Color.PURPLE, null)
         assert(a.match(b))
     }
 
     @Test
     fun unequalSwitchCardNotMatch() {
-        val a = SwitchCard(Color.YELLOW)
-        val b = SwitchCard(Color.BLUE)
+        val a = Card(CardType.SWITCH, Color.PURPLE, null)
+        val b = Card(CardType.SWITCH, Color.CYAN, null)
         assert(a.match(b))
     }
 
     @Test
     fun sameColorSwitchCardAndPlusCardMatch() {
-        val a = SwitchCard(Color.YELLOW)
-        val b = DrawCard(Color.YELLOW)
+        val a = Card(CardType.SWITCH, Color.PURPLE, null)
+        val b = Card(CardType.DRAW_TWO, Color.PURPLE, null)
         assert(a.match(b))
     }
 
     @Test
     fun differentColorSwitchCardAndPlusCardNotMatch() {
-        val a = SwitchCard(Color.GREEN)
-        val b = DrawCard(Color.YELLOW)
+        val a = Card(CardType.SWITCH, Color.GREEN, null)
+        val b = Card(CardType.DRAW_TWO, Color.PURPLE, null)
         assert(!a.match(b))
     }
 
     @Test
     fun sameColorSwitchCardAndNumberCardMatch() {
-        val a = SwitchCard(Color.YELLOW)
-        val b = NumberCard(Color.YELLOW, 2)
+        val a = Card(CardType.SWITCH, Color.PURPLE, null)
+        val b = Card(CardType.NUMBER_CARD, Color.PURPLE, 2)
         assert(a.match(b))
     }
 
     @Test
     fun differentColorSwitchCardAndNumberCardNotMatch() {
-        val a = SwitchCard(Color.GREEN)
-        val b = NumberCard(Color.YELLOW, 2)
+        val a = Card(CardType.SWITCH, Color.GREEN, null)
+        val b = Card(CardType.NUMBER_CARD, Color.PURPLE, 2)
         assert(!a.match(b))
     }
 
     // SkipCard
     @Test
     fun equalSkipCardMatch() {
-        val a = SkipCard(Color.YELLOW)
-        val b = SkipCard(Color.YELLOW)
+        val a = Card(CardType.SKIP, Color.PURPLE, null)
+        val b = Card(CardType.SKIP, Color.PURPLE, null)
         assert(a.match(b))
     }
 
     @Test
     fun unequalSkipCardNotMatch() {
-        val a = SkipCard(Color.YELLOW)
-        val b = SkipCard(Color.BLUE)
+        val a = Card(CardType.SKIP, Color.PURPLE, null)
+        val b = Card(CardType.SKIP, Color.CYAN, null)
         assert(a.match(b))
     }
 
     @Test
     fun sameColorSkipCardAndPlusCardMatch() {
-        val a = SkipCard(Color.YELLOW)
-        val b = DrawCard(Color.YELLOW)
+        val a = Card(CardType.SKIP, Color.PURPLE, null)
+        val b = Card(CardType.DRAW_TWO, Color.PURPLE, null)
         assert(a.match(b))
     }
 
     @Test
     fun differentColorSkipCardAndPlusCardNotMatch() {
-        val a = SkipCard(Color.GREEN)
-        val b = DrawCard(Color.YELLOW)
+        val a = Card(CardType.SKIP, Color.GREEN, null)
+        val b = Card(CardType.DRAW_TWO, Color.PURPLE, null)
         assert(!a.match(b))
     }
 
     @Test
     fun sameColorSkipCardAndNumberCardMatch() {
-        val a = SkipCard(Color.YELLOW)
-        val b = NumberCard(Color.YELLOW, 2)
+        val a = Card(CardType.SKIP, Color.PURPLE, null)
+        val b = Card(CardType.NUMBER_CARD, Color.PURPLE, 2)
         assert(a.match(b))
     }
 
     @Test
     fun differentColorSkipCardAndNumberCardNotMatch() {
-        val a = SkipCard(Color.GREEN)
-        val b = NumberCard(Color.YELLOW, 2)
+        val a = Card(CardType.SKIP, Color.GREEN, null)
+        val b = Card(CardType.NUMBER_CARD, Color.PURPLE, 2)
         assert(!a.match(b))
     }
 
     // Choose cards
     @Test
     fun anyChooseCardMatchesAnyColor() {
-        val a = ChooseCard(Color.ANY)
-        val b = NumberCard(Color.YELLOW, 2)
+        val a = Card(CardType.CHOOSE, Color.ANY, null)
+        val b = Card(CardType.NUMBER_CARD, Color.PURPLE, 2)
         assert(a.match(b))
     }
 
     @Test
-    fun redChooseCardAndBlueNotMatch() {
-        val a = ChooseCard(Color.RED)
-        val b = NumberCard(Color.BLUE, 0)
+    fun ORANGEChooseCardAndCYANNotMatch() {
+        val a = Card(CardType.CHOOSE, Color.ORANGE, null)
+        val b = Card(CardType.NUMBER_CARD, Color.CYAN, 0)
         assert(!a.match(b))
     }
 
     @Test
-    fun redChooseCardAndRedNumberCardMatch() {
-        val a = ChooseCard(Color.RED)
-        val b = NumberCard(Color.RED, 7)
+    fun ORANGEChooseCardAndORANGENumberCardMatch() {
+        val a = Card(CardType.CHOOSE, Color.ORANGE, null)
+        val b = Card(CardType.NUMBER_CARD, Color.ORANGE, 7)
         assert(a.match(b))
     }
 }

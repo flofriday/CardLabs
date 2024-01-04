@@ -1,22 +1,25 @@
 package simulation
 
-import cardscheme.SchemeValue
-import cardscheme.StringValue
-import cardscheme.SymbolValue
-import cardscheme.VectorValue
+import cardscheme.*
+import simulation.models.*
 
 fun encodeCard(card: Card): SchemeValue {
     val type =
-        when (card) {
-            is NumberCard -> card.number.toString()
-            is SwitchCard -> "switch"
-            is SkipCard -> "skip"
-            is DrawCard -> "draw"
-            is ChooseCard -> "choose"
-            is ChooseDrawCard -> "chooseDraw"
+        when (card.type) {
+            CardType.NUMBER_CARD -> IntegerValue(card.number!!, null)
+            CardType.SWITCH -> StringValue("switch", null)
+            CardType.SKIP -> StringValue("skip", null)
+            CardType.DRAW_TWO -> StringValue("draw", null)
+            CardType.CHOOSE -> StringValue("choose", null)
+            CardType.CHOOSE_DRAW -> StringValue("choose-draw", null)
             else -> throw Exception("Invalid case")
         }
-    return VectorValue(mutableListOf<SchemeValue>(SymbolValue(card.color.toString().lowercase(), null), StringValue(type, null)), null)
+    return VectorValue(
+        mutableListOf<SchemeValue>(
+            SymbolValue(card.color.toString().lowercase(), null),
+            type
+        ), null
+    )
 }
 
 fun decodeCard(value: SchemeValue): Card {
@@ -32,21 +35,32 @@ fun decodeCard(value: SchemeValue): Card {
         throw DecodeError("The first field of a card must be a symbol")
     }
 
-    if (value.values[1] !is StringValue) {
-        throw DecodeError("The second field of a card must be a string")
+    if (value.values[1] !is StringValue && value.values[1] !is IntegerValue) {
+        throw DecodeError("The second field of a card must be a string or integer")
     }
 
-    val color = (value.values[0] as SymbolValue).value.uppercase()
-    val type = (value.values[1] as StringValue).value
-    return when {
-        type == "switch" -> SwitchCard(Color.valueOf(color))
-        type == "skip" -> SkipCard(Color.valueOf(color))
-        type == "draw" -> DrawCard(Color.valueOf(color))
-        type == "choose" -> ChooseCard(Color.valueOf(color))
-        type == "chooseDraw" -> ChooseDrawCard(Color.valueOf(color))
-        (type.toIntOrNull() != null) -> NumberCard(Color.valueOf(color), type.toInt())
-        else -> throw DecodeError("Invalid type $type")
+    val color = Color.valueOf((value.values[0] as SymbolValue).value.uppercase())
+
+
+    if (value.values[1] is IntegerValue) {
+        val num = (value.values[1] as IntegerValue).value
+        if (!(0..9).contains(num)) {
+            throw DecodeError("Number cards can only hold numbers between 0 and 9, but it was: $num")
+        }
+        return Card(CardType.NUMBER_CARD, color, num)
     }
+
+    val typeValue = (value.values[1] as StringValue).value
+    val type: CardType = when (typeValue) {
+        "switch" -> CardType.SWITCH
+        "skip" -> CardType.SKIP
+        "draw" -> CardType.DRAW_TWO
+        "choose" -> CardType.CHOOSE
+        "choose-draw" -> CardType.CHOOSE_DRAW
+        else -> throw DecodeError("Invalid type $typeValue")
+    }
+
+    return Card(type, color, null)
 }
 
 class DecodeError(val reason: String) : Throwable()

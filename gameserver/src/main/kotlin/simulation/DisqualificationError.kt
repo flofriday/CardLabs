@@ -2,4 +2,4 @@ package simulation
 
 import cardscheme.SchemeError
 
-class DisqualificationError(val botId: Int, val reason: String, schemeError: SchemeError?) : Throwable()
+class DisqualificationError(val botId: Long, val reason: String, val schemeError: SchemeError?) : Throwable()

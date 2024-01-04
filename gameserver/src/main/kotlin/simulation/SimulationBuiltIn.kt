@@ -1,6 +1,7 @@
 package simulation
 
 import cardscheme.*
+import simulation.models.Card
 import kotlin.random.Random
 
 /**
