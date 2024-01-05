@@ -31,12 +31,12 @@ export default function GameDetail({
   );
 
   useEffect(() => {
-    getLogLinesForGame(10)
+    getLogLinesForGame(Number(params.slug))
       .then((lines) => {
         setLogLines(lines);
       })
       .catch(() => {});
-    getRoundInfosForGame(10)
+    getRoundInfosForGame(Number(params.slug))
       .then((roundInfos) => {
         setRoundInfos(roundInfos);
       })
