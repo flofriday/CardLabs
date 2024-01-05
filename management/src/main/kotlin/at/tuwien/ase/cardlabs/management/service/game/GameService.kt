@@ -14,7 +14,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
+import java.time.Instant
 
 @Service
 class GameService(
@@ -67,13 +67,13 @@ class GameService(
         val gameDaos = mutableListOf<GameDAO>()
         for (game in games) {
             val dao = GameDAO()
-            dao.startTime = LocalDateTime.now()
+            dao.startTime = Instant.now()
             dao.endTime = dao.startTime
             dao.winningBotId = null
             dao.disqualifiedBotId = null
             dao.turns = emptyList()
             dao.gameState = GameState.CREATED
-            dao.participatingBots = game.participatingBots
+            dao.participatingBotsId = game.participatingBotsId
             gameDaos.add(dao)
         }
         return gameRepository.saveAll(gameDaos)

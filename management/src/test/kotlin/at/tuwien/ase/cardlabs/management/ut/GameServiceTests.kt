@@ -12,7 +12,7 @@ import at.tuwien.ase.cardlabs.management.database.model.game.card.Color
 import at.tuwien.ase.cardlabs.management.database.model.game.hand.Hand
 import at.tuwien.ase.cardlabs.management.database.model.game.log.DebugLogMessage
 import at.tuwien.ase.cardlabs.management.database.model.game.log.SystemLogMessage
-import at.tuwien.ase.cardlabs.management.database.model.game.round.Turn
+import at.tuwien.ase.cardlabs.management.database.model.game.turn.Turn
 import at.tuwien.ase.cardlabs.management.database.repository.GameRepository
 import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
 import at.tuwien.ase.cardlabs.management.service.AccountService
@@ -23,6 +23,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.annotation.DirtiesContext
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @ApplicationTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -56,8 +57,8 @@ class GameServiceTests {
         val botId = 0L
 
         val gameDAO = GameDAO()
-        gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0)
-        gameDAO.endTime = LocalDateTime.of(2023, 12, 11, 16, 0)
+        gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0).toInstant(ZoneOffset.UTC)
+        gameDAO.endTime = LocalDateTime.of(2023, 12, 11, 16, 0).toInstant(ZoneOffset.UTC)
         gameDAO.winningBotId = botId
         val topCard = Card(CardType.DRAW_TWO, Color.CYAN, null)
         val drawPile = listOf(
@@ -82,6 +83,7 @@ class GameServiceTests {
             Turn(0, topCard, drawPile, hand, actions, logMessages),
         )
         gameDAO.gameState = GameState.CREATED
+        gameDAO.participatingBotsId = listOf(botId)
         val gameId = gameRepository.save(gameDAO).id!!
         val result = gameService.fetchById(user, gameId)
 
@@ -89,7 +91,7 @@ class GameServiceTests {
         assertEquals(gameDAO.endTime, result.endTime)
         assertEquals(gameDAO.winningBotId, result.winningBotId)
         assertEquals(gameDAO.turns.size, result.turns.size)
-        assertEquals(gameDAO.turns[0].roundId, result.turns[0].roundId)
+        assertEquals(gameDAO.turns[0].turnId, result.turns[0].turnId)
         assertEquals(gameDAO.turns[0].topCard, result.turns[0].topCard)
         assertEquals(gameDAO.turns[0].drawPile.size, result.turns[0].drawPile.size)
         assertEquals(gameDAO.turns[0].drawPile[0], result.turns[0].drawPile[0])
@@ -122,8 +124,8 @@ class GameServiceTests {
         val botId = 0L
 
         val gameDAO = GameDAO()
-        gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0)
-        gameDAO.endTime = LocalDateTime.of(2023, 12, 11, 16, 0)
+        gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0).toInstant(ZoneOffset.UTC)
+        gameDAO.endTime = LocalDateTime.of(2023, 12, 11, 16, 0).toInstant(ZoneOffset.UTC)
         gameDAO.winningBotId = botId
         val topCard = Card(CardType.DRAW_TWO, Color.CYAN, null)
         val logMessages = listOf(
@@ -134,6 +136,7 @@ class GameServiceTests {
             Turn(0, topCard, emptyList(), emptyList(), emptyList(), logMessages),
         )
         gameDAO.gameState = GameState.CREATED
+        gameDAO.participatingBotsId = listOf(botId)
         val gameId = gameRepository.save(gameDAO).id!!
         val result = gameService.fetchLogById(user, gameId)
 

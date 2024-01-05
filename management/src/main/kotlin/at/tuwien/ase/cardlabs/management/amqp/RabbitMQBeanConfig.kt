@@ -47,7 +47,7 @@ class RabbitMQBeanConfig {
         connectionFactory.port = port
         connectionFactory.username = username!!
         connectionFactory.setPassword(password!!)
-        connectionFactory.virtualHost = virtualHost!!
+        // connectionFactory.virtualHost = virtualHost!!
 
         connectionFactory.setRequestedHeartBeat(30)
         connectionFactory.setConnectionTimeout(30000)
@@ -78,7 +78,7 @@ class RabbitMQBeanConfig {
     }
 
     // This code is used to register a listener for the match queue
-    /*@Bean
+    @Bean
     fun listenerContainerMatchQueueMessage(
         connectionFactory: ConnectionFactory,
         objectMapper: ObjectMapper,
@@ -88,7 +88,7 @@ class RabbitMQBeanConfig {
         container.setQueueNames(matchQueue)
         container.setMessageListener(MatchQueueRabbitMQListener(objectMapper))
         return container
-    }*/
+    }
 
     @Bean
     fun listenerContainerMatchResultQueueMessage(

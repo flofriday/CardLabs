@@ -4,23 +4,23 @@ import at.tuwien.ase.cardlabs.management.database.model.game.action.ActionType
 import at.tuwien.ase.cardlabs.management.database.model.game.card.CardType
 import at.tuwien.ase.cardlabs.management.database.model.game.card.Color
 import java.io.Serializable
-import java.time.LocalDateTime
+import java.time.Instant
 
 /**
  * The message that is sent to RabbitMQ when a match has been completed
  */
 data class MatchResultQueueMessage(
     val gameId: Long,
-    val startTime: LocalDateTime,
-    val endTime: LocalDateTime,
+    val startTime: Instant,
+    val endTime: Instant,
     val winningBotId: Long,
     val disqualifiedBotId: Long,
     val turns: List<Turn>,
-    val participatingBots: List<Long>,
+    val participatingBotsId: List<Long>,
 ) : Serializable
 
 data class Turn(
-    val roundId: Long,
+    val turnId: Long,
     val topCard: Card,
     val drawPile: List<Card>, // Stores the top 10 cards of the pile, fewer if there a fewer on the pile
     val hands: List<Hand>,
