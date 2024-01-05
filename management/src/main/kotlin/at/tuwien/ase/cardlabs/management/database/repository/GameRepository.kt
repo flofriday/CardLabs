@@ -25,7 +25,7 @@ interface GameRepository : CrudRepository<GameDAO?, Long?> {
         """
             SELECT * 
                 FROM game g
-                WHERE (ARRAY_CONTAINS(g.participating_bots, :botId))
+                WHERE (ARRAY_CONTAINS(g.participating_bots_id, :botId))
         """,
         nativeQuery = true
     )
