@@ -10,16 +10,10 @@ export default function Help(): JSX.Element {
   const [markdownContent, setMarkdownContent] = useState("");
 
   useEffect(() => {
-    const fetchMarkdown = async () => {
-      try {
-        const response = await fetch("./cardScheme.md");
-        const content = await response.text();
-        setMarkdownContent(content);
-      } catch (error) {
-        console.error("Error fetching Markdown file:", error);
-      }
-    };
-    fetchMarkdown();
+    fetch("./cardScheme.md")
+      .then(async (response) => await response.text())
+      .then((content) => { setMarkdownContent(content); })
+      .catch((error) => { console.error("Error fetching Markdown file:", error); });
   });
 
   return (
