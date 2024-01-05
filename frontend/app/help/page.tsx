@@ -12,8 +12,12 @@ export default function Help(): JSX.Element {
   useEffect(() => {
     fetch("./cardScheme.md")
       .then(async (response) => await response.text())
-      .then((content) => { setMarkdownContent(content); })
-      .catch((error) => { console.error("Error fetching Markdown file:", error); });
+      .then((content) => {
+        setMarkdownContent(content);
+      })
+      .catch((error) => {
+        console.error("Error fetching Markdown file:", error);
+      });
   });
 
   return (
@@ -22,14 +26,16 @@ export default function Help(): JSX.Element {
 
       <Robot type={RobotType.QUESTIONMARK} />
       <div className="flex flex-col justify-center items-center pt-52 space-y-6 pb-11">
-        <TextItem title="Programming Language - CardScheme">
-          <Markdown className="prose prose-invert max-w-none">
-            {markdownContent}
-          </Markdown>
-        </TextItem>
-        <TextItem title="Programming language">
-          In order to code your bot you have to use the programming language XY.
-          Here are some websites to get additional help for the language:
+        <TextItem title="Playing a card">
+          Congratulations on your decision to embrace the delightful world of
+          feline fabulousness! Becoming a cat is a journey of sophistication,
+          curiosity, and unabashed lounging. Here are some purr-actical tips to
+          master the art of being a cat: Find the sunniest spot in the house and
+          claim it as your own. Nap frequently; the more unpredictable, the
+          better. Dont forget to stretch luxuriously before, during, and after
+          each nap. Chase anything that moves, especially if its your tail. Bat
+          at random objects as if youre a secret ninja on a mission. A
+          crumpled-up paper ball is a world-class toy trust us.
         </TextItem>
         <TextItem title="Playing a card">
           Congratulations on your decision to embrace the delightful world of
@@ -71,6 +77,11 @@ export default function Help(): JSX.Element {
           pursuit of comfort.
         </TextItem>
         <TextItem title="Editing a bot">Happy catting!</TextItem>
+        <TextItem title="Programming Language">
+          <Markdown className="prose prose-invert max-w-none">
+            {markdownContent}
+          </Markdown>
+        </TextItem>
       </div>
     </div>
   );

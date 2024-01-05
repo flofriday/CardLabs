@@ -17,10 +17,10 @@ const config: Config = {
         DEFAULT: {
           css: {
             'code::before': {
-              content: '&nbsp;&nbsp;',
+              content: '\u00A0 \u00A0',
             },
             'code::after': {
-              content: '&nbsp;&nbsp;',
+              content: '\u00A0 \u00A0',
             },
             code: {
               background: 'rgb(0 0 0 / 50%)',
