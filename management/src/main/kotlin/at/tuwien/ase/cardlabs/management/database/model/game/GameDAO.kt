@@ -36,7 +36,7 @@ class GameDAO : AuditedEntity() {
     @Column
     var disqualifiedBotId: Long? = null
 
-    @Column(nullable = false, length = 32768)
+    @Column(nullable = false, length = 16777216)
     @Convert(converter = TurnListConverter::class)
     lateinit var turns: List<Turn>
 
