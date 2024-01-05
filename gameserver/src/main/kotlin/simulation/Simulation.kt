@@ -2,7 +2,7 @@ package simulation
 
 import cardscheme.*
 import simulation.models.*
-import java.time.LocalDateTime
+import java.time.Instant
 import kotlin.math.abs
 
 class Simulation(val gameId: Long, val bots: List<Bot>) {
@@ -14,80 +14,98 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
     private var turns = mutableListOf<Turn>()
 
     fun run(): SimulationResult {
-        val startTime = LocalDateTime.now()
+        val startTime = Instant.now()
         var winningBotId: Long? = null
         var disqualifiedBotId: Long? = null
 
-        initializeGame()
-        initializeBots()
+        // FIXME: Like really, badly, that's is a crime to all programming gods.
+        try {
+            initializeGame()
 
-        while (true) {
+            var isFirst = true
             turns.addLast(
                 Turn(
                     //roundId=turns.size.toLong(),
                     topCard = pile.last(),
                     drawPile = drawPile.take(10),
-                    hands = players.map { p -> Hand(p.bot.id, p.hand) },
+                    hands = players.map { p -> Hand(p.bot.botId, p.hand) },
                     actions = mutableListOf<Action>(),
                     logMessages = mutableListOf<LogMessage>()
                 )
             )
 
-            val player = players[currentPlayer]
+            initializeBots()
 
-            // Pick up cards if necessary
-            if (pile.last().type == CardType.DRAW_TWO) {
-                pickup(player, 2)
-            } else if (pile.last().type == CardType.CHOOSE_DRAW) {
-                pickup(player, 4)
-            }
-
-            // Play a card
-            try {
-                takeTurn(player)
-            } catch (e: DisqualificationError) {
-                val bot = bots.filter { b -> b.id == e.botId }.first()
-                logSystem("Player ${player.bot.id} disqualified.")
-                logBot(bot, e.reason)
-                if (e.schemeError != null) {
-                    // FIXME: Disable colors in the error
-                    logBot(bot, e.schemeError.format(bot.code))
+            while (true) {
+                if (!isFirst) {
+                    turns.addLast(
+                        Turn(
+                            //roundId=turns.size.toLong(),
+                            topCard = pile.last(),
+                            drawPile = drawPile.take(10),
+                            hands = players.map { p -> Hand(p.bot.botId, p.hand) },
+                            actions = mutableListOf<Action>(),
+                            logMessages = mutableListOf<LogMessage>()
+                        )
+                    )
                 }
-                disqualifiedBotId = e.botId
-                break
-            }
-            logSystem("Player ${player.bot.id} played ${pile.last()}")
-            if (player.hand.isEmpty()) {
-                winningBotId = player.bot.id
-                logSystem("Player ${player.bot.id} won!!!")
-                break
-            }
+                isFirst = false
 
-            // Determine the next player
-            if (pile.last().type == CardType.SWITCH) {
-                // If only two players play its basically a skip card
-                // TODO: Is this how this should work?
-                if (players.size != 2) {
-                    direction *= -1
+                val player = players[currentPlayer]
+
+                // Pick up cards if necessary
+                if (pile.last().type == CardType.DRAW_TWO) {
+                    pickup(player, 2)
+                } else if (pile.last().type == CardType.CHOOSE_DRAW) {
+                    pickup(player, 4)
+                }
+
+                // Play a card
+                takeTurn(player)
+
+                logSystem("Player ${player.bot.botId} played ${pile.last()}")
+                if (player.hand.isEmpty()) {
+                    winningBotId = player.bot.botId
+                    logSystem("Player ${player.bot.botId} won!!!")
+                    break
+                }
+
+                // Determine the next player
+                if (pile.last().type == CardType.SWITCH) {
+                    // If only two players play its basically a skip card
+                    // TODO: Is this how this should work?
+                    if (players.size != 2) {
+                        direction *= -1
+                        currentPlayer += direction
+                    }
+                } else if (pile.last().type == CardType.SKIP) {
+                    currentPlayer += (direction * 2)
+                } else {
                     currentPlayer += direction
                 }
-            } else if (pile.last().type == CardType.SKIP) {
-                currentPlayer += (direction * 2)
-            } else {
-                currentPlayer += direction
+                currentPlayer %= players.size
+                if (currentPlayer < 0) currentPlayer = players.size - abs(currentPlayer)
             }
-            currentPlayer %= players.size
-            if (currentPlayer < 0) currentPlayer = players.size - abs(currentPlayer)
+
+        } catch (e: DisqualificationError) {
+            val bot = bots.filter { b -> b.botId == e.botId }.first()
+            logSystem("Player $bot.botId} disqualified.")
+            logBot(bot, e.reason)
+            if (e.schemeError != null) {
+                // FIXME: Disable colors in the error
+                logBot(bot, e.schemeError.format(bot.code))
+            }
+            disqualifiedBotId = e.botId
         }
 
         return SimulationResult(
             gameId = gameId,
             startTime = startTime,
-            endTime = LocalDateTime.now(),
+            endTime = Instant.now(),
             winningBotId = winningBotId,
             disqualifiedBotId = disqualifiedBotId,
             turns = turns,
-            participatingBotsIds = bots.map { b -> b.id }
+            participatingBotsIds = bots.map { b -> b.botId }
         )
     }
 
@@ -106,12 +124,12 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
             try {
                 player.interpreter.run(player.bot.code)
             } catch (e: SchemeError) {
-                throw DisqualificationError(player.bot.id, "The bot crashed during the initialization.", e)
+                throw DisqualificationError(player.bot.botId, "The bot crashed during the initialization.", e)
             }
 
             if (!player.interpreter.env.has("turn")) {
                 throw DisqualificationError(
-                    player.bot.id,
+                    player.bot.botId,
                     "The bot doesn't implement the required turn function.",
                     null,
                 )
@@ -126,7 +144,7 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
         // Verify that the player has at least a matching card
         // FIXME: That's not how it works right?
         while (player.hand.none { c -> topCard.match(c) }) {
-            logSystem("Player ${player.bot.id} doesn't have any matching cards.")
+            logSystem("Player ${player.bot.botId} doesn't have any matching cards.")
             pickup(player, 1)
         }
 
@@ -135,14 +153,18 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
         try {
             val func = player.interpreter.env.get("turn")!!
             if (func !is CallableValue) {
-                throw DisqualificationError(player.bot.id, "`turn` isn't a function but a `${func.typeName()}`", null)
+                throw DisqualificationError(
+                    player.bot.botId,
+                    "`turn` isn't a function but a `${func.typeName()}`",
+                    null
+                )
             }
 
             val players =
                 this.players.map { p ->
                     VectorValue(
                         mutableListOf(
-                            StringValue(p.bot.id.toString(), null),
+                            StringValue(p.bot.botId.toString(), null),
                             IntegerValue(p.hand.size, null)
                         ), null
                     )
@@ -158,7 +180,7 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
                     ),
                 )
         } catch (e: SchemeError) {
-            throw DisqualificationError(player.bot.id, "The bot crashed while taking a turn.", e)
+            throw DisqualificationError(player.bot.botId, "The bot crashed while taking a turn.", e)
         }
 
         // Verify the played card and remove it from the hand
@@ -166,14 +188,14 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
 
         if (!player.hand.remove(playedCard)) {
             throw DisqualificationError(
-                player.bot.id,
+                player.bot.botId,
                 "The bot tried to play a card it doesn't hold: $playedCard",
                 null,
             )
         }
 
         if (!topCard.match(playedCard)) {
-            throw DisqualificationError(player.bot.id, "The tried to play an invalid card: $playedCard", null)
+            throw DisqualificationError(player.bot.botId, "The tried to play an invalid card: $playedCard", null)
         }
 
         pile.addLast(playedCard)
@@ -183,8 +205,8 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
         val cards = takeCards(number)
         player.hand.addAll(cards)
         for (card in cards) {
-            logSystem("Player ${player.bot.id} picked up $card.")
-            currentTurn().actions.addLast(Action(player.bot.id, ActionType.DRAW_CARD, card))
+            logSystem("Player ${player.bot.botId} picked up $card.")
+            currentTurn().actions.addLast(Action(player.bot.botId, ActionType.DRAW_CARD, card))
         }
     }
 
@@ -208,8 +230,8 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
     }
 
     private fun logBot(bot: Bot, message: String) {
-        println("${bot.id} prints: $message")
-        currentTurn().logMessages.addLast(DebugLogMessage(bot.id, message))
+        println("${bot.botId} prints: $message")
+        currentTurn().logMessages.addLast(DebugLogMessage(bot.botId, message))
     }
 
     private fun currentTurn(): Turn {
