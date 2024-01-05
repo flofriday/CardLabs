@@ -25,7 +25,9 @@ export default function Help(): JSX.Element {
       }
       return await response.text();
     } catch (error) {
-      throw "Error fetching Markdown file (" + url + "):" + error + "\n";
+      throw new Error(
+        `Error fetching Markdown file (${url}): ${(error as Error).message}`
+      );
     }
   };
 
@@ -50,7 +52,9 @@ export default function Help(): JSX.Element {
       );
       setEditBotContent(await fetchMarkdown("./documentation/editBot.md"));
     } catch (error) {
-      throw error;
+      throw new Error(
+        `Error fetching Markdown files: ${(error as Error).message}`
+      );
     }
   };
 
