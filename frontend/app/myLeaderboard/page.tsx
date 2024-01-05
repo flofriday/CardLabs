@@ -10,7 +10,6 @@ import { leaderBoardEntry } from "../types/leaderBoardEntry";
 import { getLeaderBoardPage } from "../services/LeaderBoardService";
 import { RegionType } from "../types/RegionType";
 import { LeaderBoardType } from "../types/LeaderBoardType";
-import React from "react";
 import { getUserInfo } from "../services/UserService";
 
 export default function MyLeaderboard(): JSX.Element {
@@ -44,7 +43,7 @@ export default function MyLeaderboard(): JSX.Element {
         setTotalPages(p.totalPages);
       })
       .catch(() => {});
-  }, [pageNumber, selectedRegion]);
+  }, [pageNumber, selectedRegion, userId]);
 
   return (
     <div className="flex flex-col h-full">

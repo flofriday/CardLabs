@@ -15,7 +15,7 @@ export async function getGlobalTop5LeaderBoardEntries(
     toast.error(
       "Leaderboard could not be loaded as the account could not be verified. Please trying logging out and logging and repeating your action."
     );
-    return {} as leaderBoardEntry[];
+    return {} as const as leaderBoardEntry[];
   }
 
   let url = `/api/leaderboard/public?page=${0}&entriesPerPage=${5}&regionType=${regionType.toUpperCase()}`;
@@ -44,7 +44,7 @@ export async function getGlobalTop5LeaderBoardEntries(
     throw new Error(`HTTP error! Status: ${response.status}`);
   } else {
     const leaderBoardPage = (await response.json()) as Page<leaderBoardEntry>;
-    return leaderBoardPage.content as leaderBoardEntry[];
+    return leaderBoardPage.content;
   }
 }
 
@@ -62,7 +62,7 @@ export async function getMyTop5LeaderBoardEntries(
     toast.error(
       "Leaderboard could not be loaded as the account could not be verified. Please trying logging out and logging and repeating your action."
     );
-    return {} as leaderBoardEntry[];
+    return {} as const as leaderBoardEntry[];
   }
 
   if (regionType !== RegionType.GLOBAL) {
@@ -91,7 +91,7 @@ export async function getMyTop5LeaderBoardEntries(
     throw new Error(`HTTP error! Status: ${response.status}`);
   } else {
     const leaderBoardPage = (await response.json()) as Page<leaderBoardEntry>;
-    return leaderBoardPage.content as leaderBoardEntry[];
+    return leaderBoardPage.content;
   }
 }
 
@@ -145,7 +145,7 @@ export async function getLeaderBoardPage(
       toast.error(
         "Leaderboard could not be loaded as the account could not be verified. Please trying logging out and logging and repeating your action."
       );
-      return {} as Page<leaderBoardEntry>;
+      return {} as const as Page<leaderBoardEntry>;
     }
 
     if (regionType !== RegionType.GLOBAL) {
@@ -175,7 +175,7 @@ export async function getLeaderBoardPage(
       return (await response.json()) as Page<leaderBoardEntry>;
     }
   } else {
-    return {} as Page<leaderBoardEntry>;
+    return {} as const as Page<leaderBoardEntry>;
   }
 }
 
