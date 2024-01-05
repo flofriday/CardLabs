@@ -16,6 +16,8 @@ const config: Config = {
       typography: {
         DEFAULT: {
           css: {
+            '--tw-prose-invert-body': '#FFFFFF',
+            '--tw-prose-invert-bullets': '#FFFFFF',
             'code::before': {
               content: '\u00A0 \u00A0',
             },

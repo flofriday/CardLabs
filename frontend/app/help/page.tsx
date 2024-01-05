@@ -7,17 +7,57 @@ import Markdown from "react-markdown";
 import React, { useState, useEffect } from "react";
 
 export default function Help(): JSX.Element {
-  const [markdownContent, setMarkdownContent] = useState("");
+  const [programmingLanguageContent, setProgrammingLanguageContent] =
+    useState("");
+  const [codeTemplateContent, setCodeTemplateContent] = useState("");
+  const [convenienceFunctionsContent, setConvenienceFunctionsContent] =
+    useState("");
+  const [debuggingContent, setDebuggingContent] = useState("");
+  const [botTestingContent, setBotTestingContent] = useState("");
+  const [createNewBotContent, setCreateNewBotContent] = useState("");
+  const [editBotContent, setEditBotContent] = useState("");
+
+  const fetchMarkdown = async (url: string): Promise<string> => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${url}`);
+      }
+      return await response.text();
+    } catch (error) {
+      throw "Error fetching Markdown file (" + url + "):" + error + "\n";
+    }
+  };
+
+  const loadAllMarkdownFiles = async (): Promise<void> => {
+    try {
+      setCodeTemplateContent(
+        await fetchMarkdown("./documentation/codeTemplate.md")
+      );
+      setProgrammingLanguageContent(
+        await fetchMarkdown("./documentation/cardScheme.md")
+      );
+
+      setConvenienceFunctionsContent(
+        await fetchMarkdown("./documentation/convenienceFunctions.md")
+      );
+      setDebuggingContent(await fetchMarkdown("./documentation/debugging.md"));
+      setBotTestingContent(
+        await fetchMarkdown("./documentation/botTesting.md")
+      );
+      setCreateNewBotContent(
+        await fetchMarkdown("./documentation/createBot.md")
+      );
+      setEditBotContent(await fetchMarkdown("./documentation/editBot.md"));
+    } catch (error) {
+      throw error;
+    }
+  };
 
   useEffect(() => {
-    fetch("./cardScheme.md")
-      .then(async (response) => await response.text())
-      .then((content) => {
-        setMarkdownContent(content);
-      })
-      .catch((error) => {
-        console.error("Error fetching Markdown file:", error);
-      });
+    loadAllMarkdownFiles().catch((error) => {
+      console.error("Error fetching Markdown files:", error);
+    });
   });
 
   return (
@@ -26,60 +66,39 @@ export default function Help(): JSX.Element {
 
       <Robot type={RobotType.QUESTIONMARK} />
       <div className="flex flex-col justify-center items-center pt-52 space-y-6 pb-11">
-        <TextItem title="Playing a card">
-          Congratulations on your decision to embrace the delightful world of
-          feline fabulousness! Becoming a cat is a journey of sophistication,
-          curiosity, and unabashed lounging. Here are some purr-actical tips to
-          master the art of being a cat: Find the sunniest spot in the house and
-          claim it as your own. Nap frequently; the more unpredictable, the
-          better. Dont forget to stretch luxuriously before, during, and after
-          each nap. Chase anything that moves, especially if its your tail. Bat
-          at random objects as if youre a secret ninja on a mission. A
-          crumpled-up paper ball is a world-class toy trust us.
+        <TextItem title="Code template">
+          <Markdown className="prose prose-invert max-w-none">
+            {codeTemplateContent}
+          </Markdown>
         </TextItem>
-        <TextItem title="Playing a card">
-          Congratulations on your decision to embrace the delightful world of
-          feline fabulousness! Becoming a cat is a journey of sophistication,
-          curiosity, and unabashed lounging. Here are some purr-actical tips to
-          master the art of being a cat: Find the sunniest spot in the house and
-          claim it as your own. Nap frequently; the more unpredictable, the
-          better. Dont forget to stretch luxuriously before, during, and after
-          each nap. Chase anything that moves, especially if its your tail. Bat
-          at random objects as if youre a secret ninja on a mission. A
-          crumpled-up paper ball is a world-class toy trust us.
-        </TextItem>
-        <TextItem title="Drawing a card">
-          Dedicate time each day to meticulous self-grooming. Allow your human
-          to brush your fur, but only if they insist. Exhibit disdain for
-          water-related activities. Master the art of silent judgmental stares.
-          Practice the subtle art of headbutts to express affection. Perfect the
-          mysterious meow a versatile language of its own.
-        </TextItem>
-        <TextItem title="Unavailable features">
-          There is no IO commands available. The only exception for this is the
-          command XY that can be used for debugging.
+        <TextItem title="Convenience functions">
+          <Markdown className="prose prose-invert max-w-none">
+            {convenienceFunctionsContent}
+          </Markdown>
         </TextItem>
         <TextItem title="Debugging">
-          Mark your kingdom with strategic scratching. Gracefully drape yourself
-          over essential human belongings. The higher the perch, the greater
-          your royal status. Demand the finest culinary offerings. Act like each
-          meal is a gourmet experience. Give your human the gift of bringing
-          them freshly caught prey (preferably a toy mouse).
+          <Markdown className="prose prose-invert max-w-none">
+            {debuggingContent}
+          </Markdown>
         </TextItem>
         <TextItem title="Testing your bot">
-          Refuse to conform to schedules, except when it comes to mealtime. Be
-          selective with your affection let your humans earn it. Exhibit a
-          mysterious aura; maintain an air of unapproachable elegance.
+          <Markdown className="prose prose-invert max-w-none">
+            {botTestingContent}
+          </Markdown>
         </TextItem>
         <TextItem title="Creating a new bot">
-          Remember, being a cat is an art, not a science. Embrace your inner
-          feline with grace, curiosity, and an unwavering commitment to the
-          pursuit of comfort.
+          <Markdown className="prose prose-invert max-w-none">
+            {createNewBotContent}
+          </Markdown>
         </TextItem>
-        <TextItem title="Editing a bot">Happy catting!</TextItem>
+        <TextItem title="Editing a bot">
+          <Markdown className="prose prose-invert max-w-none">
+            {editBotContent}
+          </Markdown>
+        </TextItem>
         <TextItem title="Programming Language">
           <Markdown className="prose prose-invert max-w-none">
-            {markdownContent}
+            {programmingLanguageContent}
           </Markdown>
         </TextItem>
       </div>

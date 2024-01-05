@@ -1,0 +1,1 @@
+To create and manage your bots you must be logged in. If you don't have an account yet, feel free to create on by clicking on "Register". After you are logged in, navigate to the "Dashboard" and click on "New Bot".
