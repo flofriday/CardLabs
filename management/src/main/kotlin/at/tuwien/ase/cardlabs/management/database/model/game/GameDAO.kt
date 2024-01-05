@@ -1,8 +1,8 @@
 package at.tuwien.ase.cardlabs.management.database.model.game
 
-import at.tuwien.ase.cardlabs.management.database.converter.RoundListConverter
+import at.tuwien.ase.cardlabs.management.database.converter.TurnListConverter
 import at.tuwien.ase.cardlabs.management.database.model.AuditedEntity
-import at.tuwien.ase.cardlabs.management.database.model.game.round.Turn
+import at.tuwien.ase.cardlabs.management.database.model.game.turn.Turn
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
@@ -11,7 +11,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import java.time.LocalDateTime
+import java.time.Instant
 
 /**
  * When the game state is CREATED, then only the properties id and gameState contain correct values
@@ -25,10 +25,10 @@ class GameDAO : AuditedEntity() {
     var id: Long? = null
 
     @Column(nullable = false)
-    lateinit var startTime: LocalDateTime
+    lateinit var startTime: Instant
 
     @Column(nullable = false)
-    lateinit var endTime: LocalDateTime
+    lateinit var endTime: Instant
 
     @Column
     var winningBotId: Long? = null
@@ -37,7 +37,7 @@ class GameDAO : AuditedEntity() {
     var disqualifiedBotId: Long? = null
 
     @Column(nullable = false, length = 32768)
-    @Convert(converter = RoundListConverter::class)
+    @Convert(converter = TurnListConverter::class)
     lateinit var turns: List<Turn>
 
     @Column(nullable = false)
@@ -45,5 +45,5 @@ class GameDAO : AuditedEntity() {
     lateinit var gameState: GameState
 
     @Column(nullable = false)
-    lateinit var participatingBots: List<Long>
+    lateinit var participatingBotsId: List<Long>
 }

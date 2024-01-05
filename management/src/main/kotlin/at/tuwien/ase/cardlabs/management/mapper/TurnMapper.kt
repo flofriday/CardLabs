@@ -7,13 +7,13 @@ import at.tuwien.ase.cardlabs.management.matchmaker.Turn
 import org.springframework.stereotype.Component
 
 @Component
-class RoundMapper(
+class TurnMapper(
     private val logMessageMapper: LogMessageMapper,
 ) {
 
-    fun mapRound(turn: Turn): at.tuwien.ase.cardlabs.management.database.model.game.round.Turn {
-        return at.tuwien.ase.cardlabs.management.database.model.game.round.Turn(
-            roundId = turn.roundId,
+    fun mapRound(turn: Turn): at.tuwien.ase.cardlabs.management.database.model.game.turn.Turn {
+        return at.tuwien.ase.cardlabs.management.database.model.game.turn.Turn(
+            turnId = turn.turnId,
             topCard = mapCard(turn.topCard),
             drawPile = turn.drawPile.map(::mapCard).toList(),
             hands = turn.hands.map(::mapHand).toList(),

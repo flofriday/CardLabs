@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class GameMapper(
-    private val roundMapper: RoundMapper,
+    private val turnMapper: TurnMapper,
 ) {
 
     fun map(game: Game): GameDAO {
@@ -41,7 +41,7 @@ class GameMapper(
         gameDAO.endTime = matchResultQueueMessage.endTime
         gameDAO.winningBotId = matchResultQueueMessage.winningBotId
         gameDAO.disqualifiedBotId = matchResultQueueMessage.disqualifiedBotId
-        gameDAO.turns = matchResultQueueMessage.turns.map(roundMapper::mapRound).toList()
+        gameDAO.turns = matchResultQueueMessage.turns.map(turnMapper::mapRound).toList()
         return gameDAO
     }
 }
