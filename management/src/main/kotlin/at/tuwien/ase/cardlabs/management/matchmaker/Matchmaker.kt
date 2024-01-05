@@ -7,7 +7,6 @@ import at.tuwien.ase.cardlabs.management.controller.model.game.GameCreate
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import at.tuwien.ase.cardlabs.management.service.game.GameService
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -22,8 +21,7 @@ class Matchmaker(
     private val matchmakerAlgorithm: MatchmakerAlgorithm,
     private val gameService: GameService,
     private val rabbitTemplate: RabbitTemplate,
-    private val objectMapper: ObjectMapper,
-    @MatchQueue private val matchQueue: Queue
+    @MatchQueue private val matchQueue: Queue,
 ) {
 
     private final val logger = LoggerFactory.getLogger(javaClass)

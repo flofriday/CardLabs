@@ -100,7 +100,7 @@ class RabbitMQBeanConfig {
     ): SimpleMessageListenerContainer {
         val container = SimpleMessageListenerContainer()
         container.connectionFactory = connectionFactory
-        container.setQueueNames(matchQueue)
+        container.setQueueNames(matchResultQueue)
         container.setMessageListener(
             MatchResultQueueRabbitMQListener(
                 objectMapper,
