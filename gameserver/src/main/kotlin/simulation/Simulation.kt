@@ -1,6 +1,7 @@
 package simulation
 
 import cardscheme.*
+import org.slf4j.LoggerFactory
 import simulation.models.*
 import java.time.Instant
 import kotlin.math.abs
@@ -12,6 +13,7 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
     private var currentPlayer = 0
     private var direction = 1
     private var turns = mutableListOf<Turn>()
+    private var logger = LoggerFactory.getLogger(Simulation::class.java)
 
     fun run(): SimulationResult {
         val startTime = Instant.now()
@@ -170,6 +172,7 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
                     )
                 }
 
+            // FIXME: Add the output to the turn
             result =
                 player.interpreter.run(
                     func,
@@ -216,7 +219,7 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
     private fun takeCards(number: Int): List<Card> {
         // Reshuffle the pile if necessary
         if (number > drawPile.size) {
-            println("Reshuffle pile into the draw pile")
+            logSystem("Reshuffle pile into the draw pile")
             val playedCards = pile.drop(1)
             pile = pile.take(1).toMutableList()
             drawPile.addAll(playedCards.shuffled())
@@ -228,7 +231,7 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
     }
 
     private fun logSystem(message: String) {
-        println(message)
+        logger.debug(message)
         currentTurn().logMessages.addLast(SystemLogMessage(message))
     }
 
@@ -236,7 +239,7 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
         bot: Bot,
         message: String,
     ) {
-        println("${bot.botId} prints: $message")
+        logger.debug("Bot ${bot.botId} prints: $message")
         currentTurn().logMessages.addLast(DebugLogMessage(bot.botId, message))
     }
 
