@@ -8,6 +8,16 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
 export default function Help(): JSX.Element {
+  const markdownUrlMap = new Map<string, string>([
+    ["./documentation/codeTemplate.md", "Code Template"],
+    ["./documentation/convenienceFunctions.md", "Convenience functions"],
+    ["./documentation/debugging.md", "Debugging"],
+    ["./documentation/botTesting.md", "Testing your bot"],
+    ["./documentation/createBot.md", "Creating a new bot"],
+    ["./documentation/editBot.md", "Editing a bot"],
+    ["./documentation/cardScheme.md", "Programming Language"],
+  ]);
+
   const [markdownContent, setMarkdownContent] = useState(new Map());
 
   const fetchMarkdown = async (url: string): Promise<string> => {
@@ -36,7 +46,7 @@ export default function Help(): JSX.Element {
       }
     }
 
-    if (errorMessages.length != 0) {
+    if (errorMessages.length !== 0) {
       throw new Error(
         `Failed to load markdown files for: ${errorMessages.join(", ")}`
       );
@@ -44,16 +54,7 @@ export default function Help(): JSX.Element {
   };
 
   useEffect(() => {
-    const markdownUrlList = [
-      "./documentation/codeTemplate.md",
-      "./documentation/cardScheme.md",
-      "./documentation/convenienceFunctions.md",
-      "./documentation/debugging.md",
-      "./documentation/botTesting.md",
-      "./documentation/createBot.md",
-      "./documentation/editBot.md",
-    ];
-    loadAllMarkdownFiles(markdownUrlList).catch((error) => {
+    loadAllMarkdownFiles(Array.from(markdownUrlMap.keys())).catch((error) => {
       toast.error((error as Error).message);
       console.error((error as Error).message);
     });
@@ -65,41 +66,18 @@ export default function Help(): JSX.Element {
 
       <Robot type={RobotType.QUESTIONMARK} />
       <div className="flex flex-col justify-center items-center pt-52 space-y-6 pb-11">
-        <TextItem title="Code template">
-          <Markdown className="prose prose-invert max-w-none">
-            {markdownContent.get("./documentation/codeTemplate.md")}
-          </Markdown>
-        </TextItem>
-        <TextItem title="Convenience functions">
-          <Markdown className="prose prose-invert max-w-none">
-            {markdownContent.get("./documentation/convenienceFunctions.md")}
-          </Markdown>
-        </TextItem>
-        <TextItem title="Debugging">
-          <Markdown className="prose prose-invert max-w-none">
-            {markdownContent.get("./documentation/debugging.md")}
-          </Markdown>
-        </TextItem>
-        <TextItem title="Testing your bot">
-          <Markdown className="prose prose-invert max-w-none">
-            {markdownContent.get("./documentation/botTesting.md")}
-          </Markdown>
-        </TextItem>
-        <TextItem title="Creating a new bot">
-          <Markdown className="prose prose-invert max-w-none">
-            {markdownContent.get("./documentation/createBot.md")}
-          </Markdown>
-        </TextItem>
-        <TextItem title="Editing a bot">
-          <Markdown className="prose prose-invert max-w-none">
-            {markdownContent.get("./documentation/editBot.md")}
-          </Markdown>
-        </TextItem>
-        <TextItem title="Programming Language">
-          <Markdown className="prose prose-invert max-w-none">
-            {markdownContent.get("./documentation/cardScheme.md")}
-          </Markdown>
-        </TextItem>
+        {Array.from(markdownUrlMap.keys()).map((markdownUrl, index) => {
+          return (
+            <TextItem
+              title={markdownUrlMap.get(markdownUrl)!}
+              key={markdownUrl}
+            >
+              <Markdown className="prose prose-invert max-w-none">
+                {markdownContent.get(markdownUrl)}
+              </Markdown>
+            </TextItem>
+          );
+        })}
       </div>
     </div>
   );
