@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageListener
 
-class MatchQueueRabbitMQListener(
+class MatchQueueListener(
     private val objectMapper: ObjectMapper
 ) : MessageListener {
 

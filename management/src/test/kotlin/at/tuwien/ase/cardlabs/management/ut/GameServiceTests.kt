@@ -83,7 +83,7 @@ class GameServiceTests {
             Turn(0, topCard, drawPile, hand, actions, logMessages),
         )
         gameDAO.gameState = GameState.CREATED
-        gameDAO.participatingBotsId = listOf(botId)
+        gameDAO.participatingBotIds = listOf(botId)
         val gameId = gameRepository.save(gameDAO).id!!
         val result = gameService.fetchById(user, gameId)
 
@@ -136,7 +136,7 @@ class GameServiceTests {
             Turn(0, topCard, emptyList(), emptyList(), emptyList(), logMessages),
         )
         gameDAO.gameState = GameState.CREATED
-        gameDAO.participatingBotsId = listOf(botId)
+        gameDAO.participatingBotIds = listOf(botId)
         val gameId = gameRepository.save(gameDAO).id!!
         val result = gameService.fetchLogById(user, gameId)
 

@@ -45,5 +45,5 @@ class GameDAO : AuditedEntity() {
     lateinit var gameState: GameState
 
     @Column(nullable = false)
-    lateinit var participatingBotsId: List<Long>
+    lateinit var participatingBotIds: List<Long>
 }

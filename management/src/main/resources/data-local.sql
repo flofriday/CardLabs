@@ -104,7 +104,7 @@ VALUES
 
 -- Create a few default games
 INSERT INTO GAME
-(id, start_time, end_time, winning_bot_id, disqualified_bot_id, turns, game_state, participating_bots_id, created, updated)
+(id, start_time, end_time, winning_bot_id, disqualified_bot_id, turns, game_state, participating_bot_ids, created, updated)
 VALUES
     (10000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, null, null, '[]', 'CREATED', ARRAY[10019, 10018, 10017], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (10001, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 10000, null,

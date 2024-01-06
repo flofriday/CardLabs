@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageListener
 
-class MatchResultQueueRabbitMQListener(
+class MatchResultQueueListener(
     private val objectMapper: ObjectMapper,
     private val gameService: GameService,
     private val gameMapper: GameMapper,
@@ -30,6 +30,8 @@ class MatchResultQueueRabbitMQListener(
         gameService.save(game)
 
         // Update bots
-        botService.setBotStateToDefaultState(msg.participatingBotsId)
+        botService.setBotStateToDefaultState(msg.participatingBotIds)
+
+        // TODO: calculate elo
     }
 }
