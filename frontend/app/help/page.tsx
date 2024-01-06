@@ -69,7 +69,7 @@ export default function Help(): JSX.Element {
         {Array.from(markdownUrlMap.keys()).map((markdownUrl, index) => {
           return (
             <TextItem
-              title={markdownUrlMap.get(markdownUrl)!}
+              title={markdownUrlMap.get(markdownUrl) ?? "Documentation"}
               key={markdownUrl}
             >
               <Markdown className="prose prose-invert max-w-none">
