@@ -1,6 +1,6 @@
 # CardScheme
 
-CardScheme is a Scheme based language. It implements a modified subset that allows the user to write competitive card game bots.
+CardScheme is a Scheme based language. CardScheme is a Scheme based language that provides you with some (but not all) Scheme language features. We only provide you with the necessary features to allow you to write competitive card game bots in order to make it easy to get started and to enable you to focus on what is important. Note, that some implementations may also be different or behave in different ways than the official Scheme standard. You can see the documentation of CardScheme below.
 
 ## Types
 
@@ -44,12 +44,12 @@ Example: `(define x 3)` defines a variable `x` which is set to the initial value
 
 Syntax: `(let ((<variable1> <init1>)...) <body>)`  
 Example: `(let ((x 3)) (display x))` defines a variable `x` which is set to the initial value 3 and that can be used inside the body.  
-Any expression can not access the corresponding variable definition (or will access an outside one if it exists).
+Any expression outside of the body can not access the corresponding variable definition (or will access an outside one if it exists). So for example, calling `(display x)` outside of our `let` body would not work in this example since `x` is only defined inside.
 
 ### Let\*
 
 Syntax: `(let* ((<variable1> <init1>)...) <body>)"`  
-The `let*` construct is similar to `let` but the bindings are performed left to right which meanch that the first binding is accessible in the second binding and so on.
+The `let*` construct is similar to `let` but the bindings are performed left to right which means that the first binding is accessible in the second binding and so on.
 
 ### Letrec
 
@@ -120,10 +120,10 @@ Example: `(sqrt 16)`
 The only Input/Output capabilities that CardScheme provides is `display`, e.g.
 
 ```Scheme
-(display  "hello world!\n"
+(display  "hello world!\n")
 ```
 
-This prints a message to a buffer that is captured and returned to the user.
+This prints a message to a buffer that is safely captured and that can be printed.
 
 ## Sources
 
