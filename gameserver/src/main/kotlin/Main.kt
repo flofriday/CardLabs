@@ -18,9 +18,6 @@ val REQUEST_QUEUE = "match-queue"
 val RESULT_QUEUE = "match-result-queue"
 
 fun main(args: Array<String>) {
-    //System.setProperty("log4j2.debug", "false");
-    //val logger2: org.apache.logging.log4j.Logger = LogManager.getFormatterLogger("Foo")!!
-    //logger2.info("nono")
     val logger: Logger = LoggerFactory.getLogger("Main")
 
     logger.info("Loading config")

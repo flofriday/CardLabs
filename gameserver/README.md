@@ -6,9 +6,15 @@ This folder also includes CardScheme, a custom interpreter for CardLabs.
 
 ## Build and run it yourself
 
-You need a Java 21 JDK inatalled.
+You need a Java 21 JDK installed.
 
+The server needs to connect to a RabbitMQ instance, if you want to host one locally, you can use:
+
+```bash
+docker run -it --rm --hostname my-rabbit --name some-rabbit -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
+
+```bash
 # GameServer
 ./mvnw compile exec:java
 ```
