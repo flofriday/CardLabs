@@ -50,16 +50,53 @@ Any expression outside of the body can not access the corresponding variable def
 
 Syntax: `(let* ((<variable1> <init1>)...) <body>)"`  
 The `let*` construct is similar to `let` but the bindings are performed left to right which means that the first binding is accessible in the second binding and so on.
+Example:
+
+```Scheme
+(let ((x 2) (y 3))
+    (let* ((x 7)
+        (z (+ x y)))
+    (* z x)))
+```
 
 ### Letrec
 
 Syntax: `(letrec ((<variable1> <init1>)...) <body>)"`  
 In `letrec` the variable(s) are bound to a fresh location. They are then set to the evaluated init(s). Each variable is assigned in some unspecified order. This allows to define mutually recursive procedures.
+Example:
+
+```Scheme
+(letrec (
+    (even? (lambda (n)
+        (if (zero? n)
+            #t
+            (odd? (- n 1)))))
+    (odd? (lambda (n)
+        (if (zero? n)
+            #f
+            (even? (- n 1))))))
+    (even? 88))
+```
 
 ### Letrec\*
 
 Syntax: `(letrec* ((<variable1> <init1>)...) <body>)"`  
 In `letrec*` the variable(s) are bound to a fresh location. They are then set to the evaluated init(s). Each variable is assigned in left-to-right order.
+Example:
+
+```Scheme
+(letrec* ((p
+    (lambda (x)
+        (+ 1 (q (- x 1)))))
+    (q
+        (lambda (y)
+            (if (zero? y)
+                0
+                (+ 1 (p (- y 1))))))
+        (x (p 5))
+        (y x))
+y)
+```
 
 ## Procedures
 
