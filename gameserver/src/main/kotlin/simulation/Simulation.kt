@@ -25,13 +25,13 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
             var isFirst = true
             turns.addLast(
                 Turn(
-                    //roundId=turns.size.toLong(),
+                    turnId = turns.size.toLong(),
                     topCard = pile.last(),
                     drawPile = drawPile.take(10),
                     hands = players.map { p -> Hand(p.bot.botId, p.hand) },
                     actions = mutableListOf<Action>(),
-                    logMessages = mutableListOf<LogMessage>()
-                )
+                    logMessages = mutableListOf<LogMessage>(),
+                ),
             )
 
             initializeBots()
@@ -40,13 +40,13 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
                 if (!isFirst) {
                     turns.addLast(
                         Turn(
-                            //roundId=turns.size.toLong(),
+                            turnId = turns.size.toLong(),
                             topCard = pile.last(),
                             drawPile = drawPile.take(10),
                             hands = players.map { p -> Hand(p.bot.botId, p.hand) },
                             actions = mutableListOf<Action>(),
-                            logMessages = mutableListOf<LogMessage>()
-                        )
+                            logMessages = mutableListOf<LogMessage>(),
+                        ),
                     )
                 }
                 isFirst = false
@@ -86,7 +86,6 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
                 currentPlayer %= players.size
                 if (currentPlayer < 0) currentPlayer = players.size - abs(currentPlayer)
             }
-
         } catch (e: DisqualificationError) {
             val bot = bots.filter { b -> b.botId == e.botId }.first()
             logSystem("Player $bot.botId} disqualified.")
@@ -105,7 +104,7 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
             winningBotId = winningBotId,
             disqualifiedBotId = disqualifiedBotId,
             turns = turns,
-            participatingBotsIds = bots.map { b -> b.botId }
+            participatingBotIds = bots.map { b -> b.botId },
         )
     }
 
@@ -156,7 +155,7 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
                 throw DisqualificationError(
                     player.bot.botId,
                     "`turn` isn't a function but a `${func.typeName()}`",
-                    null
+                    null,
                 )
             }
 
@@ -165,8 +164,9 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
                     VectorValue(
                         mutableListOf(
                             StringValue(p.bot.botId.toString(), null),
-                            IntegerValue(p.hand.size, null)
-                        ), null
+                            IntegerValue(p.hand.size, null),
+                        ),
+                        null,
                     )
                 }
 
@@ -201,7 +201,10 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
         pile.addLast(playedCard)
     }
 
-    private fun pickup(player: Player, number: Int) {
+    private fun pickup(
+        player: Player,
+        number: Int,
+    ) {
         val cards = takeCards(number)
         player.hand.addAll(cards)
         for (card in cards) {
@@ -229,7 +232,10 @@ class Simulation(val gameId: Long, val bots: List<Bot>) {
         currentTurn().logMessages.addLast(SystemLogMessage(message))
     }
 
-    private fun logBot(bot: Bot, message: String) {
+    private fun logBot(
+        bot: Bot,
+        message: String,
+    ) {
         println("${bot.botId} prints: $message")
         currentTurn().logMessages.addLast(DebugLogMessage(bot.botId, message))
     }

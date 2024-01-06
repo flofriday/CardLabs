@@ -16,7 +16,7 @@ class CardMapper {
                     }
                     continue
                 }
-               
+
                 val card = Card(type, color, null)
                 Assert.assertEquals(card, decodeCard(encodeCard(card)))
             }

@@ -10,5 +10,5 @@ class SimulationResult(
     val winningBotId: Long?,
     val disqualifiedBotId: Long?,
     val turns: List<Turn>,
-    val participatingBotsIds: List<Long>
+    val participatingBotIds: List<Long>,
 ) : Serializable

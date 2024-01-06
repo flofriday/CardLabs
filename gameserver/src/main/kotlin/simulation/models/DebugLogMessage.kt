@@ -1,5 +1,4 @@
-package simulation.models;
-
+package simulation.models
 
 class DebugLogMessage(
     val botId: Long,

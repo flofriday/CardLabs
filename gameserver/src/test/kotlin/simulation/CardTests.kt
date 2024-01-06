@@ -185,14 +185,14 @@ class CardTests {
     }
 
     @Test
-    fun ORANGEChooseCardAndCYANNotMatch() {
+    fun orangeChooseCardAndCYANNotMatch() {
         val a = Card(CardType.CHOOSE, Color.ORANGE, null)
         val b = Card(CardType.NUMBER_CARD, Color.CYAN, 0)
         assert(!a.match(b))
     }
 
     @Test
-    fun ORANGEChooseCardAndORANGENumberCardMatch() {
+    fun orangeChooseCardAndORANGENumberCardMatch() {
         val a = Card(CardType.CHOOSE, Color.ORANGE, null)
         val b = Card(CardType.NUMBER_CARD, Color.ORANGE, 7)
         assert(a.match(b))

@@ -6,39 +6,46 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
+import simulation.Config
 import simulation.Simulation
 import simulation.models.Bot
 import simulation.models.SimulationRequest
 import simulation.models.SimulationResult
 import java.text.SimpleDateFormat
 
-
 val REQUEST_QUEUE = "match-queue"
 val RESULT_QUEUE = "match-result-queue"
-val RABBITMQ_HOST = "localhost"
 
 fun main(args: Array<String>) {
+    val config = Config()
+    config.load()
 
-    test()
     val factory = ConnectionFactory()
-    factory.host = RABBITMQ_HOST
-    //factory.setPort(RABBITMQ_PORT);
-    //factory.setUsername(RABBITMQ_USER);
-    //factory.setPassword(RABBITMQ_PASSWORD);
+    factory.host = config.rmqHost
+    if (config.rmqUser != null) {
+        factory.setUsername(config.rmqUser)
+    }
+    if (config.rmqPassword != null) {
+        factory.setPassword(config.rmqPassword)
+    }
+    if (config.rmqVirtualHost != null) {
+        factory.setVirtualHost("sypfwnyo")
+    }
 
     val connection = factory.newConnection()
     val channel = connection.createChannel()
-    channel.queueDeclare(REQUEST_QUEUE, false, false, false, null)
-    channel.queueDeclare(RESULT_QUEUE, false, false, false, null)
+    channel.queueDeclare(REQUEST_QUEUE, true, false, false, null)
+    channel.queueDeclare(RESULT_QUEUE, true, false, false, null)
 
     val mapper = buildJsonMapper()
-    val deliverCallback = DeliverCallback { consumerTag: String?, delivery: Delivery ->
-        println("FLOOOO")
-        val message = String(delivery.body, charset("UTF-8"))
-        val request = mapper.readValue(message, SimulationRequest::class.java)
-        val result = runGame(request)
-        channel.basicPublish("", RESULT_QUEUE, null, mapper.writeValueAsBytes(result))
-    }
+    val deliverCallback =
+        DeliverCallback { consumerTag: String?, delivery: Delivery ->
+            println("FLOOOO")
+            val message = String(delivery.body, charset("UTF-8"))
+            val request = mapper.readValue(message, SimulationRequest::class.java)
+            val result = runGame(request)
+            channel.basicPublish("", RESULT_QUEUE, null, mapper.writeValueAsBytes(result))
+        }
 
     println("Waiting for requests...")
     channel.basicConsume(REQUEST_QUEUE, true, deliverCallback) { tag -> }
@@ -85,5 +92,7 @@ fun buildJsonMapper(): ObjectMapper {
         .registerModule(JavaTimeModule()) // To support Java 8 time classes
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) // Disable writing dates as timestamps
         .setSerializationInclusion(JsonInclude.Include.NON_NULL) // Exclude null values when serializing
-        .setDateFormat(SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")); // Convert the date in RFC3339 format (https://www.rfc-editor.org/rfc/rfc3339)
+        .setDateFormat(
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"),
+        ); // Convert the date in RFC3339 format (https://www.rfc-editor.org/rfc/rfc3339)
 }

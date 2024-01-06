@@ -545,11 +545,12 @@ fun builtInAssoc(
         }
 
         val newArgs = listOf(obj, FuncArg(innerList.values.first(), null))
-        val compareResult = if (compare == null) {
-            builtinIsEqual(newArgs, executor)
-        } else {
-            executor.callFunction(compare, newArgs)
-        }
+        val compareResult =
+            if (compare == null) {
+                builtinIsEqual(newArgs, executor)
+            } else {
+                executor.callFunction(compare, newArgs)
+            }
 
         if (compareResult !is BooleanValue) {
             throw SchemeError(

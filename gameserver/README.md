@@ -4,7 +4,7 @@ The server executing the bots.
 
 This folder also includes CardScheme, a custom interpreter for CardLabs.
 
-## Build it yourself
+## Build and run it yourself
 
 You need a Java 21 JDK inatalled.
 
@@ -12,6 +12,16 @@ You need a Java 21 JDK inatalled.
 # GameServer
 ./mvnw compile exec:java
 ```
+
+## Configuration
+
+By default the game server connects to a RabbitMQ instance on localhost with the default user and password.
+However, you can change that by setting some environment variables.
+
+- `RMQ_HOST`:  RabbitMQ Host
+- `RMQ_USER`: RabbitMQ User
+- `RMQ_PASSWORD`: RabbitMQ Password
+- `RMQ_VIRTUALHOST`: RabbitMQ Virtual Host
 
 ## Testing, Linting and Formatting
 
@@ -25,7 +35,3 @@ You need a Java 21 JDK inatalled.
 # Lint the code
 ./mvnw ktlint:check
 ```
-
-## Examples
-
-There are some CardScheme examples in the `examples` folder.

@@ -17,8 +17,9 @@ fun encodeCard(card: Card): SchemeValue {
     return VectorValue(
         mutableListOf<SchemeValue>(
             SymbolValue(card.color.toString().lowercase(), null),
-            type
-        ), null
+            type,
+        ),
+        null,
     )
 }
 
@@ -41,7 +42,6 @@ fun decodeCard(value: SchemeValue): Card {
 
     val color = Color.valueOf((value.values[0] as SymbolValue).value.uppercase())
 
-
     if (value.values[1] is IntegerValue) {
         val num = (value.values[1] as IntegerValue).value
         if (!(0..9).contains(num)) {
@@ -51,14 +51,15 @@ fun decodeCard(value: SchemeValue): Card {
     }
 
     val typeValue = (value.values[1] as StringValue).value
-    val type: CardType = when (typeValue) {
-        "switch" -> CardType.SWITCH
-        "skip" -> CardType.SKIP
-        "draw" -> CardType.DRAW_TWO
-        "choose" -> CardType.CHOOSE
-        "choose-draw" -> CardType.CHOOSE_DRAW
-        else -> throw DecodeError("Invalid type $typeValue")
-    }
+    val type: CardType =
+        when (typeValue) {
+            "switch" -> CardType.SWITCH
+            "skip" -> CardType.SKIP
+            "draw" -> CardType.DRAW_TWO
+            "choose" -> CardType.CHOOSE
+            "choose-draw" -> CardType.CHOOSE_DRAW
+            else -> throw DecodeError("Invalid type $typeValue")
+        }
 
     return Card(type, color, null)
 }
