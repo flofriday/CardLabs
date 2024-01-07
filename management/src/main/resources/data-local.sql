@@ -1,88 +1,97 @@
-INSERT INTO location (name, continent)
-VALUES ('Austria', 'EUROPE');
-INSERT INTO location (name, continent)
-VALUES ('Germany', 'EUROPE');
-INSERT INTO location (name, continent)
-VALUES ('Denmark', 'EUROPE');
-INSERT INTO location (name, continent)
-VALUES ('Switzerland', 'EUROPE');
-INSERT INTO location (name, continent)
-VALUES ('Netherlands', 'EUROPE');
-INSERT INTO location (name, continent)
-VALUES ('Japan', 'ASIA');
+INSERT INTO location
+    (name, continent)
+VALUES
+    ('Austria', 'EUROPE'),
+    ('Germany', 'EUROPE'),
+    ('Denmark', 'EUROPE'),
+    ('Switzerland', 'EUROPE'),
+    ('Netherlands', 'EUROPE'),
+    ('Japan', 'ASIA');
 
 
 -- Password for the accounts: test1:pass1 test2:pass2 test3:pass3 test4:pass4
-INSERT INTO ACCOUNT (id, created, deleted, updated, email, password, send_change_updates, send_newsletter, send_score_updates, username, location) VALUES (999999999, TIMESTAMP WITH TIME ZONE '2023-11-24 11:50:04.206298+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:50:04.206298+01', 'test1@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', TRUE, FALSE, TRUE, 'test1', 'Austria');
-INSERT INTO ACCOUNT (id, created, deleted, updated, email, password, send_change_updates, send_newsletter, send_score_updates, username, location) VALUES (999999998, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:00.302842+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:00.302842+01', 'test2@email', '$2a$10$BRpCdEjDwoZMtzFY/p0dlOyu33shFmAgZ.4ufx7LzEEVTfQ7Yhnbm', FALSE, TRUE, TRUE, 'test2', 'Denmark');
-INSERT INTO ACCOUNT (id, created, deleted, updated, email, password, send_change_updates, send_newsletter, send_score_updates, username, location) VALUES (999999997, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:23.151055+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:23.151055+01', 'test3@email', '$2a$10$X1MqlGvqvzRCncIsQWmwPeVw3jGpGTbbfA9JmpmDjryZxdepGRpJe', FALSE, TRUE, FALSE, 'test3', 'Japan');
-INSERT INTO ACCOUNT (id, created, deleted, updated, email, password, send_change_updates, send_newsletter, send_score_updates, username, location) VALUES (999999996, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:47.996734+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:47.996734+01', 'test4@email', '$2a$10$3OruGPVHedOkqqZOlyFQgeRpYDcOGGb1J87xzZv0GAgFCW/6juLRC', FALSE, FALSE, TRUE, 'test4', 'Austria');
+INSERT INTO ACCOUNT
+    (id, created, deleted, updated, email, password, send_change_updates, send_newsletter, send_score_updates, username, location)
+VALUES
+    (999999999, TIMESTAMP WITH TIME ZONE '2023-11-24 11:50:04.206298+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:50:04.206298+01', 'test1@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', TRUE, FALSE, TRUE, 'test1', 'Austria'),
+    (999999998, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:00.302842+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:00.302842+01', 'test2@email', '$2a$10$BRpCdEjDwoZMtzFY/p0dlOyu33shFmAgZ.4ufx7LzEEVTfQ7Yhnbm', FALSE, TRUE, TRUE, 'test2', 'Denmark'),
+    (999999997, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:23.151055+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:23.151055+01', 'test3@email', '$2a$10$X1MqlGvqvzRCncIsQWmwPeVw3jGpGTbbfA9JmpmDjryZxdepGRpJe', FALSE, TRUE, FALSE, 'test3', 'Japan'),
+    (999999996, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:47.996734+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:47.996734+01', 'test4@email', '$2a$10$3OruGPVHedOkqqZOlyFQgeRpYDcOGGb1J87xzZv0GAgFCW/6juLRC', FALSE, FALSE, TRUE, 'test4', 'Austria');
 
 --bots for user 1
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999994, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 1 for user test1', 'CREATED', 'READY', 1000, NULL, 'Neous', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999995, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 2 for user test1', 'CREATED', 'READY', 2000, NULL, 'Raxgios', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999996, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 3 for user test1', 'CREATED', 'READY', 3000, NULL, 'Jenlonos', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999997, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 4 for user test1', 'CREATED', 'READY', 4000, NULL, 'Tynixos', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999998, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 5 for user test1', 'CREATED', 'READY', 5000, NULL, 'Vexgios', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999987, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 6000, NULL, 'Zargitron', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999986, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 400, NULL, 'Vexphous', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999985, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 1200, NULL, 'Tydortron', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999984, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 510, NULL, 'Neodoros', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999983, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 254, NULL, 'Krygitron', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999982, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 789, NULL, 'Vexnixax', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999981, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 3510, NULL, 'Xendorphis', 999999999);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999980, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 3510, NULL, 'Jenphoos', 999999999);
+INSERT INTO BOT
+    (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id)
+VALUES
+    (999999994, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 1 for user test1', 'CREATED', 'READY', 1000, NULL, 'Neous', 999999999),
+    (999999995, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 2 for user test1', 'CREATED', 'READY', 2000, NULL, 'Raxgios', 999999999),
+    (999999996, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 3 for user test1', 'CREATED', 'READY', 3000, NULL, 'Jenlonos', 999999999),
+    (999999997, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 4 for user test1', 'CREATED', 'READY', 4000, NULL, 'Tynixos', 999999999),
+    (999999998, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 5 for user test1', 'CREATED', 'READY', 5000, NULL, 'Vexgios', 999999999),
+    (999999987, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 6000, NULL, 'Zargitron', 999999999),
+    (999999986, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 400, NULL, 'Vexphous', 999999999),
+    (999999985, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 1200, NULL, 'Tydortron', 999999999),
+    (999999984, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 510, NULL, 'Neodoros', 999999999),
+    (999999983, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 254, NULL, 'Krygitron', 999999999),
+    (999999982, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 789, NULL, 'Vexnixax', 999999999),
+    (999999981, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 3510, NULL, 'Xendorphis', 999999999),
+    (999999980, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 6 for user test1', 'CREATED', 'READY', 3510, NULL, 'Jenphoos', 999999999);
 
 
 --bots for user 2
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999993, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 1 for user test2', 'CREATED', 'READY', 1000, NULL, 'Zarzorax', 999999998);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999992, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 2 for user test2', 'CREATED', 'READY', 2000, NULL, 'Zarlonphis', 999999998);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999991, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 3 for user test2', 'CREATED', 'READY', 3000, NULL, 'Jenphoium', 999999998);
+INSERT INTO BOT
+    (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id)
+VALUES
+    (999999993, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 1 for user test2', 'CREATED', 'READY', 1000, NULL, 'Zarzorax', 999999998),
+    (999999992, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 2 for user test2', 'CREATED', 'READY', 2000, NULL, 'Zarlonphis', 999999998),
+    (999999991, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 3 for user test2', 'CREATED', 'READY', 3000, NULL, 'Jenphoium', 999999998);
 
 
 --bots for user 3
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999990, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 1 for user test3', 'CREATED', 'READY', 1000, NULL, 'Neophis', 999999997);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999989, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 2 for user test3', 'CREATED', 'READY', 2000, NULL, 'Krylonium', 999999997);
-INSERT INTO BOT (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id) VALUES (999999988, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 3 for user test3', 'CREATED', 'READY', 3000, NULL, 'Neotarphis', 999999997);
+INSERT INTO BOT
+    (id, created, deleted, updated, code_updated, current_code, current_state, default_state, elo_score, error_state_message, name, owner_id)
+VALUES
+    (999999990, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 1 for user test3', 'CREATED', 'READY', 1000, NULL, 'Neophis', 999999997),
+    (999999989, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 2 for user test3', 'CREATED', 'READY', 2000, NULL, 'Krylonium', 999999997),
+    (999999988, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 3 for user test3', 'CREATED', 'READY', 3000, NULL, 'Neotarphis', 999999997);
 
 -- Password for the accounts: test1:pass1 test2:pass2 test3:pass3 test4:pass4 test5:pass1
 -- Note: if the auto incrementer reaches 10000 it will result in a conflict as it does not know about these values, do not use in production
 INSERT INTO ACCOUNT
-(id, username, email, password, location, send_change_updates, send_newsletter, send_score_updates, created, updated)
+    (id, username, email, password, location, send_change_updates, send_newsletter, send_score_updates, created, updated)
 VALUES
-    (10000, 'test1', 'test1@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', 'Austria', TRUE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10001, 'test2', 'test2@email', '$2a$10$BRpCdEjDwoZMtzFY/p0dlOyu33shFmAgZ.4ufx7LzEEVTfQ7Yhnbm', 'Denmark', FALSE, TRUE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10002, 'test3', 'test3@email', '$2a$10$X1MqlGvqvzRCncIsQWmwPeVw3jGpGTbbfA9JmpmDjryZxdepGRpJe', 'Switzerland', FALSE, TRUE, FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10003, 'test4', 'test4@email', '$2a$10$3OruGPVHedOkqqZOlyFQgeRpYDcOGGb1J87xzZv0GAgFCW/6juLRC', 'Austria', FALSE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10004, 'test5', 'test5@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', 'Austria', FALSE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (10000, '0test1', '0test1@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', 'Austria', TRUE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10001, '0test2', '0test2@email', '$2a$10$BRpCdEjDwoZMtzFY/p0dlOyu33shFmAgZ.4ufx7LzEEVTfQ7Yhnbm', 'Denmark', FALSE, TRUE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10002, '0test3', '0test3@email', '$2a$10$X1MqlGvqvzRCncIsQWmwPeVw3jGpGTbbfA9JmpmDjryZxdepGRpJe', 'Switzerland', FALSE, TRUE, FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10003, '0test4', '0test4@email', '$2a$10$3OruGPVHedOkqqZOlyFQgeRpYDcOGGb1J87xzZv0GAgFCW/6juLRC', 'Austria', FALSE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10004, '0test5', '0test5@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', 'Austria', FALSE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Create a few default bots
 INSERT INTO BOT
-(id, name, owner_id, current_code, elo_score, current_state, default_state, created, updated)
+    (id, name, owner_id, current_code, code_updated, elo_score, current_state, default_state, created, updated)
 VALUES
-    (10000, 'Neophotron', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10001, 'Neozoros', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10002, 'Zarlonphis', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10003, 'Vextarlar', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10004, 'Xentron', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10005, 'Vexgieon', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10006, 'Krytaros', 10000, '', 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10007, 'Raxtphis', 10000, '', 400, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10008, 'Raxtron', 10000, '', 1000, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10009, 'Neophis', 10000, '', 1050, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10010, 'Raxmekos', 10000, '', 1100, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10011, 'Kryax', 10000, '', 1150, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10012, 'Zartartron', 10000, '', 1200, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10013, 'Vexdorium', 10000, '', 1250, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10014, 'Vextarax', 10000, '', 1400, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10015, 'Xennixos', 10000, '', 1950, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10016, 'Raxtareon', 10000, '', 2000, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10017, 'Xenphotron', 10000, '', 2500, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10018, 'Krytarphis', 10000, '', 2550, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10019, 'Krylonphis', 10000, '', 2600, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10020, 'Krylonlar', 10000, '', 5000, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (10000, 'Neophotron', 10000, '', CURRENT_TIMESTAMP, 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10001, 'Neozoros', 10000, '', CURRENT_TIMESTAMP, 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10002, 'Zarlonphis', 10000, '', CURRENT_TIMESTAMP, 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10003, 'Vextarlar', 10000, '', CURRENT_TIMESTAMP, 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10004, 'Xentron', 10000, '', CURRENT_TIMESTAMP, 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10005, 'Vexgieon', 10000, '', CURRENT_TIMESTAMP, 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10006, 'Krytaros', 10000, '', CURRENT_TIMESTAMP, 1000, 'CREATED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10007, 'Raxtphis', 10000, '', CURRENT_TIMESTAMP, 400, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10008, 'Raxtron', 10000, '', CURRENT_TIMESTAMP, 1000, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10009, 'Neophis', 10000, '', CURRENT_TIMESTAMP, 1050, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10010, 'Raxmekos', 10000, '', CURRENT_TIMESTAMP, 1100, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10011, 'Kryax', 10000, '', CURRENT_TIMESTAMP, 1150, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10012, 'Zartartron', 10000, '', CURRENT_TIMESTAMP, 1200, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10013, 'Vexdorium', 10000, '', CURRENT_TIMESTAMP, 1250, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10014, 'Vextarax', 10000, '', CURRENT_TIMESTAMP, 1400, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10015, 'Xennixos', 10000, '', CURRENT_TIMESTAMP, 1950, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10016, 'Raxtareon', 10000, '', CURRENT_TIMESTAMP, 2000, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10017, 'Xenphotron', 10000, '', CURRENT_TIMESTAMP, 2500, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10018, 'Krytarphis', 10000, '', CURRENT_TIMESTAMP, 2550, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10019, 'Krylonphis', 10000, '', CURRENT_TIMESTAMP, 2600, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10020, 'Krylonlar', 10000, '', CURRENT_TIMESTAMP, 5000, 'QUEUED', 'READY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO BOT_CODE
-(id, bot_id, code, created, updated)
+    (id, bot_id, code, created, updated)
 VALUES
     (10000, 10000, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (10001, 10000, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
@@ -104,7 +113,7 @@ VALUES
 
 -- Create a few default games
 INSERT INTO GAME
-(id, start_time, end_time, winning_bot_id, disqualified_bot_id, turns, game_state, participating_bot_ids, created, updated)
+    (id, start_time, end_time, winning_bot_id, disqualified_bot_id, turns, game_state, participating_bot_ids, created, updated)
 VALUES
     (10000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, null, null, '[]', 'CREATED', ARRAY[10019, 10018, 10017], CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (10001, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 10000, null,

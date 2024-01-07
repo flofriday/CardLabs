@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.AttributeConverter
 
 /**
- * Converts a list of rounds into a JSON or vice versa. This is used when saving data to the database.
+ * Converts a list of turns into a JSON or vice versa. This is used when saving data to the database.
  */
 class TurnListConverter(private val objectMapper: ObjectMapper) : AttributeConverter<List<Turn>, String> {
 
