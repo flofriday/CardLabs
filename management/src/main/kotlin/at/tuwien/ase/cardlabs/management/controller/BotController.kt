@@ -5,8 +5,8 @@ import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
-import org.slf4j.LoggerFactory
 import at.tuwien.ase.cardlabs.management.util.Region
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus

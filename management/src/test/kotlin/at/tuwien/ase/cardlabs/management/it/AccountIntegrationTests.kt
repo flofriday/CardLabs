@@ -8,7 +8,6 @@ import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.util.Continent
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Assertions.assertEquals
