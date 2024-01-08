@@ -1,4 +1,4 @@
-package at.tuwien.ase.cardlabs.management.database.model.match.log
+package at.tuwien.ase.cardlabs.management.database.model.game.log
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -14,7 +14,6 @@ import java.io.Serializable
     JsonSubTypes.Type(value = DebugLogMessage::class, name = "debug"),
 )
 open class LogMessage(
-    val round: Long,
     val message: String,
 ) : Serializable {
     override fun equals(other: Any?): Boolean {
@@ -23,13 +22,10 @@ open class LogMessage(
 
         other as LogMessage
 
-        if (round != other.round) return false
         return message == other.message
     }
 
     override fun hashCode(): Int {
-        var result = round.hashCode()
-        result = 31 * result + message.hashCode()
-        return result
+        return message.hashCode()
     }
 }
