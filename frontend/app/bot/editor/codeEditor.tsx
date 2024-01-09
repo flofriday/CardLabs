@@ -43,6 +43,9 @@ export default function CodeEditor({
         defaultLanguage="scheme"
         options={{
           fontSize: 20,
+          autoIndent: "advanced",
+          formatOnPaste: true,
+          formatOnType: true,
         }}
         theme="card-labs"
         value={_code ?? undefined}

@@ -54,12 +54,30 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   const [saved, setSaved] = useState(true);
   const router = useRouter();
 
+  const setupBotCodeTemplate = async (): Promise<string> => {
+    try {
+      const response = await fetch("../codeTemplate.txt");
+      if (!response.ok) {
+        console.error(response);
+        throw Error();
+      }
+      return await response.text();
+    } catch (error) {
+      toast.error("Failed to load new code template");
+      return "";
+    }
+  };
+
   useEffect(() => {
     if (_id == null) {
       // fetch new name
+
       getNewBotName()
         .then((n) => {
           setName(n);
+          setupBotCodeTemplate().then((codeTemplate: string) => {
+            setCode(codeTemplate);
+          });
         })
         .catch(() => {});
     } else {
