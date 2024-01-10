@@ -34,6 +34,12 @@ export default function Leaderboard(): JSX.Element {
       .catch(() => {});
   }, [pageNumber, selectedRegion]);
 
+  useEffect(() => {
+    if (pageNumber >= totalPages) {
+      setPageNumber(totalPages - 1);
+    }
+  }, [totalPages]);
+
   return (
     <div className="flex flex-col h-full">
       <LeftPageHeader title="Leaderboard" />
