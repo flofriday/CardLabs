@@ -1,9 +1,3 @@
-; Card definition
-(define-structure card (color symbol))
-
-; Player definition
-(define-structure player (id cardCount))
-
 ; It's your turn, select a card
 ; hand is just a list of cards
 ; topCard is a single card
