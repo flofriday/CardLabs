@@ -17,7 +17,7 @@ class JwtAuthenticationFilter(private val userDetailsService: UserDetailsService
         filterChain: FilterChain,
     ) {
         val jwt = getJwtFromRequest(request)
-        if (jwt != null && JwtHelper.isValidToken(jwt)) {
+        if (jwt != null && JwtHelper.isValidAccessToken(jwt)) {
             val username = JwtHelper.extractAccountUsername(jwt)
 
             val userDetails = userDetailsService.loadUserByUsername(username)

@@ -36,6 +36,16 @@ class JwtHelper {
         }
 
         @JvmStatic
+        fun isRefreshToken(token: String): Boolean {
+            return "refresh-token" == (extractAllClaims(token)["type"] as String)
+        }
+
+        @JvmStatic
+        fun isAccessToken(token: String): Boolean {
+            return "access-token" == (extractAllClaims(token)["type"] as String)
+        }
+
+        @JvmStatic
         fun <T> extractClaim(token: String, claimsResolver: (Claims) -> T): T {
             return claimsResolver(extractAllClaims(token))
         }
@@ -60,12 +70,13 @@ class JwtHelper {
             val claims = mutableMapOf<String, Any>()
             claims["account_id"] = userDetails.id
             claims["account_username"] = userDetails.username
+            claims["type"] = "refresh-token"
             return createToken(userDetails.username, claims, refreshTokenValidity)
         }
 
         @JvmStatic
         fun generateAccessTokenFromRefreshToken(token: String): JwtToken {
-            if (!isValidToken(token)) {
+            if (!isValidRefreshToken(token)) {
                 throw RefreshTokenExpiredException("The JWT refresh token has expired")
             }
 
@@ -79,6 +90,7 @@ class JwtHelper {
             val claims = mutableMapOf<String, Any>()
             claims["account_id"] = accountId
             claims["account_username"] = username
+            claims["type"] = "access-token"
             return createToken(username, claims, accessTokenValidity)
         }
 
@@ -98,8 +110,13 @@ class JwtHelper {
         }
 
         @JvmStatic
-        fun isValidToken(token: String): Boolean {
-            return !isTokenExpired(extractAllClaims(token))
+        fun isValidRefreshToken(token: String): Boolean {
+            return !isTokenExpired(extractAllClaims(token)) && isRefreshToken(token)
+        }
+
+        @JvmStatic
+        fun isValidAccessToken(token: String): Boolean {
+            return !isTokenExpired(extractAllClaims(token)) && isAccessToken(token)
         }
     }
 }
