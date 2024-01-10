@@ -1,11 +1,12 @@
-#FROM amazoncorretto:21
-FROM gradle:8.5-jdk21
+FROM maven:3-amazoncorretto-21
 
 WORKDIR /app
 
-COPY settings.gradle build.gradle ./
-RUN gradle dependencies
-COPY . .
-RUN gradle build --no-daemon --console=plain
+RUN yum install -y curl
 
-CMD ["gradle", "bootRun", "--args='--spring.profiles.active=local'"]
+COPY pom.xml ./
+RUN mvn dependency:go-offline
+
+COPY src ./src
+
+CMD ["mvn", "compile", "exec:java"]
