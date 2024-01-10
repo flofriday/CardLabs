@@ -20,12 +20,12 @@ fun generateDeck(): List<Card> {
             deck.addLast(Card(CardType.SWITCH, color, null))
             deck.addLast(Card(CardType.DRAW_TWO, color, null))
         }
+    }
 
-        // Add 4x choice cards and 4x Plus 4 choice cards
-        for (_i in 1..4) {
-            deck.addLast(Card(CardType.CHOOSE, Color.ANY, null))
-            deck.addLast(Card(CardType.CHOOSE_DRAW, Color.ANY, null))
-        }
+    // Add 4x choice cards and 4x Plus 4 choice cards
+    for (_i in 1..4) {
+        deck.addLast(Card(CardType.CHOOSE, Color.ANY, null))
+        deck.addLast(Card(CardType.CHOOSE_DRAW, Color.ANY, null))
     }
 
     return deck

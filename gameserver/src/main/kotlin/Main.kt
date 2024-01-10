@@ -9,7 +9,6 @@ import com.rabbitmq.client.Delivery
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import simulation.Config
-import simulation.models.Bot
 import simulation.models.SimulationRequest
 import simulation.runSimulation
 import java.text.SimpleDateFormat
@@ -19,7 +18,6 @@ val RESULT_QUEUE = "match-result-queue"
 
 fun main(args: Array<String>) {
     val logger: Logger = LoggerFactory.getLogger("Main")
-    logTestRequest()
 
     logger.info("Loading config")
     val config = Config()
@@ -56,34 +54,6 @@ fun main(args: Array<String>) {
 
     logger.info("Waiting for requests...")
     channel.basicConsume(REQUEST_QUEUE, true, deliverCallback) { tag -> }
-}
-
-fun logTestRequest() {
-    val bot1 =
-        Bot(
-            1,
-            1,
-            """
-            (define (turn topCard hand players)
-                (random-choice
-                    (matching-cards topCard hand)))
-            """.trimIndent(),
-        )
-
-    val bot2 =
-        Bot(
-            2,
-            2,
-            """
-            (define (turn topCard hand players)
-                (display players)
-                (newline)
-                (random-choice
-                    (matching-cards topCard hand)))
-            """.trimIndent(),
-        )
-    val req = SimulationRequest(42, listOf(bot1, bot2))
-    println(buildJsonMapper().writeValueAsString(req))
 }
 
 fun buildJsonMapper(): ObjectMapper {
