@@ -13,6 +13,8 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import org.hibernate.annotations.CreationTimestamp
+import java.time.Instant
 
 /**
  * A database entry representing a bot. When the deleted field from the parent class AuditedEntity is set, then the
@@ -39,6 +41,10 @@ class BotDAO : AuditedEntity() {
     // the bot program code
     @Column(nullable = false, length = 32768)
     lateinit var currentCode: String
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    var codeUpdated: Instant? = null
 
     @OneToMany(mappedBy = "bot", fetch = FetchType.LAZY)
     var codeHistory: MutableList<BotCodeDAO> = mutableListOf()

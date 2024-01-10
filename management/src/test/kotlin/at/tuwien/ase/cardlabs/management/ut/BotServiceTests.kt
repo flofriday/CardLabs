@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.ut
 
+import at.tuwien.ase.cardlabs.management.ApplicationTest
 import at.tuwien.ase.cardlabs.management.TestConfig
 import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
@@ -9,6 +10,7 @@ import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
+import at.tuwien.ase.cardlabs.management.util.Region
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -17,11 +19,10 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvFileSource
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.annotation.DirtiesContext
 
-@SpringBootTest
+@ApplicationTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 internal class BotServiceTests {
 
@@ -157,7 +158,7 @@ internal class BotServiceTests {
         val bot = createBot(userDetails, "Tytartron", null)
 
         val result = assertDoesNotThrow {
-            botService.fetchRankPosition(userDetails, bot.id!!)
+            botService.fetchRankPosition(userDetails, bot.id!!, Region.GLOBAL)
         }
         assertEquals(1, result)
     }
@@ -170,11 +171,11 @@ internal class BotServiceTests {
         val bot2 = createBot(userDetails, "Neophotron", null)
 
         val result1 = assertDoesNotThrow {
-            botService.fetchRankPosition(userDetails, bot1.id!!)
+            botService.fetchRankPosition(userDetails, bot1.id!!, Region.GLOBAL)
         }
         assertEquals(1, result1)
         val result2 = assertDoesNotThrow {
-            botService.fetchRankPosition(userDetails, bot2.id!!)
+            botService.fetchRankPosition(userDetails, bot2.id!!, Region.GLOBAL)
         }
         assertEquals(1, result2)
     }

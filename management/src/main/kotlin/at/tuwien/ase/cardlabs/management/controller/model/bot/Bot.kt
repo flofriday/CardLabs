@@ -1,6 +1,7 @@
 package at.tuwien.ase.cardlabs.management.controller.model.bot
 
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
+import java.time.Instant
 
 /**
  * A model representing a bot
@@ -14,5 +15,12 @@ data class Bot(
     val eloScore: Int,
     val currentState: BotState,
     val defaultState: BotState,
+    val created: Instant?,
+    val updated: Instant?,
     val errorStateMessage: String?,
-)
+) {
+
+    fun getLatestCodeVersion(): BotCode? {
+        return codeHistory.maxByOrNull { it.id!! }
+    }
+}

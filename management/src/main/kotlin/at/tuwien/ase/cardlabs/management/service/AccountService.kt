@@ -14,6 +14,7 @@ import at.tuwien.ase.cardlabs.management.error.account.LocationNotFoundException
 import at.tuwien.ase.cardlabs.management.mapper.AccountMapper
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.validation.validator.AccountValidator
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Lazy
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -28,8 +29,11 @@ class AccountService(
     @Lazy private val passwordEncoder: PasswordEncoder,
 ) {
 
+    private final val logger = LoggerFactory.getLogger(javaClass)
+
     @Transactional
     fun create(account: Account): Account {
+        logger.debug("Attempting to create an account with the username ${account.username}")
         Helper.requireNull(account.id, "The id must not be set")
 
         AccountValidator.validateAccountCreate(account)
@@ -58,7 +62,8 @@ class AccountService(
     }
 
     @Transactional
-    fun update(user: CardLabUser, accountUpdate: AccountUpdate) {
+    fun update(user: CardLabUser, accountUpdate: AccountUpdate): Account {
+        logger.debug("User ${user.id} attempts to update its account")
         Helper.requireNonNull(user, "No authentication provided")
         val account = findByUsername(user.username) ?: throw AccountNotFoundException("Account could not be found")
 
@@ -71,21 +76,27 @@ class AccountService(
         account.sendScoreUpdates = accountUpdate.sendScoreUpdates
         account.sendChangeUpdates = accountUpdate.sendChangeUpdates
 
-        accountRepository.save(account)
+        return accountMapper.map(accountRepository.save(account))
     }
 
     @Transactional
-    fun delete(user: CardLabUser, id: Long) {
+    fun delete(user: CardLabUser, accountId: Long) {
+        logger.debug("User ${user.id} attempts to delete the account $accountId")
         Helper.requireNonNull(user, "No authentication provided")
-        Helper.requireNonNull(id, "Cannot delete an account with the id null")
-        if (user.id != id) {
+        Helper.requireNonNull(accountId, "Cannot delete an account with the id null")
+        if (user.id != accountId) {
             throw UnauthorizedException("Can't delete an account other than yourself")
         }
 
-        val accountDao = findById(id)
+        val accountDao = findById(accountId)
         if (accountDao != null) {
             accountDao.deleted = Instant.now()
         }
+    }
+
+    fun getUser(user: CardLabUser): Account {
+        logger.debug("User ${user.id} attempts to fetch its account information")
+        return getUser(user.username)
     }
 
     fun getUser(username: String): Account {

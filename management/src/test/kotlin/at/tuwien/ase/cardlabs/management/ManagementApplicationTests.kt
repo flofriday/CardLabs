@@ -1,9 +1,8 @@
 package at.tuwien.ase.cardlabs.management
 
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
+@ApplicationTest
 class ManagementApplicationTests {
 
     @Test
