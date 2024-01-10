@@ -13,11 +13,9 @@ export async function isAuthenticated(): Promise<boolean> {
 export async function validToken(jwt: string): Promise<boolean> {
   // this needs to change if the backend is located on a different url
   // sadly this can't be "api/authentication", but I dont know why
-  const management_url = process.env.MANAGMENT_HOST
-    ? `${process.env.MANAGMENT_HOST}/:path*`
-    : "http://127.0.0.1:8080/:path*";
+  const managementUrl = process.env.MANAGMENT_HOST ?? "http://127.0.0.1:8080";
 
-  const response = await fetch(management_url, {
+  const response = await fetch(`${managementUrl}/:path*`, {
     mode: "cors",
     method: "GET",
     headers: {
