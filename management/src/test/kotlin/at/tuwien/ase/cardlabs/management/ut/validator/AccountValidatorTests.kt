@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.ut.validator
 
+import at.tuwien.ase.cardlabs.management.ApplicationTest
 import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.error.ValidationException
 import at.tuwien.ase.cardlabs.management.validation.validator.AccountValidator
@@ -9,9 +10,8 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvFileSource
-import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
+@ApplicationTest
 internal class AccountValidatorTests {
 
     @ParameterizedTest

@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.ut
 
+import at.tuwien.ase.cardlabs.management.ApplicationTest
 import at.tuwien.ase.cardlabs.management.TestConfig
 import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
@@ -18,11 +19,10 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvFileSource
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.annotation.DirtiesContext
 
-@SpringBootTest
+@ApplicationTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 internal class BotServiceTests {
 

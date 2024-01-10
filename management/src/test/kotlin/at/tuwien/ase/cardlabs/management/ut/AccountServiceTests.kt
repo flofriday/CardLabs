@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.ut
 
+import at.tuwien.ase.cardlabs.management.ApplicationTest
 import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
@@ -16,10 +17,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
 
-@SpringBootTest
+@ApplicationTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 internal class AccountServiceTests {
 
@@ -143,7 +143,7 @@ internal class AccountServiceTests {
             TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
 
         assertDoesNotThrow {
-            accountService.delete(userDetailsAccount, userDetailsAccount.id!!)
+            accountService.delete(userDetailsAccount, userDetailsAccount.id)
         }
     }
 

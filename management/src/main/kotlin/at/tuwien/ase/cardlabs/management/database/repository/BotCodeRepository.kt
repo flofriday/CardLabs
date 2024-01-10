@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface BotCodeRepository : CrudRepository<BotCodeDAO?, Long?> {
 
-    fun findByBotCodeIdAndDeletedIsNull(id: Long): BotCodeDAO?
+    fun findByIdAndDeletedIsNull(id: Long): BotCodeDAO?
 }
