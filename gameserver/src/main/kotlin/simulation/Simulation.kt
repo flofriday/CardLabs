@@ -29,6 +29,7 @@ fun runSimulation(request: SimulationRequest): SimulationResult {
     val startTime = Instant.now()
 
     val state = initialGameState(generateDeck().shuffled().toMutableList(), request)
+    state.players = state.players.shuffled()
     try {
         initializeBots(state.players)
         while (true) {
@@ -46,7 +47,7 @@ fun runSimulation(request: SimulationRequest): SimulationResult {
             winningBotId = state.players.first { p -> p.hand.isEmpty() }.bot.botId,
             disqualifiedBotId = null,
             turns = state.turns,
-            participatingBotIds = request.participatingBots.map { b -> b.botId },
+            participatingBotIds = state.players.map { p -> p.bot.botId },
         )
     } catch (e: DisqualificationError) {
         if (state.turns.isEmpty()) {
@@ -68,7 +69,7 @@ fun runSimulation(request: SimulationRequest): SimulationResult {
             winningBotId = null,
             disqualifiedBotId = e.botId,
             turns = state.turns,
-            participatingBotIds = request.participatingBots.map { b -> b.botId },
+            participatingBotIds = state.players.map { p -> p.bot.botId },
         )
     }
 }
@@ -83,17 +84,18 @@ fun runTurn(state: GameState) {
     val turn = turnSnapShot(state)
     state.turns.addLast(turn)
 
-
-    // Play a card
-    if (player.hand.none { c -> state.pile.last().match(c) }) {
+    // Pick a card if there is no matching one
+    if (player.hand.none { card -> state.pile.last().match(card) }) {
         logSystem(turn, "Player ${player.bot.botId} has no matching card and draws one")
-        player.hand.addAll(pickupCards(state, 1))
+        player.hand.addLast(state.drawPile.removeFirst())
 
         state.currentPlayer += state.direction
         state.currentPlayer %= state.players.size
         if (state.currentPlayer < 0) state.currentPlayer = state.players.size - abs(state.currentPlayer)
         return
     }
+
+    // Play a card
     execBotTurn(state, player)
     logSystem(turn, "Player ${player.bot.botId} played ${state.pile.last()}")
 
@@ -120,11 +122,14 @@ fun runTurn(state: GameState) {
         nextPlayer.hand.addAll(pickupCards(state, 2))
     } else if (state.pile.last().type == CardType.CHOOSE_DRAW) {
         logSystem(turn, "Player ${nextPlayer.bot.botId} draws 4 cards.")
-        nextPlayer.hand.addAll(pickupCards(state, 4))
+        nextPlayer.hand.addAll(state.drawPile.removeFirstN(4))
     }
 }
 
-fun execBotTurn(state: GameState, player: Player) {
+fun execBotTurn(
+    state: GameState,
+    player: Player,
+) {
     val topCard = state.pile.last()
 
     // Call the bot
@@ -185,11 +190,11 @@ fun execBotTurn(state: GameState, player: Player) {
 fun turnSnapShot(state: GameState): Turn {
     return Turn(
         state.turns.size.toLong(),
-        state.pile.first(),
+        state.pile.last(),
         state.drawPile.take(5),
         state.players.map { p -> Hand(p.bot.botId, p.hand) },
         mutableListOf(),
-        mutableListOf()
+        mutableListOf(),
     )
 }
 
@@ -205,12 +210,16 @@ fun pickupCards(state: GameState, number: Int): List<Card> {
     return state.drawPile.removeFirstN(number)
 }
 
-fun initialGameState(deck: MutableList<Card>, request: SimulationRequest): GameState {
-    val players = request.participatingBots.map { bot ->
-        val player = Player(bot, deck.removeFirstN(7).toMutableList(), SchemeInterpreter())
-        injectSimulationBuiltin(player.interpreter.env)
-        player
-    }
+fun initialGameState(
+    deck: MutableList<Card>,
+    request: SimulationRequest,
+): GameState {
+    val players =
+        request.participatingBots.map { bot ->
+            val interpreter = SchemeInterpreter()
+            injectSimulationBuiltin(interpreter.env)
+            Player(bot, deck.removeFirstN(7).toMutableList(), interpreter)
+        }
     return GameState(mutableListOf(deck.removeFirst()), deck, players)
 }
 
@@ -234,7 +243,10 @@ private fun initializeBots(players: List<Player>) {
     }
 }
 
-private fun logSystem(turn: Turn, message: String) {
+private fun logSystem(
+    turn: Turn,
+    message: String,
+) {
     logger.debug(message)
     turn.logMessages.addLast(SystemLogMessage(message))
 }
