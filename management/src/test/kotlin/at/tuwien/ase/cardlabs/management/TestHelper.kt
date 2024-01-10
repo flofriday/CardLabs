@@ -4,7 +4,7 @@ import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
-import at.tuwien.ase.cardlabs.management.security.authentication.JwtAuthenticationResponse
+import at.tuwien.ase.cardlabs.management.security.authentication.AuthenticationResponse
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -36,7 +36,7 @@ class TestHelper {
             )
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andReturn()
-            val response = jacksonObjectMapper().readValue<JwtAuthenticationResponse>(result.response.contentAsString)
+            val response = jacksonObjectMapper().readValue<AuthenticationResponse>(result.response.contentAsString)
             return response.jwt
         }
 

@@ -5,7 +5,7 @@ import at.tuwien.ase.cardlabs.management.WebApplicationTest
 import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
-import at.tuwien.ase.cardlabs.management.security.authentication.JwtAuthenticationResponse
+import at.tuwien.ase.cardlabs.management.security.authentication.AuthenticationResponse
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.util.Continent
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -20,7 +20,6 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import kotlin.streams.toList
 
 @WebApplicationTest
 @AutoConfigureMockMvc
@@ -86,7 +85,7 @@ class LocationIntegrationTests {
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<JwtAuthenticationResponse>(jsonResponseString)
+        val response = jacksonObjectMapper().readValue<AuthenticationResponse>(jsonResponseString)
         return response.jwt
     }
 

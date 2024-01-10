@@ -1,10 +1,12 @@
 package at.tuwien.ase.cardlabs.management.security.jwt
 
+import at.tuwien.ase.cardlabs.management.error.authentication.RefreshTokenExpiredException
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.security.core.Authentication
+import java.time.Duration
 import java.util.Date
 
 class JwtHelper {
@@ -13,47 +15,91 @@ class JwtHelper {
 
         lateinit var secretKey: String
 
-        @JvmStatic
-        fun generateToken(authentication: Authentication): String {
-            val userDetails = authentication.principal as CardLabUser
-            val now = Date()
-            val validityDuration = 12 * 60 * 60 * 1000; // 12 hours
-            val expiryDate = Date(now.time + validityDuration)
+        lateinit var refreshTokenValidity: Duration
 
-            return Jwts.builder()
-                .setSubject(authentication.name)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .claim("account_id", userDetails.id)
-                .claim("account_username", userDetails.username)
-                .claim("account_email", userDetails.email)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact()
+        lateinit var accessTokenValidity: Duration
+
+        @JvmStatic
+        fun extractSubject(token: String): String {
+            return extractClaim(token, Claims::getSubject)
         }
 
         @JvmStatic
-        fun validateToken(token: String): Boolean {
-            val claims = Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .body
-
-            return !isTokenExpired(claims)
+        fun extractAccountId(token: String): Long {
+            // Claims only support int
+            return (extractAllClaims(token)["account_id"] as Int).toLong()
         }
 
         @JvmStatic
-        fun getUsernameFromToken(token: String): String {
-            return Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .body
-                .subject
+        fun extractAccountUsername(token: String): String {
+            return extractAllClaims(token)["account_username"] as String
+        }
+
+        @JvmStatic
+        fun <T> extractClaim(token: String, claimsResolver: (Claims) -> T): T {
+            return claimsResolver(extractAllClaims(token))
         }
 
         @JvmStatic
         private fun isTokenExpired(claims: Claims): Boolean {
-            val expiration: Date = claims.expiration
-            return expiration.before(Date())
+            return claims.expiration.before(Date())
+        }
+
+        @JvmStatic
+        private fun extractAllClaims(token: String): Claims {
+            return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .body
+        }
+
+        @JvmStatic
+        fun generateRefreshToken(authentication: Authentication): JwtToken {
+            val userDetails = authentication.principal as CardLabUser
+            val claims = mutableMapOf<String, Any>()
+            claims["account_id"] = userDetails.id
+            claims["account_username"] = userDetails.username
+            return createToken(userDetails.username, claims, refreshTokenValidity)
+        }
+
+        @JvmStatic
+        fun generateAccessTokenFromRefreshToken(token: String): JwtToken {
+            if (!isValidToken(token)) {
+                throw RefreshTokenExpiredException("The JWT refresh token has expired")
+            }
+
+            val accountId = extractAccountId(token)
+            val accountUsername = extractAccountUsername(token)
+            return generateAccessToken(accountId, accountUsername)
+        }
+
+        @JvmStatic
+        private fun generateAccessToken(accountId: Long, username: String): JwtToken {
+            val claims = mutableMapOf<String, Any>()
+            claims["account_id"] = accountId
+            claims["account_username"] = username
+            return createToken(username, claims, accessTokenValidity)
+        }
+
+        @JvmStatic
+        private fun createToken(subject: String, claims: Map<String, Any>, validityDuration: Duration): JwtToken {
+            val now = Date()
+            val expiryDate = Date(now.time + validityDuration.toMillis())
+
+            val token = Jwts.builder()
+                .setSubject(subject)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .addClaims(claims)
+                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .compact()
+            return JwtToken(token, expiryDate.toInstant())
+        }
+
+        @JvmStatic
+        fun isValidToken(token: String): Boolean {
+            return !isTokenExpired(extractAllClaims(token))
         }
     }
 }
