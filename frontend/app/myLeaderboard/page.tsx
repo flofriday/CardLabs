@@ -47,7 +47,7 @@ export default function MyLeaderboard(): JSX.Element {
 
   return (
     <div className="flex flex-col h-full">
-      <LeftPageHeader title="Leaderboard" />
+      <LeftPageHeader title="My Leaderboard" />
 
       <div className="flex flex-1 justify-center items-center pt-20">
         <div className="w-1/4 p-12">
