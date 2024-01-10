@@ -64,20 +64,27 @@ export default function Help(): JSX.Element {
     <div className="flex flex-col h-full">
       <LeftPageHeader title="Help" />
 
-      <Robot type={RobotType.QUESTIONMARK} />
-      <div className="flex flex-col justify-center items-center pt-52 space-y-6 pb-11">
-        {Array.from(markdownUrlMap.keys()).map((markdownUrl, index) => {
-          return (
-            <TextItem
-              title={markdownUrlMap.get(markdownUrl) ?? "Documentation"}
-              key={markdownUrl}
-            >
-              <Markdown className="prose prose-invert max-w-none">
-                {markdownContent.get(markdownUrl)}
-              </Markdown>
-            </TextItem>
-          );
-        })}
+      <div className="flex flex-1">
+        <div className="w-1/4 mt-48 p-12">
+          <Robot type={RobotType.QUESTIONMARK} />
+        </div>
+
+        <div className="w-1/2 px-12 pt-56">
+          <div className="flex flex-col justify-center items-center space-y-6 pb-11">
+            {Array.from(markdownUrlMap.keys()).map((markdownUrl, index) => {
+              return (
+                <TextItem
+                  title={markdownUrlMap.get(markdownUrl) ?? "Documentation"}
+                  key={markdownUrl}
+                >
+                  <Markdown className="prose prose-invert max-w-none">
+                    {markdownContent.get(markdownUrl)}
+                  </Markdown>
+                </TextItem>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
