@@ -20,6 +20,7 @@ class LeaderBoardService(private val leaderBoardRepository: LeaderBoardRepositor
             val continent = locationRepository.findByName(filter) ?: throw IllegalArgumentException()
             return leaderBoardRepository.getLeaderBoardEntriesContinent(continent.continent, pageable)
         } else {
+            locationRepository.findByName(filter) ?: throw IllegalArgumentException()
             return leaderBoardRepository.getLeaderBoardEntriesCountry(filter, pageable)
         }
     }
@@ -33,6 +34,7 @@ class LeaderBoardService(private val leaderBoardRepository: LeaderBoardRepositor
             val continent = locationRepository.findByName(filter) ?: throw IllegalArgumentException()
             return leaderBoardRepository.getPrivateLeaderBoardEntriesContinent(user.id, continent.continent, pageable)
         } else {
+            locationRepository.findByName(filter) ?: throw IllegalArgumentException()
             return leaderBoardRepository.getPrivateLeaderBoardEntriesCountry(user.id, filter, pageable)
         }
     }
