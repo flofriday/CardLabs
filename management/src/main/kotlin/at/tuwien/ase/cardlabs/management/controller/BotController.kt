@@ -6,6 +6,7 @@ import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import at.tuwien.ase.cardlabs.management.util.Region
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
@@ -25,9 +26,12 @@ class BotController(
     val botService: BotService,
 ) {
 
+    private final val logger = LoggerFactory.getLogger(javaClass)
+
     @GetMapping("/bot/name")
     fun getName(@AuthenticationPrincipal user: CardLabUser): ResponseEntity<String> {
-        val name = botService.generateBotName()
+        logger.info("User ${user.id} attempts to generate a bot name")
+        val name = botService.generateBotName(user)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(name)
@@ -38,53 +42,58 @@ class BotController(
         @AuthenticationPrincipal user: CardLabUser,
         @RequestBody botCreate: BotCreate,
     ): ResponseEntity<Bot> {
+        logger.info("User ${user.id} attempts to create a bot with the name ${botCreate.name}")
         val result = botService.create(user, botCreate)
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(result)
     }
 
-    @PatchMapping("/bot/{id}")
+    @PatchMapping("/bot/{botId}")
     fun patch(
         @AuthenticationPrincipal user: CardLabUser,
-        @PathVariable id: Long,
+        @PathVariable botId: Long,
         @RequestBody botPatch: BotPatch,
     ): ResponseEntity<Bot> {
-        val result = botService.patch(user, id, botPatch)
+        logger.info("User ${user.id} attempts to patch the bot $botId")
+        val result = botService.patch(user, botId, botPatch)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(result)
     }
 
-    @PatchMapping("/bot/{id}/code-version")
+    @PatchMapping("/bot/{botId}/code-version")
     fun rank(
         @AuthenticationPrincipal user: CardLabUser,
-        @PathVariable id: Long,
+        @PathVariable botId: Long,
     ): ResponseEntity<Unit> {
-        botService.createCodeVersion(user, id)
+        logger.info("User ${user.id} attempts to create a code version for the bot $botId")
+        botService.createCodeVersion(user, botId)
         return ResponseEntity
             .status(HttpStatus.OK)
             .build()
     }
 
-    @GetMapping("/bot/{id}/rank")
+    @GetMapping("/bot/{botId}/rank")
     fun rankPosition(
         @AuthenticationPrincipal user: CardLabUser,
-        @PathVariable id: Long,
+        @PathVariable botId: Long,
         @RequestParam(required = true) region: Region,
     ): ResponseEntity<Long> {
-        val rank = botService.fetchRankPosition(user, id, region)
+        logger.info("User ${user.id} attempts to create a code version for the bot $botId")
+        val rank = botService.fetchRankPosition(user, botId, region)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(rank)
     }
 
-    @GetMapping("/bot/{id}")
+    @GetMapping("/bot/{botId}")
     fun fetch(
         @AuthenticationPrincipal user: CardLabUser,
-        @PathVariable id: Long,
+        @PathVariable botId: Long,
     ): ResponseEntity<Bot> {
-        val result = botService.fetch(user, id)
+        logger.info("User ${user.id} attempts to fetch the bot $botId")
+        val result = botService.fetch(user, botId)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(result)
@@ -96,6 +105,7 @@ class BotController(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "10") pageSize: Int,
     ): ResponseEntity<Page<Bot>> {
+        logger.info("User ${user.id} attempts to fetch all its bots (pageNumber=$pageNumber, pageSize=$pageSize)")
         val pageable = PageRequest.of(pageNumber, pageSize)
         val result = botService.fetchAll(user, pageable)
         return ResponseEntity
@@ -103,12 +113,13 @@ class BotController(
             .body(result)
     }
 
-    @DeleteMapping("/bot/{id}")
+    @DeleteMapping("/bot/{botId}")
     fun delete(
         @AuthenticationPrincipal user: CardLabUser,
-        @PathVariable id: Long,
+        @PathVariable botId: Long,
     ): ResponseEntity<Unit> {
-        botService.delete(user, id)
+        logger.info("User ${user.id} attempts to delete the bot $botId")
+        botService.delete(user, botId)
         return ResponseEntity
             .status(HttpStatus.OK)
             .build()

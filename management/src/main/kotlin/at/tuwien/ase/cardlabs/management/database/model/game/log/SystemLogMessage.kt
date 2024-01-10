@@ -1,9 +1,8 @@
-package at.tuwien.ase.cardlabs.management.database.model.match.log
+package at.tuwien.ase.cardlabs.management.database.model.game.log
 
 class SystemLogMessage(
-    round: Long,
     message: String,
-) : LogMessage(round, message) {
+) : LogMessage(message) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

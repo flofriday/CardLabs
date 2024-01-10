@@ -1,12 +1,16 @@
 package at.tuwien.ase.cardlabs.management.database.repository
 
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotDAO
+import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
+import java.util.stream.Stream
 
 /**
  * Bot entities for which the deleted field is not null are viewed as deleted entities
@@ -24,6 +28,8 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
         """,
     )
     fun findByOwnerIdAndDeletedIsNull(@Param("ownerId") ownerId: Long, pageable: Pageable): Page<BotDAO>
+
+    fun findAllByIdInAndDeletedIsNull(botsIds: List<Long>): Stream<BotDAO>
 
     @Query(
         """
@@ -51,4 +57,17 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
         """,
     )
     fun findBotRankPositionContinent(@Param("botId") botId: Long): Long
+
+    fun findByCurrentStateAndDeletedIsNull(botState: BotState): Stream<BotDAO>
+
+    @Modifying
+    @Transactional
+    @Query(
+        """
+            UPDATE BotDAO b 
+                SET b.currentState = :newState 
+                WHERE b.id IN :botIds
+        """
+    )
+    fun updateMultipleBotState(botIds: List<Long>, newState: BotState): Int
 }

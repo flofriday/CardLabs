@@ -42,6 +42,10 @@ class BotDAO : AuditedEntity() {
     @Column(nullable = false, length = 32768)
     lateinit var currentCode: String
 
+    @CreationTimestamp
+    @Column(nullable = false)
+    var codeUpdated: Instant? = null
+
     @OneToMany(mappedBy = "bot", fetch = FetchType.LAZY)
     var codeHistory: MutableList<BotCodeDAO> = mutableListOf()
 
@@ -61,8 +65,4 @@ class BotDAO : AuditedEntity() {
     // The state error message if the current bot state is ERROR
     @Column
     var errorStateMessage: String? = null
-
-    @CreationTimestamp
-    @Column(nullable = false)
-    var codeUpdated: Instant? = null
 }

@@ -1,16 +1,19 @@
 package at.tuwien.ase.cardlabs.management.it
 
 import at.tuwien.ase.cardlabs.management.TestHelper
+import at.tuwien.ase.cardlabs.management.WebApplicationTest
 import at.tuwien.ase.cardlabs.management.controller.model.game.Game
-import at.tuwien.ase.cardlabs.management.database.model.match.GameDAO
-import at.tuwien.ase.cardlabs.management.database.model.match.action.Action
-import at.tuwien.ase.cardlabs.management.database.model.match.action.ActionType
-import at.tuwien.ase.cardlabs.management.database.model.match.card.Card
-import at.tuwien.ase.cardlabs.management.database.model.match.card.CardType
-import at.tuwien.ase.cardlabs.management.database.model.match.card.Color
-import at.tuwien.ase.cardlabs.management.database.model.match.log.DebugLogMessage
-import at.tuwien.ase.cardlabs.management.database.model.match.log.SystemLogMessage
-import at.tuwien.ase.cardlabs.management.database.model.match.result.Result
+import at.tuwien.ase.cardlabs.management.database.model.game.GameDAO
+import at.tuwien.ase.cardlabs.management.database.model.game.GameState
+import at.tuwien.ase.cardlabs.management.database.model.game.action.Action
+import at.tuwien.ase.cardlabs.management.database.model.game.action.ActionType
+import at.tuwien.ase.cardlabs.management.database.model.game.card.Card
+import at.tuwien.ase.cardlabs.management.database.model.game.card.CardType
+import at.tuwien.ase.cardlabs.management.database.model.game.card.Color
+import at.tuwien.ase.cardlabs.management.database.model.game.hand.Hand
+import at.tuwien.ase.cardlabs.management.database.model.game.log.DebugLogMessage
+import at.tuwien.ase.cardlabs.management.database.model.game.log.SystemLogMessage
+import at.tuwien.ase.cardlabs.management.database.model.game.turn.Turn
 import at.tuwien.ase.cardlabs.management.database.repository.GameRepository
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -19,15 +22,15 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebApplicationTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class GameIntegrationTests {
@@ -62,23 +65,37 @@ class GameIntegrationTests {
         val account = TestHelper.createAccount(accountService)
         val jwt = TestHelper.getAuthenticationToken(mockMvc, account.username, TestHelper.DEFAULT_PASSWORD)
         val botId = 0L
-        val botCodeId = 0L
 
         val gameDAO = GameDAO()
-        gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0)
-        gameDAO.endTime = LocalDateTime.of(2023, 12, 11, 16, 0)
-        gameDAO.actions = listOf(
-            Action(botId, ActionType.INITIAL_CARD_DRAW, Card(CardType.DRAW_TWO, Color.CYAN, null), null),
-            Action(botId, ActionType.DRAW_CARD, Card(CardType.NUMBER_CARD, Color.ORANGE, 5), null),
+        gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0).toInstant(ZoneOffset.UTC)
+        gameDAO.endTime = LocalDateTime.of(2023, 12, 11, 16, 0).toInstant(ZoneOffset.UTC)
+        gameDAO.winningBotId = botId
+        val topCard = Card(CardType.DRAW_TWO, Color.CYAN, null)
+        val drawPile = listOf(
+            Card(CardType.DRAW_TWO, Color.CYAN, null),
+            Card(CardType.NUMBER_CARD, Color.ORANGE, 5),
         )
-        gameDAO.results = listOf(
-            Result(botId, botCodeId, 1000, 1015, 0),
+        val hand = listOf(
+            Hand(botId, emptyList())
         )
-        gameDAO.logMessages = listOf(
-            SystemLogMessage(0, "Test message for system"),
-            DebugLogMessage(0, "Test message for debug", botId),
+        val actions = listOf(
+            Action(
+                botId,
+                ActionType.PLAY_CARD,
+                Card(CardType.DRAW_TWO, Color.ORANGE, null),
+            )
         )
-        val gameId = gameRepository.save(gameDAO).id!!
+        val logMessages = listOf(
+            SystemLogMessage("hello"),
+            DebugLogMessage("world", botId),
+        )
+        gameDAO.turns = listOf(
+            Turn(0, topCard, drawPile, hand, actions, logMessages),
+        )
+        gameDAO.gameState = GameState.CREATED
+        gameDAO.participatingBotIds = listOf(botId)
+        var x = gameRepository.save(gameDAO)
+        val gameId = x.id!!
 
         val result = mockMvc.perform(
             get("/match/$gameId/all")
@@ -91,14 +108,20 @@ class GameIntegrationTests {
 
         assertEquals(gameDAO.startTime, response.startTime)
         assertEquals(gameDAO.endTime, response.endTime)
-        assertEquals(gameDAO.actions.size, response.actions.size)
-        assertEquals(gameDAO.actions[0], response.actions[0])
-        assertEquals(gameDAO.actions[1], response.actions[1])
-        assertEquals(gameDAO.results.size, response.results.size)
-        assertEquals(gameDAO.results[0], response.results[0])
-        assertEquals(gameDAO.logMessages.size, response.logMessages.size)
-        assertEquals(gameDAO.logMessages[0], response.logMessages[0])
-        assertEquals(gameDAO.logMessages[1], response.logMessages[1])
+        assertEquals(gameDAO.winningBotId, response.winningBotId)
+        assertEquals(gameDAO.turns.size, response.turns.size)
+        assertEquals(gameDAO.turns[0].turnId, response.turns[0].turnId)
+        assertEquals(gameDAO.turns[0].topCard, response.turns[0].topCard)
+        assertEquals(gameDAO.turns[0].drawPile.size, response.turns[0].drawPile.size)
+        assertEquals(gameDAO.turns[0].drawPile[0], response.turns[0].drawPile[0])
+        assertEquals(gameDAO.turns[0].hands.size, response.turns[0].hands.size)
+        assertEquals(gameDAO.turns[0].hands[0], response.turns[0].hands[0])
+        assertEquals(gameDAO.turns[0].actions.size, response.turns[0].actions.size)
+        assertEquals(gameDAO.turns[0].actions[0], response.turns[0].actions[0])
+        assertEquals(gameDAO.turns[0].logMessages.size, response.turns[0].logMessages.size)
+        assertEquals(gameDAO.turns[0].logMessages[0], response.turns[0].logMessages[0])
+        assertEquals(gameDAO.turns[0].logMessages[1], response.turns[0].logMessages[1])
+        assertEquals(gameDAO.gameState, response.gameState)
     }
 
     @Test
@@ -119,22 +142,21 @@ class GameIntegrationTests {
         val account = TestHelper.createAccount(accountService)
         val jwt = TestHelper.getAuthenticationToken(mockMvc, account.username, TestHelper.DEFAULT_PASSWORD)
         val botId = 0L
-        val botCodeId = 0L
 
         val gameDAO = GameDAO()
-        gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0)
-        gameDAO.endTime = LocalDateTime.of(2023, 12, 11, 16, 0)
-        gameDAO.actions = listOf(
-            Action(botId, ActionType.INITIAL_CARD_DRAW, Card(CardType.DRAW_TWO, Color.CYAN, null), null),
-            Action(botId, ActionType.DRAW_CARD, Card(CardType.NUMBER_CARD, Color.ORANGE, 5), null),
+        gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0).toInstant(ZoneOffset.UTC)
+        gameDAO.endTime = LocalDateTime.of(2023, 12, 11, 16, 0).toInstant(ZoneOffset.UTC)
+        gameDAO.winningBotId = botId
+        val topCard = Card(CardType.DRAW_TWO, Color.CYAN, null)
+        val logMessages = listOf(
+            SystemLogMessage("hello"),
+            DebugLogMessage("world", botId),
         )
-        gameDAO.results = listOf(
-            Result(botId, botCodeId, 1000, 1015, 0),
+        gameDAO.turns = listOf(
+            Turn(0, topCard, emptyList(), emptyList(), emptyList(), logMessages),
         )
-        gameDAO.logMessages = listOf(
-            SystemLogMessage(0, "Test message for system"),
-            DebugLogMessage(0, "Test message for debug", botId),
-        )
+        gameDAO.gameState = GameState.CREATED
+        gameDAO.participatingBotIds = listOf(botId)
         val gameId = gameRepository.save(gameDAO).id!!
 
         val result = mockMvc.perform(
@@ -148,13 +170,13 @@ class GameIntegrationTests {
 
         assertEquals(gameDAO.startTime, response.startTime)
         assertEquals(gameDAO.endTime, response.endTime)
-        assertEquals(gameDAO.actions.size, response.actions.size)
-        assertEquals(gameDAO.actions[0], response.actions[0])
-        assertEquals(gameDAO.actions[1], response.actions[1])
-        assertEquals(gameDAO.results.size, response.results.size)
-        assertEquals(gameDAO.results[0], response.results[0])
-        assertEquals(gameDAO.logMessages.size, response.logMessages.size)
-        assertEquals(gameDAO.logMessages[0], response.logMessages[0])
-        assertEquals(gameDAO.logMessages[1], response.logMessages[1])
+        assertEquals(gameDAO.winningBotId, response.winningBotId)
+        assertEquals(gameDAO.turns.size, response.turns.size)
+        assertEquals(gameDAO.turns[0].turnId, response.turns[0].turnId)
+        assertEquals(gameDAO.turns[0].topCard, response.turns[0].topCard)
+        assertEquals(gameDAO.turns[0].logMessages.size, response.turns[0].logMessages.size)
+        assertEquals(gameDAO.turns[0].logMessages[0], response.turns[0].logMessages[0])
+        assertEquals(gameDAO.turns[0].logMessages[1], response.turns[0].logMessages[1])
+        assertEquals(gameDAO.gameState, response.gameState)
     }
 }
