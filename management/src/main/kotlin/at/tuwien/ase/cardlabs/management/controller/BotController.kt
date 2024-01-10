@@ -5,6 +5,7 @@ import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
+import at.tuwien.ase.cardlabs.management.util.Region
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -77,9 +78,10 @@ class BotController(
     fun rankPosition(
         @AuthenticationPrincipal user: CardLabUser,
         @PathVariable botId: Long,
+        @RequestParam(required = true) region: Region,
     ): ResponseEntity<Long> {
         logger.info("User ${user.id} attempts to create a code version for the bot $botId")
-        val rank = botService.fetchRankPosition(user, botId)
+        val rank = botService.fetchRankPosition(user, botId, region)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(rank)

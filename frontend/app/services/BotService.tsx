@@ -1,6 +1,8 @@
 import { getCookie } from "cookies-next";
 import { toast } from "react-toastify";
 import { MatchOverviewEntryType } from "../types/MatchOverviewEntryType";
+import { RegionType } from "../types/RegionType";
+import { Page } from "../types/contentPage";
 
 export async function getNewBotName(): Promise<string> {
   const jwt = getCookie("auth_token");
@@ -71,6 +73,8 @@ export interface Bot {
   currentState: BotState;
   defaultState: BotState;
   errorStateMessage: string;
+  updated: Date;
+  created: Date;
 }
 
 export async function getBot(id: number): Promise<Bot> {
@@ -92,6 +96,8 @@ export async function getBot(id: number): Promise<Bot> {
 
   // TODO add error handling
   const bot = (await response.json()) as Bot;
+  bot.created = new Date(bot.created);
+  bot.updated = new Date(bot.updated);
   return bot;
 }
 
@@ -250,4 +256,76 @@ export async function getTotalNumberOfBotMatchOverviewPages(
 ): Promise<number> {
   // TODO replace this with calls to the backend
   return 2;
+}
+
+export async function getAllBots(
+  pageNumber: number,
+  pageSize: number
+): Promise<Page<Bot>> {
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch(
+    "/api/bot?" +
+      new URLSearchParams({
+        pageNumber: pageNumber.toString(),
+        pageSize: pageSize.toString(),
+      }).toString(),
+    {
+      mode: "cors",
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + jwt,
+      },
+    }
+  );
+
+  if (response.status !== 200) {
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
+    throw new EvalError(); // TODO change this
+  }
+
+  const page = (await response.json()) as Page<Bot>;
+
+  for (let i = 0; i < page.content.length; i++) {
+    page.content[i].created = new Date(page.content[i].created);
+    page.content[i].updated = new Date(page.content[i].updated);
+  }
+
+  return page;
+}
+
+export async function getBotRank(
+  botId: number,
+  region: RegionType
+): Promise<number> {
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch(
+    "/api/bot/" +
+      botId +
+      "/rank?" +
+      new URLSearchParams({
+        region: region.toString().toUpperCase(),
+      }).toString(),
+    {
+      mode: "cors",
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + jwt,
+      },
+    }
+  );
+
+  if (response.status !== 200) {
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
+    throw new EvalError(); // TODO change this
+  }
+
+  return (await response.json()) as number;
 }

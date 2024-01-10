@@ -13,6 +13,27 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            '--tw-prose-invert-body': '#FFFFFF',
+            '--tw-prose-invert-bullets': '#FFFFFF',
+            'code::before': {
+              content: '\u00A0 \u00A0',
+            },
+            'code::after': {
+              content: '\u00A0 \u00A0',
+            },
+            code: {
+              background: 'rgb(0 0 0 / 50%)',
+              wordWrap: 'break-word',
+              boxDecorationBreak: 'clone',
+              padding: '.1rem .3rem .2rem',
+              borderRadius: '.2rem',
+            }
+          }
+        }
+      }
     },
     colors: {
       background: "#2D2E3A",
@@ -31,6 +52,8 @@ const config: Config = {
       bronze: "#A97142",
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 };
 export default config;

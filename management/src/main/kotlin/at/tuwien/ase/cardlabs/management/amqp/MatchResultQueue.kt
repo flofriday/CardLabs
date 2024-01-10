@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier
     AnnotationTarget.TYPE_PARAMETER,
     AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.TYPE,
-    AnnotationTarget.ANNOTATION_CLASS
 )
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier

@@ -1,18 +1,28 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface Props {
   onPageChange: (page: number) => void;
   totalNumberOfPages: number;
+  initalPage: number;
 }
 
 export default function Pagination({
   onPageChange,
   totalNumberOfPages,
+  initalPage,
 }: Props): JSX.Element {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages] = useState<number>(totalNumberOfPages);
+  const [currentPage, setCurrentPage] = useState<number>(initalPage ?? 0);
+  const [totalPages, setTotalPages] = useState<number>(totalNumberOfPages);
+
+  useEffect(() => {
+    setTotalPages(totalNumberOfPages);
+  }, [totalNumberOfPages]);
+
+  useEffect(() => {
+    setCurrentPage(initalPage);
+  }, [initalPage]);
 
   const goToPage = (page: number): void => {
     setCurrentPage(page);
@@ -20,23 +30,23 @@ export default function Pagination({
   };
 
   const goToFirstPage = (): void => {
-    setCurrentPage(1);
-    onPageChange(1);
+    setCurrentPage(0);
+    onPageChange(0);
   };
 
   const goToLastPage = (): void => {
-    setCurrentPage(totalPages);
-    onPageChange(totalPages);
+    setCurrentPage(totalPages - 1);
+    onPageChange(totalPages - 1);
   };
 
   const goToPrevPage = (): void => {
-    const prevPage = Math.max(currentPage - 1, 1);
+    const prevPage = Math.max(currentPage - 1, 0);
     setCurrentPage(prevPage);
     onPageChange(prevPage);
   };
 
   const goToNextPage = (): void => {
-    const nextPage = Math.min(currentPage + 1, totalPages);
+    const nextPage = Math.min(currentPage + 1, totalPages - 1);
     setCurrentPage(nextPage);
     onPageChange(nextPage);
   };
@@ -48,12 +58,12 @@ export default function Pagination({
         <button
           key={i}
           className={`mx-1 px-4 py-3 w-14 h-14 text-4xl ${
-            i === currentPage
+            i === currentPage + 1
               ? "bg-primary text-text font-bold"
               : "bg-secondary text-text font-normal hover:bg-primary"
           } rounded-md flex items-center justify-center`}
           onClick={() => {
-            goToPage(i);
+            goToPage(i - 1);
           }}
         >
           {i}

@@ -30,6 +30,6 @@ class MatchResultQueueRabbitMQListener(
         gameService.save(game)
 
         // Update bots
-        botService.setBotStateToDefaultState(msg.participatingBots)
+        botService.setBotStateToDefaultState(msg.participatingBotIds)
     }
 }

@@ -5,4 +5,5 @@ enum class Color {
     ORANGE,
     GREEN,
     PURPLE,
+    ANY,
 }

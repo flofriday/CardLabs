@@ -21,7 +21,7 @@ class Matchmaker(
     private val matchmakerAlgorithm: MatchmakerAlgorithm,
     private val gameService: GameService,
     private val rabbitTemplate: RabbitTemplate,
-    @MatchQueue private val matchQueue: Queue
+    @MatchQueue private val matchQueue: Queue,
 ) {
 
     private final val logger = LoggerFactory.getLogger(javaClass)
@@ -53,7 +53,8 @@ class Matchmaker(
         val gameCreates = mutableListOf<GameCreate>()
         val playingBotIds = result.matches.flatMap { innerList -> innerList.map { bot -> bot.id!! } }
         for (bots in result.matches) {
-            gameCreates.add(GameCreate())
+            val participatingBotIds = bots.map { bot -> bot.id!! }
+            gameCreates.add(GameCreate(participatingBotIds))
         }
         val gameCreateResult = gameService.save(gameCreates)
 

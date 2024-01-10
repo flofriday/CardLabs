@@ -20,7 +20,6 @@ export default function Modal({
   const animation = "transition-opacity ease-in-out duration-200";
   useEffect(() => {
     setShowModal(true);
-    console.log("test");
   }, []);
 
   function handleParentClick(e: React.MouseEvent<HTMLInputElement>): void {
