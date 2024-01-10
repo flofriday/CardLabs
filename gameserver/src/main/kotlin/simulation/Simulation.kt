@@ -87,7 +87,7 @@ fun runTurn(state: GameState) {
     // Play a card
     if (player.hand.none { c -> state.pile.last().match(c) }) {
         logSystem(turn, "Player ${player.bot.botId} has no matching card and draws one")
-        player.hand.addAll(state.drawPile.removeFirstN(1))
+        player.hand.addAll(pickupCards(state, 1))
 
         state.currentPlayer += state.direction
         state.currentPlayer %= state.players.size
@@ -117,10 +117,10 @@ fun runTurn(state: GameState) {
     val nextPlayer = state.players[state.currentPlayer]
     if (state.pile.last().type == CardType.DRAW_TWO) {
         logSystem(turn, "Player ${nextPlayer.bot.botId} draws 2 cards.")
-        nextPlayer.hand.addAll(state.drawPile.removeFirstN(2))
+        nextPlayer.hand.addAll(pickupCards(state, 2))
     } else if (state.pile.last().type == CardType.CHOOSE_DRAW) {
         logSystem(turn, "Player ${nextPlayer.bot.botId} draws 4 cards.")
-        nextPlayer.hand.addAll(state.drawPile.removeFirstN(2))
+        nextPlayer.hand.addAll(pickupCards(state, 4))
     }
 }
 
@@ -191,6 +191,18 @@ fun turnSnapShot(state: GameState): Turn {
         mutableListOf(),
         mutableListOf()
     )
+}
+
+fun pickupCards(state: GameState, number: Int): List<Card> {
+    // Reshuffle the pile if necessary
+    if (number > state.drawPile.size) {
+        logSystem(state.turns.last(), "Reshuffle pile into the draw pile")
+        val playedCards = state.pile.drop(1)
+        state.pile = state.pile.take(1).toMutableList()
+        state.drawPile.addAll(playedCards.shuffled())
+    }
+
+    return state.drawPile.removeFirstN(number)
 }
 
 fun initialGameState(deck: MutableList<Card>, request: SimulationRequest): GameState {
