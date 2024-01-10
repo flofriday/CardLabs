@@ -9,9 +9,9 @@ import com.rabbitmq.client.Delivery
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import simulation.Config
-import simulation.Simulation
+import simulation.models.Bot
 import simulation.models.SimulationRequest
-import simulation.models.SimulationResult
+import simulation.runSimulation
 import java.text.SimpleDateFormat
 
 val REQUEST_QUEUE = "match-queue"
@@ -19,6 +19,7 @@ val RESULT_QUEUE = "match-result-queue"
 
 fun main(args: Array<String>) {
     val logger: Logger = LoggerFactory.getLogger("Main")
+    logTestRequest()
 
     logger.info("Loading config")
     val config = Config()
@@ -28,13 +29,13 @@ fun main(args: Array<String>) {
     val factory = ConnectionFactory()
     factory.host = config.rmqHost
     if (config.rmqUser != null) {
-        factory.setUsername(config.rmqUser)
+        factory.username = config.rmqUser
     }
     if (config.rmqPassword != null) {
-        factory.setPassword(config.rmqPassword)
+        factory.password = config.rmqPassword
     }
     if (config.rmqVirtualHost != null) {
-        factory.setVirtualHost("sypfwnyo")
+        factory.virtualHost = config.rmqVirtualHost
     }
 
     val connection = factory.newConnection()
@@ -48,7 +49,7 @@ fun main(args: Array<String>) {
             val message = String(delivery.body, charset("UTF-8"))
             val request = mapper.readValue(message, SimulationRequest::class.java)
             logger.info("Simulating game ${request.gameId}...")
-            val result = runGame(request)
+            val result = runSimulation(request)
             logger.info("Finished game ${request.gameId}")
             channel.basicPublish("", RESULT_QUEUE, null, mapper.writeValueAsBytes(result))
         }
@@ -57,10 +58,32 @@ fun main(args: Array<String>) {
     channel.basicConsume(REQUEST_QUEUE, true, deliverCallback) { tag -> }
 }
 
+fun logTestRequest() {
+    val bot1 =
+        Bot(
+            1,
+            1,
+            """
+            (define (turn topCard hand players)
+                (random-choice
+                    (matching-cards topCard hand)))
+            """.trimIndent(),
+        )
 
-fun runGame(request: SimulationRequest): SimulationResult {
-    val simulation = Simulation(request.gameId, request.participatingBots)
-    return simulation.run()
+    val bot2 =
+        Bot(
+            2,
+            2,
+            """
+            (define (turn topCard hand players)
+                (display players)
+                (newline)
+                (random-choice
+                    (matching-cards topCard hand)))
+            """.trimIndent(),
+        )
+    val req = SimulationRequest(42, listOf(bot1, bot2))
+    println(buildJsonMapper().writeValueAsString(req))
 }
 
 fun buildJsonMapper(): ObjectMapper {

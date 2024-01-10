@@ -5,7 +5,7 @@ import simulation.models.*
 fun generateDeck(): List<Card> {
     val deck = mutableListOf<Card>()
 
-    for (color in Color.entries) {
+    for (color in listOf(Color.CYAN, Color.GREEN, Color.PURPLE, Color.ORANGE)) {
         // Numbered cards, two of each number-color pairs, except zero where there is only one such pair
         for (number in 0..9) {
             deck.addLast(Card(CardType.NUMBER_CARD, color, number))
