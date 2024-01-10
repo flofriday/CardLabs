@@ -452,7 +452,7 @@ data class VectorValue(val values: MutableList<SchemeValue>, val schemeSecurityM
     }
 }
 
-data class Arity(val min: Int, val max: Int, val isVarArg: Boolean) {
+data class Arity(val min: Int, val max: Int, val isVarArg: Boolean = false) {
     fun inside(n: Int): Boolean {
         if (isVarArg) {
             return n >= min
