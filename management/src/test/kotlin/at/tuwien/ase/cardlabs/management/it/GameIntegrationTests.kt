@@ -50,12 +50,12 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchAllById_widthNonExistingGame_expectGameDoesNotExistError() {
         val account = TestHelper.createAccount(accountService)
-        val jwt = TestHelper.getAuthenticationToken(mockMvc, account.username, TestHelper.DEFAULT_PASSWORD)
+        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username, TestHelper.DEFAULT_PASSWORD).accessToken
         val gameId = 0L
         mockMvc.perform(
             get("/match/$gameId/all")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $jwt"),
+                .header("Authorization", "Bearer $accessToken"),
         )
             .andExpect(status().isNotFound)
     }
@@ -63,7 +63,7 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchAllById_withExistingGame_expectSuccess() {
         val account = TestHelper.createAccount(accountService)
-        val jwt = TestHelper.getAuthenticationToken(mockMvc, account.username, TestHelper.DEFAULT_PASSWORD)
+        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username, TestHelper.DEFAULT_PASSWORD).accessToken
         val botId = 0L
 
         val gameDAO = GameDAO()
@@ -100,7 +100,7 @@ class GameIntegrationTests {
         val result = mockMvc.perform(
             get("/match/$gameId/all")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $jwt"),
+                .header("Authorization", "Bearer $accessToken"),
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -127,12 +127,12 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchLogById_widthNonExistingGame_expectGameDoesNotExistError() {
         val account = TestHelper.createAccount(accountService)
-        val jwt = TestHelper.getAuthenticationToken(mockMvc, account.username, TestHelper.DEFAULT_PASSWORD)
+        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username, TestHelper.DEFAULT_PASSWORD).accessToken
         val gameId = 0L
         mockMvc.perform(
             get("/match/$gameId/all")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $jwt"),
+                .header("Authorization", "Bearer $accessToken"),
         )
             .andExpect(status().isNotFound)
     }
@@ -140,7 +140,7 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchLogById_withExistingGame_expectSuccess() {
         val account = TestHelper.createAccount(accountService)
-        val jwt = TestHelper.getAuthenticationToken(mockMvc, account.username, TestHelper.DEFAULT_PASSWORD)
+        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username, TestHelper.DEFAULT_PASSWORD).accessToken
         val botId = 0L
 
         val gameDAO = GameDAO()
@@ -162,7 +162,7 @@ class GameIntegrationTests {
         val result = mockMvc.perform(
             get("/match/$gameId/all")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $jwt"),
+                .header("Authorization", "Bearer $accessToken"),
         )
             .andExpect(status().isOk)
             .andReturn()

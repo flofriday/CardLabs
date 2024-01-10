@@ -4,10 +4,11 @@ import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
+import at.tuwien.ase.cardlabs.management.security.authentication.AccessTokenAuthenticationResponse
 import at.tuwien.ase.cardlabs.management.security.authentication.AuthenticationResponse
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -27,7 +28,12 @@ class TestHelper {
         }
 
         @JvmStatic
-        fun getAuthenticationToken(mockMvc: MockMvc, username: String, password: String): String {
+        fun getInitialAuthenticationTokens(
+            objectMapper: ObjectMapper,
+            mockMvc: MockMvc,
+            username: String,
+            password: String
+        ): AuthenticationResponse {
             val body = createAccountLoginJSON(username, password)
             val result = mockMvc.perform(
                 MockMvcRequestBuilders.post("/authentication/login")
@@ -36,8 +42,24 @@ class TestHelper {
             )
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andReturn()
-            val response = jacksonObjectMapper().readValue<AuthenticationResponse>(result.response.contentAsString)
-            return response.jwt
+            return objectMapper.readValue<AuthenticationResponse>(result.response.contentAsString)
+        }
+
+        @JvmStatic
+        fun getAccessToken(
+            objectMapper: ObjectMapper,
+            mockMvc: MockMvc,
+            refreshToken: String
+        ): AccessTokenAuthenticationResponse {
+            val body = createAuthenticationRefreshJSON(refreshToken)
+            val result = mockMvc.perform(
+                MockMvcRequestBuilders.post("/authentication/refresh")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body),
+            )
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andReturn()
+            return objectMapper.readValue<AccessTokenAuthenticationResponse>(result.response.contentAsString)
         }
 
         @JvmStatic
@@ -135,6 +157,15 @@ class TestHelper {
                 {
                     "username": "$username",
                     "password": "$password"
+                }
+            """.trimIndent()
+        }
+
+        @JvmStatic
+        fun createAuthenticationRefreshJSON(refreshToken: String): String {
+            return """
+                {
+                    "refreshToken": "$refreshToken"
                 }
             """.trimIndent()
         }

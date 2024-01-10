@@ -5,9 +5,9 @@ import at.tuwien.ase.cardlabs.management.WebApplicationTest
 import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
-import at.tuwien.ase.cardlabs.management.security.authentication.AuthenticationResponse
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.util.Continent
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -27,6 +26,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 class LocationIntegrationTests {
 
     @Autowired
+    private lateinit var objectMapper: ObjectMapper
+
+    @Autowired
     private lateinit var locationRepository: LocationRepository
 
     @Autowired
@@ -35,7 +37,8 @@ class LocationIntegrationTests {
     @Autowired
     private lateinit var accountService: AccountService
 
-    private val countries: List<Pair<String, Continent>> = listOf(Pair("Austria", Continent.EUROPE), Pair("Germany", Continent.EUROPE), Pair("Japan", Continent.EUROPE))
+    private val countries: List<Pair<String, Continent>> =
+        listOf(Pair("Austria", Continent.EUROPE), Pair("Germany", Continent.EUROPE), Pair("Japan", Continent.EUROPE))
 
     @BeforeEach
     fun beforeEach() {
@@ -62,11 +65,11 @@ class LocationIntegrationTests {
     @Test
     fun whenGetLocations_withValidJWT_expectSuccess() {
         createAccount("test", "test@test.com", "PassWord123!?", null, true, true, true)
-        val authenticationToken = getAuthenticationToken("test", "PassWord123!?")
+        val authenticationTokens = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, "test", "PassWord123!?")
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/locations")
-                .header("Authorization", "Bearer $authenticationToken"),
+                .header("Authorization", "Bearer ${authenticationTokens.accessToken}"),
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
@@ -75,21 +78,24 @@ class LocationIntegrationTests {
         assertEquals(countries.stream().map { f -> f.first }.toList(), response)
     }
 
-    private fun getAuthenticationToken(username: String, password: String): String {
-        val body = TestHelper.createAccountLoginJSON(username, password)
-        val result = mockMvc.perform(
-            MockMvcRequestBuilders.post("/authentication/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body),
+    private fun createAccount(
+        username: String,
+        email: String,
+        password: String,
+        location: String?,
+        sendScoreUpdates: Boolean,
+        sendChangeUpdates: Boolean,
+        sendNewsletter: Boolean
+    ): Account {
+        return TestHelper.createAccount(
+            accountService,
+            username,
+            email,
+            password,
+            location,
+            sendScoreUpdates,
+            sendChangeUpdates,
+            sendNewsletter
         )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andReturn()
-        val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<AuthenticationResponse>(jsonResponseString)
-        return response.jwt
-    }
-
-    private fun createAccount(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): Account {
-        return TestHelper.createAccount(accountService, username, email, password, location, sendScoreUpdates, sendChangeUpdates, sendNewsletter)
     }
 }
