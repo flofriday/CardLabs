@@ -2,6 +2,8 @@ import { toast } from "react-toastify";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { minidenticon } from "minidenticons";
 import { decodeJwt } from "jose";
+import { refreshAccessToken } from "./RefreshService";
+
 // this function returns the jwt on success and null on failure
 export async function login(
   username: string,
@@ -28,7 +30,9 @@ export async function login(
     return false;
   }
   const json = await response.json();
-  setCookie("auth_token", json.jwt);
+  localStorage.setItem("refresh_token", json.refreshToken);
+  setCookie("auth_token", json.accessToken);
+  localStorage.setItem("auth_token_expire", json.expiryDateAccessToken);
 
   return true;
 }
@@ -86,6 +90,7 @@ export interface User {
 }
 
 export async function getUserInfo(): Promise<User> {
+  await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
   const response = await fetch("api/account", {
@@ -103,6 +108,7 @@ export async function getUserInfo(): Promise<User> {
 }
 
 export async function deleteUser(): Promise<boolean> {
+  await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
   const response = await fetch("api/account", {
@@ -151,6 +157,7 @@ export async function updateUser(
   sendChangeUpdates: boolean,
   sendNewsletter: boolean
 ): Promise<boolean> {
+  await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
   const response = await fetch("api/account", {
