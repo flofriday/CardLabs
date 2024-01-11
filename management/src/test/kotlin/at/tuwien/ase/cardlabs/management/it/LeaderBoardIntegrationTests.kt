@@ -1,6 +1,7 @@
 package at.tuwien.ase.cardlabs.management.it
 
 import at.tuwien.ase.cardlabs.management.TestHelper
+import at.tuwien.ase.cardlabs.management.WebApplicationTest
 import at.tuwien.ase.cardlabs.management.controller.model.LeaderBoardEntry
 import at.tuwien.ase.cardlabs.management.database.model.AccountDAO
 import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
@@ -8,7 +9,6 @@ import at.tuwien.ase.cardlabs.management.database.model.bot.BotDAO
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.BotRepository
-import at.tuwien.ase.cardlabs.management.database.repository.LeaderBoardRepository
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.security.authentication.JwtAuthenticationResponse
 import at.tuwien.ase.cardlabs.management.util.Continent
@@ -27,8 +27,8 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import java.util.*
 
+@WebApplicationTest
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -52,7 +52,6 @@ class LeaderBoardIntegrationTests {
     private val countries: List<Pair<String, Continent>> = listOf(Pair("Austria", Continent.EUROPE), Pair("Germany", Continent.EUROPE), Pair("Japan", Continent.ASIA))
     private val globalViewBotNameList: ArrayList<String> = arrayListOf("Test12", "Test6", "Test11", "Test5", "Test10")
     private val continentViewAccount1Europe: ArrayList<String> = arrayListOf("Test6", "Test5", "Test4", "Test3", "Test2")
-
 
     @BeforeEach
     fun beforeEach() {
@@ -208,9 +207,9 @@ class LeaderBoardIntegrationTests {
     }
 
     @Test
-    fun whenGetPublicLeaderboardGlobalView_withoutJWT_expectGlobalViewPage(){
+    fun whenGetPublicLeaderboardGlobalView_withoutJWT_expectGlobalViewPage() {
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=GLOBAL")
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=GLOBAL"),
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
@@ -224,21 +223,21 @@ class LeaderBoardIntegrationTests {
     }
 
     @Test
-    fun whenGetPublicLeaderboardContinentView_withoutJWT_expect400(){
+    fun whenGetPublicLeaderboardContinentView_withoutJWT_expect400() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=CONTINENT")
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=CONTINENT"),
         ).andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
-    fun whenGetPublicLeaderboardCountryView_withoutJWT_expect400(){
+    fun whenGetPublicLeaderboardCountryView_withoutJWT_expect400() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=COUNTRY")
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=COUNTRY"),
         ).andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
-    fun whenGetPublicLeaderboardGlobalView_withJWT_expectGlobalViewPage(){
+    fun whenGetPublicLeaderboardGlobalView_withJWT_expectGlobalViewPage() {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
@@ -256,13 +255,13 @@ class LeaderBoardIntegrationTests {
     }
 
     @Test
-    fun whenGetPublicLeaderboardContinentView_withJWT_withUserContinentSet_expectUserContinentPage(){
+    fun whenGetPublicLeaderboardContinentView_withJWT_withUserContinentSet_expectUserContinentPage() {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=CONTINENT&filter=Austria")
                 .header("Authorization", "Bearer $authenticationToken"),
-            ).andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
 
         val jsonResponseString = result.response.contentAsString
@@ -271,11 +270,10 @@ class LeaderBoardIntegrationTests {
 
         assertTrue(retrievedBotNames.containsAll(continentViewAccount1Europe), "Not all expected bot names are present in the response")
         assertTrue(retrievedBotNames == continentViewAccount1Europe, "Bot names order in the response doesn't match the expected order")
-
     }
 
     @Test
-    fun whenGetPublicLeaderboardCountryView_withJWT_withUserCountrySet_expectUserCountryPage(){
+    fun whenGetPublicLeaderboardCountryView_withJWT_withUserCountrySet_expectUserCountryPage() {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
@@ -293,7 +291,7 @@ class LeaderBoardIntegrationTests {
     }
 
     @Test
-    fun whenGetPrivateLeaderboardGlobalView_withJWT_expectGlobalViewPage(){
+    fun whenGetPrivateLeaderboardGlobalView_withJWT_expectGlobalViewPage() {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
@@ -311,7 +309,7 @@ class LeaderBoardIntegrationTests {
     }
 
     @Test
-    fun whenGetPrivateLeaderboardContinentView_withJWT_withUserContinentSet_expectUserContinentPage(){
+    fun whenGetPrivateLeaderboardContinentView_withJWT_withUserContinentSet_expectUserContinentPage() {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
@@ -329,7 +327,7 @@ class LeaderBoardIntegrationTests {
     }
 
     @Test
-    fun whenGetPrivateLeaderboardCountryView_withJWT_withUserCountrySet_expectUserCountryPage(){
+    fun whenGetPrivateLeaderboardCountryView_withJWT_withUserCountrySet_expectUserCountryPage() {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
