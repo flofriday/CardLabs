@@ -115,7 +115,38 @@ def test_logedin_myleaderboard_switch_page(driver_headless):
     WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[p/text()="40." and p/text()="Neodoros"]'))
 
 
-def test_logedin_dashboard_leaderboard(driver_headless):
+def test_logedin_dashboard_myleaderboard_continent(driver_headless):
     driver = driver_headless
     helper.login(driver, "test1", "pass1")
+    driver.find_element(By.XPATH, '//div[starts-with(div/div/div/h2/text(), "My Bots")]/ul/li/a[text()="Continent"]').click()
+    WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[h2/text()="My Bots - Continent"]/div/div[p/text()="1. Zargitron"]'))
+
+def test_logedin_dashboard_myleaderboard_country(driver_headless):
+    driver = driver_headless
+    helper.login(driver, "test1", "pass1")
+    driver.find_element(By.XPATH, '//div[starts-with(div/div/div/h2/text(), "My Bots")]/ul/li/a[text()="Country"]').click()
+    WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[h2/text()="My Bots - Country"]/div/div[p/text()="1. Zargitron"]'))
+
+def test_logedin_dashboard_myleaderboard_global(driver_headless):
+    driver = driver_headless
+    helper.login(driver, "test1", "pass1")
+    driver.find_element(By.XPATH, '//div[starts-with(div/div/div/h2/text(), "My Bots")]/ul/li/a[text()="Global"]').click()
     WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[h2/text()="My Bots - Global"]/div/div[p/text()="1. Zargitron"]'))
+
+def test_logedin_dashboard_globalleaderboard_continent(driver_headless):
+    driver = driver_headless
+    helper.login(driver, "test1", "pass1")
+    driver.find_element(By.XPATH, '//div[contains(div/div/div/h2/text(), "Leaderboard")]/ul/li/a[text()="Continent"]').click()
+    WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[h2/text()="Continent Leaderboard"]/div/div[p/text()="1. Zargitron"]'))
+
+def test_logedin_dashboard_globalleaderboard_country(driver_headless):
+    driver = driver_headless
+    helper.login(driver, "test1", "pass1")
+    driver.find_element(By.XPATH, '//div[contains(div/div/div/h2/text(), "Leaderboard")]/ul/li/a[text()="Country"]').click()
+    WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[h2/text()="Country Leaderboard"]/div/div[p/text()="1. Zargitron"]'))
+
+def test_logedin_dashboard_globalleaderboard_global(driver_headless):
+    driver = driver_headless
+    helper.login(driver, "test1", "pass1")
+    driver.find_element(By.XPATH, '//div[contains(div/div/div/h2/text(), "Leaderboard")]/ul/li/a[text()="Global"]').click()
+    WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[h2/text()="Global Leaderboard"]/div/div[p/text()="1. Zargitron"]'))
