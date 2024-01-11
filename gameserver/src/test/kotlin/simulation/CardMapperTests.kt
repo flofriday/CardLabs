@@ -4,7 +4,7 @@ import org.junit.Assert
 import org.junit.Test
 import simulation.models.*
 
-class CardMapper {
+class CardMapperTests {
     @Test
     fun encodeDecodeAllCards() {
         for (color in listOf(Color.ORANGE, Color.GREEN, Color.PURPLE, Color.CYAN)) {

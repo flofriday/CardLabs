@@ -209,20 +209,25 @@ fun turnSnapShot(state: GameState): Turn {
     )
 }
 
-fun pickupCards(state: GameState, player: Player, number: Int) {
+fun pickupCards(
+    state: GameState,
+    player: Player,
+    number: Int,
+) {
     // Reshuffle the pile if necessary
     if (number > state.drawPile.size) {
         logSystem(state.turns.last(), "Reshuffle pile into the draw pile")
         var playedCards = state.pile.drop(1)
 
         // If played choose cards have a color, reset it
-        playedCards = playedCards.map { card ->
-            when (card.type) {
-                CardType.CHOOSE -> Card(CardType.CHOOSE, Color.ANY, null)
-                CardType.CHOOSE_DRAW -> Card(CardType.CHOOSE_DRAW, Color.ANY, null)
-                else -> card
+        playedCards =
+            playedCards.map { card ->
+                when (card.type) {
+                    CardType.CHOOSE -> Card(CardType.CHOOSE, Color.ANY, null)
+                    CardType.CHOOSE_DRAW -> Card(CardType.CHOOSE_DRAW, Color.ANY, null)
+                    else -> card
+                }
             }
-        }
         state.pile = state.pile.take(1).toMutableList()
         state.drawPile.addAll(playedCards.shuffled())
     }
