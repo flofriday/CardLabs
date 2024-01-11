@@ -75,9 +75,13 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
       getNewBotName()
         .then((n) => {
           setName(n);
-          setupBotCodeTemplate().then((codeTemplate: string) => {
-            setCode(codeTemplate);
-          });
+          setupBotCodeTemplate()
+            .then((codeTemplate: string) => {
+              setCode(codeTemplate);
+            })
+            .catch(() => {
+              toast.error("Error loading code template");
+            });
         })
         .catch(() => {});
     } else {
