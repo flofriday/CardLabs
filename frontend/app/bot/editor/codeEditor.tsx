@@ -3,7 +3,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { langs } from "@uiw/codemirror-extensions-langs";
 import { tags as t } from "@lezer/highlight";
 import { createTheme } from "@uiw/codemirror-themes";
-import { rainbowBrackets } from "rainbowbrackets";
+import rainbowBrackets from "rainbowbrackets";
 
 interface Props {
   onChange?: (code: string | undefined | null) => void;
