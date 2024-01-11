@@ -41,7 +41,7 @@ export default function MiniLeaderBoardContent({
         {entries.map((entry, index) => (
           <div key={index} className="grid grid-cols-5">
             <p className="font-bold col-span-2 truncate pr-2">
-              {entry.place}. {entry.botName}
+              {entry.place + ". " + entry.botName}
             </p>
             <div className="col-span-2 pr-4">
               <div className="bg-background h-4 w-full h-full ml-2flex items-center justify-center p-1">

@@ -21,7 +21,7 @@ export default function LeaderBoardEntry({ entry }: Props): JSX.Element {
           }
           `}
         >
-          {entry.place}.
+          {entry.place + "."}
         </p>
         <p className="flex-1 font-bold truncate pr-2"> {entry.botName} </p>
         <p className="flex-1 ml-2">{entry.userName}</p>
