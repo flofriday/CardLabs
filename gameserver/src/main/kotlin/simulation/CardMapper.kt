@@ -7,11 +7,11 @@ fun encodeCard(card: Card): SchemeValue {
     val type =
         when (card.type) {
             CardType.NUMBER_CARD -> IntegerValue(card.number!!, null)
-            CardType.SWITCH -> StringValue("switch", null)
-            CardType.SKIP -> StringValue("skip", null)
-            CardType.DRAW_TWO -> StringValue("draw", null)
-            CardType.CHOOSE -> StringValue("choose", null)
-            CardType.CHOOSE_DRAW -> StringValue("choose-draw", null)
+            CardType.SWITCH -> SymbolValue("switch", null)
+            CardType.SKIP -> SymbolValue("skip", null)
+            CardType.DRAW_TWO -> SymbolValue("draw", null)
+            CardType.CHOOSE -> SymbolValue("choose", null)
+            CardType.CHOOSE_DRAW -> SymbolValue("choose-draw", null)
             else -> throw Exception("Invalid case")
         }
     return VectorValue(
@@ -36,7 +36,7 @@ fun decodeCard(value: SchemeValue): Card {
         throw DecodeError("The first field of a card must be a symbol")
     }
 
-    if (value.values[1] !is StringValue && value.values[1] !is IntegerValue) {
+    if (value.values[1] !is SymbolValue && value.values[1] !is IntegerValue) {
         throw DecodeError("The second field of a card must be a string or integer")
     }
 
@@ -50,7 +50,7 @@ fun decodeCard(value: SchemeValue): Card {
         return Card(CardType.NUMBER_CARD, color, num)
     }
 
-    val typeValue = (value.values[1] as StringValue).value
+    val typeValue = (value.values[1] as SymbolValue).value
     val type: CardType =
         when (typeValue) {
             "switch" -> CardType.SWITCH

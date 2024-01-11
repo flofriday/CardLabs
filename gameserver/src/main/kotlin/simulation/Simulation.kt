@@ -87,7 +87,7 @@ fun runTurn(state: GameState) {
     // Pick a card if there is no matching one
     if (player.hand.none { card -> state.pile.last().match(card) }) {
         logSystem(turn, "Player ${player.bot.botId} has no matching card and draws one")
-        player.hand.addLast(state.drawPile.removeFirst())
+        pickupCards(state, player, 1)
 
         state.currentPlayer += state.direction
         state.currentPlayer %= state.players.size
@@ -98,6 +98,7 @@ fun runTurn(state: GameState) {
     // Play a card
     execBotTurn(state, player)
     logSystem(turn, "Player ${player.bot.botId} played ${state.pile.last()}")
+    turn.actions.addLast(Action(player.bot.botId, ActionType.PLAY_CARD, state.pile.last()))
 
     // Determine the next player
     if (state.pile.last().type == CardType.SWITCH) {
@@ -119,10 +120,10 @@ fun runTurn(state: GameState) {
     val nextPlayer = state.players[state.currentPlayer]
     if (state.pile.last().type == CardType.DRAW_TWO) {
         logSystem(turn, "Player ${nextPlayer.bot.botId} draws 2 cards.")
-        nextPlayer.hand.addAll(pickupCards(state, 2))
+        pickupCards(state, nextPlayer, 2)
     } else if (state.pile.last().type == CardType.CHOOSE_DRAW) {
         logSystem(turn, "Player ${nextPlayer.bot.botId} draws 4 cards.")
-        nextPlayer.hand.addAll(state.drawPile.removeFirstN(4))
+        pickupCards(state, nextPlayer, 4)
     }
 }
 
@@ -172,16 +173,26 @@ fun execBotTurn(
     // Verify the played card and remove it from the hand
     val playedCard = decodeCard(result!!)
 
-    if (!player.hand.remove(playedCard)) {
-        throw DisqualificationError(
-            player.bot.botId,
-            "The bot tried to play a card it doesn't hold: $playedCard",
-            null,
-        )
+    if (playedCard.type == CardType.CHOOSE_DRAW || playedCard.type == CardType.CHOOSE) {
+        if (!player.hand.remove(Card(playedCard.type, Color.ANY, null))) {
+            throw DisqualificationError(
+                player.bot.botId,
+                "The bot tried to play a card it doesn't hold: $playedCard",
+                null,
+            )
+        }
+    } else {
+        if (!player.hand.remove(playedCard)) {
+            throw DisqualificationError(
+                player.bot.botId,
+                "The bot tried to play a card it doesn't hold: $playedCard",
+                null,
+            )
+        }
     }
 
     if (!topCard.match(playedCard)) {
-        throw DisqualificationError(player.bot.botId, "The tried to play an invalid card: $playedCard", null)
+        throw DisqualificationError(player.bot.botId, "The bot tried to play an invalid card: $playedCard", null)
     }
 
     state.pile.addLast(playedCard)
@@ -198,16 +209,30 @@ fun turnSnapShot(state: GameState): Turn {
     )
 }
 
-fun pickupCards(state: GameState, number: Int): List<Card> {
+fun pickupCards(state: GameState, player: Player, number: Int) {
     // Reshuffle the pile if necessary
     if (number > state.drawPile.size) {
         logSystem(state.turns.last(), "Reshuffle pile into the draw pile")
-        val playedCards = state.pile.drop(1)
+        var playedCards = state.pile.drop(1)
+
+        // If played choose cards have a color, reset it
+        playedCards = playedCards.map { card ->
+            when (card.type) {
+                CardType.CHOOSE -> Card(CardType.CHOOSE, Color.ANY, null)
+                CardType.CHOOSE_DRAW -> Card(CardType.CHOOSE_DRAW, Color.ANY, null)
+                else -> card
+            }
+        }
         state.pile = state.pile.take(1).toMutableList()
         state.drawPile.addAll(playedCards.shuffled())
     }
 
-    return state.drawPile.removeFirstN(number)
+    // Pick up the cards
+    var cards = state.drawPile.removeFirstN(number)
+    for (card in cards) {
+        state.turns.last().actions.addLast(Action(player.bot.botId, ActionType.DRAW_CARD, card))
+    }
+    player.hand.addAll(cards)
 }
 
 fun initialGameState(
