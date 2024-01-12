@@ -42,7 +42,7 @@ def test_delete_bot_from_editor_abort_with_go_cross_button(driver_headless):
     driver.find_element(By.CSS_SELECTOR, ".-right-3 > svg").click()
     assert driver.find_element(By.ID, "leftHeading").text == botname
 
-def test_delete_bot_from_editor(driver_headless):
+def test_delete_bot_from_editor_should_navigate_to_my_bots(driver_headless):
     driver = driver_headless
     helper.login(driver, "test1", "pass1")
     helper.new_bot(driver, "test code")

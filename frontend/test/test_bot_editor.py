@@ -5,6 +5,15 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 import re
 
+
+def test_create_bot_and_check_template_code(driver_headless):
+    driver = driver_headless
+    helper.login(driver, "test1", "pass1")
+    driver.find_element(By.ID, "button_create_new_bot").click()
+    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".cm-content")))
+    WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.CSS_SELECTOR, ".cm-content").get_attribute("innerText") == helper.get_code_template())
+    assert driver.find_element(By.CSS_SELECTOR, ".cm-content").get_attribute("innerText") == helper.get_code_template()
+
 def test_create_bot_and_save_it(driver_headless):
     driver = driver_headless
     helper.login(driver, "test1", "pass1")
