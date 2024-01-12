@@ -27,7 +27,7 @@ def driver():
 def driver_headless():
     options = get_options()
     options.add_argument('--headless=new')
-    options.add_argument("--lang=en-UK")
+    options.add_argument('--lang=en-UK')
 
     driver_headless = webdriver.Chrome(options=options, service=get_service())
     yield driver_headless
