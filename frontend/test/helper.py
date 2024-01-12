@@ -35,11 +35,14 @@ def register(driver, username, email, password, location):
 
 def new_bot(driver, code):
     driver.find_element(By.ID, "button_create_new_bot").click()
-    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".view-lines")))
-    driver.find_element(By.CSS_SELECTOR, ".monaco-editor textarea").send_keys(code)
+    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".cm-content")))
+    driver.find_element(By.CSS_SELECTOR, ".cm-content").send_keys(code)
     driver.find_element(By.ID, "button_save_bot").click()
     WebDriverWait(driver, 30).until(lambda driver: re.match("^.*[/]bot[/]editor[/][0-9]+$", driver.current_url)) # wait for url change
     bot_url = driver.current_url
     driver.find_element(By.ID, "home_authenticated").click()
     driver.get(bot_url)
-    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".view-lines")))
+    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".cm-content")))
+
+def get_code_template():
+    return "; It's your turn, select a card\n; hand is just a list of cards\n; topCard is a single card\n(define turn (lambda (topCard hand players)\n    (random-choice\n        (matching-cards topCard hand))))\n\n\n; Event: cardPlayed\n; UnoSaid event is not provided as you can just use cardPlayed\n(define cardPlayed (lambda (card player)\n    ))\n\n\n; Event: cardPicked\n; Some other player had to pick a card\n(define cardPicked (lambda (topCard player)\n    ))\n\n\n; Event: reshuffledPile\n; The drawPile got reshuffled\n(define reshuffledPile (lambda ()\n    ))"

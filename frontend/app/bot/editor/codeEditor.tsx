@@ -87,6 +87,7 @@ export default function CodeEditor({
           closeBrackets: true,
         }}
         extensions={[langs.scheme(), rainbowBrackets()]}
+        autoFocus={true}
         theme={cardLabsTheme}
         value={_code ?? undefined}
         onChange={onChange}
