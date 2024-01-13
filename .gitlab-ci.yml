@@ -39,7 +39,6 @@ build:frontend:
   dependencies:
     - analysis:frontend
   allow_failure: false
-# TODO: deploy stage
 
 ###########################
 ### Management pipeline ###
@@ -73,7 +72,6 @@ test:management:
   dependencies:
     - build:management
   allow_failure: false
-  # TODO: deploy stage
 
 ###########################
 ### GameServer pipeline ###
@@ -96,3 +94,20 @@ test:gameserver:
   dependencies:
     - analysis:gameserver
   allow_failure: false
+
+############################
+### Continous deployment ###
+############################
+deploy-all:
+  stage: deploy
+  image: bitnami/kubectl
+  script:
+    - sed -i 's/:latest/:'$CI_PIPELINE_ID'/g' kubernetes.yaml rabbitmq-service.yaml frontend-service.yaml management-service.yaml gameserver-service.yaml
+    - cat kubernetes.yaml
+    - cat rabbitmq-service.yaml
+    - cat frontend-service.yaml
+    - cat management-service.yaml
+    - cat gameserver-service.yaml
+    - kubectl apply -f kubernetes.yaml -f rabbitmq-service.yaml -f frontend-service.yaml -f management-service.yaml -f gameserver-service.yaml
+  only:
+    - 40-continious-deployment
