@@ -6,10 +6,12 @@ spec:
   selector:
     app: rabbitmq
   ports:
-    - protocol: TCP
+    - name: comm-port
+      protocol: TCP
       port: 5672
       targetPort: 5672
-    - protocol: TCP
+    - name: manage-port
+      protocol: TCP
       port: 15672
       targetPort: 15672
 ---
@@ -31,12 +33,8 @@ spec:
         - name: rabbitmq
           image: rabbitmq:3.9.13-management-alpine
           ports:
-            - name: comm-port
-              protocol: TCP
-              containerPort: 5672
-            - name: manage-port
-              protocol: TCP
-              containerPort: 15672
+            - containerPort: 5672
+            - containerPort: 15672
           env:
             - name: RABBITMQ_DEFAULT_USER
               value: guest
