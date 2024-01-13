@@ -31,7 +31,11 @@ spec:
         - name: rabbitmq
           image: rabbitmq:3.9.13-management-alpine
           ports:
-            - containerPort: 5672
+            - name: Communication_port
+              protocol: TCP
+              containerPort: 5672
+            - name: Management_port
+              protocol: TCP
             - containerPort: 15672
           env:
             - name: RABBITMQ_DEFAULT_USER
