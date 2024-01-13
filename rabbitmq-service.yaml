@@ -31,10 +31,10 @@ spec:
         - name: rabbitmq
           image: rabbitmq:3.9.13-management-alpine
           ports:
-            - name: commPort
+            - name: comm-port
               protocol: TCP
               containerPort: 5672
-            - name: managePort
+            - name: manage-port
               protocol: TCP
               containerPort: 15672
           env:
