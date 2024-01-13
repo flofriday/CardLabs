@@ -98,7 +98,7 @@ test:gameserver:
 ############################
 ### Continous deployment ###
 ############################
-deploy-all:
+deploy:
   stage: deploy
   image: bitnami/kubectl
   script:
