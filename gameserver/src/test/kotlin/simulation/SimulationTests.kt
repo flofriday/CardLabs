@@ -217,6 +217,9 @@ class SimulationTests {
 
         runTurn(state)
         Assert.assertEquals(state.currentPlayer, 0)
+        val expectedCard = Card(CardType.SKIP, Color.CYAN, null)
+        Assert.assertEquals(state.turns.last().actions.first { a -> a.type == ActionType.PLAY_CARD }.card, expectedCard)
+        Assert.assertEquals(state.pile.last(), expectedCard)
     }
 
     @Test
@@ -239,6 +242,9 @@ class SimulationTests {
 
         runTurn(state)
         Assert.assertEquals(state.direction, -1)
+        val expectedCard = Card(CardType.SWITCH, Color.CYAN, null)
+        Assert.assertEquals(state.turns.last().actions.first { a -> a.type == ActionType.PLAY_CARD }.card, expectedCard)
+        Assert.assertEquals(state.pile.last(), expectedCard)
     }
 
     @Test
@@ -263,8 +269,11 @@ class SimulationTests {
             )
 
         runTurn(state)
-        Assert.assertEquals(state.direction, -1)
-        Assert.assertEquals(state.currentPlayer, 0)
+        Assert.assertEquals(player1.hand.size, 0)
+        Assert.assertEquals(player2.hand.size, 3)
+        val expectedCard = Card(CardType.DRAW_TWO, Color.CYAN, null)
+        Assert.assertEquals(state.turns.last().actions.first { a -> a.type == ActionType.PLAY_CARD }.card, expectedCard)
+        Assert.assertEquals(state.pile.last(), expectedCard)
     }
 
     @Test
@@ -290,6 +299,9 @@ class SimulationTests {
 
         runTurn(state)
         assert(player1.hand.isEmpty())
+        val expectedCard = Card(CardType.CHOOSE, Color.ANY, null)
+        Assert.assertEquals(state.turns.last().actions.first { a -> a.type == ActionType.PLAY_CARD }.card, expectedCard)
+        Assert.assertEquals(state.pile.last(), expectedCard)
     }
 
     @Test
@@ -318,6 +330,9 @@ class SimulationTests {
         runTurn(state)
         assert(player1.hand.isEmpty())
         Assert.assertEquals(player2.hand.size, 5)
+        val expectedCard = Card(CardType.CHOOSE_DRAW, Color.ANY, null)
+        Assert.assertEquals(state.turns.last().actions.first { a -> a.type == ActionType.PLAY_CARD }.card, expectedCard)
+        Assert.assertEquals(state.pile.last(), expectedCard)
     }
 
     @Test

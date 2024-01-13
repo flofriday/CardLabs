@@ -104,8 +104,8 @@ fun runTurn(state: GameState) {
     if (state.pile.last().type == CardType.SWITCH) {
         // If only two players play its basically a skip card
         // TODO: Is this how this should work?
+        state.direction *= -1
         if (state.players.size != 2) {
-            state.direction *= -1
             state.currentPlayer += state.direction
         }
     } else if (state.pile.last().type == CardType.SKIP) {
