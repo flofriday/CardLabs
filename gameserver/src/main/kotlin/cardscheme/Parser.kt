@@ -80,8 +80,16 @@ class Parser {
                 return parseDo()
             } else if (peekn(2) is IfToken) {
                 return parseIf()
+            } else if (peekn(2) is CondToken) {
+                return parseCond()
             } else if (peekn(2) is LambdaToken) {
                 return parseLambda()
+            } else if (peekn(2) is LetToken) {
+                return parseLet()
+            } else if (peekn(2) is SetToken) {
+                return parseSet()
+            } else if (peekn(2) is DefineToken) {
+                throw SchemeError("Misplaced Define", "Define cannot occur here.", peekn(2).location, null)
             }
             return parseApplication()
         }
@@ -99,36 +107,131 @@ class Parser {
     /**
      * Parse a lambda expression.
      *
-     * Spec: R7R, chapter 4.1.4
-     * (lambda <formals> <body>)
-     *
-     * FIXME: Incomplete, varargs missing.
+     * Spec: R7RS, chapter 4.1.4
+     * (lambda (<variable>...) <body>)
+     * (lambda <variable> <body>)
+     * (lambda (<variable1>... <variableN> . <variableN+1>) <body>)
      */
     private fun parseLambda(): LambdaNode {
         val lparen = consume()
         consume()
 
-        val args = mutableListOf<IdentifierNode>()
+        val params = mutableListOf<IdentifierNode>()
+        var isVarArg = false
 
         if (peek() is IdentifierToken) {
             val token = consume() as IdentifierToken
-            args.addLast(IdentifierNode(token.value, token.location))
+            isVarArg = true
+            params.addLast(IdentifierNode(token.value, token.location))
         } else if (peek() is LParenToken) {
             consume()
-            while (peek() !is RParenToken) {
-                val token = must<IdentifierToken>("I expected an identifier here")
-                args.addLast(IdentifierNode(token.value, token.location))
+            while (peek() is IdentifierToken) {
+                val token = must<IdentifierToken>("I expected an identifier here.")
+                params.addLast(IdentifierNode(token.value, token.location))
             }
-            consume()
+            if (peek() is DotToken) {
+                consume()
+                val lastParam = must<IdentifierToken>("After the dot I expected an identifier here.")
+                params.addLast(IdentifierNode(lastParam.value, lastParam.location))
+                isVarArg = true
+            }
+
+            must<RParenToken>("I expected a closing right parenthesis here.")
         }
 
         val body = parseBody()
         val rparen = consume()
 
+        verifyUniqueNames(params)
         return LambdaNode(
-            args,
+            params,
+            isVarArg,
             body,
             Location.merge(lparen.location, rparen.location),
+        )
+    }
+
+    /**
+     * Parse let expression.
+     *
+     * Spec: R7RS, chapter 4.2.2
+     * (let ((<variable> <init>) ...) <body>)
+     * (let* ((<variable> <init>) ...) <body>)
+     * (letrec ((<variable> <init>) ...) <body>)
+     * (letrec* ((<variable> <init>) ...) <body>)
+     *
+     * Spec: R7RS, chapter 4.2.4
+     * (let <variable> <bindings> <body>)
+     * Note: also often called "named let", which we desugar here
+     */
+    private fun parseLet(): LetNode {
+        val lparen = consume()
+        val letToken = consume() as LetToken
+        var namedToken: IdentifierToken? = null
+
+        // Named let
+        if (!letToken.star && !letToken.rec && peek() is IdentifierToken) {
+            namedToken = consume() as IdentifierToken
+        }
+
+        val bindings = mutableListOf<VariableBinding>()
+        must<LParenToken>("I expected a opening left parenthesis here.")
+        while (peek() !is RParenToken) {
+            val bindingStart = must<LParenToken>("I expected a opening left parenthesis here.")
+            val name = must<IdentifierToken>("I expected a variable name here.")
+            val init = parseExpression()
+            val bindingEnd = must<RParenToken>("I expected a closing right parenthesis here.")
+            bindings.addLast(
+                VariableBinding(
+                    IdentifierNode(name.value, name.location),
+                    init,
+                    Location.merge(bindingStart.location, bindingEnd.location),
+                ),
+            )
+        }
+        consume()
+
+        val body = parseBody()
+        val rparen = must<RParenToken>("I expected a closing right parenthesis here.")
+
+        // Only `let*` can have duplicates in names.
+        if (!(letToken.star && !letToken.rec)) {
+            verifyUniqueNames(bindings.map { b -> b.name })
+        }
+
+        // Normal lets
+        if (namedToken == null) {
+            return LetNode(
+                letToken.rec,
+                letToken.star,
+                bindings,
+                body,
+                Location.merge(lparen.location, rparen.location),
+            )
+        }
+
+        // Named let
+        val location = Location.merge(lparen.location, rparen.location)
+        val namedNode = IdentifierNode(namedToken.value, namedToken.location)
+        return LetNode(
+            true,
+            // must be recursive as the generated function can call itself
+            false,
+            mutableListOf(
+                VariableBinding(
+                    namedNode,
+                    LambdaNode(bindings.map { b -> b.name }, false, body, location),
+                    namedToken.location,
+                ),
+            ),
+            BodyNode(
+                listOf(),
+                mutableListOf(
+                    ApplicationNode(listOf(namedNode) + bindings.map { b -> b.init }, false, location),
+                ),
+                location,
+            ),
+            location,
         )
     }
 
@@ -154,7 +257,7 @@ class Parser {
     /**
      * Parse an if expression.
      *
-     * Spec: R7R, chapter 4.1.5
+     * Spec: R7RS, chapter 4.1.5
      * (if <test> <consequent> <alternate>)
      * (if <test> <consequent>)
      */
@@ -176,51 +279,199 @@ class Parser {
     }
 
     /**
+     * Parse an cond expression. It is desugared to nested if expressions
+     *
+     * Spec: R7RS, chapter 4.2.1
+     * (cond <clause1> <clause2> ...)
+     * where <clause> is (<test> <expression1> ...)
+     */
+    private fun parseCond(): IfNode {
+        val lparen = consume()
+        consume()
+
+        val conditionsList = SchemeList<ExpressionNode>()
+        val expressionsList = SchemeList<List<ExpressionNode>>()
+
+        var currentClause: ExpressionNode? = null
+
+        do {
+            must<LParenToken>("Expected left parenthesis here")
+            if (peek() is ElseToken) {
+                consume()
+                currentClause = BodyNode(emptyList(), parseExpressions(), lparen.location)
+                must<RParenToken>("Expected right parenthesis here")
+                break
+            }
+
+            val condition = parseExpression()
+            val thenExpressions = parseExpressions()
+            must<RParenToken>("Expected right parenthesis here")
+
+            conditionsList.addFirst(condition)
+            expressionsList.addFirst(thenExpressions)
+        } while (peek() !is RParenToken)
+        must<RParenToken>("Expected right parenthesis here")
+
+        for ((condition, thenExpressions) in conditionsList.zip(expressionsList)) {
+            currentClause =
+                IfNode(
+                    condition,
+                    BodyNode(emptyList(), thenExpressions, lparen.location),
+                    currentClause,
+                    lparen.location,
+                )
+        }
+
+        return currentClause as IfNode
+    }
+
+    /**
+     * The parser behaves differently in a quoted environment
+     */
+    private fun parseQuotedExpression(): ExpressionNode {
+        val token = peek()
+        return when (token) {
+            is LParenToken -> {
+                val lparen = consume()
+                val expressionNodes = mutableListOf<ExpressionNode>()
+                while (peek() !is RParenToken) {
+                    expressionNodes.addLast(parseQuotedExpression())
+                }
+                val rparen = consume()
+
+                expressionNodes.addFirst(IdentifierNode("list", lparen.location))
+                ApplicationNode(expressionNodes, false, Location.merge(lparen.location, rparen.location))
+            }
+
+            is IdentifierToken -> {
+                consume()
+                SymbolNode(token.value, token.location)
+            }
+
+            is BeginToken -> {
+                consume()
+                SymbolNode("begin", token.location)
+            }
+
+            is CondToken -> {
+                consume()
+                SymbolNode("cond", token.location)
+            }
+
+            is DefineToken -> {
+                consume()
+                SymbolNode("define", token.location)
+            }
+
+            is SetToken -> {
+                consume()
+                SymbolNode("set!", token.location)
+            }
+
+            is DoToken -> {
+                consume()
+                SymbolNode("do", token.location)
+            }
+
+            is IfToken -> {
+                consume()
+                SymbolNode("if", token.location)
+            }
+
+            is LambdaToken -> {
+                consume()
+                SymbolNode("lambda", token.location)
+            }
+
+            is LetToken -> {
+                consume()
+                SymbolNode(token.display(), token.location)
+            }
+
+            is ElseToken -> {
+                consume()
+                SymbolNode("else", token.location)
+            }
+
+            is QuoteToken -> {
+                consume()
+                SymbolNode("quote", token.location)
+            }
+
+            is BooleanToken -> {
+                consume()
+                return BoolNode(token.value, token.location)
+            }
+
+            is IntegerToken -> {
+                consume()
+                return IntNode(token.value, token.location)
+            }
+
+            is FloatToken -> {
+                consume()
+                return FloatNode(token.value, token.location)
+            }
+
+            is CharToken -> {
+                consume()
+                return CharNode(token.value, token.location)
+            }
+
+            is StringToken -> {
+                consume()
+                return StringNode(token.value, token.location)
+            }
+
+            else -> {
+                throw SchemeError(
+                    "Unexpected Token",
+                    "While reading the sourcecode I got confused here",
+                    token.location,
+                    null,
+                )
+            }
+        }
+    }
+
+    /**
      * A quote expression (with a single quote).
      *
-     * Spec: R7R, chapter 4.1.2
+     * Spec: R7RS, chapter 4.1.2
      * '<datum>
      *
      * This parser automatically desugars the syntax to an application
      *
      * FIXME: The parser doesn't match the spec
      */
-    private fun parseSingleQuote(): ApplicationNode {
+    private fun parseSingleQuote(): ExpressionNode {
         val token = consume() as SingleQuoteToken
-        must<LParenToken>("Quoted List must be followed my left parenthesis")
-        val expressionNodes = parseExpressions()
-        val rparen = consume()
-
-        expressionNodes.addFirst(IdentifierNode("list", token.location))
-        return ApplicationNode(expressionNodes, Location.merge(token.location, rparen.location))
+        return parseQuotedExpression()
     }
 
     /**
      * A quote expression (with the keyword).
      *
-     * Spec: R7R, chapter 4.1.2
+     * Spec: R7RS, chapter 4.1.2
      * (quote <datum>)
      *
      * This parser automatically desugars the syntax to an application
      *
      * FIXME: The parser doesn't match the spec
      */
-    private fun parseQuote(): ApplicationNode {
-        val quoteToken = consume()
-        consume()
-        must<LParenToken>("Quoted List must be followed my left parenthesis")
-        val expressionNodes = parseExpressions()
-        consume()
-        val rparen = must<RParenToken>("Expected a right parenthesis here")
+    private fun parseQuote(): ExpressionNode {
+        val lparen = consume()
+        val quote = consume()
 
-        expressionNodes.addFirst(IdentifierNode("list", quoteToken.location))
-        return ApplicationNode(expressionNodes, Location.merge(quoteToken.location, rparen.location))
+        val expr = parseQuotedExpression()
+        val rparen = must<RParenToken>("Expected a closing right parenthesis here")
+        return expr
     }
 
     /**
      * A vector expression
      *
-     * Spec: R7R, chapter 6.8
+     * Spec: R7RS, chapter 6.8
      * #(<expression> ...)
      *
      * This parser automatically desugars the syntax to an application.
@@ -235,13 +486,13 @@ class Parser {
         val rparen = must<RParenToken>("Expected a right parenthesis here")
 
         expressionNodes.addFirst(IdentifierNode("vector", pound.location))
-        return ApplicationNode(expressionNodes, Location.merge(pound.location, rparen.location))
+        return ApplicationNode(expressionNodes, false, Location.merge(pound.location, rparen.location))
     }
 
     /**
      * Parse a begin expression.
      *
-     * Spec: R7R, chapter 4.2.3
+     * Spec: R7RS, chapter 4.2.3
      * (begin <expression or definition> ...)
      * (begin <expression1> <expression2> ...)
      *
@@ -264,7 +515,7 @@ class Parser {
     /**
      * Parse a do loop.
      *
-     * Spec: R7R, chapter 4.2.4
+     * Spec: R7RS, chapter 4.2.4
      * (do ((<variable1> <init1> <step1>) ...)
      *      (<test> <expression> ...)
      * <command> ...)
@@ -292,7 +543,11 @@ class Parser {
         val body =
             if (peek() !is RParenToken) {
                 val bodyExpressions = parseExpressions()
-                BodyNode(listOf(), bodyExpressions, Location.merge(bodyExpressions.first().location, bodyExpressions.last().location))
+                BodyNode(
+                    listOf(),
+                    bodyExpressions,
+                    Location.merge(bodyExpressions.first().location, bodyExpressions.last().location),
+                )
             } else {
                 null
             }
@@ -312,21 +567,21 @@ class Parser {
             }
 
         val end = must<RParenToken>("I expected a closing right parenthesis here.")
+
+        verifyUniqueNames(variableInitSteps.map { v -> v.name })
         return DoNode(variableInitSteps, test, body, command, Location.merge(start.location, end.location))
     }
 
     /**
      * Parse a definition.
      *
-     * Spec: R7R, chapter 5.3
+     * Spec: R7RS, chapter 5.3
      * (define <variable> <expression>)
      * (define (<variable> <formals>) <body>)
-     * (define (<variable> . <formal>) <body>)
+     * (define (<variable> . <variable>) <body>)
      *
      * Since the last two forms are just syntactic sugar for a define of the first form with a nested lambda this parser
      * de-sugars it.
-     *
-     * FIXME: Implement the varargs form.
      */
     private fun parseDefine(): DefineNode {
         val lparen = consume()
@@ -342,34 +597,72 @@ class Parser {
                 body,
                 Location.merge(lparen.location, rparen.location),
             )
-        } else if (peek() is LParenToken) {
+        }
+
+        if (peek() is LParenToken) {
             consume()
             val functionName = must<IdentifierToken>("Expected an identifier here")
 
             val args = mutableListOf<IdentifierNode>()
-            while (peek() !is RParenToken) {
+            var isVarArg = false
+
+            while (peek() is IdentifierToken) {
                 val arg = must<IdentifierToken>("Expected an identifier here")
                 args.addLast(IdentifierNode(arg.value, arg.location))
             }
-            consume()
+            if (peek() is DotToken) {
+                consume()
+                val arg = must<IdentifierToken>("Expected an identifier here")
+                args.addLast(IdentifierNode(arg.value, arg.location))
+                isVarArg = true
+            }
+            must<RParenToken>("Expected a right parenthesis here")
 
             val body = parseBody()
             val rparen = must<RParenToken>("Expected a right parenthesis here")
 
+            verifyUniqueNames(args)
             return DefineNode(
                 IdentifierNode(functionName.value, functionName.location),
-                LambdaNode(args, body, body.location),
+                LambdaNode(args, isVarArg, body, body.location),
                 Location.merge(lparen.location, rparen.location),
             )
-        } else {
-            throw SchemeError("Unexpected Token", "I expected either an identifier or a left parenthesis here.", peek().location, null)
         }
+
+        throw SchemeError(
+            "Unexpected Token",
+            "I expected either an identifier or a left parenthesis here.",
+            peek().location,
+            null,
+        )
+    }
+
+    /**
+     * Parse a set! expression.
+     *
+     * Spec: R7RS, chapter 4.16
+     * (set! <variable> <expression>)
+     *
+     */
+    private fun parseSet(): SetNode {
+        val lparen = consume()
+        consume()
+
+        val name = must<IdentifierToken>("The first argument of a `set!` must be a variable name.")
+        val expression = parseExpression()
+        val rparen = must<RParenToken>("I expected a closing right parenthesis here.")
+
+        return SetNode(
+            IdentifierNode(name.value, name.location),
+            expression,
+            Location.merge(lparen.location, rparen.location),
+        )
     }
 
     /**
      * Parse a application of a procedure (aka function call).
      *
-     * Spec: R7R, chapter 4.1.3
+     * Spec: R7RS, chapter 4.1.3
      * (<operator> <operator1> ...)
      */
     private fun parseApplication(): ApplicationNode {
@@ -381,7 +674,23 @@ class Parser {
         }
 
         val rparen = must<RParenToken>("Expected a right parenthesis here")
-        return ApplicationNode(expressions, Location.merge(lparen.location, rparen.location))
+        return ApplicationNode(expressions, false, Location.merge(lparen.location, rparen.location))
+    }
+
+    private fun verifyUniqueNames(names: List<IdentifierNode>) {
+        val nameSet = HashSet<String>()
+
+        for (name in names) {
+            if (nameSet.contains(name.identifier)) {
+                throw SchemeError(
+                    "Name Error",
+                    "All names must be unique, however this one was already used.",
+                    name.location,
+                    null,
+                )
+            }
+            nameSet.add(name.identifier)
+        }
     }
 
     private inline fun <reified T : Token> must(error: String): T {
@@ -393,21 +702,36 @@ class Parser {
 
     private fun peek(): Token {
         if (index >= tokens.size) {
-            throw SchemeError("Unexpected end of file", "I was in the middle of reading something but the file just ended.", null, null)
+            throw SchemeError(
+                "Unexpected end of file",
+                "I was in the middle of reading something but the file just ended.",
+                null,
+                null,
+            )
         }
         return tokens[index]
     }
 
     private fun peekn(n: Int): Token {
         if (index + n - 1 >= tokens.size) {
-            throw SchemeError("Unexpected end of file", "I was in the middle of reading something but the file just ended.", null, null)
+            throw SchemeError(
+                "Unexpected end of file",
+                "I was in the middle of reading something but the file just ended.",
+                null,
+                null,
+            )
         }
         return tokens[index + n - 1]
     }
 
     private fun consume(): Token {
         if (index >= tokens.size) {
-            throw SchemeError("Unexpected end of file", "I was in the middle of reading something but the file just ended.", null, null)
+            throw SchemeError(
+                "Unexpected end of file",
+                "I was in the middle of reading something but the file just ended.",
+                null,
+                null,
+            )
         }
         index++
         return tokens[index - 1]

@@ -66,10 +66,10 @@ abstract class StatementNode(location: Location) : AstNode(location) {
  * @param expressions the expressions making up the call where the first one will (hopefully)
  *   evaluate to a procedure.
  */
-class ApplicationNode(val expressions: List<ExpressionNode>, location: Location) :
+class ApplicationNode(val expressions: List<ExpressionNode>, var isLast: Boolean = false, location: Location) :
     ExpressionNode(location) {
     override fun dump(indent: Int): String {
-        var out = getIndentation(indent) + "Application\n"
+        var out = getIndentation(indent) + "Application (isLast=$isLast)\n"
         for (child in expressions) {
             out += child.dump(indent + 1)
         }
@@ -196,6 +196,24 @@ class IdentifierNode(val identifier: String, location: Location) : ExpressionNod
 }
 
 /**
+ * A symbol.
+ *
+ * A symbol literal, this doesn't quite exist in syntax, but we desugar quote syntax in the parser and this just makes
+ * sense.
+ *
+ * @param name the name of the symbol.
+ */
+class SymbolNode(val name: String, location: Location) : ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) + "Symbol: '$name'\n"
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visitedBy(this)
+    }
+}
+
+/**
  * A body of a lambda, let etc.
  *
  * In general this can also be used if multiple expressions need to be evaluated sequentially.
@@ -230,14 +248,78 @@ class BodyNode(
  * Lambdas evaluate to a procedure (aka function).
  *
  * @param params are the names to which the arguments upon calling get bound.
+ * @param isVarArg weather or not this function can accept indefinite many arguments.
  * @param body of the function.
  */
-class LambdaNode(val params: List<IdentifierNode>, val body: BodyNode, location: Location) :
+class LambdaNode(val params: List<IdentifierNode>, val isVarArg: Boolean, val body: BodyNode, location: Location) :
     ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) +
-                "Lambda: '${params.joinToString(", ") { a -> a.identifier }}'\n" +
-                body.dump(indent + 1)
+            "Lambda: '${params.joinToString(", ") { a -> a.identifier }}'" +
+            (if (isVarArg) " (vararg)" else "") + "\n" +
+            body.dump(indent + 1)
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visitedBy(this)
+    }
+}
+
+/**
+ * A binding of an expression to a variable.
+ *
+ * @param name of the variable.
+ * @param init initial value of the variable.
+ */
+data class VariableBinding(val name: IdentifierNode, val init: ExpressionNode, val location: Location)
+
+/**
+ * A let node.
+ *
+ * Since let, let*, letrec and letrec* expressions look so similar they are all expressed by this expression.
+ * However, named let are not found here as they will get desugared in the parser.
+ *
+ * @param rec indicates whether this is a recursive let.
+ * @param star indicates whether this is a star let.
+ * @param bindings is the list of variable bindings.
+ * @param body is the body that gets executed once the bindings are assigned.
+ */
+class LetNode(
+    val rec: Boolean,
+    val star: Boolean,
+    val bindings: List<VariableBinding>,
+    val body: BodyNode,
+    location: Location,
+) :
+    ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) +
+            "LetNode: (rec: $rec, star: $star)\n" +
+            getIndentation(indent + 1) + "Bindings:\n" +
+            bindings.joinToString("\n") { b ->
+                b.name.dump(indent + 2) + b.init.dump(indent + 2)
+            } +
+            body.dump(indent + 1)
+    }
+
+    override fun <T> visit(visitor: ExpressionVisitor<T>): T {
+        return visitor.visitedBy(this)
+    }
+}
+
+/**
+ * A set expression.
+ *
+ * Bind an existing name to a new value
+ *
+ * @param params are the names to which the arguments upon calling get bound.
+ * @param body of the function.
+ */
+class SetNode(val name: IdentifierNode, val expression: ExpressionNode, location: Location) :
+    ExpressionNode(location) {
+    override fun dump(indent: Int): String {
+        return getIndentation(indent) +
+            "SetNode:\n" + name.dump(indent + 1) + expression.dump(indent + 1)
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
@@ -263,7 +345,7 @@ data class VariableInitStep(
  *
  * Many of the names used here are best explained by teh spec.
  *
- * Spec: R7R, chapter 4.2.4
+ * Spec: R7RS, chapter 4.2.4
  *
  * @param variableInitSteps the variable bindings with the step executed after each iteration.
  * @param test to decide if the loop keeps iterating.
@@ -320,11 +402,11 @@ class IfNode(
 ) : ExpressionNode(location) {
     override fun dump(indent: Int): String {
         return getIndentation(indent) +
-                "If:\n${condition.dump(indent)} \n${thenExpression.dump(indent + 1)} \n${
-                    elseExpression?.dump(
-                        indent + 1,
-                    )
-                }"
+            "If:\n${condition.dump(indent + 1)} \n${thenExpression.dump(indent + 1)} \n${
+                elseExpression?.dump(
+                    indent + 1,
+                )
+            }"
     }
 
     override fun <T> visit(visitor: ExpressionVisitor<T>): T {
@@ -346,11 +428,17 @@ interface ExpressionVisitor<T> {
 
     fun visitedBy(node: IdentifierNode): T
 
+    fun visitedBy(node: SymbolNode): T
+
     fun visitedBy(node: ApplicationNode): T
 
     fun visitedBy(node: BodyNode): T
 
     fun visitedBy(node: LambdaNode): T
+
+    fun visitedBy(node: LetNode): T
+
+    fun visitedBy(node: SetNode): T
 
     fun visitedBy(node: IfNode): T
 

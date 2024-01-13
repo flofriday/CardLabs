@@ -28,8 +28,29 @@ class BeginToken(location: Location) : Token(location)
 
 class DefineToken(location: Location) : Token(location)
 
+class SetToken(location: Location) : Token(location)
+
 class DoToken(location: Location) : Token(location)
+
+class DotToken(location: Location) : Token(location)
 
 class IfToken(location: Location) : Token(location)
 
 class LambdaToken(location: Location) : Token(location)
+
+class LetToken(val rec: Boolean, val star: Boolean, location: Location) : Token(location) {
+    fun display(): String {
+        var text = "let"
+        if (rec) {
+            text += "rec"
+        }
+        if (star) {
+            text += "*"
+        }
+        return text
+    }
+}
+
+class CondToken(location: Location) : Token(location)
+
+class ElseToken(location: Location) : Token(location)

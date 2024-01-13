@@ -1,20 +1,16 @@
 package cardscheme
 
-import MemoryMonitor
-import java.util.concurrent.Callable
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
-
 class SchemeInterpreter(
-    private val timeLimitInSeconds: Long = 2,
-    private val memoryLimit: Long = 1024 * 1014 * 1024,
+    private val outputBuffer: StringBuilder = StringBuilder(),
+    /* private val timeLimitInSeconds: Long = 2,
+    private val memoryLimit: Long = 1024 * 1024 * 1024,
     private val timeoutBetweenChecks: Long = 100,
+     */
+    private val instructionLimit: Long = 100000,
+    private val memoryLimit: Long = 1024 * 1024,
 ) {
     var env = Environment(null, HashMap())
+    val schemeSecurityMonitor = SchemeSecurityMonitor(instructionLimit, memoryLimit)
 
     init {
         injectBuiltin(env)
@@ -25,9 +21,16 @@ class SchemeInterpreter(
      */
     fun run(program: String): SchemeValue? {
         val tokens = Tokenizer().tokenize(program)
+        return run(tokens)
+    }
+
+    /**
+     * Executes a given program with some time and memory constraints.
+     */
+    fun run(tokens: List<Token>): SchemeValue? {
         val ast = Parser().parse(tokens)
-        val buffer = StringBuffer()
-        return runWithTimeoutAndMemoryLimit({ Executor(env, buffer).execute(ast) })
+        Resolver().resolve(ast)
+        return Executor(env, outputBuffer, schemeSecurityMonitor).execute(ast)
     }
 
     /**
@@ -37,10 +40,10 @@ class SchemeInterpreter(
         func: CallableValue,
         args: List<SchemeValue>,
     ): SchemeValue? {
-        val buffer = StringBuffer()
-        return runWithTimeoutAndMemoryLimit({ Executor(env, buffer).execute(func, args) })
+        return Executor(env, outputBuffer, schemeSecurityMonitor).execute(func, args)
     }
 
+    /*
     private fun runWithTimeoutAndMemoryLimit(function: () -> SchemeValue?): SchemeValue? {
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
         val memoryMonitorThread = Thread(MemoryMonitor(Thread.currentThread(), memoryLimit, timeoutBetweenChecks))
@@ -82,4 +85,5 @@ class SchemeInterpreter(
             executor.shutdownNow()
         }
     }
+     */
 }

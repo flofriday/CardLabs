@@ -25,6 +25,9 @@ class Tokenizer() {
             } else if (c == '\'') {
                 tokens.add(SingleQuoteToken(Location(line, line, col, col)))
                 consume()
+            } else if (c == '.') {
+                tokens.add(DotToken(Location(line, line, col, col)))
+                consume()
             } else if (c == '"') {
                 tokens.addLast(scanString())
             } else if (c == '\n') {
@@ -34,25 +37,14 @@ class Tokenizer() {
             } else if (c == ';') {
                 col = 1
                 line++
-                while (index < program.length && program[index++] != '\n') {}
+                while (index < program.length && program[index++] != '\n') {
+                }
             } else if (c == '#') {
                 tokens.addLast(scanPoundSign())
-            } else if (c.isDigit()) {
+            } else if (c.isDigit() || isNumber(c)) {
                 tokens.addLast(scanNumber())
-            } else if (consumeMatch("begin")) {
-                tokens.add(BeginToken(Location(line, line, col - "begin".length, col - 1)))
-            } else if (consumeMatch("define")) {
-                tokens.add(DefineToken(Location(line, line, col - "define".length, col - 1)))
-            } else if (consumeMatch("do")) {
-                tokens.add(DoToken(Location(line, line, col - "do".length, col - 1)))
-            } else if (consumeMatch("if")) {
-                tokens.add(IfToken(Location(line, line, col - "if".length, col - 1)))
-            } else if (consumeMatch("lambda")) {
-                tokens.add(LambdaToken(Location(line, line, col - "lambda".length, col - 1)))
-            } else if (consumeMatch("quote")) {
-                tokens.add(QuoteToken(Location(line, line, col - "quote".length, col - 1)))
             } else if (isIdentifierInitial(c)) {
-                tokens.addLast(scanIdentifier())
+                tokens.addLast(scanIdentifierKeyword())
             } else if (c.isWhitespace()) {
                 consume()
             } else {
@@ -66,6 +58,10 @@ class Tokenizer() {
         }
 
         return tokens
+    }
+
+    private fun isNumber(c: Char): Boolean {
+        return (index + 1 < program.length) && (peek() == '+' || peek() == '-') && program[index + 1].isDigit()
     }
 
     private fun isIdentifierInitial(c: Char): Boolean {
@@ -94,7 +90,7 @@ class Tokenizer() {
         return isIdentifierInitial(c) || c == '.' || c.isDigit()
     }
 
-    private fun scanIdentifier(): IdentifierToken {
+    private fun scanIdentifierKeyword(): Token {
         val initial = consume()
         var literal: String = initial.toString()
 
@@ -107,11 +103,31 @@ class Tokenizer() {
             literal += consume()
         }
 
-        return IdentifierToken(literal, Location(line, line, col - literal.length, col - 1))
+        val location = Location(line, line, col - literal.length, col - 1)
+        return when (literal) {
+            "begin" -> BeginToken(location)
+            "define" -> DefineToken(location)
+            "do" -> DoToken(location)
+            "if" -> IfToken(location)
+            "cond" -> CondToken(location)
+            "else" -> ElseToken(location)
+            "lambda" -> LambdaToken(location)
+            "letrec*" -> LetToken(true, true, location)
+            "letrec" -> LetToken(true, false, location)
+            "let*" -> LetToken(false, true, location)
+            "let" -> LetToken(false, false, location)
+            "quote" -> QuoteToken(location)
+            "set!" -> SetToken(location)
+            else -> IdentifierToken(literal, location)
+        }
     }
 
     private fun scanNumber(): Token {
         var literal = ""
+
+        if (peek() == '+' || peek() == '-') {
+            literal += consume()
+        }
 
         while (peek().isDigit()) {
             val digit = consume()
@@ -158,7 +174,12 @@ class Tokenizer() {
         if (peek().isLetter()) {
             return CharToken(consume(), Location(line, line, col - 2, col - 1))
         } else {
-            throw SchemeError("Unknown Character", "This does not seem to be a character", Location(line, line, col - 2, col - 1), null)
+            throw SchemeError(
+                "Unknown Character",
+                "This does not seem to be a character",
+                Location(line, line, col - 2, col - 1),
+                null,
+            )
         }
     }
 
