@@ -149,6 +149,14 @@ class ComparisonTests {
     }
 
     @Test
+    fun equalWithFloatAndInt() {
+        val program = "(= 0 0.0)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
     fun smallerEqualWithManyInts1() {
         val program = "(<= 1 2 3 4 5 6 7 8 9 10 11 12 13 14 14)"
         val result = SchemeInterpreter().run(program)
@@ -170,6 +178,14 @@ class ComparisonTests {
         val result = SchemeInterpreter().run(program)
         assert(result is BooleanValue)
         Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun smallerEqualWithFloatAndInt() {
+        val program = "(<= 0 0.0)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
     }
 
     @Test
@@ -202,5 +218,189 @@ class ComparisonTests {
         val result = SchemeInterpreter().run(program)
         assert(result is BooleanValue)
         Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun greaterEqualWithFloatAndInt() {
+        val program = "(>= 0 0.0)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isZeroOnZeroInt() {
+        val program = "(zero? 0)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isZeroOnZeroFloat() {
+        val program = "(zero? 0.0)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isZeroOnTwo() {
+        val program = "(zero? 2)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isPositiveOnPositive() {
+        val program = "(positive? 45.7)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isPositiveOnZero() {
+        val program = "(positive? 0)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isPositiveOnNegative() {
+        val program = "(positive? -67)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isNegativeOnPositive() {
+        val program = "(negative? 45.7)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isNegativeOnZero() {
+        val program = "(negative? 0)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEvenOnEven() {
+        val program = "(even? 2)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEvenOnOdd() {
+        val program = "(even? 1)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isOddOnEven() {
+        val program = "(odd? 2)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isOddOnOdd() {
+        val program = "(odd? 1)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEqualOnSameSymbols() {
+        val program = "(equal? 'a 'a)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEqualOnDifferentSymbols() {
+        val program = "(equal? 'a 'b)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEqualOnSameFlatList() {
+        val program = "(equal? '(a) '(a))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEqualOnDifferentFlatList() {
+        val program = "(equal? '(a) '(b))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEqualOnSameNestedList() {
+        val program = "(equal? '(a (b) c) '(a (b) c))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEqualOnDifferentNestedList() {
+        val program = "(equal? '(a (b) c) '(a (x) c))"
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEqualOnSameStrings() {
+        val program = """(equal? "abc" "abc")"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEqualOnDifferentStrings() {
+        val program = """(equal? "abc" "abxc")"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEqualOnSameVector() {
+        val program = """(equal? (make-vector 5 'a) (make-vector 5 'a))"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isEqualOnDifferentVector() {
+        val program = """(equal? (make-vector 5 'a) (make-vector 3 'a))"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
     }
 }

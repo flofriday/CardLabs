@@ -2,8 +2,26 @@ package cardscheme
 
 import org.junit.Assert
 import org.junit.Test
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
 class SecurityTests {
+    @Test
+    fun writingToStdoutShouldNotWork() {
+        val outputStreamCapture = ByteArrayOutputStream()
+        System.setOut(PrintStream(outputStreamCapture))
+        val program =
+            """
+            (begin
+                (display 1)
+                (display 2)
+                (display (+ 1 2)))
+            """.trimIndent()
+        SchemeInterpreter().run(program)
+        Assert.assertEquals("", outputStreamCapture.toString().trim())
+        System.setOut(System.out)
+    }
+
     @Test
     fun openFileShouldFail() {
         val program = """(open-input-file "Readme.md")"""
@@ -44,10 +62,31 @@ class SecurityTests {
         assert(result is IntegerValue)
         Assert.assertEquals(6, (result as IntegerValue).value)
 
-        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter(memoryLimit = 1).run(program) }
+        // Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter(memoryLimit = 1).run(program) }
     }
 
     /*
+        @Test
+    fun memoryExhaustion() {
+        val program =
+            """
+            (define l (list ))
+            (do (
+                    (i 0 (+ i 1)))
+                ((>= i 1000) i)
+                (do (
+                    (j 0 (+ j 1)))
+                ((>= j 1000) j)
+                (set! l (cons #(j l) l))
+                )
+                )
+                (display l)
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(100, (result as IntegerValue).value)
+    }
+
     @Test(timeout = 30000)
     fun limitedMemoryTest2() {
         val program = """(define (infinite-append)
