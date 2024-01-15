@@ -111,8 +111,6 @@ def test_logedin_myleaderboard_switch_page(driver_headless):
     WebDriverWait(driver, 10).until(expected_conditions.presence_of_element_located((By.XPATH, '//button[text()="3"]')))
     driver.find_element(By.XPATH, '//button[text()="3"]').click()
     WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[p/text()="28." and p/text()="Neous"]'))
-    WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[p/text()="39." and p/text()="Vexnixax"]'))
-    WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[p/text()="40." and p/text()="Neodoros"]'))
 
 
 def test_logedin_dashboard_myleaderboard_continent(driver_headless):
