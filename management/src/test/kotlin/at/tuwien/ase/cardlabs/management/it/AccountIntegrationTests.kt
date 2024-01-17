@@ -475,7 +475,7 @@ class AccountIntegrationTests {
     }
 
     private fun getAuthenticationToken(username: String, password: String): String {
-        return TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, username, password).accessToken
+        return TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, username, password).accessToken.token
     }
 
     private fun createAccount(

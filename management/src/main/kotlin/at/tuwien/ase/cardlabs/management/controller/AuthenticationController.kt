@@ -5,7 +5,7 @@ import at.tuwien.ase.cardlabs.management.security.authentication.AccessTokenAuth
 import at.tuwien.ase.cardlabs.management.security.authentication.AuthRequest
 import at.tuwien.ase.cardlabs.management.security.authentication.AuthenticationResponse
 import at.tuwien.ase.cardlabs.management.security.authentication.RefreshTokenRequest
-import at.tuwien.ase.cardlabs.management.security.jwt.JwtHelper
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class AuthenticationController(val authenticationManager: AuthenticationManager) {
+class AuthenticationController(
+    private val authenticationManager: AuthenticationManager,
+    private val jwtTokenService: JwtTokenService,
+) {
 
     private final val logger = LoggerFactory.getLogger(javaClass)
 
@@ -32,25 +35,17 @@ class AuthenticationController(val authenticationManager: AuthenticationManager)
             ),
         )
 
-        val refreshToken = JwtHelper.generateRefreshToken(authentication)
-        val accessToken = JwtHelper.generateAccessTokenFromRefreshToken(refreshToken.token)
+        val refreshToken = jwtTokenService.generateRefreshToken(authentication)
         return ResponseEntity.status(HttpStatus.OK)
-            .body(
-                AuthenticationResponse(
-                    refreshToken.token,
-                    refreshToken.expiryDate,
-                    accessToken.token,
-                    accessToken.expiryDate
-                )
-            )
+            .body(AuthenticationResponse(refreshToken.refreshToken, refreshToken.accessToken))
     }
 
     @PostMapping("/authentication/refresh")
     fun refreshToken(@RequestBody refreshTokenRequest: RefreshTokenRequest): ResponseEntity<AccessTokenAuthenticationResponse> {
         logger.info("User attempts to generate a new access token")
-        val accessToken = JwtHelper.generateAccessTokenFromRefreshToken(refreshTokenRequest.refreshToken)
+        val accessToken = jwtTokenService.generateAccessToken(refreshTokenRequest.refreshToken)
         return ResponseEntity.status(HttpStatus.OK)
-            .body(AccessTokenAuthenticationResponse(accessToken.token, accessToken.expiryDate))
+            .body(AccessTokenAuthenticationResponse(accessToken))
     }
 
     @GetMapping("/authentication")

@@ -3,7 +3,8 @@ package at.tuwien.ase.cardlabs.management.error
 import at.tuwien.ase.cardlabs.management.error.account.AccountDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.account.AccountExistsException
 import at.tuwien.ase.cardlabs.management.error.account.LocationNotFoundException
-import at.tuwien.ase.cardlabs.management.error.authentication.RefreshTokenExpiredException
+import at.tuwien.ase.cardlabs.management.error.authentication.InvalidTokenException
+import at.tuwien.ase.cardlabs.management.error.authentication.TokenExpiredException
 import at.tuwien.ase.cardlabs.management.error.bot.BotDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.bot.BotStateException
 import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
@@ -87,8 +88,15 @@ class GlobalExceptionHandler {
             .body(ex.message)
     }
 
-    @ExceptionHandler(RefreshTokenExpiredException::class)
-    fun handleRefreshTokenExpired(ex: RefreshTokenExpiredException): ResponseEntity<String> {
+    @ExceptionHandler(TokenExpiredException::class)
+    fun handleTokenExpired(ex: TokenExpiredException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(ex.message)
+    }
+
+    @ExceptionHandler(InvalidTokenException::class)
+    fun handleInvalidToken(ex: InvalidTokenException): ResponseEntity<String> {
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(ex.message)

@@ -55,7 +55,7 @@ class GameIntegrationTests {
         mockMvc.perform(
             get("/match/$gameId/all")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $accessToken"),
+                .header("Authorization", "Bearer ${accessToken.token}"),
         )
             .andExpect(status().isNotFound)
     }
@@ -100,7 +100,7 @@ class GameIntegrationTests {
         val result = mockMvc.perform(
             get("/match/$gameId/all")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $accessToken"),
+                .header("Authorization", "Bearer ${accessToken.token}"),
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -132,7 +132,7 @@ class GameIntegrationTests {
         mockMvc.perform(
             get("/match/$gameId/all")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $accessToken"),
+                .header("Authorization", "Bearer ${accessToken.token}"),
         )
             .andExpect(status().isNotFound)
     }
@@ -162,7 +162,7 @@ class GameIntegrationTests {
         val result = mockMvc.perform(
             get("/match/$gameId/all")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer $accessToken"),
+                .header("Authorization", "Bearer ${accessToken.token}"),
         )
             .andExpect(status().isOk)
             .andReturn()

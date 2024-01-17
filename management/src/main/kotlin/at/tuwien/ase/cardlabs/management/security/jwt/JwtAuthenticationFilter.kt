@@ -8,8 +8,10 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.web.filter.OncePerRequestFilter
 
-class JwtAuthenticationFilter(private val userDetailsService: UserDetailsService) :
-    OncePerRequestFilter() {
+class JwtAuthenticationFilter(
+    private val userDetailsService: UserDetailsService,
+    private val jwtTokenService: JwtTokenService,
+) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -17,8 +19,8 @@ class JwtAuthenticationFilter(private val userDetailsService: UserDetailsService
         filterChain: FilterChain,
     ) {
         val jwt = getJwtFromRequest(request)
-        if (jwt != null && JwtHelper.isValidAccessToken(jwt)) {
-            val username = JwtHelper.extractAccountUsername(jwt)
+        if (jwt != null && jwtTokenService.isValidAccessToken(jwt)) {
+            val username = jwtTokenService.extractAccountUsername(jwt)
 
             val userDetails = userDetailsService.loadUserByUsername(username)
             val authentication = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)

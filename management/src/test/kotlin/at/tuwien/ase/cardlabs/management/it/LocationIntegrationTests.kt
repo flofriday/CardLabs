@@ -69,7 +69,7 @@ class LocationIntegrationTests {
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/locations")
-                .header("Authorization", "Bearer ${authenticationTokens.accessToken}"),
+                .header("Authorization", "Bearer ${authenticationTokens.accessToken.token}"),
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
