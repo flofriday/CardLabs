@@ -30,9 +30,9 @@ export async function login(
     return false;
   }
   const json = await response.json();
-  localStorage.setItem("refresh_token", json.refreshToken);
-  setCookie("auth_token", json.accessToken);
-  localStorage.setItem("auth_token_expire", json.expiryDateAccessToken);
+  localStorage.setItem("refresh_token", json.refreshToken.token);
+  setCookie("auth_token", json.accessToken.token);
+  localStorage.setItem("auth_token_expire", json.accessToken.expiration);
 
   return true;
 }

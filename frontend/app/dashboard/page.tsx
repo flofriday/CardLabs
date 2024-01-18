@@ -8,7 +8,6 @@ import {
   getMyTop5LeaderBoardEntries,
 } from "../services/LeaderBoardService";
 import { LeaderBoardType } from "../types/LeaderBoardType";
-import { refreshAccessToken } from "../services/RefreshService";
 
 export default function Dashboard(): JSX.Element {
   return (
