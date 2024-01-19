@@ -1,7 +1,7 @@
 FROM node:21-slim
 
-ARG MANAGMENT_HOST
-ENV MANAGMENT_HOST $MANAGMENT_HOST
+#ARG MANAGMENT_HOST
+#ENV MANAGMENT_HOST $MANAGMENT_HOST
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
-CMD [ "npm", "start" ]
+#RUN npm run build
+#CMD [ "npm", "start" ]
 
-#CMD [ "npm", "run", "dev"]
+CMD [ "npm", "run", "dev"]
