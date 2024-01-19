@@ -5,6 +5,6 @@ WORKDIR /app
 COPY settings.gradle build.gradle ./
 RUN gradle dependencies
 COPY . .
-RUN gradle build --console=plain
+RUN gradle build --no-daemon --console=plain
 
 CMD ["gradle", "bootRun", "--args='--spring.profiles.active=local'"]
