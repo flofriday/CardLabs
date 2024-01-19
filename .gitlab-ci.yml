@@ -18,15 +18,15 @@ cache:
     - ${MANAGEMENT_DIR}/build
 
 analysis:docker_test:
-  image: quay.io/buildah/stable
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
   stage: analysis
-  variables:
-    STORAGE_DRIVER: vfs
-    BUILDAH_FORMAT: docker
   script:
-    - echo "build:2000:50000" > /etc/subuid
-    - echo "build:2000:50000" > /etc/subgid
-    - buildah login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/frontend"
+      --dockerfile "${CI_PROJECT_DIR}/frontend/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/frontend:${CI_PIPELINE_ID}"
   only:
     - 40-continious-deployment
 
