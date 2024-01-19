@@ -1,7 +1,7 @@
 interface Game {
   id: number;
   startTime: Date;
-  endTime: number;
+  endTime: Date;
   winningBotId: number;
   disqualifiedBotId: number;
   turns: any;

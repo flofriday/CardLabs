@@ -1,7 +1,6 @@
 "use client";
 
 import Pagination from "../../components/Pagination";
-import RegionSelector from "../../components/RegionSelector";
 import LeftPageHeader from "../../components/leftPageHeader";
 import Robot, { RobotType } from "../../components/robot";
 import { useState, useEffect } from "react";
@@ -22,7 +21,7 @@ export default function GameOverview({
 
   const entriesPerPage = 5;
   const [gameEntries, setGameEntries] = useState<Game[]>([]);
-  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
 
   const handlePageChange = (page: number): void => {
@@ -54,7 +53,7 @@ export default function GameOverview({
         <div className="w-1/2 px-12 pt-16">
           <div className="flex flex-col items-center justify-center space-y-10">
             {gameEntries.map((entry, index) => (
-              <GameEntry game={entry} key={index}></GameEntry>
+              <GameEntry game={entry} key={index} botId={botId}></GameEntry>
             ))}
             <Pagination
               initalPage={pageNumber}
