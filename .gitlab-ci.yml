@@ -24,7 +24,7 @@ analysis:frontend:
   image: node:20.9.0
   stage: analysis
   script:
-    - ls
+    - docker login registry.reset.inso-w.at $CI_REGISTRY_USER $CI_REGISTRY_PASSWORD
     - printenv
     - apt-get update -qq && apt-get install -y nodejs
     - cd ${FRONTEND_DIR}
