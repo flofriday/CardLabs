@@ -156,6 +156,10 @@ deploy:
     - cat management-service.yaml
     - cat gameserver-service.yaml
     - kubectl apply -f kubernetes.yaml,rabbitmq-service.yaml,frontend-service.yaml,management-service.yaml,gameserver-service.yaml
+    - sleep 15
+    - kubectl get services
+    - kubectl get pods --all-namespaces
+    - kubectl get events --sort-by=.metadata.creationTimestamp
   dependencies:
     - push:frontend
     - push:management
