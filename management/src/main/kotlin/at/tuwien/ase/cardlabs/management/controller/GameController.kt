@@ -56,7 +56,7 @@ class GameController(
         @RequestParam(required = false, defaultValue = "10") pageSize: Int,
     ): ResponseEntity<Page<Game>> {
         logger.info("User ${user.id} attempts to fetch all the matches from bot $botId (pageNumber=$pageNumber, pageSize=$pageSize)")
-        botService.fetch(user, botId);
+        botService.fetch(user, botId)
         val pageable = PageRequest.of(pageNumber, pageSize)
         val result = gameService.fetchAllGamesWithBot(user, botId, pageable)
         return ResponseEntity

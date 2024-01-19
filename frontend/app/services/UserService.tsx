@@ -139,7 +139,7 @@ export function getUserProfilePicture(jwt: string): string {
     username = "Placeholder";
   } else {
     const payload = decodeJwt(jwt);
-    username = payload.account_username as string;
+    username = payload["account-username"] as string;
   }
 
   const saturation = 100;
