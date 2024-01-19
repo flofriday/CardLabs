@@ -17,6 +17,13 @@ cache:
     - .gradle/caches
     - ${MANAGEMENT_DIR}/build
 
+analysis:docker:
+  image: amazoncorretto:21-alpine
+  stage: analysis
+  script:
+    - docker login registry.reset.inso-w.at $CI_REGISTRY_USER $CI_REGISTRY_PASSWORD
+    - printenv
+
 #########################
 ### Frontend pipeline ###
 #########################
@@ -24,8 +31,6 @@ analysis:frontend:
   image: node:20.9.0
   stage: analysis
   script:
-    - docker login registry.reset.inso-w.at $CI_REGISTRY_USER $CI_REGISTRY_PASSWORD
-    - printenv
     - apt-get update -qq && apt-get install -y nodejs
     - cd ${FRONTEND_DIR}
     - npm install
