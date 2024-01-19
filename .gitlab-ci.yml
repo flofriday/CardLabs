@@ -26,8 +26,6 @@ analysis:docker_test:
     - docker login --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
     - docker build -t ${DOCKER_IMAGE_REGISTRY}/frontend:$CI_PIPELINE_ID ./frontend
     - docker push ${DOCKER_IMAGE_REGISTRY}/frontend:$CI_PIPELINE_ID
-  dependencies:
-    - build:frontend
   only:
     - 40-continious-deployment
 
