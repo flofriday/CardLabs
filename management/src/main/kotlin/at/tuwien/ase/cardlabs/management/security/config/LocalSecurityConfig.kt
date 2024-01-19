@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -44,15 +45,17 @@ class LocalSecurityConfig(private val accountService: AccountService) {
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/account", "POST")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/open", "GET")).permitAll()
                     .anyRequest().authenticated()
             }
-            .sessionManagement { sessionManagement ->
-                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            }
-            .addFilterBefore(
-                JwtAuthenticationFilter(DatabaseUserDetailsService(accountService)),
-                UsernamePasswordAuthenticationFilter::class.java,
-            )
+            .oauth2Login(Customizer.withDefaults())
+//            .sessionManagement { sessionManagement ->
+//                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//            }
+//            .addFilterBefore(
+//                JwtAuthenticationFilter(DatabaseUserDetailsService(accountService)),
+//                UsernamePasswordAuthenticationFilter::class.java,
+//            )
 
         return http.build()
     }

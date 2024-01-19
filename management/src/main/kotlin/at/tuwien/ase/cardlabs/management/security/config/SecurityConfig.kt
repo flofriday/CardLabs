@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -28,7 +29,7 @@ class SecurityConfig(private val accountService: AccountService) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http
+        return http
             .csrf { csrf ->
                 csrf.disable()
             }
@@ -37,17 +38,18 @@ class SecurityConfig(private val accountService: AccountService) {
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/account", "POST")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/account/open", "GET")).permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement { sessionManagement ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
-            .addFilterBefore(
-                JwtAuthenticationFilter(DatabaseUserDetailsService(accountService)),
-                UsernamePasswordAuthenticationFilter::class.java,
-            )
-
-        return http.build()
+            .oauth2Login(Customizer.withDefaults())
+//            .addFilterBefore(
+//                JwtAuthenticationFilter(DatabaseUserDetailsService(accountService)),
+//                UsernamePasswordAuthenticationFilter::class.java,
+//            )
+            .build()
     }
 
     @Bean
