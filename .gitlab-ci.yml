@@ -24,6 +24,8 @@ analysis:frontend:
   image: node:20.9.0
   stage: analysis
   script:
+    - ls
+    - printenv
     - apt-get update -qq && apt-get install -y nodejs
     - cd ${FRONTEND_DIR}
     - npm install
@@ -46,11 +48,12 @@ push:frontend:
   image: amazoncorretto:21-alpine
   stage: push
   script:
-    - cat secret-dockercfg
     - docker build -t ${DOCKER_IMAGE_REGISTRY}/frontend:latest ./frontend
     - docker push ${DOCKER_IMAGE_REGISTRY}/frontend:latest
   dependencies:
     - build:frontend
+  only:
+    - 40-continious-deployment
 
 ###########################
 ### Management pipeline ###
@@ -93,6 +96,8 @@ push:management:
     - docker push ${DOCKER_IMAGE_REGISTRY}/management:latest
   dependencies:
     - test:management
+  only:
+    - 40-continious-deployment
 
 ###########################
 ### GameServer pipeline ###
@@ -124,6 +129,8 @@ push:gameserver:
     - docker push ${DOCKER_IMAGE_REGISTRY}/gameserver:latest
   dependencies:
     - test:gameserver
+  only:
+    - 40-continious-deployment
 
 ############################
 ### Continous deployment ###
