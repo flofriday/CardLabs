@@ -9,16 +9,31 @@ import org.springframework.security.core.Authentication
  */
 interface TokenService {
 
+    /**
+     * Generate a token pair containing a refresh token and access token
+     */
     fun generateRefreshToken(authentication: Authentication): TokenPair
 
+    /**
+     * Generate an access token from a refresh token
+     */
     @Throws(TokenExpiredException::class, InvalidTokenException::class)
     fun generateAccessToken(refreshToken: String): Token
 
+    /**
+     * Verify if a refresh token is valid. If not throw an exception.
+     */
     @Throws(TokenExpiredException::class, InvalidTokenException::class)
-    fun isValidRefreshToken(token: String): Boolean
+    fun verifyValidRefreshToken(token: String): Unit
 
+    /**
+     * Verify if an access token is valid. If not throw an exception.
+     */
     @Throws(TokenExpiredException::class, InvalidTokenException::class)
-    fun isValidAccessToken(token: String): Boolean
+    fun verifyValidAccessToken(token: String): Unit
 
+    /**
+     * Extract the username from a refresh/access token
+     */
     fun extractAccountUsername(token: String): String
 }

@@ -1,4 +1,8 @@
 import { setCookie, deleteCookie } from "cookies-next";
+
+/**
+ * Returns if the refresh token is still valid or a new one has successfully been received
+ */
 export async function refreshAccessToken(): Promise<boolean> {
   const expireStr = localStorage.getItem("auth_token_expire");
   if (expireStr === null) {

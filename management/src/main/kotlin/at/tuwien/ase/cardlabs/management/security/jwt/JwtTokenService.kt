@@ -22,12 +22,9 @@ class JwtTokenService(
     private val jwtConfig: JwtConfig
 ) : TokenService {
 
-    companion object {
-
-        private const val CLAIM_ACCOUNT_ID: String = "account-id"
-        private const val CLAIM_ACCOUNT_USERNAME: String = "account-username"
-        private const val CLAIM_TOKEN_TYPE: String = "token-type"
-    }
+    private val claimAccountIdFieldName: String = "account-id"
+    private val claimAccountUsernameFieldName: String = "account-username"
+    private val claimAccountTokenTypeFieldName: String = "token-type"
 
     override fun generateRefreshToken(authentication: Authentication): TokenPair {
         val userDetails = authentication.principal as CardLabUser
@@ -38,28 +35,26 @@ class JwtTokenService(
 
     override fun generateAccessToken(refreshToken: String): Token {
         // no need to check for the boolean value as it always throws an exception if invalid
-        isValidRefreshToken(refreshToken)
+        verifyValidRefreshToken(refreshToken)
         return createAccessToken(refreshToken)
     }
 
-    override fun isValidRefreshToken(token: String): Boolean {
+    override fun verifyValidRefreshToken(token: String) {
         if (isTokenExpired(token)) {
             throw TokenExpiredException("The token is expired")
         }
         if (getTokenType(token) != TokenType.REFRESH_TOKEN) {
             throw InvalidTokenException("Invalid token type")
         }
-        return true
     }
 
-    override fun isValidAccessToken(token: String): Boolean {
+    override fun verifyValidAccessToken(token: String) {
         if (isTokenExpired(token)) {
             throw TokenExpiredException("The token is expired")
         }
         if (getTokenType(token) != TokenType.ACCESS_TOKEN) {
             throw InvalidTokenException("Invalid token type")
         }
-        return true
     }
 
     // === Token creation functions ===
@@ -73,8 +68,8 @@ class JwtTokenService(
 
     private fun createAccessToken(refreshToken: String): Token {
         val claims = extractAllClaims(refreshToken)
-        val accountId = (claims[CLAIM_ACCOUNT_ID] as Int).toLong()
-        val accountUsername = claims[CLAIM_ACCOUNT_USERNAME] as String
+        val accountId = (claims[claimAccountIdFieldName] as Int).toLong()
+        val accountUsername = claims[claimAccountUsernameFieldName] as String
         return createToken(
             accountUsername,
             createClaim(accountId, accountUsername, TokenType.ACCESS_TOKEN),
@@ -92,9 +87,9 @@ class JwtTokenService(
 
     private fun createClaim(accountId: Long, accountUsername: String, tokenType: TokenType): Map<String, Any> {
         val claims = mutableMapOf<String, Any>()
-        claims[CLAIM_ACCOUNT_ID] = accountId
-        claims[CLAIM_ACCOUNT_USERNAME] = accountUsername
-        claims[CLAIM_TOKEN_TYPE] = tokenType
+        claims[claimAccountIdFieldName] = accountId
+        claims[claimAccountUsernameFieldName] = accountUsername
+        claims[claimAccountTokenTypeFieldName] = tokenType
         return claims
     }
 
@@ -132,10 +127,10 @@ class JwtTokenService(
     @Throws(InvalidTokenException::class)
     private fun getTokenType(token: String): TokenType {
         val claims = extractAllClaims(token)
-        if (claims[CLAIM_TOKEN_TYPE] == null) {
+        if (claims[claimAccountTokenTypeFieldName] == null) {
             throw InvalidTokenException("The token type is not set")
         }
-        val tokenType = claims[CLAIM_TOKEN_TYPE] as String
+        val tokenType = claims[claimAccountTokenTypeFieldName] as String
         try {
             return TokenType.valueOf(tokenType)
         } catch (exception: IllegalArgumentException) {
@@ -153,6 +148,6 @@ class JwtTokenService(
 
     override fun extractAccountUsername(token: String): String {
         val claims = extractAllClaims(token)
-        return claims[CLAIM_ACCOUNT_USERNAME] as String
+        return claims[claimAccountUsernameFieldName] as String
     }
 }
