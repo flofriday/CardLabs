@@ -44,3 +44,8 @@ spec:
               value: "http://23ws-ase-pr-inso-04.apps.student.inso-w.at/rabbitmq"
       imagePullSecrets:
         - name: secret-dockercfg
+  revisionHistoryLimit: 2
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2

@@ -41,7 +41,6 @@ spec:
               memory: "1000Mi"
               cpu: "200m"
               ephemeral-storage: "200Mi"
-
           ports:
             - containerPort: 5672
             - containerPort: 15672

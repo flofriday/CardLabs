@@ -40,7 +40,12 @@ spec:
           ports:
             - containerPort: 3000
           env:
-            - name: MANAGMENT_HOST
+            - name: MANAGEMENT_HOST
               value: "http://23ws-ase-pr-inso-04.apps.student.inso-w.at/management"
       imagePullSecrets:
         - name: secret-dockercfg
+  revisionHistoryLimit: 2
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
