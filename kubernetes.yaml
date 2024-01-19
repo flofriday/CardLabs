@@ -10,20 +10,6 @@ spec:
     - host: "23ws-ase-pr-inso-04.apps.student.inso-w.at"
       http:
         paths:
-          - path: /management
-            pathType: Prefix
-            backend:
-              service:
-                name: management-service
-                port:
-                  number: 8080
-          - path: /gameserver
-            pathType: Prefix
-            backend:
-              service:
-                name: gameserver-service
-                port:
-                  number: 8081
           - path: /
             pathType: Prefix
             backend:
@@ -31,10 +17,3 @@ spec:
                 name: frontend-service
                 port:
                   number: 3000
-          - path: /rabbitmq
-            pathType: Prefix
-            backend:
-              service:
-                name: rabbitmq-service
-                port:
-                  number: 5672

@@ -7,7 +7,7 @@ spec:
     app: management
   ports:
     - protocol: TCP
-      port: 8081
+      port: 8080
       targetPort: 8080
 ---
 apiVersion: apps/v1
@@ -40,8 +40,14 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: RMQ_HOST
-              value: "http://23ws-ase-pr-inso-04.apps.student.inso-w.at/rabbitmq"
+            - name: RABBITMQ_HOST
+              value: "rabbitmq"
+            - name: RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_DEFAULT_USER
+              value: "guest"
+            - name: RABBITMQ_DEFAULT_PASS
+              value: "guest"
       imagePullSecrets:
         - name: secret-dockercfg
   revisionHistoryLimit: 2

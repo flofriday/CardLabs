@@ -6,7 +6,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: process.env.MANAGMENT_HOST ? `${process.env.MANAGMENT_HOST}/:path*` : "http://23ws-ase-pr-inso-04.apps.student.inso-w.at/management/:path*",
+        destination: process.env.MANAGMENT_HOST ? `${process.env.MANAGMENT_HOST}/:path*` : "http://127.0.0.1:8080/:path*",
       },
     ];
   },
