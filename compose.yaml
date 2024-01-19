@@ -18,8 +18,6 @@ services:
     build:
       context: "./frontend/"
       dockerfile: "./Dockerfile"
-      args:
-        MANAGMENT_HOST: http://management:8080
     ports:
       - "3000:3000"
     environment:
