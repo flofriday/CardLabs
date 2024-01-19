@@ -73,7 +73,7 @@ class GameService(
             dao.disqualifiedBotId = null
             dao.turns = emptyList()
             dao.gameState = GameState.CREATED
-            dao.participatingBotsId = game.participatingBotsId
+            dao.participatingBotIds = game.participatingBotsIds
             gameDaos.add(dao)
         }
         return gameRepository.saveAll(gameDaos)

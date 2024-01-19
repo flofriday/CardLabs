@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // protected sites
-const protectedRoutes = ["/settings", "/dashboard", "/gameDetail"];
+const protectedRoutes = ["/settings", "/dashboard", "/bot", "/gameDetail"];
+
 
 function RedirectToForbidden(req: NextRequest): NextResponse<unknown> {
   const absoluteURL = new URL("/unauthorized", req.url);

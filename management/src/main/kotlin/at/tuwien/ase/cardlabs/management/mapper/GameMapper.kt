@@ -42,6 +42,7 @@ class GameMapper(
         gameDAO.winningBotId = matchResultQueueMessage.winningBotId
         gameDAO.disqualifiedBotId = matchResultQueueMessage.disqualifiedBotId
         gameDAO.turns = matchResultQueueMessage.turns.map(turnMapper::mapRound).toList()
+        gameDAO.participatingBotIds = matchResultQueueMessage.participatingBotIds
         return gameDAO
     }
 }

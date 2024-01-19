@@ -7,6 +7,7 @@ import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
 import at.tuwien.ase.cardlabs.management.security.authentication.JwtAuthenticationResponse
 import at.tuwien.ase.cardlabs.management.service.AccountService
+import at.tuwien.ase.cardlabs.management.util.Continent
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -19,6 +20,7 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import kotlin.streams.toList
 
 @WebApplicationTest
 @AutoConfigureMockMvc
@@ -34,13 +36,14 @@ class LocationIntegrationTests {
     @Autowired
     private lateinit var accountService: AccountService
 
-    private val countries: List<String> = listOf("Austria", "Germany", "Netherlands")
+    private val countries: List<Pair<String, Continent>> = listOf(Pair("Austria", Continent.EUROPE), Pair("Germany", Continent.EUROPE), Pair("Japan", Continent.EUROPE))
 
     @BeforeEach
     fun beforeEach() {
-        for (country: String in countries) {
+        for (country: Pair<String, Continent> in countries) {
             val c = LocationDAO()
-            c.name = country
+            c.name = country.first
+            c.continent = country.second
             locationRepository.save(c)
         }
     }
@@ -54,7 +57,7 @@ class LocationIntegrationTests {
             .andReturn()
         val jsonResponseString = result.response.contentAsString
         val response = jacksonObjectMapper().readValue<List<String>>(jsonResponseString)
-        assertEquals(countries, response)
+        assertEquals(countries.stream().map { f -> f.first }.toList(), response)
     }
 
     @Test
@@ -70,7 +73,7 @@ class LocationIntegrationTests {
             .andReturn()
         val jsonResponseString = result.response.contentAsString
         val response = jacksonObjectMapper().readValue<List<String>>(jsonResponseString)
-        assertEquals(countries, response)
+        assertEquals(countries.stream().map { f -> f.first }.toList(), response)
     }
 
     private fun getAuthenticationToken(username: String, password: String): String {

@@ -93,7 +93,7 @@ class GameIntegrationTests {
             Turn(0, topCard, drawPile, hand, actions, logMessages),
         )
         gameDAO.gameState = GameState.CREATED
-        gameDAO.participatingBotsId = listOf(botId)
+        gameDAO.participatingBotIds = listOf(botId)
         var x = gameRepository.save(gameDAO)
         val gameId = x.id!!
 
@@ -156,7 +156,7 @@ class GameIntegrationTests {
             Turn(0, topCard, emptyList(), emptyList(), emptyList(), logMessages),
         )
         gameDAO.gameState = GameState.CREATED
-        gameDAO.participatingBotsId = listOf(botId)
+        gameDAO.participatingBotIds = listOf(botId)
         val gameId = gameRepository.save(gameDAO).id!!
 
         val result = mockMvc.perform(
