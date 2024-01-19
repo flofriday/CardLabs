@@ -21,7 +21,7 @@ analysis:docker:
   image: docker:24.0.7-alpine3.19
   stage: analysis
   script:
-    - docker login registry.reset.inso-w.at --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD
+    - docker login --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
     - printenv
 
 #########################
