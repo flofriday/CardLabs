@@ -159,7 +159,6 @@ deploy:
     - sleep 15
     - kubectl get services
     - kubectl get pods
-    - kubectl get events --sort-by=.metadata.creationTimestamp
   dependencies:
     - push:frontend
     - push:management
