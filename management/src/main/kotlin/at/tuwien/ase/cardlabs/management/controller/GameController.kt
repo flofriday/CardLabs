@@ -3,6 +3,7 @@ package at.tuwien.ase.cardlabs.management.controller
 import at.tuwien.ase.cardlabs.management.controller.model.game.Game
 import at.tuwien.ase.cardlabs.management.database.model.game.log.LogMessage
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
+import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import at.tuwien.ase.cardlabs.management.service.game.GameService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class GameController(
     val gameService: GameService,
+    val botService: BotService
 ) {
 
     private final val logger = LoggerFactory.getLogger(javaClass)
@@ -54,6 +56,7 @@ class GameController(
         @RequestParam(required = false, defaultValue = "10") pageSize: Int,
     ): ResponseEntity<Page<Game>> {
         logger.info("User ${user.id} attempts to fetch all the matches from bot $botId (pageNumber=$pageNumber, pageSize=$pageSize)")
+        botService.fetch(user, botId);
         val pageable = PageRequest.of(pageNumber, pageSize)
         val result = gameService.fetchAllGamesWithBot(user, botId, pageable)
         return ResponseEntity
