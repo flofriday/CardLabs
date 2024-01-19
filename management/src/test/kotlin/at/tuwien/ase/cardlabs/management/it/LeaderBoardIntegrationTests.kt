@@ -212,7 +212,7 @@ class LeaderBoardIntegrationTests {
     @Test
     fun whenGetPublicLeaderboardGlobalView_withoutJWT_expectGlobalViewPage() {
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=GLOBAL"),
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=GLOBAL"),
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
@@ -234,14 +234,14 @@ class LeaderBoardIntegrationTests {
     @Test
     fun whenGetPublicLeaderboardContinentView_withoutJWT_expect400() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=CONTINENT"),
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=CONTINENT"),
         ).andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
     fun whenGetPublicLeaderboardCountryView_withoutJWT_expect400() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=COUNTRY"),
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=COUNTRY"),
         ).andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
@@ -250,7 +250,7 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=GLOBAL")
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=GLOBAL")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
@@ -274,7 +274,7 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=CONTINENT&filter=Austria")
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=CONTINENT&filter=Austria")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
@@ -298,7 +298,7 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=COUNTRY&filter=Austria")
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=COUNTRY&filter=Austria")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
@@ -322,7 +322,7 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&regionType=GLOBAL")
+            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&region=GLOBAL")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
@@ -346,7 +346,7 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&regionType=GLOBAL")
+            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&region=GLOBAL")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
@@ -370,7 +370,7 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&regionType=GLOBAL")
+            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&region=GLOBAL")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
