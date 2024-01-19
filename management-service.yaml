@@ -41,6 +41,6 @@ spec:
             - containerPort: 8080
           env:
             - name: RMQ_HOST
-              value: "http://23ws-ase-pr-inso-04.apps.student.inso-w.at:5672"
+              value: "http://23ws-ase-pr-inso-04.apps.student.inso-w.at/rabbitmq"
       imagePullSecrets:
         - name: secret-dockercfg
