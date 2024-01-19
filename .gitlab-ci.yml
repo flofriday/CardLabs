@@ -17,6 +17,20 @@ cache:
     - .gradle/caches
     - ${MANAGEMENT_DIR}/build
 
+analysis:docker_test:
+  image: docker:24.0.7-alpine3.19
+  services:
+    - docker:dind
+  stage: push
+  script:
+    - docker login --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
+    - docker build -t ${DOCKER_IMAGE_REGISTRY}/frontend:$CI_PIPELINE_ID ./frontend
+    - docker push ${DOCKER_IMAGE_REGISTRY}/frontend:$CI_PIPELINE_ID
+  dependencies:
+    - build:frontend
+  only:
+    - 40-continious-deployment
+
 #########################
 ### Frontend pipeline ###
 #########################
