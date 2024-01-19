@@ -18,7 +18,7 @@ export async function getGlobalTop5LeaderBoardEntries(
     return {} as const as leaderBoardEntry[];
   }
 
-  let url = `/api/leaderboard/public?page=${0}&entriesPerPage=${5}&regionType=${regionType.toUpperCase()}`;
+  let url = `/api/leaderboard/public?page=${0}&entriesPerPage=${5}&region=${regionType.toUpperCase()}`;
 
   if (regionType !== RegionType.GLOBAL) {
     let filter = null;
@@ -28,7 +28,7 @@ export async function getGlobalTop5LeaderBoardEntries(
       url = `${url}&filter=${filter}`;
     } else {
       regionType = RegionType.GLOBAL;
-      url = `/api/leaderboard/public?page=${0}&entriesPerPage=${5}&regionType=${regionType.toUpperCase()}`;
+      url = `/api/leaderboard/public?page=${0}&entriesPerPage=${5}&region=${regionType.toUpperCase()}`;
     }
   }
 
@@ -52,7 +52,7 @@ export async function getMyTop5LeaderBoardEntries(
   regionType: RegionType
 ): Promise<leaderBoardEntry[]> {
   const user = await getUserInfo();
-  let url = `/api/leaderboard/private?page=${0}&entriesPerPage=${5}&regionType=${regionType.toUpperCase()}&userId=${
+  let url = `/api/leaderboard/private?page=${0}&entriesPerPage=${5}&region=${regionType.toUpperCase()}&userId=${
     user.id
   }`;
 
@@ -72,7 +72,7 @@ export async function getMyTop5LeaderBoardEntries(
       url = `${url}&filter=${filter}`;
     } else {
       regionType = RegionType.GLOBAL;
-      url = `/api/leaderboard/private?page=${0}&entriesPerPage=${5}&regionType=${regionType.toUpperCase()}&userId=${
+      url = `/api/leaderboard/private?page=${0}&entriesPerPage=${5}&region=${regionType.toUpperCase()}&userId=${
         user.id
       }`;
     }
@@ -106,11 +106,11 @@ export async function getLeaderBoardPage(
     const loggedIn =
       getCookie("auth_token") !== null && getCookie("auth_token") !== undefined;
 
-    let url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}`;
+    let url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&region=${regionType.toUpperCase()}`;
 
     if (!loggedIn) {
       regionType = RegionType.GLOBAL;
-      url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}`;
+      url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&region=${regionType.toUpperCase()}`;
     } else if (regionType !== RegionType.GLOBAL) {
       let filter = null;
       const user = await getUserInfo();
@@ -119,7 +119,7 @@ export async function getLeaderBoardPage(
         url = `${url}&filter=${filter}`;
       } else {
         regionType = RegionType.GLOBAL;
-        url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}`;
+        url = `/api/leaderboard/public?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&region=${regionType.toUpperCase()}`;
       }
     }
 
@@ -137,7 +137,7 @@ export async function getLeaderBoardPage(
       return (await response.json()) as Page<leaderBoardEntry>;
     }
   } else if (boardType === LeaderBoardType.MY_BOTS) {
-    let url = `/api/leaderboard/private?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}&userId=${userId}`;
+    let url = `/api/leaderboard/private?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&region=${regionType.toUpperCase()}&userId=${userId}`;
 
     const jwt = getCookie("auth_token");
 
@@ -156,7 +156,7 @@ export async function getLeaderBoardPage(
         url = `${url}&filter=${filter}`;
       } else {
         regionType = RegionType.GLOBAL;
-        url = `/api/leaderboard/private?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&regionType=${regionType.toUpperCase()}&userId=${userId}`;
+        url = `/api/leaderboard/private?page=${pageNumber}&entriesPerPage=${numberOfEntriesPerPage}&region=${regionType.toUpperCase()}&userId=${userId}`;
       }
     }
 

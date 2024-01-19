@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service
 
 @Service
 class LeaderBoardService(private val leaderBoardRepository: LeaderBoardRepository, private val locationRepository: LocationRepository) {
-    fun getLeaderBoardPage(entriesPerPage: Int, page: Int, regionType: Region, filter: String): Page<LeaderBoardEntry> {
+    fun getLeaderBoardPage(entriesPerPage: Int, page: Int, region: Region, filter: String): Page<LeaderBoardEntry> {
         val pageable = PageRequest.of(page, entriesPerPage)
 
-        if (regionType == Region.GLOBAL) {
+        if (region == Region.GLOBAL) {
             return leaderBoardRepository.getLeaderBoardEntriesGlobal(pageable)
-        } else if (regionType == Region.CONTINENT) {
+        } else if (region == Region.CONTINENT) {
             val continent = locationRepository.findByName(filter) ?: throw IllegalArgumentException()
             return leaderBoardRepository.getLeaderBoardEntriesContinent(continent.continent, pageable)
         } else {
@@ -25,12 +25,12 @@ class LeaderBoardService(private val leaderBoardRepository: LeaderBoardRepositor
         }
     }
 
-    fun getPrivateLeaderBoardPage(entriesPerPage: Int, page: Int, regionType: Region, filter: String, user: CardLabUser): Page<LeaderBoardEntry> {
+    fun getPrivateLeaderBoardPage(entriesPerPage: Int, page: Int, region: Region, filter: String, user: CardLabUser): Page<LeaderBoardEntry> {
         val pageable = PageRequest.of(page, entriesPerPage)
 
-        if (regionType == Region.GLOBAL) {
+        if (region == Region.GLOBAL) {
             return leaderBoardRepository.getPrivateLeaderBoardEntriesGlobal(user.id, pageable)
-        } else if (regionType == Region.CONTINENT) {
+        } else if (region == Region.CONTINENT) {
             val continent = locationRepository.findByName(filter) ?: throw IllegalArgumentException()
             return leaderBoardRepository.getPrivateLeaderBoardEntriesContinent(user.id, continent.continent, pageable)
         } else {
