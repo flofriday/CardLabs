@@ -3,9 +3,12 @@ package at.tuwien.ase.cardlabs.management.error
 import at.tuwien.ase.cardlabs.management.error.account.AccountDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.account.AccountExistsException
 import at.tuwien.ase.cardlabs.management.error.account.LocationNotFoundException
+import at.tuwien.ase.cardlabs.management.error.authentication.InvalidTokenException
+import at.tuwien.ase.cardlabs.management.error.authentication.TokenExpiredException
 import at.tuwien.ase.cardlabs.management.error.bot.BotDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.bot.BotStateException
 import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
+import io.jsonwebtoken.ExpiredJwtException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -83,6 +86,27 @@ class GlobalExceptionHandler {
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(ex.message)
+    }
+
+    @ExceptionHandler(TokenExpiredException::class)
+    fun handleTokenExpired(ex: TokenExpiredException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(ex.message)
+    }
+
+    @ExceptionHandler(InvalidTokenException::class)
+    fun handleInvalidToken(ex: InvalidTokenException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(ex.message)
+    }
+
+    @ExceptionHandler(ExpiredJwtException::class)
+    fun handleExpiredJwtException(ex: ExpiredJwtException): ResponseEntity<Unit> {
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .build()
     }
 
     @ExceptionHandler(UsernameNotFoundException::class)
