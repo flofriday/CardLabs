@@ -29,12 +29,12 @@ spec:
           image: registry.reset.inso-w.at/2023ws-ase-pr-group/23ws-ase-pr-inso-04/gameserver:latest
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "10m"
-              ephemeral-storage: "100Mi"
+              memory: "500Mi"
+              cpu: "200m"
+              ephemeral-storage: "50Mi"
             limits:
-              memory: "280Mi"
-              cpu: "500m"
+              memory: "1000Mi"
+              cpu: "400m"
               ephemeral-storage: "100Mi"
 
           ports:

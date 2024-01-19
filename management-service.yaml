@@ -29,13 +29,13 @@ spec:
           image: registry.reset.inso-w.at/2023ws-ase-pr-group/23ws-ase-pr-inso-04/management:latest
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "10m"
-              ephemeral-storage: "100Mi"
+              memory: "150Mi"
+              cpu: "200m"
+              ephemeral-storage: "500Mi"
             limits:
-              memory: "280Mi"
-              cpu: "500m"
-              ephemeral-storage: "100Mi"
+              memory: "300Mi"
+              cpu: "400m"
+              ephemeral-storage: "1000Mi"
 
           ports:
             - containerPort: 8080
