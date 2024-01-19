@@ -43,7 +43,7 @@ export default function GameOverview({
 
   return (
     <div className="flex flex-col h-full">
-      <LeftPageHeader title="Game Overview" />
+      <LeftPageHeader title="Match Overview" />
 
       <div className="flex flex-1 justify-center items-center pt-20">
         <div className="w-1/4 p-12">
@@ -62,6 +62,7 @@ export default function GameOverview({
             />
           </div>
         </div>
+        <div className="w-1/4 p-12"></div>
       </div>
     </div>
   );
