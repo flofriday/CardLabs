@@ -2,8 +2,6 @@ FROM gradle:8.5-jdk21
 
 WORKDIR /app
 
-ENV GRADLE_OPTS="-Xmx1000m"
-
 COPY settings.gradle build.gradle ./
 RUN gradle dependencies
 COPY . .
