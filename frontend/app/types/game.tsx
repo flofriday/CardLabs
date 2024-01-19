@@ -7,3 +7,5 @@ interface Game {
   turns: any;
   gameState: string;
 }
+
+export type { Game };

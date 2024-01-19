@@ -7,39 +7,46 @@ import { useState, useEffect } from "react";
 import GameEntry from "./gameEntry";
 import { getGames } from "@/app/services/GameService";
 import { notFound } from "next/navigation";
+import { Game } from "@/app/types/game";
 
 export default function GameOverview({
   params,
 }: {
   params: { slug: string };
 }): JSX.Element {
+  const [gameEntries, setGameEntries] = useState<Game[]>([]);
+  const [pageNumber, setPageNumber] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
+  useEffect(() => {
+    if (isNaN(Number(params.slug))) {
+      return notFound();
+    }
+    getGames(Number(params.slug), 6, pageNumber)
+      .then((page) => {
+        setGameEntries(page.content);
+        setTotalPages(page.totalPages);
+        console.log(page.content);
+      })
+      .catch(() => {});
+  }, [pageNumber, params.slug]);
+
   if (isNaN(Number(params.slug))) {
     return notFound();
   }
 
   const botId = Number(params.slug);
 
-  const entriesPerPage = 5;
-  const [gameEntries, setGameEntries] = useState<Game[]>([]);
-  const [pageNumber, setPageNumber] = useState<number>(0);
-  const [totalPages, setTotalPages] = useState<number>(1);
-
   const handlePageChange = (page: number): void => {
     setPageNumber(page);
 
-    getGames(botId, 6, pageNumber).then((page) => {
-      setGameEntries(page.content);
-      setTotalPages(page.totalPages);
-    });
+    getGames(botId, 6, pageNumber)
+      .then((page) => {
+        setGameEntries(page.content);
+        setTotalPages(page.totalPages);
+      })
+      .catch(() => {});
   };
-
-  useEffect(() => {
-    getGames(botId, 6, pageNumber).then((page) => {
-      setGameEntries(page.content);
-      setTotalPages(page.totalPages);
-      console.log(page.content);
-    });
-  }, [pageNumber, botId]);
 
   return (
     <div className="flex flex-col h-full">

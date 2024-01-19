@@ -178,7 +178,7 @@ export async function getBotMatchOverviewPage(
     return await response.json();
   }
   */
-  if (pageNumber == 1) {
+  if (pageNumber === 1) {
     return [
       {
         gameDate: new Date("2023-01-01T12:00:00"),

@@ -1,6 +1,8 @@
 import { getCookie } from "cookies-next";
 import { Page } from "../types/contentPage";
 import { refreshAccessToken } from "./RefreshService";
+import { toast } from "react-toastify";
+import { Game } from "../types/game";
 
 export async function getGames(
   botId: number,
@@ -22,8 +24,8 @@ export async function getGames(
     }
   );
 
-  if (response.status == 200) {
-    let page = (await response.json()) as Page<Game>;
+  if (response.status === 200) {
+    const page = (await response.json()) as Page<Game>;
     for (let i = 0; i < page.content.length; i++) {
       page.content[i].startTime = new Date(page.content[i].startTime);
       page.content[i].endTime = new Date(page.content[i].endTime);
@@ -31,5 +33,6 @@ export async function getGames(
     return page;
   }
 
+  toast.error("An error occurred. Please try again later.");
   throw Error();
 }
