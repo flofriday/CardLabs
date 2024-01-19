@@ -18,13 +18,13 @@ cache:
     - ${MANAGEMENT_DIR}/build
 
 analysis:docker_test:
-  image: quay.io/buildah/stable:latest
+  image: quay.io/podman/stable
   stage: analysis
   variables:
     STORAGE_DRIVER: vfs
     BUILDAH_FORMAT: docker
   script:
-    - buildah login --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
+    - podman login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
   only:
     - 40-continious-deployment
 
