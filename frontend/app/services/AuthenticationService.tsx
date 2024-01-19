@@ -15,7 +15,7 @@ export async function validToken(jwt: string): Promise<boolean> {
   // sadly this can't be "api/authentication", but I dont know why
   const managementUrl = process.env.MANAGMENT_HOST ?? "http://127.0.0.1:8080";
 
-  const response = await fetch(`${managementUrl}/:path*`, {
+  const response = await fetch(`${managementUrl}/authentication`, {
     mode: "cors",
     method: "GET",
     headers: {
@@ -24,9 +24,5 @@ export async function validToken(jwt: string): Promise<boolean> {
     },
   });
 
-  if (response.status === 200) {
-    return true;
-  } else {
-    return false;
-  }
+  return response.status === 200;
 }

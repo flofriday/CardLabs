@@ -18,6 +18,8 @@ services:
     build:
       context: "./frontend/"
       dockerfile: "./Dockerfile"
+      args:
+        MANAGMENT_HOST: http://management:8080
     ports:
       - "3000:3000"
     environment:
@@ -32,7 +34,10 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - RMQ_HOST=http://rabbitmq:5672
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -44,7 +49,9 @@ services:
     ports:
       - "8081:8080"
     environment:
-      - RMQ_HOST=http://rabbitmq:5672
+      - RMQ_HOST=rabbitmq
+      - RMQ_USER=guest
+      - RMQ_PASSWORD=guest
     depends_on:
       rabbitmq:
         condition: service_healthy
