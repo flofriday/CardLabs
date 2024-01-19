@@ -6,6 +6,22 @@ import org.junit.Test
 
 class StringTests {
     @Test
+    fun isStringOnString() {
+        val program = """(string? "flo")"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
+    fun isStringOnInt() {
+        val program = """(string? 34)"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        Assert.assertEquals(false, (result as BooleanValue).value)
+    }
+
+    @Test
     fun stringAppend() {
         val program = """(string-append "abc" "efg")"""
         val result = SchemeInterpreter().run(program)
@@ -65,6 +81,22 @@ class StringTests {
         val result = SchemeInterpreter().run(program)
         assert(result is FloatValue)
         Assert.assertEquals(50.3456f, (result as FloatValue).value)
+    }
+
+    @Test
+    fun symbolToString() {
+        val program = """(symbol->string 'test)"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is StringValue)
+        Assert.assertEquals("test", (result as StringValue).value)
+    }
+
+    @Test
+    fun stringToSymbol() {
+        val program = """(string->symbol "paul")"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is SymbolValue)
+        Assert.assertEquals("paul", (result as SymbolValue).value)
     }
 
     @Test

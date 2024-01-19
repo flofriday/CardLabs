@@ -42,6 +42,32 @@ class IterationTest {
         Assert.assertEquals(42, (result as IntegerValue).value)
     }
 
-    // FIXME: There are tests missing to verify that the command gets executed every iteration, but at the time of
-    // writing there aren't any good side-effect we could test for.
+    @Test
+    fun iterationVerifyCommandExecution() {
+        val program =
+            """
+            (define cnt 0)
+            (do (
+                    (i 0 (+ i 1)))
+                ((>= i 100) i)
+                (set! cnt (+ cnt 1)))
+            cnt
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is IntegerValue)
+        Assert.assertEquals(100, (result as IntegerValue).value)
+    }
+
+    @Test
+    fun badVariableNameClash() {
+        val program =
+            """
+             (do (
+                (i 0 (+ i 1))
+                (i 0 (+ i 1))
+                )
+            ((>= i 100) i))
+            """.trimIndent()
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
 }

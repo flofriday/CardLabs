@@ -1,9 +1,11 @@
 package at.tuwien.ase.cardlabs.management.controller
 
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
-import at.tuwien.ase.cardlabs.management.security.authentication.JwtAuthenticationResponse
-import at.tuwien.ase.cardlabs.management.security.authentication.LoginRequest
-import at.tuwien.ase.cardlabs.management.security.jwt.JwtHelper
+import at.tuwien.ase.cardlabs.management.security.authentication.AccessTokenAuthenticationResponse
+import at.tuwien.ase.cardlabs.management.security.authentication.AuthRequest
+import at.tuwien.ase.cardlabs.management.security.authentication.AuthenticationResponse
+import at.tuwien.ase.cardlabs.management.security.authentication.RefreshTokenRequest
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,23 +18,34 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class AuthenticationController(val authenticationManager: AuthenticationManager) {
+class AuthenticationController(
+    private val authenticationManager: AuthenticationManager,
+    private val jwtTokenService: JwtTokenService,
+) {
 
     private final val logger = LoggerFactory.getLogger(javaClass)
 
     @PostMapping("/authentication/login")
-    fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<JwtAuthenticationResponse> {
-        logger.info("User ${loginRequest.username} attempts to login")
+    fun authRequest(@RequestBody authRequest: AuthRequest): ResponseEntity<AuthenticationResponse> {
+        logger.info("User ${authRequest.username} attempts to login")
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken.unauthenticated(
-                loginRequest.username,
-                loginRequest.password,
+                authRequest.username,
+                authRequest.password,
             ),
         )
 
-        val jwt = JwtHelper.generateToken(authentication)
+        val refreshToken = jwtTokenService.generateRefreshToken(authentication)
         return ResponseEntity.status(HttpStatus.OK)
-            .body(JwtAuthenticationResponse(loginRequest.username, jwt))
+            .body(AuthenticationResponse(refreshToken.refreshToken, refreshToken.accessToken))
+    }
+
+    @PostMapping("/authentication/refresh")
+    fun refreshToken(@RequestBody refreshTokenRequest: RefreshTokenRequest): ResponseEntity<AccessTokenAuthenticationResponse> {
+        logger.info("User attempts to generate a new access token")
+        val accessToken = jwtTokenService.generateAccessToken(refreshTokenRequest.refreshToken)
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(AccessTokenAuthenticationResponse(accessToken))
     }
 
     @GetMapping("/authentication")

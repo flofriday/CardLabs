@@ -6,6 +6,7 @@ interface Props {
 
 function onLogout(router: any): void {
   deleteCookie("auth_token");
+  deleteCookie("refresh_token");
   router.refresh();
   router.replace("/");
 }

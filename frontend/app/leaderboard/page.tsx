@@ -4,13 +4,10 @@ import Pagination from "../components/Pagination";
 import RegionSelector from "../components/RegionSelector";
 import LeftPageHeader from "../components/leftPageHeader";
 import Robot, { RobotType } from "../components/robot";
-import LeaderBoardEntry from "./LeaderBoardEntry";
+import LeaderBoardEntry from "../components/LeaderBoardEntry";
 import { useState, useEffect } from "react";
 import { leaderBoardEntry } from "../types/leaderBoardEntry";
-import {
-  getLeaderBoardPage,
-  getTotalNumberOfPages,
-} from "../services/LeaderBoardService";
+import { getLeaderBoardPage } from "../services/LeaderBoardService";
 import { RegionType } from "../types/RegionType";
 import { LeaderBoardType } from "../types/LeaderBoardType";
 
@@ -19,47 +16,29 @@ export default function Leaderboard(): JSX.Element {
   const [leaderBoardEntries, setLeaderBoardEntries] = useState<
     leaderBoardEntry[]
   >([]);
-  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(2);
   const [selectedRegion, setSelectedRegion] = useState(RegionType.GLOBAL);
 
   useEffect(() => {
-    getTotalNumberOfPages(entriesPerPage)
-      .then((pages) => {
-        setTotalPages(pages);
-      })
-      .catch(() => {});
     getLeaderBoardPage(
       entriesPerPage,
       pageNumber,
       selectedRegion,
       LeaderBoardType.ALL_BOTS
     )
-      .then((entries) => {
-        setLeaderBoardEntries(entries);
+      .then((p) => {
+        setLeaderBoardEntries(p.content);
+        setTotalPages(p.totalPages);
       })
       .catch(() => {});
-  });
+  }, [pageNumber, selectedRegion]);
 
-  const handlePageChange = (page: number): void => {
-    setPageNumber(page);
-
-    getLeaderBoardPage(5, page, selectedRegion, LeaderBoardType.ALL_BOTS)
-      .then((entries) => {
-        setLeaderBoardEntries(entries);
-      })
-      .catch(() => {});
-  };
-
-  const handleRegionChange = (region: RegionType): void => {
-    setSelectedRegion(region);
-
-    getLeaderBoardPage(5, pageNumber, selectedRegion, LeaderBoardType.ALL_BOTS)
-      .then((entries) => {
-        setLeaderBoardEntries(entries);
-      })
-      .catch(() => {});
-  };
+  useEffect(() => {
+    if (pageNumber >= totalPages) {
+      setPageNumber(totalPages - 1);
+    }
+  }, [totalPages]);
 
   return (
     <div className="flex flex-col h-full">
@@ -77,13 +56,20 @@ export default function Leaderboard(): JSX.Element {
             ))}
             <Pagination
               totalNumberOfPages={totalPages}
-              onPageChange={handlePageChange}
+              initalPage={pageNumber}
+              onPageChange={(e) => {
+                setPageNumber(e);
+              }}
             />
           </div>
         </div>
 
         <div className="w-1/4 p-12">
-          <RegionSelector onRegionChange={handleRegionChange} />
+          <RegionSelector
+            onRegionChange={(r) => {
+              setSelectedRegion(r);
+            }}
+          />
         </div>
       </div>
     </div>

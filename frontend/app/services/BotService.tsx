@@ -3,8 +3,10 @@ import { toast } from "react-toastify";
 import { MatchOverviewEntryType } from "../types/MatchOverviewEntryType";
 import { RegionType } from "../types/RegionType";
 import { Page } from "../types/contentPage";
+import { refreshAccessToken } from "./RefreshService";
 
 export async function getNewBotName(): Promise<string> {
+  await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
   const response = await fetch("/api/bot/name", {
@@ -28,6 +30,7 @@ export async function createBot(
   name: string,
   currentCode: string
 ): Promise<number> {
+  await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
   const response = await fetch("/api/bot", {
@@ -78,6 +81,7 @@ export interface Bot {
 }
 
 export async function getBot(id: number): Promise<Bot> {
+  await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
   const response = await fetch("/api/bot/" + id, {
@@ -105,6 +109,7 @@ export async function saveBot(
   id: number,
   currentCode: string
 ): Promise<boolean> {
+  await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
   const response = await fetch("/api/bot/" + id, {
@@ -130,6 +135,7 @@ export async function saveBot(
 }
 
 export async function deleteBot(id: number): Promise<boolean> {
+  await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
   const response = await fetch("/api/bot/" + id, {
@@ -262,6 +268,7 @@ export async function getAllBots(
   pageNumber: number,
   pageSize: number
 ): Promise<Page<Bot>> {
+  await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
   const response = await fetch(
@@ -301,6 +308,7 @@ export async function getBotRank(
   botId: number,
   region: RegionType
 ): Promise<number> {
+  await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
   const response = await fetch(
