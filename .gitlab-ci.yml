@@ -44,6 +44,8 @@ build:frontend:
 
 push:frontend:
   image: docker:24.0.7-alpine3.19
+  services:
+    - docker:dind
   stage: push
   script:
     - docker login --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
@@ -89,6 +91,8 @@ test:management:
 
 push:management:
   image: docker:24.0.7-alpine3.19
+  services:
+    - docker:dind
   stage: push
   script:
     - docker login --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
@@ -123,6 +127,8 @@ test:gameserver:
 
 push:gameserver:
   image: docker:24.0.7-alpine3.19
+  services:
+    - docker:dind
   stage: push
   script:
     - docker login --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
