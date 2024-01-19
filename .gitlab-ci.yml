@@ -24,8 +24,10 @@ analysis:docker_test:
     STORAGE_DRIVER: vfs
     BUILDAH_FORMAT: docker
   script:
-    - buildah login -u $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
+    - buildah login --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
+    - buildah images
     - docker build -t ${DOCKER_IMAGE_REGISTRY}/frontend:$CI_PIPELINE_ID ./frontend
+    - buildah images
     - docker push ${DOCKER_IMAGE_REGISTRY}/frontend:$CI_PIPELINE_ID
   only:
     - 40-continious-deployment
