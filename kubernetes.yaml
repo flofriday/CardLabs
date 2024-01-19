@@ -1,55 +1,3 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: 23ws-ase-pr-inso-04
-  namespace: 23ws-ase-pr-inso-04
-spec:
-  selector:
-    matchLabels:
-      app: 23ws-ase-pr-inso-04
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: 23ws-ase-pr-inso-04
-    spec:
-      containers:
-        - name: 23ws-ase-pr-inso-04-container
-          image: registry.reset.inso-w.at/2023ws-ase-pr-group/23ws-ase-pr-inso-04:latest
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "10m"
-              ephemeral-storage: "100Mi"
-            limits:
-              memory: "280Mi"
-              cpu: "500m"
-              ephemeral-storage: "100Mi"
-          ports:
-            - containerPort: 8080
-      imagePullSecrets:
-        - name: secret-dockercfg
-  revisionHistoryLimit: 2
-  strategy:
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 2
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: s-23ws-ase-pr-inso-04-service
-  namespace: 23ws-ase-pr-inso-04
-spec:
-  type: ClusterIP
-  clusterIP: None
-  selector:
-    app: 23ws-ase-pr-inso-04
-  ports:
-    - port: 8080
-      protocol: TCP
-      targetPort: 8080
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -66,23 +14,16 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: s-23ws-ase-pr-inso-04-service
+                name: management-service
                 port:
                   number: 8080
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: management-service
-                port:
-                  number: 8081
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
                 name: gameserver-service
                 port:
-                  number: 8082
+                  number: 8081
           - path: /
             pathType: Prefix
             backend:

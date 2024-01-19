@@ -2,12 +2,14 @@ stages:
   - analysis
   - build
   - test
+  - push
   - deploy
 
 variables:
   FRONTEND_DIR: "frontend"
   MANAGEMENT_DIR: "management"
   GAMESERVER_DIR: "gameserver"
+  DOCKER_IMAGE_REGISTRY: "registry.reset.inso-w.at/2023ws-ase-pr-group/23ws-ase-pr-inso-04"
 
 cache:
   paths:
@@ -39,6 +41,16 @@ build:frontend:
   dependencies:
     - analysis:frontend
   allow_failure: false
+
+push:frontend:
+  image: amazoncorretto:21-alpine
+  stage: push
+  script:
+    - cat secret-dockercfg
+    - docker build -t ${DOCKER_IMAGE_REGISTRY}/frontend:latest ./frontend
+    - docker push ${DOCKER_IMAGE_REGISTRY}/frontend:latest
+  dependencies:
+    - build:frontend
 
 ###########################
 ### Management pipeline ###
@@ -73,6 +85,15 @@ test:management:
     - build:management
   allow_failure: false
 
+push:management:
+  image: amazoncorretto:21-alpine
+  stage: push
+  script:
+    - docker build -t ${DOCKER_IMAGE_REGISTRY}/management:latest ./management
+    - docker push ${DOCKER_IMAGE_REGISTRY}/management:latest
+  dependencies:
+    - test:management
+
 ###########################
 ### GameServer pipeline ###
 ###########################
@@ -95,6 +116,15 @@ test:gameserver:
     - analysis:gameserver
   allow_failure: false
 
+push:gameserver:
+  image: amazoncorretto:21-alpine
+  stage: push
+  script:
+    - docker build -t ${DOCKER_IMAGE_REGISTRY}/gameserver:latest ./gameserver
+    - docker push ${DOCKER_IMAGE_REGISTRY}/gameserver:latest
+  dependencies:
+    - test:gameserver
+
 ############################
 ### Continous deployment ###
 ############################
@@ -109,5 +139,9 @@ deploy:
     - cat management-service.yaml
     - cat gameserver-service.yaml
     - kubectl apply -f kubernetes.yaml,rabbitmq-service.yaml,frontend-service.yaml,management-service.yaml,gameserver-service.yaml
+  dependencies:
+    - push:frontend
+    - push:management
+    - push:gameserver
   only:
     - 40-continious-deployment
