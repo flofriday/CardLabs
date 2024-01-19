@@ -19,10 +19,10 @@ class LeaderBoardController(val leaderBoardService: LeaderBoardService) {
     fun getLeaderBoardPage(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "5") entriesPerPage: Int,
-        @RequestParam(defaultValue = "GLOBAL") regionType: Region,
+        @RequestParam(defaultValue = "GLOBAL") region: Region,
         @RequestParam(defaultValue = "", required = false) filter: String
     ): ResponseEntity<Page<LeaderBoardEntry>> {
-        val resultPage = leaderBoardService.getLeaderBoardPage(entriesPerPage, page, regionType, filter)
+        val resultPage = leaderBoardService.getLeaderBoardPage(entriesPerPage, page, region, filter)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(resultPage)
@@ -45,6 +45,11 @@ class LeaderBoardController(val leaderBoardService: LeaderBoardService) {
     @GetMapping("/leaderboard/firstPlace")
     fun getScoreOfGlobalFirstPlace(): ResponseEntity<Long> {
         val score = leaderBoardService.getScoreOfGlobalFirstPlace()
+        if (score == null) {
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .build()
+        }
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(score)

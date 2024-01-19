@@ -1,6 +1,8 @@
 import { toast } from "react-toastify";
+import { refreshAccessToken } from "./RefreshService";
 
 export async function getLocations(): Promise<string[]> {
+  await refreshAccessToken();
   const response = await fetch("api/locations", {
     mode: "cors",
     method: "GET",

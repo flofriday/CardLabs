@@ -121,7 +121,7 @@ export default function BotCard({ bot, refetch }: Props): JSX.Element {
           <h3>{updatedDate}</h3>
         </div>
         <div className="flex justify-center space-x-4 mt-4">
-          <Link href={"/"}>
+          <Link href={"/game/" + bot.id}>
             <IconButton
               text="Info"
               type={ButtonIcon.INFO}

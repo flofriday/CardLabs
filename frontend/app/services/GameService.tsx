@@ -1,236 +1,54 @@
-import { RoundInfo } from "../types/RoundInfo";
-import { LogLine } from "../types/LogLine";
-import { BotRoundInfo } from "../types/BotRoundInfo";
+import { getCookie } from "cookies-next";
+import { Page } from "../types/contentPage";
+import { refreshAccessToken } from "./RefreshService";
 import { toast } from "react-toastify";
-import Card, { CardColor, CardValue } from "../components/card";
+import { Game } from "../types/game";
+import { UnAuthorizedError } from "../exceptions/UnAuthorizedError";
+import { LogLine } from "../types/LogLine";
+import { RoundInfo } from "../types/RoundInfo";
 
-const logExamples: LogLine[] = [
-  { message: "This is a normal log message." },
-  { message: "Another log entry." },
-  { message: "Debugging information.", isDebug: true },
-  { message: "More normal logs." },
-  { message: "Debug log with additional information.", isDebug: true },
-  { message: "More normal logs." },
-  { message: "This is a normal log message." },
-  { message: "Another log entry." },
-  { message: "Debugging information.", isDebug: true },
-  { message: "More normal logs." },
-  { message: "Debug log with additional information.", isDebug: true },
-  { message: "More normal logs." },
-  { message: "This is a normal log message." },
-  { message: "Another log entry." },
-  { message: "Debugging information.", isDebug: true },
-  { message: "More normal logs." },
-  { message: "Debug log with additional information.", isDebug: true },
-  { message: "More normal logs." },
-];
+export async function getGames(
+  botId: number,
+  numberOfEntriesPerPage: number,
+  pageNumber: number
+): Promise<Page<Game>> {
+  await refreshAccessToken();
+  const jwt = getCookie("auth_token");
 
-const drawpile = [
-  { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-  { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-  { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-  { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-  { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-];
+  const response = await fetch(
+    `/api/match/bot/${botId}?pageNumber=${pageNumber}&pageSize=${numberOfEntriesPerPage}`,
+    {
+      mode: "cors",
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + jwt,
+      },
+    }
+  );
 
-const round1 = [
-  {
-    botName: "Bot1",
-    botHand: [
-      {
-        cardColor: CardColor.PURPLE,
-        cardValue: CardValue.FIVE,
-      },
-      {
-        cardColor: CardColor.ORANGE,
-        cardValue: CardValue.FIVE,
-        selected: true,
-      },
-      { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-    ],
-    active: true,
-  },
-  {
-    botName: "Bot2LongLongNameIshBlublBul",
-    botHand: [
-      { cardColor: CardColor.GREEN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GREEN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GREEN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GREEN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GREEN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GREEN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GREEN, cardValue: CardValue.FIVE },
-    ],
-  },
-  {
-    botName: "Bot3",
-    botHand: [
-      { cardColor: CardColor.CYAN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.CYAN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.CYAN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.CYAN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.CYAN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.CYAN, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.CYAN, cardValue: CardValue.FIVE },
-    ],
-  },
-  {
-    botName: "Bot4",
-    botHand: [
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-    ],
-  },
-  {
-    botName: "Bot5",
-    botHand: [
-      { cardColor: CardColor.GRAY, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GRAY, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GRAY, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GRAY, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GRAY, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GRAY, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GRAY, cardValue: CardValue.FIVE },
-    ],
-  },
-  {
-    botName: "Bot6",
-    botHand: [
-      { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-    ],
-  },
-];
+  if (response.status === 200) {
+    const page = (await response.json()) as Page<Game>;
+    for (let i = 0; i < page.content.length; i++) {
+      page.content[i].startTime = new Date(page.content[i].startTime);
+      page.content[i].endTime = new Date(page.content[i].endTime);
+    }
+    return page;
+  }
 
-const round2 = [
-  {
-    botName: "Bot1",
-    botHand: [
-      {
-        cardColor: CardColor.PURPLE,
-        cardValue: CardValue.FIVE,
-      },
-      {
-        cardColor: CardColor.PURPLE,
-        cardValue: CardValue.FIVE,
-      },
-      {
-        cardColor: CardColor.PURPLE,
-        cardValue: CardValue.FIVE,
-        selected: true,
-      },
-    ],
-    active: true,
-  },
-  {
-    botName: "Bot2LongLongNameIshBlublBul",
-    botHand: [{ cardColor: CardColor.GREEN, cardValue: CardValue.FIVE }],
-  },
-  {
-    botName: "Bot3",
-    botHand: [{ cardColor: CardColor.CYAN, cardValue: CardValue.FIVE }],
-  },
-  {
-    botName: "Bot4",
-    botHand: [
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.ORANGE, cardValue: CardValue.FIVE },
-    ],
-  },
-  {
-    botName: "Bot5",
-    botHand: [
-      { cardColor: CardColor.GRAY, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GRAY, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GRAY, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.GRAY, cardValue: CardValue.FIVE },
-    ],
-  },
-  {
-    botName: "Bot6",
-    botHand: [
-      { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-      { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-    ],
-  },
-];
+  if (response.status === 401) {
+    throw new UnAuthorizedError("Not authorized");
+  }
 
-const roundInfos: RoundInfo[] = [
-  {
-    botInfos: round1,
-    drawPile: drawpile,
-    topCard: { cardColor: CardColor.PURPLE, cardValue: CardValue.FIVE },
-  },
-  {
-    botInfos: round2,
-    drawPile: drawpile,
-    topCard: { cardColor: CardColor.GRAY, cardValue: CardValue.DRAW_TWO },
-  },
-];
+  toast.error("An error occurred. Please try again later.");
+  throw Error();
+}
 
 export async function getRoundInfosForGame(
   gameID: number
 ): Promise<RoundInfo[]> {
   // TODO replace this with calls to the backend
-  //return roundInfos;
+  // return roundInfos;
 
   try {
     const response = await fetch(`api/match/${gameID}/all`, {
@@ -255,9 +73,9 @@ export async function getRoundInfosForGame(
 
 export async function getLogLinesForGame(gameID: number): Promise<LogLine[]> {
   // TODO replace this with calls to the backend
-  //return logExamples;
+  // return logExamples;
 
-  //@GetMapping("/match/{gameId}/log")
+  // @GetMapping("/match/{gameId}/log")
 
   try {
     const response = await fetch(`api/match/${gameID}/log`, {

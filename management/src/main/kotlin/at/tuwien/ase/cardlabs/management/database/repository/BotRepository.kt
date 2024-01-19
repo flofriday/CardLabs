@@ -24,7 +24,7 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
         """
         SELECT b
             FROM BotDAO b
-            WHERE b.owner.id = :ownerId AND b.deleted = NULL 
+            WHERE b.owner.id = :ownerId AND b.deleted = NULL
         """,
     )
     fun findByOwnerIdAndDeletedIsNull(@Param("ownerId") ownerId: Long, pageable: Pageable): Page<BotDAO>
@@ -34,7 +34,7 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
     @Query(
         """
         SELECT COUNT(b) + 1
-            FROM BotDAO b 
+            FROM BotDAO b
             WHERE b.eloScore > (SELECT b2.eloScore FROM BotDAO b2 WHERE b2.id = :botId)
         """,
     )
@@ -64,8 +64,8 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
     @Transactional
     @Query(
         """
-            UPDATE BotDAO b 
-                SET b.currentState = :newState 
+            UPDATE BotDAO b
+                SET b.currentState = :newState
                 WHERE b.id IN :botIds
         """
     )
