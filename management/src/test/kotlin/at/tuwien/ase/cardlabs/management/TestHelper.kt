@@ -108,7 +108,7 @@ class TestHelper {
 
         @JvmStatic
         fun getAccount(accountService: AccountService, username: String): Account {
-            return accountService.getUser(username)
+            return accountService.fetchUser(username)
         }
 
         @JvmStatic
