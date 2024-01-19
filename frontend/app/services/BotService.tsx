@@ -1,6 +1,5 @@
 import { getCookie } from "cookies-next";
 import { toast } from "react-toastify";
-import { MatchOverviewEntryType } from "../types/MatchOverviewEntryType";
 import { RegionType } from "../types/RegionType";
 import { Page } from "../types/contentPage";
 import { refreshAccessToken } from "./RefreshService";
