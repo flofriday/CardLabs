@@ -3,6 +3,7 @@ import { Page } from "../types/contentPage";
 import { refreshAccessToken } from "./RefreshService";
 import { toast } from "react-toastify";
 import { Game } from "../types/game";
+import { UnAuthorizedError } from "../exceptions/UnAuthorizedError";
 
 export async function getGames(
   botId: number,
@@ -31,6 +32,10 @@ export async function getGames(
       page.content[i].endTime = new Date(page.content[i].endTime);
     }
     return page;
+  }
+
+  if (response.status === 401) {
+    throw new UnAuthorizedError("Not authorized");
   }
 
   toast.error("An error occurred. Please try again later.");
