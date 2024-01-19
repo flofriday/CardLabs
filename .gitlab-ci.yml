@@ -9,7 +9,10 @@ variables:
   FRONTEND_DIR: "frontend"
   MANAGEMENT_DIR: "management"
   GAMESERVER_DIR: "gameserver"
+  DOCKER_HOST: tcp://docker:2375
   DOCKER_IMAGE_REGISTRY: "registry.reset.inso-w.at/2023ws-ase-pr-group/23ws-ase-pr-inso-04"
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
 
 cache:
   paths:
