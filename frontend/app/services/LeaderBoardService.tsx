@@ -179,7 +179,7 @@ export async function getLeaderBoardPage(
   }
 }
 
-export async function getScoreOfGlobalFirstPlace(): Promise<number> {
+export async function getScoreOfGlobalFirstPlace(): Promise<number | undefined> {
   const response = await fetch("api/leaderboard/firstPlace", {
     mode: "cors",
     method: "GET",
@@ -187,12 +187,15 @@ export async function getScoreOfGlobalFirstPlace(): Promise<number> {
       Accept: "application/json",
     },
   });
-
+  if (response.status === 404) {
+    // No need to show an error message as this is the case where not bot exists
+    return undefined
+  }
   if (response.status !== 200) {
     toast.error(
       "Could not load first place as our servers seem to be too busy. Please try again."
     );
-    return 0;
+    return undefined;
   }
 
   return (await response.json()) as number;

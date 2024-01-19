@@ -39,7 +39,7 @@ class LeaderBoardService(private val leaderBoardRepository: LeaderBoardRepositor
         }
     }
 
-    fun getScoreOfGlobalFirstPlace(): Long {
+    fun getScoreOfGlobalFirstPlace(): Long? {
         return leaderBoardRepository.getScoreOfGlobalFirstPlace()
     }
 }
