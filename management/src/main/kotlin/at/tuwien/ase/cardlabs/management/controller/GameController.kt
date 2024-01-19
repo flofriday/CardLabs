@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController
 class GameController(
     val gameService: GameService,
 ) {
-
     private final val logger = LoggerFactory.getLogger(javaClass)
 
     @GetMapping("/match/{gameId}/all")

@@ -1,7 +1,7 @@
 import { getCookie } from "cookies-next";
 import { toast } from "react-toastify";
-import { Page } from "../types/contentPage";
 import { RegionType } from "../types/RegionType";
+import { Page } from "../types/contentPage";
 import { refreshAccessToken } from "./RefreshService";
 
 export async function getNewBotName(): Promise<string> {

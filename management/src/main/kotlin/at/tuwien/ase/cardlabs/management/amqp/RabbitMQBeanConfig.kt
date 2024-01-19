@@ -78,20 +78,6 @@ class RabbitMQBeanConfig {
         return Queue(matchResultQueue!!)
     }
 
-    // This code is used to register a listener for the match queue
-//    @Bean
-//    fun listenerContainerMatchQueueMessage(
-//        connectionFactory: ConnectionFactory,
-//        objectMapper: ObjectMapper,
-//    ): SimpleMessageListenerContainer {
-//        val container = SimpleMessageListenerContainer()
-//        container.connectionFactory = connectionFactory
-//        container.acknowledgeMode = AcknowledgeMode.AUTO
-//        container.setQueueNames(matchQueue)
-//        container.setMessageListener(MatchQueueRabbitMQListener(objectMapper))
-//        return container
-//    }
-
     @Bean
     fun listenerContainerMatchResultQueueMessage(
         connectionFactory: ConnectionFactory,

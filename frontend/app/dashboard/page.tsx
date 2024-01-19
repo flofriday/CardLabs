@@ -19,29 +19,29 @@ export default function Dashboard(): JSX.Element {
           <Robot type={RobotType.BASIC} />
         </div>
 
-        <div className="flex flex-col justify-center items-center space-y-16 pt-10 w-full h-full">
+        <div className="flex flex-col justify-center items-center space-y-16 pt-10 w-2/6 h-full">
           <Link
             href="/bot/editor"
-            className="btn bg-primary flex justify-center items-center h-20 py-2 w-1/4 font-bold rounded-lg shadow-md text-4xl hover:bg-primary_highlight"
+            className="btn bg-primary flex justify-center items-center h-20 py-2 w-full font-bold rounded-lg shadow-md text-4xl hover:bg-primary_highlight"
             id="button_create_new_bot"
           >
             New Bot
           </Link>
           <Link
             href="/bot"
-            className="btn bg-primary flex justify-center items-center h-20 py-2 w-1/4 font-bold rounded-lg shadow-md text-4xl hover:bg-primary_highlight"
+            className="btn bg-primary flex justify-center items-center h-20 py-2 w-full font-bold rounded-lg shadow-md text-4xl hover:bg-primary_highlight"
           >
             My Bots
           </Link>
           <Link
             href="/rules"
-            className="btn bg-primary flex justify-center items-center h-20 py-2 w-1/4 font-bold rounded-lg shadow-md text-4xl hover:bg-primary_highlight"
+            className="btn bg-primary flex justify-center items-center h-20 py-2 w-full font-bold rounded-lg shadow-md text-4xl hover:bg-primary_highlight"
           >
             Game Rules
           </Link>
           <Link
             href="/help"
-            className="btn bg-primary flex justify-center items-center h-20 py-2 w-1/4 font-bold rounded-lg shadow-md text-4xl hover:bg-primary_highlight"
+            className="btn bg-primary flex justify-center items-center h-20 py-2 w-full font-bold rounded-lg shadow-md text-4xl hover:bg-primary_highlight"
           >
             Help
           </Link>
