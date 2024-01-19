@@ -17,19 +17,6 @@ cache:
     - .gradle/caches
     - ${MANAGEMENT_DIR}/build
 
-analysis:docker_test:
-  image:
-    name: gcr.io/kaniko-project/executor:v1.14.0-debug
-    entrypoint: [""]
-  stage: analysis
-  script:
-    - /kaniko/executor
-      --context "${CI_PROJECT_DIR}/frontend"
-      --dockerfile "${CI_PROJECT_DIR}/frontend/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}/frontend:${CI_PIPELINE_ID}"
-  only:
-    - 40-continious-deployment
-
 #########################
 ### Frontend pipeline ###
 #########################
@@ -56,14 +43,15 @@ build:frontend:
   allow_failure: false
 
 push:frontend:
-  image: docker:24.0.7-alpine3.19
-  services:
-    - docker:dind
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
   stage: push
   script:
-    - docker login --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
-    - docker build -t ${DOCKER_IMAGE_REGISTRY}/frontend:$CI_PIPELINE_ID ./frontend
-    - docker push ${DOCKER_IMAGE_REGISTRY}/frontend:$CI_PIPELINE_ID
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/frontend"
+      --dockerfile "${CI_PROJECT_DIR}/frontend/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/frontend:${CI_PIPELINE_ID}"
   dependencies:
     - build:frontend
   only:
@@ -103,14 +91,15 @@ test:management:
   allow_failure: false
 
 push:management:
-  image: docker:24.0.7-alpine3.19
-  services:
-    - docker:dind
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
   stage: push
   script:
-    - docker login --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
-    - docker build -t ${DOCKER_IMAGE_REGISTRY}/management:$CI_PIPELINE_ID ./management
-    - docker push ${DOCKER_IMAGE_REGISTRY}/management:$CI_PIPELINE_ID
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/management"
+      --dockerfile "${CI_PROJECT_DIR}/management/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/management:${CI_PIPELINE_ID}"
   dependencies:
     - test:management
   only:
@@ -139,14 +128,15 @@ test:gameserver:
   allow_failure: false
 
 push:gameserver:
-  image: docker:24.0.7-alpine3.19
-  services:
-    - docker:dind
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
   stage: push
   script:
-    - docker login --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD registry.reset.inso-w.at
-    - docker build -t ${DOCKER_IMAGE_REGISTRY}/gameserver:$CI_PIPELINE_ID ./gameserver
-    - docker push ${DOCKER_IMAGE_REGISTRY}/gameserver:$CI_PIPELINE_ID
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/gameserver"
+      --dockerfile "${CI_PROJECT_DIR}/gameserver/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/gameserver:${CI_PIPELINE_ID}"
   dependencies:
     - test:gameserver
   only:
