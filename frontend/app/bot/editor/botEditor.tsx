@@ -154,7 +154,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
               toast.error("This bot has already been queued for ranking");
               return;
             }
-            if (code !== undefined && code?.length >= CODE_CHARACTER_LIMIT) {
+            if (code?.length >= CODE_CHARACTER_LIMIT) {
               toast.error(
                 `This bot exceeds the character limit of ${CODE_CHARACTER_LIMIT}`
               );
