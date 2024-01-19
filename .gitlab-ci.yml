@@ -18,7 +18,7 @@ cache:
     - ${MANAGEMENT_DIR}/build
 
 analysis:docker_test:
-  image: quay.io/buildah/stable:v1.32.2
+  image: quay.io/buildah/stable:v1.31
   stage: analysis
   variables:
     STORAGE_DRIVER: vfs
