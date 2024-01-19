@@ -27,7 +27,7 @@ export default function TextItem({
 }: Props): JSX.Element {
   return (
     <div
-      className={`bg-secondary w-6/12 p-6 rounded-xl text-xl flex
+      className={`bg-secondary p-6 rounded-xl text-xl flex w-full
         ${imgAtEnd ? " justify-between" : ""}`}
     >
       {((src != null && alt != null) || customImgElement !== undefined) &&

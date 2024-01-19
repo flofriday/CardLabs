@@ -2,6 +2,7 @@ package at.tuwien.ase.cardlabs.management.security.config
 
 import at.tuwien.ase.cardlabs.management.security.DatabaseUserDetailsService
 import at.tuwien.ase.cardlabs.management.security.jwt.JwtAuthenticationFilter
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
@@ -26,7 +27,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 @EnableWebSecurity
 @EnableMethodSecurity
 @Profile("local")
-class LocalSecurityConfig(private val accountService: AccountService) {
+class LocalSecurityConfig(
+    private val accountService: AccountService,
+    private val jwtTokenService: JwtTokenService,
+) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -43,19 +47,21 @@ class LocalSecurityConfig(private val accountService: AccountService) {
                 authorize
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/authentication/refresh")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/leaderboard/public")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/leaderboard/firstPlace")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/account", "POST")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/open", "GET")).permitAll()
                     .anyRequest().authenticated()
             }
-            .oauth2Login(Customizer.withDefaults())
-//            .sessionManagement { sessionManagement ->
-//                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//            }
-//            .addFilterBefore(
-//                JwtAuthenticationFilter(DatabaseUserDetailsService(accountService)),
-//                UsernamePasswordAuthenticationFilter::class.java,
-//            )
+            .sessionManagement { sessionManagement ->
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .addFilterBefore(
+                JwtAuthenticationFilter(DatabaseUserDetailsService(accountService), jwtTokenService),
+                UsernamePasswordAuthenticationFilter::class.java,
+            )
 
         return http.build()
     }

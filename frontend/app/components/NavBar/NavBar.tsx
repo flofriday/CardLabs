@@ -25,9 +25,23 @@ export default async function NavBar(): Promise<JSX.Element> {
           </Link>
         )}
 
-        <Link href="/" className="text-base  hover:text-accent max-sm:hidden">
+        <Link
+          href="/leaderboard"
+          id="leaderboard_link"
+          className="text-base  hover:text-accent max-sm:hidden"
+        >
           Leaderboard
         </Link>
+
+        {(await isAuthenticated()) && (
+          <Link
+            href="/myLeaderboard"
+            id="myleaderboard_link"
+            className="text-base  hover:text-accent max-sm:hidden"
+          >
+            My Leaderboard
+          </Link>
+        )}
         <Link
           href="/help"
           className="text-base  hover:text-accent max-sm:hidden"
