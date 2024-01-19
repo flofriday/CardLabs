@@ -20,7 +20,7 @@ export default function GameEntry({ game, botId }: Props): JSX.Element {
           text="View"
           type={ButtonIcon.INFO}
           onClick={() => {
-            console.log("forward :)");
+            // TODO: implement forward button
           }}
         />
       </div>
