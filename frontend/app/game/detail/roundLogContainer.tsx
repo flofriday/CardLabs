@@ -1,4 +1,4 @@
-import { LogLine } from "../types/LogLine";
+import { LogLine } from "@/app/types/LogLine";
 
 interface Props {
   logLines: LogLine[];
@@ -13,10 +13,12 @@ export default function RoundLogContainer({ logLines }: Props): JSX.Element {
       {logLines.map((log, index) => (
         <div
           key={index}
-          className={`mb-2 ${log.isDebug ? "text-yellow" : ""} p-2 rounded-md`}
+          className={`mb-2 ${
+            log.type !== "system" ? "text-yellow" : ""
+          } p-2 rounded-md`}
         >
-          {log.isDebug && "[DBG] "} {!log.isDebug && `${++nonDebugIndex}.`}{" "}
-          {log.message}
+          {log.type !== "system" && "[DBG] "}{" "}
+          {log.type === "system" && `${++nonDebugIndex}.`} {log.message}
         </div>
       ))}
     </div>
