@@ -46,8 +46,6 @@ export async function getGames(
 export async function getGame(gameID: number): Promise<Game> {
   await refreshAccessToken();
   const jwt = getCookie("auth_token");
-  // TODO replace this with calls to the backend
-  // return roundInfos;
 
   try {
     const response = await fetch(`/api/match/${gameID}/all`, {

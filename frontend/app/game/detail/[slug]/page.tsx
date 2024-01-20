@@ -6,7 +6,7 @@ import { Key, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { LogLine } from "@/app/types/LogLine";
 import { getLogLinesForGame, getGame } from "@/app/services/GameService";
-import Card, { CardColor, toCardType } from "@/app/components/card";
+import Card, { toCardType } from "@/app/components/card";
 import { Game } from "@/app/types/game";
 import { BackendCard } from "@/app/types/backendCard";
 import { Hand } from "@/app/types/hand";
@@ -28,11 +28,10 @@ export default function GameDetail({
       .catch(() => {});
     getGame(Number(params.slug))
       .then((g) => {
-        console.log(g);
         setGame(g);
       })
       .catch(() => {});
-  }, [params.slug, round]);
+  }, [params.slug]);
 
   if (isNaN(Number(params.slug))) {
     return notFound();
@@ -72,7 +71,7 @@ export default function GameDetail({
                         game?.turns[round].topCard.type,
                         game?.turns[round].topCard.number
                       )}
-                      color={CardColor.PURPLE}
+                      color={game?.turns[round].topCard.color}
                       className="h-16 w-fit"
                     />
                   )}
@@ -84,7 +83,14 @@ export default function GameDetail({
               <div>
                 {game !== undefined
                   ? game.turns[round].hands.map((hand: Hand, index: Key) => (
-                      <BotHandsContainer hand={hand} key={index} />
+                      <BotHandsContainer
+                        hand={hand}
+                        key={index}
+                        active={hand.botId === game.turns[round].activeBotId}
+                        actions={game.turns[round].actions.filter(
+                          (a) => a.botId === hand.botId
+                        )}
+                      />
                     ))
                   : ""}
               </div>

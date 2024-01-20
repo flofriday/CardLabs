@@ -23,6 +23,7 @@ data class MatchResultQueueMessage(
 
 data class Turn(
     val turnId: Long,
+    val activeBotId: Long,
     val topCard: Card,
     val drawPile: List<Card>, // Stores the top 10 cards of the pile, fewer if there a fewer on the pile
     val hands: List<Hand>,
