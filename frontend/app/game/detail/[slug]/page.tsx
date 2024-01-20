@@ -56,7 +56,7 @@ export default function GameDetail({
             <div className="w-full flex">
               <div className="w-4/6 flex justify-between grow space-x-5">
                 <Slider
-                  totalRoundNumber={game?.turns.length}
+                  totalRoundNumber={game !== undefined ? game?.turns.length : 0}
                   onChange={(r) => {
                     setRound(r - 1);
                   }}
