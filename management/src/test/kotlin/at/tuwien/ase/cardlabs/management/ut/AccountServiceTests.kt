@@ -50,11 +50,7 @@ internal class AccountServiceTests {
             id = 1L,
             username = "test",
             email = "test@test.com",
-            password = "password",
             location = null,
-            sendScoreUpdates = true,
-            sendNewsletter = true,
-            sendChangeUpdates = true,
         )
 
         val exception = assertThrows<IllegalArgumentException> {
@@ -69,11 +65,7 @@ internal class AccountServiceTests {
             id = null,
             username = "test",
             email = "test@test.com",
-            password = "PassWord123?!",
             location = "Austria",
-            sendScoreUpdates = true,
-            sendNewsletter = true,
-            sendChangeUpdates = true,
         )
 
         val created = assertDoesNotThrow {
@@ -83,11 +75,7 @@ internal class AccountServiceTests {
         assertNotNull(created.id)
         assertEquals("test", created.username)
         assertEquals("test@test.com", created.email)
-        assertEquals("REDACTED", created.password)
         assertEquals("Austria", created.location)
-        assertEquals(true, created.sendScoreUpdates)
-        assertEquals(true, created.sendNewsletter)
-        assertEquals(true, created.sendChangeUpdates)
 
         val found = accountRepository.findByUsernameAndDeletedIsNull(created.username)
         assertNotNull(found)
@@ -102,11 +90,7 @@ internal class AccountServiceTests {
             id = null,
             username = "test",
             email = "test@test.com",
-            password = "PassWord123?!",
             location = "Austria",
-            sendScoreUpdates = true,
-            sendNewsletter = true,
-            sendChangeUpdates = true,
         )
 
         val exception = assertThrows<AccountExistsException> {
@@ -123,11 +107,7 @@ internal class AccountServiceTests {
             id = null,
             username = "test2",
             email = "test@test.com",
-            password = "PassWord123?!",
             location = "Austria",
-            sendScoreUpdates = true,
-            sendNewsletter = true,
-            sendChangeUpdates = true,
         )
 
         val exception = assertThrows<AccountExistsException> {
@@ -140,7 +120,7 @@ internal class AccountServiceTests {
     fun whenAccountDelete_expectSuccess() {
         val account = createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
         val userDetailsAccount =
-            TestHelper.createUserDetails(account.id!!, account.username, account.email, account.password)
+            TestHelper.createUserDetails(account.id!!, account.username, account.email)
 
         assertDoesNotThrow {
             accountService.delete(userDetailsAccount, userDetailsAccount.id)

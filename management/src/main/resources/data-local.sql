@@ -8,14 +8,13 @@ VALUES
     ('Netherlands', 'EUROPE'),
     ('Japan', 'ASIA');
 
--- Password for the accounts: test1:pass1 test2:pass2 test3:pass3 test4:pass4
 INSERT INTO ACCOUNT
-    (id, created, deleted, updated, email, password, send_change_updates, send_newsletter, send_score_updates, username, location)
+    (id, created, deleted, updated, email, username, location)
 VALUES
-    (999999999, TIMESTAMP WITH TIME ZONE '2023-11-24 11:50:04.206298+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:50:04.206298+01', 'test1@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', TRUE, FALSE, TRUE, 'test1', 'Austria'),
-    (999999998, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:00.302842+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:00.302842+01', 'test2@email', '$2a$10$BRpCdEjDwoZMtzFY/p0dlOyu33shFmAgZ.4ufx7LzEEVTfQ7Yhnbm', FALSE, TRUE, TRUE, 'test2', 'Denmark'),
-    (999999997, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:23.151055+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:23.151055+01', 'test3@email', '$2a$10$X1MqlGvqvzRCncIsQWmwPeVw3jGpGTbbfA9JmpmDjryZxdepGRpJe', FALSE, TRUE, FALSE, 'test3', 'Japan'),
-    (999999996, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:47.996734+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:47.996734+01', 'test4@email', '$2a$10$3OruGPVHedOkqqZOlyFQgeRpYDcOGGb1J87xzZv0GAgFCW/6juLRC', FALSE, FALSE, TRUE, 'test4', 'Austria');
+    (999999999, TIMESTAMP WITH TIME ZONE '2023-11-24 11:50:04.206298+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:50:04.206298+01', 'test1@email',  'test1', 'Austria'),
+    (999999998, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:00.302842+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:00.302842+01', 'test2@email', 'test2', 'Denmark'),
+    (999999997, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:23.151055+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:23.151055+01', 'test3@email', 'test3', 'Japan'),
+    (999999996, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:47.996734+01', NULL, TIMESTAMP WITH TIME ZONE '2023-11-24 11:49:47.996734+01', 'test4@email', 'test4', 'Austria');
 
 --bots for user 1
 INSERT INTO BOT
@@ -56,16 +55,15 @@ VALUES
     (999999989, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 2 for user test3', 'CREATED', 'READY', 2000, NULL, 'Krylonium', 999999997),
     (999999988, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', NULL, TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', TIMESTAMP WITH TIME ZONE '2023-12-17 22:09:50.591343+01', 'Code of bot 3 for user test3', 'CREATED', 'READY', 3000, NULL, 'Neotarphis', 999999997);
 
--- Password for the accounts: test1:pass1 test2:pass2 test3:pass3 test4:pass4 test5:pass1
 -- Note: if the auto incrementer reaches 10000 it will result in a conflict as it does not know about these values, do not use in production
 INSERT INTO ACCOUNT
-    (id, username, email, password, location, send_change_updates, send_newsletter, send_score_updates, created, updated)
+    (id, username, email, location, created, updated)
 VALUES
-    (10000, '0test1', '0test1@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', 'Austria', TRUE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10001, '0test2', '0test2@email', '$2a$10$BRpCdEjDwoZMtzFY/p0dlOyu33shFmAgZ.4ufx7LzEEVTfQ7Yhnbm', 'Denmark', FALSE, TRUE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10002, '0test3', '0test3@email', '$2a$10$X1MqlGvqvzRCncIsQWmwPeVw3jGpGTbbfA9JmpmDjryZxdepGRpJe', 'Switzerland', FALSE, TRUE, FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10003, '0test4', '0test4@email', '$2a$10$3OruGPVHedOkqqZOlyFQgeRpYDcOGGb1J87xzZv0GAgFCW/6juLRC', 'Austria', FALSE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10004, '0test5', '0test5@email', '$2a$10$ONDpia0apBImGfFBf/4nauIHsoKxgFfluyMHxDfZcslUWUuzrhvA2', 'Austria', FALSE, FALSE, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (10000, '0test1', '0test1@email',  'Austria',  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10001, '0test2', '0test2@email',  'Denmark', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10002, '0test3', '0test3@email', 'Switzerland', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10003, '0test4', '0test4@email',  'Austria', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10004, '0test5', '0test5@email', 'Austria', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Create a few default bots
 INSERT INTO BOT

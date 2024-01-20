@@ -35,9 +35,9 @@ class AuthenticationController(
             ),
         )
 
-        val refreshToken = jwtTokenService.generateRefreshToken(authentication)
+        val tokenPair = jwtTokenService.generateRefreshToken(authentication)
         return ResponseEntity.status(HttpStatus.OK)
-            .body(AuthenticationResponse(refreshToken.refreshToken, refreshToken.accessToken))
+            .body(AuthenticationResponse(tokenPair.refreshToken, tokenPair.accessToken))
     }
 
     @PostMapping("/authentication/refresh")

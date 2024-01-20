@@ -53,11 +53,7 @@ class AccountService(
         val acc = AccountDAO()
         acc.username = account.username
         acc.email = account.email
-        acc.password = passwordEncoder.encode(account.password)
         acc.location = location
-        acc.sendChangeUpdates = account.sendChangeUpdates
-        acc.sendScoreUpdates = account.sendScoreUpdates
-        acc.sendNewsletter = account.sendNewsletter
         return accountMapper.map(accountRepository.save(acc))
     }
 
@@ -72,9 +68,6 @@ class AccountService(
             throw LocationNotFoundException("Location with name ${accountUpdate.location} does not exist")
         }
         account.location = location
-        account.sendNewsletter = accountUpdate.sendNewsletter
-        account.sendScoreUpdates = accountUpdate.sendScoreUpdates
-        account.sendChangeUpdates = accountUpdate.sendChangeUpdates
 
         return accountMapper.map(accountRepository.save(account))
     }
