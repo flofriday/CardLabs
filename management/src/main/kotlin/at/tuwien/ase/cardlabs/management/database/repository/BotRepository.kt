@@ -25,6 +25,7 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
         SELECT b
             FROM BotDAO b
             WHERE b.owner.id = :ownerId AND b.deleted = NULL
+            ORDER BY b.codeUpdated DESC
         """,
     )
     fun findByOwnerIdAndDeletedIsNull(@Param("ownerId") ownerId: Long, pageable: Pageable): Page<BotDAO>
@@ -67,7 +68,7 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
             UPDATE BotDAO b
                 SET b.currentState = :newState
                 WHERE b.id IN :botIds
-        """
+        """,
     )
     fun updateMultipleBotState(botIds: List<Long>, newState: BotState): Int
 }
