@@ -29,8 +29,6 @@ export default async function middleware(
       url.searchParams.set(key, value);
     });
 
-    console.log(url.toString())
-
     return NextResponse.rewrite(url.toString());
   }
 }
