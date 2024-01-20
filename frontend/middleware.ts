@@ -25,6 +25,12 @@ export default async function middleware(
     const path = req.nextUrl.pathname.replace("/api", "")
     const url = new URL(path, destination)
 
+    req.nextUrl.searchParams.forEach((value, key) => {
+      url.searchParams.set(key, value);
+    });
+
+    console.log(url.toString())
+
     return NextResponse.rewrite(url.toString());
   }
 }
