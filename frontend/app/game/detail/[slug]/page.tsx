@@ -57,7 +57,7 @@ export default function GameDetail({
         id="leftHeading"
         className="absolute text-5xl md:text-7xl mt-6 md:mt-12 ml-10 md:ml-16 font-medium tracking-wider inline-block w-fit"
       >
-        Game XX.YY.ZZZZ - X. Place
+        {"Game: " + game?.startTime.toLocaleString()}
       </h1>
 
       <div className="flex flex-1 w-full pt-40">

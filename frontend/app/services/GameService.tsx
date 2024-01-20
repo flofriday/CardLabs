@@ -61,8 +61,10 @@ export async function getGame(gameID: number): Promise<Game> {
       throw new Error("Failed to fetch match log");
     }
 
-    const data = await response.json();
-    return data as Game;
+    const data = (await response.json()) as Game;
+    data.startTime = new Date(data.startTime);
+    data.endTime = new Date(data.endTime);
+    return data;
   } catch (error: any) {
     console.error("Error fetching match log:", error.message);
     throw error;
