@@ -1,6 +1,6 @@
 interface LogLine {
+  type: string;
   message: string;
-  isDebug?: boolean;
 }
 
 export type { LogLine };

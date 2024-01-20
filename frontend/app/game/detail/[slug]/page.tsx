@@ -1,34 +1,24 @@
 "use client";
 import Slider from "../Slider";
 import RoundLogContainer from "../roundLogContainer";
-import Card, { CardColor, CardValue } from "../../components/card";
 import BotHandsContainer from "../botHandsContainer";
-import { useEffect, useState } from "react";
-import {
-  getLogLinesForGame,
-  getRoundInfosForGame,
-} from "../../services/GameService";
-import { LogLine } from "../../types/LogLine";
-import { RoundInfo } from "../../types/RoundInfo";
+import { Key, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
-
-interface Props {
-  slug: string;
-}
+import { LogLine } from "@/app/types/LogLine";
+import { getLogLinesForGame, getGame } from "@/app/services/GameService";
+import Card, { CardColor, toCardType } from "@/app/components/card";
+import { Game } from "@/app/types/game";
+import { BackendCard } from "@/app/types/backendCard";
+import { Hand } from "@/app/types/hand";
 
 export default function GameDetail({
   params,
 }: {
   params: { slug: string };
 }): JSX.Element {
-  if (isNaN(Number(params.slug))) {
-    return notFound();
-  }
-
   const [logLines, setLogLines] = useState<LogLine[]>([]);
-  const [roundInfos, setRoundInfos] = useState<RoundInfo[] | undefined>(
-    undefined
-  );
+  const [game, setGame] = useState<Game>();
+  const [round, setRound] = useState(0);
 
   useEffect(() => {
     getLogLinesForGame(Number(params.slug))
@@ -36,12 +26,17 @@ export default function GameDetail({
         setLogLines(lines);
       })
       .catch(() => {});
-    getRoundInfosForGame(Number(params.slug))
-      .then((roundInfos) => {
-        setRoundInfos(roundInfos);
+    getGame(Number(params.slug))
+      .then((g) => {
+        console.log(g);
+        setGame(g);
       })
       .catch(() => {});
-  });
+  }, [params.slug, round]);
+
+  if (isNaN(Number(params.slug))) {
+    return notFound();
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -60,14 +55,22 @@ export default function GameDetail({
           <div className="w-full px-12">
             <div className="w-full flex">
               <div className="w-4/6 flex justify-between grow space-x-5">
-                <Slider totalRoundNumber={5} />
+                <Slider
+                  totalRoundNumber={5}
+                  onChange={(r) => {
+                    setRound(r - 1);
+                  }}
+                />
 
                 <div className="flex items-center space-x-4">
                   <p className="text-4xl font-bold whitespace-nowrap">
                     Top Card:
                   </p>
                   <Card
-                    value={CardValue.FOUR}
+                    value={toCardType(
+                      game?.turns[round].topCard.type,
+                      game?.turns[round].topCard.number
+                    )}
                     color={CardColor.PURPLE}
                     className="h-16 w-fit"
                   />
@@ -77,9 +80,9 @@ export default function GameDetail({
             <div className="flex flex-col pt-5">
               <p className="text-4xl font-bold underline">Bot Hands:</p>
               <div>
-                {roundInfos != undefined
-                  ? roundInfos[0].botInfos.map((info, index) => (
-                      <BotHandsContainer botRoundInfo={info} key={index} />
+                {game !== undefined
+                  ? game.turns[round].hands.map((hand: Hand, index: Key) => (
+                      <BotHandsContainer hand={hand} key={index} />
                     ))
                   : ""}
               </div>
@@ -90,16 +93,18 @@ export default function GameDetail({
             <div className="">
               <div className="flex flex-row text-4xl py-2 items-center font-bold">
                 <p>Draw Pile:</p>
-                {roundInfos != undefined
-                  ? roundInfos[0].drawPile.map((card, index) => (
-                      <div>
-                        <Card
-                          value={card.cardValue}
-                          color={card.cardColor}
-                          className="h-16 w-fit px-2"
-                        />
-                      </div>
-                    ))
+                {game !== undefined
+                  ? game.turns[round].drawPile.map(
+                      (card: BackendCard, index: Key) => (
+                        <div key={index}>
+                          <Card
+                            value={toCardType(card.type, card.number)}
+                            color={card.color}
+                            className="h-16 w-fit px-2"
+                          />
+                        </div>
+                      )
+                    )
                   : ""}
               </div>
             </div>

@@ -1,20 +1,28 @@
 "use client";
-import { ChangeEvent, KeyboardEvent, useState } from "react";
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 
 interface Props {
   totalRoundNumber: number;
+  onChange: (round: number) => void;
 }
 
-export default function Slider({ totalRoundNumber }: Props): JSX.Element {
+export default function Slider({
+  totalRoundNumber,
+  onChange,
+}: Props): JSX.Element {
   const [sliderValue, setSliderValue] = useState(1);
   const [inputText, setInputText] = useState(sliderValue.toString());
 
-  const handleSliderChange = (event: ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    onChange(sliderValue);
+  }, [sliderValue, onChange]);
+
+  const handleSliderChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setSliderValue(parseInt(event.target.value, 10));
     setInputText(event.target.value);
   };
 
-  const handleIncrement = () => {
+  const handleIncrement = (): void => {
     setSliderValue((prevValue) => {
       const newValue = Math.min(prevValue + 1, totalRoundNumber);
       setInputText(newValue.toString());
@@ -22,7 +30,7 @@ export default function Slider({ totalRoundNumber }: Props): JSX.Element {
     });
   };
 
-  const handleDecrement = () => {
+  const handleDecrement = (): void => {
     setSliderValue((prevValue) => {
       const newValue = Math.max(prevValue - 1, 1);
       setInputText(newValue.toString());
@@ -30,11 +38,13 @@ export default function Slider({ totalRoundNumber }: Props): JSX.Element {
     });
   };
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setInputText(event.target.value);
   };
 
-  const handleInputKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyPress = (
+    event: KeyboardEvent<HTMLInputElement>
+  ): void => {
     if (event.key === "Enter") {
       const inputValue = parseInt(inputText, 10);
       if (

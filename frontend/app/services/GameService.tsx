@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import { Game } from "../types/game";
 import { UnAuthorizedError } from "../exceptions/UnAuthorizedError";
 import { LogLine } from "../types/LogLine";
-import { RoundInfo } from "../types/RoundInfo";
 
 export async function getGames(
   botId: number,
@@ -44,18 +43,19 @@ export async function getGames(
   throw Error();
 }
 
-export async function getRoundInfosForGame(
-  gameID: number
-): Promise<RoundInfo[]> {
+export async function getGame(gameID: number): Promise<Game> {
+  await refreshAccessToken();
+  const jwt = getCookie("auth_token");
   // TODO replace this with calls to the backend
   // return roundInfos;
 
   try {
-    const response = await fetch(`api/match/${gameID}/all`, {
+    const response = await fetch(`/api/match/${gameID}/all`, {
       mode: "cors",
       method: "GET",
       headers: {
         Accept: "application/json",
+        Authorization: "Bearer " + jwt,
       },
     });
 
@@ -64,7 +64,7 @@ export async function getRoundInfosForGame(
     }
 
     const data = await response.json();
-    return data;
+    return data as Game;
   } catch (error: any) {
     console.error("Error fetching match log:", error.message);
     throw error;
@@ -72,17 +72,16 @@ export async function getRoundInfosForGame(
 }
 
 export async function getLogLinesForGame(gameID: number): Promise<LogLine[]> {
-  // TODO replace this with calls to the backend
-  // return logExamples;
-
-  // @GetMapping("/match/{gameId}/log")
+  await refreshAccessToken();
+  const jwt = getCookie("auth_token");
 
   try {
-    const response = await fetch(`api/match/${gameID}/log`, {
+    const response = await fetch(`/api/match/${gameID}/log`, {
       mode: "cors",
       method: "GET",
       headers: {
         Accept: "application/json",
+        Authorization: "Bearer " + jwt,
       },
     });
 

@@ -4,6 +4,7 @@ export enum CardColor {
   GREEN = "#68f200",
   PURPLE = "#9819cb",
   GRAY = "#3a4142",
+  ANY = "#3a4142",
 }
 
 export const CardValue = {
@@ -158,6 +159,44 @@ export const CardValue = {
     fontSize: 26,
   },
 } as const;
+
+export function toCardType(type: string, number?: number): CardValue_ {
+  if (type === "NUMBER_CARD") {
+    if (number === 0) {
+      return CardValue.ZERO;
+    } else if (number === 1) {
+      return CardValue.ONE;
+    } else if (number === 2) {
+      return CardValue.TWO;
+    } else if (number === 3) {
+      return CardValue.THREE;
+    } else if (number === 4) {
+      return CardValue.FOUR;
+    } else if (number === 5) {
+      return CardValue.FIVE;
+    } else if (number === 6) {
+      return CardValue.SIX;
+    } else if (number === 7) {
+      return CardValue.SEVEN;
+    } else if (number === 8) {
+      return CardValue.EIGHT;
+    } else if (number === 9) {
+      return CardValue.NINE;
+    }
+  } else if (type === "DRAW_TWO") {
+    return CardValue.DRAW_TWO;
+  } else if (type === "CHOOSE") {
+    return CardValue.CHOOSE_COLOR;
+  } else if (type === "CHOOSE_DRAW") {
+    return CardValue.CHOOSE_COLOR_4;
+  } else if (type === "SKIP") {
+    return CardValue.SKIP;
+  } else if (type === "SWITCH") {
+    return CardValue.SWITCH;
+  }
+
+  throw Error();
+}
 
 export type CardValue_ = (typeof CardValue)[keyof typeof CardValue];
 
