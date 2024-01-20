@@ -26,12 +26,17 @@ class JwtTokenService(
     private val claimAccountUsernameFieldName: String = "account-username"
     private val claimAccountTokenTypeFieldName: String = "token-type"
 
-    override fun generateRefreshToken(authentication: Authentication): TokenPair {
+    override fun generateTokenPair(authentication: Authentication): TokenPair {
         val userDetails = authentication.principal as CardLabUser
-        val refreshToken = createRefreshToken(userDetails)
-        val accessToken = createAccessToken(userDetails)
+        return generateTokenPair(userDetails)
+    }
+
+    override fun generateTokenPair(cardLabUser: CardLabUser): TokenPair {
+        val refreshToken = createRefreshToken(cardLabUser)
+        val accessToken = createAccessToken(cardLabUser)
         return TokenPair(refreshToken, accessToken)
     }
+
 
     override fun generateAccessToken(refreshToken: String): Token {
         // no need to check for the boolean value as it always throws an exception if invalid

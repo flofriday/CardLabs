@@ -2,8 +2,10 @@
 import { cookies } from "next/headers";
 
 export async function isAuthenticated(): Promise<boolean> {
+  console.log("isAuthenticalsdkfjha");
   const cookieStore = cookies();
   const authToken = cookieStore.get("auth_token")?.value;
+  console.log(`authToken: ${authToken}`);
   if (authToken === undefined) {
     return false;
   }
@@ -21,8 +23,10 @@ export async function validToken(jwt: string): Promise<boolean> {
       Authorization: "Bearer " + jwt,
     },
   });
+  console.log(response);
 
   if (response.status === 200) {
+    console.log(response.text());
     return true;
   } else {
     return false;

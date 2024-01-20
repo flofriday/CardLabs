@@ -1,14 +1,11 @@
-import { setCookie, deleteCookie } from "cookies-next";
+import { getCookie, setCookie, deleteCookie } from "cookies-next";
 
 /**
  * Returns if the refresh token is still valid or a new one has successfully been received
  */
 export async function refreshAccessToken(): Promise<boolean> {
   const expireStr = localStorage.getItem("auth_token_expire");
-  if (expireStr === null) {
-    return false;
-  }
-  if (Date.now() < Date.parse(expireStr)) {
+  if (expireStr !== null && Date.now() < Date.parse(expireStr)) {
     return true;
   }
 
@@ -28,10 +25,12 @@ export async function refreshAccessToken(): Promise<boolean> {
       refreshToken,
     }),
   });
+  console.log(response);
   if (response.status === 200) {
     const json = await response.json();
-    setCookie("auth_token", json.accessToken);
-    localStorage.setItem("auth_token_expire", json.expiryDate);
+    console.log(json);
+    setCookie("auth_token", json.token.token);
+    localStorage.setItem("auth_token_expire", json.token.expiration);
     return true;
   }
 

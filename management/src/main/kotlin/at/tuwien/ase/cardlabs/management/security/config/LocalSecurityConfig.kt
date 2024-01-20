@@ -33,8 +33,8 @@ class LocalSecurityConfig(
 ) {
 
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http
+    fun securityFilterChain(http: HttpSecurity, accountService: AccountService, jwtTokenService: JwtTokenService): SecurityFilterChain {
+         http
             .csrf { csrf ->
                 csrf.disable()
             }
@@ -46,6 +46,7 @@ class LocalSecurityConfig(
             .authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/oauth2")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/refresh")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
@@ -62,8 +63,13 @@ class LocalSecurityConfig(
                 JwtAuthenticationFilter(DatabaseUserDetailsService(accountService), jwtTokenService),
                 UsernamePasswordAuthenticationFilter::class.java,
             )
+            .exceptionHandling {configurator -> configurator.authenticationEntryPoint(Oauth2AuthenticationEntrypoint())}
+            .oauth2Login {customizer ->
+                customizer
+                    .successHandler(Oauth2LoginSuccessHandler(accountService, jwtTokenService));
+            };
 
-        return http.build()
+            return http.build()
     }
 
     @Bean

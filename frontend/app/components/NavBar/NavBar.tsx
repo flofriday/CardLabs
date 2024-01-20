@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SignInUp from "./SignInUp";
 import Profile from "./Profile";
-import { isAuthenticated } from "../../services/AuthenticationService";
+import { isAuthenticated } from "@/app/services/UserService";
 
 export default async function NavBar(): Promise<JSX.Element> {
   return (

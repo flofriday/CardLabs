@@ -39,6 +39,7 @@ class SecurityConfig(
             }
             .authorizeHttpRequests { authorize ->
                 authorize
+                    .requestMatchers(AntPathRequestMatcher("/oauth2")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/refresh")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
@@ -55,8 +56,7 @@ class SecurityConfig(
                 JwtAuthenticationFilter(DatabaseUserDetailsService(accountService), jwtTokenService),
                 UsernamePasswordAuthenticationFilter::class.java,
             )
-
-        return http.build()
+            .build()
     }
 
     @Bean

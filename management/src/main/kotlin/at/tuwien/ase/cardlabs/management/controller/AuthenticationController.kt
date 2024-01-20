@@ -35,7 +35,7 @@ class AuthenticationController(
             ),
         )
 
-        val tokenPair = jwtTokenService.generateRefreshToken(authentication)
+        val tokenPair = jwtTokenService.generateTokenPair(authentication)
         return ResponseEntity.status(HttpStatus.OK)
             .body(AuthenticationResponse(tokenPair.refreshToken, tokenPair.accessToken))
     }
