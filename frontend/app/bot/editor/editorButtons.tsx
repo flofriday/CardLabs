@@ -5,10 +5,15 @@ import { useState } from "react";
 
 interface Props {
   save: () => void;
+  rank: () => void;
   _delete: () => void;
 }
 
-export default function EditorButtons({ save, _delete }: Props): JSX.Element {
+export default function EditorButtons({
+  save,
+  rank,
+  _delete,
+}: Props): JSX.Element {
   const [deleteModalVisability, setDeleteModalVisability] = useState(false);
 
   return (
@@ -45,18 +50,18 @@ export default function EditorButtons({ save, _delete }: Props): JSX.Element {
         </Modal>
       )}
       <IconButton
-        text="Compile"
-        type={ButtonIcon.COMPILE}
-        id="button_compile_bot"
-      />
-      <IconButton
         onClick={save}
         text="Save"
         type={ButtonIcon.SAVE}
         id="button_save_bot"
       />
       <IconButton text="Test Bot" type={ButtonIcon.TEST} id="button_test_bot" />
-      <IconButton text="Rank Bot" type={ButtonIcon.RANK} id="button_rank_bot" />
+      <IconButton
+        text="Rank Bot"
+        type={ButtonIcon.RANK}
+        id="button_rank_bot"
+        onClick={rank}
+      />
       <DropDown
         defaultValue="Current"
         className="w-36"

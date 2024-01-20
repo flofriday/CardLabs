@@ -30,7 +30,10 @@ interface LeaderBoardRepository : PagingAndSortingRepository<BotDAO?, Long> {
             FROM BotDAO b LEFT JOIN b.owner o2 LEFT JOIN o2.location l2 WHERE l2.continent = :continent ORDER BY b.eloScore DESC
         """,
     )
-    fun getLeaderBoardEntriesContinent(@Param("continent") continent: Continent, pageable: Pageable): Page<LeaderBoardEntry>
+    fun getLeaderBoardEntriesContinent(
+        @Param("continent") continent: Continent,
+        pageable: Pageable
+    ): Page<LeaderBoardEntry>
 
     @Query(
         """
@@ -54,7 +57,11 @@ interface LeaderBoardRepository : PagingAndSortingRepository<BotDAO?, Long> {
             FROM BotDAO b LEFT JOIN b.owner o2 LEFT JOIN o2.location l2 WHERE l2.continent = :continent and b.owner.id = :userId ORDER BY b.eloScore DESC
         """
     )
-    fun getPrivateLeaderBoardEntriesContinent(@Param("userId") userId: Long, @Param("continent") continent: Continent, pageable: Pageable): Page<LeaderBoardEntry>
+    fun getPrivateLeaderBoardEntriesContinent(
+        @Param("userId") userId: Long,
+        @Param("continent") continent: Continent,
+        pageable: Pageable
+    ): Page<LeaderBoardEntry>
 
     @Query(
         """
@@ -62,12 +69,16 @@ interface LeaderBoardRepository : PagingAndSortingRepository<BotDAO?, Long> {
             FROM BotDAO b LEFT JOIN b.owner o2 LEFT JOIN o2.location l2 WHERE l2.name = :country and b.owner.id = :userId ORDER BY b.eloScore DESC
         """
     )
-    fun getPrivateLeaderBoardEntriesCountry(@Param("userId") userId: Long, @Param("country") country: String, pageable: Pageable): Page<LeaderBoardEntry>
+    fun getPrivateLeaderBoardEntriesCountry(
+        @Param("userId") userId: Long,
+        @Param("country") country: String,
+        pageable: Pageable
+    ): Page<LeaderBoardEntry>
 
     @Query(
         """
-        SELECT max(b.eloScore) FROM BotDAO b
+        SELECT MAX(b.eloScore) FROM BotDAO b
         """
     )
-    fun getScoreOfGlobalFirstPlace(): Long
+    fun getScoreOfGlobalFirstPlace(): Long?
 }

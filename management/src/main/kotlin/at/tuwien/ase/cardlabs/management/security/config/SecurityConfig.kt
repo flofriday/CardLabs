@@ -2,6 +2,7 @@ package at.tuwien.ase.cardlabs.management.security.config
 
 import at.tuwien.ase.cardlabs.management.security.DatabaseUserDetailsService
 import at.tuwien.ase.cardlabs.management.security.jwt.JwtAuthenticationFilter
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -24,7 +25,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 @EnableWebSecurity
 @EnableMethodSecurity
 @Profile("!local")
-class SecurityConfig(private val accountService: AccountService) {
+class SecurityConfig(
+    private val accountService: AccountService,
+    private val jwtTokenService: JwtTokenService,
+) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -35,6 +39,7 @@ class SecurityConfig(private val accountService: AccountService) {
             .authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/authentication/refresh")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/leaderboard/public")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/leaderboard/firstPlace")).permitAll()
@@ -45,7 +50,7 @@ class SecurityConfig(private val accountService: AccountService) {
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .addFilterBefore(
-                JwtAuthenticationFilter(DatabaseUserDetailsService(accountService)),
+                JwtAuthenticationFilter(DatabaseUserDetailsService(accountService), jwtTokenService),
                 UsernamePasswordAuthenticationFilter::class.java,
             )
 

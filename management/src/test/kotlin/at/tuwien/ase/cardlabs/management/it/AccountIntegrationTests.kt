@@ -45,7 +45,8 @@ class AccountIntegrationTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    private val countries: List<Pair<String, Continent>> = listOf(Pair("Austria", Continent.EUROPE), Pair("Germany", Continent.EUROPE), Pair("Japan", Continent.EUROPE))
+    private val countries: List<Pair<String, Continent>> =
+        listOf(Pair("Austria", Continent.EUROPE), Pair("Germany", Continent.EUROPE), Pair("Japan", Continent.EUROPE))
 
     @BeforeEach
     fun beforeEach() {
@@ -474,7 +475,7 @@ class AccountIntegrationTests {
     }
 
     private fun getAuthenticationToken(username: String, password: String): String {
-        return TestHelper.getAuthenticationToken(mockMvc, username, password)
+        return TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, username, password).accessToken.token
     }
 
     private fun createAccount(

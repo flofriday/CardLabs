@@ -12,9 +12,13 @@ import {
   Bot,
   saveBot as _saveBot,
   deleteBot as _deleteBot,
+  getBotRank,
 } from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { RegionType } from "@/app/types/RegionType";
+
+const CODE_CHARACTER_LIMIT = 32000;
 
 function saveNewBot(
   name: string,
@@ -36,6 +40,16 @@ function saveBot(id: number, code: string): void {
     .catch(() => {});
 }
 
+function rankBot(id: number, region: RegionType): void {
+  getBotRank(id, RegionType.GLOBAL)
+    .then(() => {
+      toast.success("This bot has been queued for ranking");
+    })
+    .catch(() => {
+      toast.error("Bot could not be queued for ranking");
+    });
+}
+
 function deleteBot(id: number, router: any): void {
   _deleteBot(id)
     .then(() => {
@@ -52,14 +66,37 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   const [name, setName] = useState("");
   const [code, setCode] = useState<string | undefined>(undefined);
   const [saved, setSaved] = useState(true);
+  const [ranked, setRanked] = useState(false);
   const router = useRouter();
+
+  const setupBotCodeTemplate = async (): Promise<string> => {
+    try {
+      const response = await fetch("../codeTemplate.txt");
+      if (!response.ok) {
+        console.error(response);
+        throw Error();
+      }
+      return await response.text();
+    } catch (error) {
+      toast.error("Failed to load new code template");
+      return "";
+    }
+  };
 
   useEffect(() => {
     if (_id == null) {
       // fetch new name
+
       getNewBotName()
         .then((n) => {
           setName(n);
+          setupBotCodeTemplate()
+            .then((codeTemplate: string) => {
+              setCode(codeTemplate);
+            })
+            .catch(() => {
+              toast.error("Error loading code template");
+            });
         })
         .catch(() => {});
     } else {
@@ -91,15 +128,43 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
       <div className="h-full w-11/12">
         <EditorButtons
           save={() => {
+            if (code !== undefined && code?.length >= CODE_CHARACTER_LIMIT) {
+              toast.error(
+                `This bot exceeds the character limit of ${CODE_CHARACTER_LIMIT}`
+              );
+              return;
+            }
             setSaved(true);
-            if (_id == null) {
+            if (_id === null) {
               saveNewBot(name, code ?? "", setId, router);
             } else {
               saveBot(_id, code ?? "");
             }
           }}
+          rank={() => {
+            if (_id === null || !saved) {
+              toast.error("Bot needs to be saved before it can be ranked");
+              return;
+            }
+            if (code === undefined) {
+              toast.error("No code provided");
+              return;
+            }
+            if (ranked) {
+              toast.error("This bot has already been queued for ranking");
+              return;
+            }
+            if (code?.length >= CODE_CHARACTER_LIMIT) {
+              toast.error(
+                `This bot exceeds the character limit of ${CODE_CHARACTER_LIMIT}`
+              );
+              return;
+            }
+            rankBot(_id, RegionType.GLOBAL);
+            setRanked(true);
+          }}
           _delete={() => {
-            if (_id != null) {
+            if (_id !== null) {
               deleteBot(_id, router);
             } else {
               toast.success("Bot deleted");
@@ -112,6 +177,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           onChange={(c) => {
             if (c !== code) {
               setSaved(false);
+              setRanked(false);
             }
             setCode(c ?? "");
           }}

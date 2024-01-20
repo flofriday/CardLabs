@@ -10,10 +10,9 @@ import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.BotRepository
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
-import at.tuwien.ase.cardlabs.management.security.authentication.JwtAuthenticationResponse
 import at.tuwien.ase.cardlabs.management.util.Continent
 import at.tuwien.ase.cardlabs.management.util.RestResponsePage
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.web.servlet.MockMvc
@@ -33,6 +31,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class LeaderBoardIntegrationTests {
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @Autowired
     private lateinit var locationRepository: LocationRepository
@@ -49,9 +50,11 @@ class LeaderBoardIntegrationTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    private val countries: List<Pair<String, Continent>> = listOf(Pair("Austria", Continent.EUROPE), Pair("Germany", Continent.EUROPE), Pair("Japan", Continent.ASIA))
+    private val countries: List<Pair<String, Continent>> =
+        listOf(Pair("Austria", Continent.EUROPE), Pair("Germany", Continent.EUROPE), Pair("Japan", Continent.ASIA))
     private val globalViewBotNameList: ArrayList<String> = arrayListOf("Test12", "Test6", "Test11", "Test5", "Test10")
-    private val continentViewAccount1Europe: ArrayList<String> = arrayListOf("Test6", "Test5", "Test4", "Test3", "Test2")
+    private val continentViewAccount1Europe: ArrayList<String> =
+        arrayListOf("Test6", "Test5", "Test4", "Test3", "Test2")
 
     @BeforeEach
     fun beforeEach() {
@@ -209,30 +212,36 @@ class LeaderBoardIntegrationTests {
     @Test
     fun whenGetPublicLeaderboardGlobalView_withoutJWT_expectGlobalViewPage() {
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=GLOBAL"),
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=GLOBAL"),
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
 
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
+        val response = objectMapper.readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
         val retrievedBotNames = response.content.map { it.botName }
 
-        assertTrue(retrievedBotNames.containsAll(globalViewBotNameList), "Not all expected bot names are present in the response")
-        assertTrue(retrievedBotNames == globalViewBotNameList, "Bot names order in the response doesn't match the expected order")
+        assertTrue(
+            retrievedBotNames.containsAll(globalViewBotNameList),
+            "Not all expected bot names are present in the response"
+        )
+        assertTrue(
+            retrievedBotNames == globalViewBotNameList,
+            "Bot names order in the response doesn't match the expected order"
+        )
     }
 
     @Test
     fun whenGetPublicLeaderboardContinentView_withoutJWT_expect400() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=CONTINENT"),
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=CONTINENT"),
         ).andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
     fun whenGetPublicLeaderboardCountryView_withoutJWT_expect400() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=COUNTRY"),
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=COUNTRY"),
         ).andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
@@ -241,17 +250,23 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=GLOBAL")
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=GLOBAL")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
 
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
+        val response = objectMapper.readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
         val retrievedBotNames = response.content.map { it.botName }
 
-        assertTrue(retrievedBotNames.containsAll(globalViewBotNameList), "Not all expected bot names are present in the response")
-        assertTrue(retrievedBotNames == globalViewBotNameList, "Bot names order in the response doesn't match the expected order")
+        assertTrue(
+            retrievedBotNames.containsAll(globalViewBotNameList),
+            "Not all expected bot names are present in the response"
+        )
+        assertTrue(
+            retrievedBotNames == globalViewBotNameList,
+            "Bot names order in the response doesn't match the expected order"
+        )
     }
 
     @Test
@@ -259,17 +274,23 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=CONTINENT&filter=Austria")
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=CONTINENT&filter=Austria")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
 
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
+        val response = objectMapper.readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
         val retrievedBotNames = response.content.map { it.botName }
 
-        assertTrue(retrievedBotNames.containsAll(continentViewAccount1Europe), "Not all expected bot names are present in the response")
-        assertTrue(retrievedBotNames == continentViewAccount1Europe, "Bot names order in the response doesn't match the expected order")
+        assertTrue(
+            retrievedBotNames.containsAll(continentViewAccount1Europe),
+            "Not all expected bot names are present in the response"
+        )
+        assertTrue(
+            retrievedBotNames == continentViewAccount1Europe,
+            "Bot names order in the response doesn't match the expected order"
+        )
     }
 
     @Test
@@ -277,17 +298,23 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&regionType=COUNTRY&filter=Austria")
+            MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=COUNTRY&filter=Austria")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
 
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
+        val response = objectMapper.readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
         val retrievedBotNames = response.content.map { it.botName }
 
-        assertTrue(retrievedBotNames.containsAll(continentViewAccount1Europe), "Not all expected bot names are present in the response")
-        assertTrue(retrievedBotNames == continentViewAccount1Europe, "Bot names order in the response doesn't match the expected order")
+        assertTrue(
+            retrievedBotNames.containsAll(continentViewAccount1Europe),
+            "Not all expected bot names are present in the response"
+        )
+        assertTrue(
+            retrievedBotNames == continentViewAccount1Europe,
+            "Bot names order in the response doesn't match the expected order"
+        )
     }
 
     @Test
@@ -295,17 +322,23 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&regionType=GLOBAL")
+            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&region=GLOBAL")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
 
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
+        val response = objectMapper.readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
         val retrievedBotNames = response.content.map { it.botName }
 
-        assertTrue(retrievedBotNames.containsAll(continentViewAccount1Europe), "Not all expected bot names are present in the response")
-        assertTrue(retrievedBotNames == continentViewAccount1Europe, "Bot names order in the response doesn't match the expected order")
+        assertTrue(
+            retrievedBotNames.containsAll(continentViewAccount1Europe),
+            "Not all expected bot names are present in the response"
+        )
+        assertTrue(
+            retrievedBotNames == continentViewAccount1Europe,
+            "Bot names order in the response doesn't match the expected order"
+        )
     }
 
     @Test
@@ -313,17 +346,23 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&regionType=GLOBAL")
+            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&region=GLOBAL")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
 
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
+        val response = objectMapper.readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
         val retrievedBotNames = response.content.map { it.botName }
 
-        assertTrue(retrievedBotNames.containsAll(continentViewAccount1Europe), "Not all expected bot names are present in the response")
-        assertTrue(retrievedBotNames == continentViewAccount1Europe, "Bot names order in the response doesn't match the expected order")
+        assertTrue(
+            retrievedBotNames.containsAll(continentViewAccount1Europe),
+            "Not all expected bot names are present in the response"
+        )
+        assertTrue(
+            retrievedBotNames == continentViewAccount1Europe,
+            "Bot names order in the response doesn't match the expected order"
+        )
     }
 
     @Test
@@ -331,30 +370,26 @@ class LeaderBoardIntegrationTests {
         val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
 
         val result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&regionType=GLOBAL")
+            MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&region=GLOBAL")
                 .header("Authorization", "Bearer $authenticationToken"),
         ).andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
 
         val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
+        val response = objectMapper.readValue<RestResponsePage<LeaderBoardEntry>>(jsonResponseString)
         val retrievedBotNames = response.content.map { it.botName }
 
-        assertTrue(retrievedBotNames.containsAll(continentViewAccount1Europe), "Not all expected bot names are present in the response")
-        assertTrue(retrievedBotNames == continentViewAccount1Europe, "Bot names order in the response doesn't match the expected order")
+        assertTrue(
+            retrievedBotNames.containsAll(continentViewAccount1Europe),
+            "Not all expected bot names are present in the response"
+        )
+        assertTrue(
+            retrievedBotNames == continentViewAccount1Europe,
+            "Bot names order in the response doesn't match the expected order"
+        )
     }
 
     private fun getAuthenticationToken(username: String, password: String): String {
-        val body = TestHelper.createAccountLoginJSON(username, password)
-        val result = mockMvc.perform(
-            MockMvcRequestBuilders.post("/authentication/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body),
-        )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andReturn()
-        val jsonResponseString = result.response.contentAsString
-        val response = jacksonObjectMapper().readValue<JwtAuthenticationResponse>(jsonResponseString)
-        return response.jwt
+        return TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, username, password).accessToken.token
     }
 }

@@ -6,9 +6,11 @@ import at.tuwien.ase.cardlabs.management.database.model.game.GameDAO
 import at.tuwien.ase.cardlabs.management.database.model.game.GameState
 import at.tuwien.ase.cardlabs.management.database.model.game.log.LogMessage
 import at.tuwien.ase.cardlabs.management.database.repository.GameRepository
+import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
 import at.tuwien.ase.cardlabs.management.mapper.GameMapper
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
+import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -20,15 +22,18 @@ import java.time.Instant
 class GameService(
     private val gameRepository: GameRepository,
     private val gameMapper: GameMapper,
+    private val botService: BotService,
 ) {
-
     private final val logger = LoggerFactory.getLogger(javaClass)
 
     /**
      * Fetch all details about a game
      */
     @Transactional
-    fun fetchById(user: CardLabUser, gameId: Long): Game {
+    fun fetchById(
+        user: CardLabUser,
+        gameId: Long,
+    ): Game {
         logger.debug("User ${user.id} attempts to fetch the game $gameId")
         val game = findById(gameId)
         return gameMapper.map(game)
@@ -38,15 +43,25 @@ class GameService(
      * Fetch all the logs from a game
      */
     @Transactional
-    fun fetchLogById(user: CardLabUser, gameId: Long): List<LogMessage> {
+    fun fetchLogById(
+        user: CardLabUser,
+        gameId: Long,
+    ): List<LogMessage> {
         logger.debug("User ${user.id} attempts to fetch the logs of the game $gameId")
         val game = findById(gameId)
         return game.turns.flatMap { it.logMessages }
     }
 
     @Transactional
-    fun fetchAllGamesWithBot(user: CardLabUser, botId: Long, pageable: Pageable): Page<Game> {
+    fun fetchAllGamesWithBot(
+        user: CardLabUser,
+        botId: Long,
+        pageable: Pageable,
+    ): Page<Game> {
         logger.debug("User ${user.id} attempts to fetch all the game for bot $botId")
+        if (!botService.isBotOwnedByUser(botId, user)) {
+            throw UnauthorizedException("You are not authorized to view the bot $botId")
+        }
         return gameRepository.findAllGamesWithBot(botId, pageable)
             .map(gameMapper::map)
     }

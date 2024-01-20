@@ -7,7 +7,7 @@ import { getUserProfilePicture } from "@/app/services/UserService";
 import { getCookie } from "cookies-next";
 
 export default function Profile(): JSX.Element {
-  const [dropdownVisability, setDropdownVisability] = useState(false);
+  const [dropdownVisibility, setDropdownVisibility] = useState(false);
   const [profilePic, setProfilePic] = useState("");
   useEffect(() => {
     const jwt = getCookie("auth_token") as string;
@@ -28,7 +28,7 @@ export default function Profile(): JSX.Element {
         className="w-11"
         id="profile_pic_in_navbar"
         onClick={() => {
-          setDropdownVisability(!dropdownVisability);
+          setDropdownVisibility(!dropdownVisibility);
         }}
       >
         <Image
@@ -42,13 +42,13 @@ export default function Profile(): JSX.Element {
       </div>
       <div
         className={`transition-all ${
-          dropdownVisability ? "opacity-100" : "opacity-0"
+          dropdownVisibility ? "opacity-100" : "opacity-0"
         }`}
       >
-        {dropdownVisability && (
+        {dropdownVisibility && (
           <NavDropDown
             close={() => {
-              setDropdownVisability(false);
+              setDropdownVisibility(false);
             }}
           />
         )}
