@@ -15,12 +15,16 @@ export default async function middleware(
 ): Promise<NextResponse<unknown> | undefined> {
   if (protectedRoutes.includes(req.nextUrl.pathname)) {
     const token = req.cookies.get("auth_token")?.value;
-    if (token !== undefined) {
-      if (!(await validToken(token))) {
-        return RedirectToForbidden(req);
-      }
-    } else {
+    if (token === undefined || !(await validToken(token))) {
       return RedirectToForbidden(req);
     }
+  }
+
+  if (req.nextUrl.pathname.startsWith('/api')) {
+    const destination = process.env.MANAGEMENT_HOST ?? "http://127.0.0.1:8080";
+    const path = req.nextUrl.pathname.replace("/api", "")
+    const url = new URL(path, destination)
+
+    return NextResponse.rewrite(url.toString());
   }
 }
