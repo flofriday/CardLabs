@@ -10,6 +10,7 @@ interface Props {
   hand: Hand;
   active: boolean;
   actions: Action[];
+  name: string;
 }
 
 function isHighlighted(
@@ -38,6 +39,7 @@ export default function BotHandsContainer({
   hand,
   active,
   actions,
+  name,
 }: Props): JSX.Element {
   const [showNextSet, setShowNextSet] = useState(false);
   const [isActive, setActive] = useState(active);
@@ -56,9 +58,9 @@ export default function BotHandsContainer({
           className={`flex-shrink-0 w-40 truncate pl-2 ${
             isActive ? "font-bold [text-shadow:_#FEF9EC_1px_0_10px]" : ""
           }`}
-          title={hand.botId + ""}
+          title={name}
         >
-          {hand.botId + ""}:
+          {name}:
         </p>
         {cardsToShow.map((card, index) => (
           <div key={index}>

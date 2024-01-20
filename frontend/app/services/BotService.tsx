@@ -94,7 +94,7 @@ export async function getBot(id: number): Promise<Bot> {
 
   if (response.status !== 200) {
     toast.error("An error occurred. Please try again later.");
-    throw new EvalError(); // TODO change this
+    throw new Error();
   }
 
   // TODO add error handling

@@ -10,6 +10,7 @@ import Card, { toCardType } from "@/app/components/card";
 import { Game } from "@/app/types/game";
 import { BackendCard } from "@/app/types/backendCard";
 import { Hand } from "@/app/types/hand";
+import { Bot, getBot } from "@/app/services/BotService";
 
 export default function GameDetail({
   params,
@@ -19,6 +20,7 @@ export default function GameDetail({
   const [logLines, setLogLines] = useState<LogLine[]>([]);
   const [game, setGame] = useState<Game>();
   const [round, setRound] = useState(0);
+  const [bots, setBots] = useState<Bot[]>([]);
 
   useEffect(() => {
     getLogLinesForGame(Number(params.slug))
@@ -29,6 +31,18 @@ export default function GameDetail({
     getGame(Number(params.slug))
       .then((g) => {
         setGame(g);
+        if (g.turns[0] !== undefined) {
+          const botIds = g.turns[0].hands.map((x) => x.botId);
+          const botsPromise = [];
+          for (let i = 0; i < botIds.length; i++) {
+            botsPromise.push(getBot(botIds[i]));
+          }
+          Promise.all(botsPromise)
+            .then((b) => {
+              setBots(b);
+            })
+            .catch(() => {});
+        }
       })
       .catch(() => {});
   }, [params.slug]);
@@ -84,6 +98,7 @@ export default function GameDetail({
                 {game !== undefined
                   ? game.turns[round].hands.map((hand: Hand, index: Key) => (
                       <BotHandsContainer
+                        name={bots.find((x) => x.id === hand.botId)?.name + ""}
                         hand={hand}
                         key={index}
                         active={hand.botId === game.turns[round].activeBotId}
