@@ -1,6 +1,7 @@
 package at.tuwien.ase.cardlabs.management.validation
 
 import at.tuwien.ase.cardlabs.management.error.ValidationException
+import kotlin.jvm.Throws
 
 /**
  * An interface representing the validation rule definition
@@ -13,5 +14,6 @@ interface ValidationRule<T> {
      *
      * @throws ValidationException if the rule is violated
      */
+    @Throws(ValidationException::class)
     fun validate(field: T)
 }

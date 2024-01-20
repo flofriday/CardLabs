@@ -45,7 +45,7 @@ class AccountController(val accountService: AccountService) {
         @AuthenticationPrincipal user: CardLabUser,
     ): ResponseEntity<Account> {
         logger.info("User ${user.id} attempts to fetch its account information")
-        val result = accountService.getUser(user)
+        val result = accountService.fetchUser(user)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(result)
