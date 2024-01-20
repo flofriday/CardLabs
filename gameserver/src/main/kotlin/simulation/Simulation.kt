@@ -203,7 +203,7 @@ fun turnSnapShot(state: GameState): Turn {
         state.turns.size.toLong(),
         state.pile.last(),
         state.drawPile.take(5),
-        state.players.map { p -> Hand(p.bot.botId, p.hand) },
+        state.players.map { p -> Hand(p.bot.botId, p.hand.toList()) },
         mutableListOf(),
         mutableListOf(),
     )
