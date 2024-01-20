@@ -81,7 +81,7 @@ class BotService(
     @Transactional
     @Throws(
         BotDoesNotExistException::class,
-        UnauthorizedException::class
+        UnauthorizedException::class,
     )
     fun patch(
         user: CardLabUser,
@@ -112,13 +112,13 @@ class BotService(
         BotDoesNotExistException::class,
         UnauthorizedException::class,
         BotStateException::class,
-        ValidationException::class
+        ValidationException::class,
     )
     fun createCodeVersion(
         user: CardLabUser,
         botId: Long,
     ) {
-        logger.debug("User ${user.id} attempts to create a code version for the bot $botId")
+        logger.debug("User ${user.id} attempts create code version for bot $botId")
         val bot =
             findById(botId)
                 ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
@@ -144,8 +144,8 @@ class BotService(
         botCodeDAO.code = bot.currentCode
         botCodeDAO = botCodeRepository.save(botCodeDAO)
 
-        bot.currentState = BotState.READY
         bot.codeHistory.add(botCodeDAO)
+        bot.currentState = BotState.QUEUED
     }
 
     /**
@@ -154,7 +154,7 @@ class BotService(
     @Transactional
     @Throws(
         BotDoesNotExistException::class,
-        UnauthorizedException::class
+        UnauthorizedException::class,
     )
     fun fetch(
         user: CardLabUser,
@@ -191,7 +191,7 @@ class BotService(
     @Transactional
     @Throws(
         BotDoesNotExistException::class,
-        UnauthorizedException::class
+        UnauthorizedException::class,
     )
     fun delete(
         user: CardLabUser,

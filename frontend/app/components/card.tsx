@@ -195,6 +195,7 @@ export function toCardType(type: string, number?: number): CardValue_ {
     return CardValue.SWITCH;
   }
 
+  console.log(`Type. ${type}   number: ${number} convertion to card failed`);
   throw Error();
 }
 

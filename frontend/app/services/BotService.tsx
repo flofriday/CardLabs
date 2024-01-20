@@ -196,6 +196,29 @@ export async function getAllBots(
   return page;
 }
 
+export async function rankBot(botId: number): Promise<boolean> {
+  await refreshAccessToken();
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch(`/api/bot/${botId}/rank`, {
+    mode: "cors",
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+    },
+  });
+
+  if (response.status !== 200) {
+    toast.error(
+      "An error occurred. Please try again later. If the error persists, please contact the support."
+    );
+    throw new Error();
+  }
+
+  return true;
+}
+
 export async function getBotRank(
   botId: number,
   region: RegionType

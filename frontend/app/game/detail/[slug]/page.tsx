@@ -56,7 +56,7 @@ export default function GameDetail({
             <div className="w-full flex">
               <div className="w-4/6 flex justify-between grow space-x-5">
                 <Slider
-                  totalRoundNumber={5}
+                  totalRoundNumber={game?.turns.length}
                   onChange={(r) => {
                     setRound(r - 1);
                   }}
@@ -66,14 +66,16 @@ export default function GameDetail({
                   <p className="text-4xl font-bold whitespace-nowrap">
                     Top Card:
                   </p>
-                  <Card
-                    value={toCardType(
-                      game?.turns[round].topCard.type,
-                      game?.turns[round].topCard.number
-                    )}
-                    color={CardColor.PURPLE}
-                    className="h-16 w-fit"
-                  />
+                  {game?.turns[round].topCard.type !== undefined && (
+                    <Card
+                      value={toCardType(
+                        game?.turns[round].topCard.type,
+                        game?.turns[round].topCard.number
+                      )}
+                      color={CardColor.PURPLE}
+                      className="h-16 w-fit"
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -97,11 +99,13 @@ export default function GameDetail({
                   ? game.turns[round].drawPile.map(
                       (card: BackendCard, index: Key) => (
                         <div key={index}>
-                          <Card
-                            value={toCardType(card.type, card.number)}
-                            color={card.color}
-                            className="h-16 w-fit px-2"
-                          />
+                          {card.type !== undefined && (
+                            <Card
+                              value={toCardType(card.type, card.number)}
+                              color={card.color}
+                              className="h-16 w-fit px-2"
+                            />
+                          )}
                         </div>
                       )
                     )

@@ -12,7 +12,7 @@ import {
   Bot,
   saveBot as _saveBot,
   deleteBot as _deleteBot,
-  getBotRank,
+  rankBot as _rankBot,
 } from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -41,7 +41,7 @@ function saveBot(id: number, code: string): void {
 }
 
 function rankBot(id: number, region: RegionType): void {
-  getBotRank(id, RegionType.GLOBAL)
+  _rankBot(id)
     .then(() => {
       toast.success("This bot has been queued for ranking");
     })
