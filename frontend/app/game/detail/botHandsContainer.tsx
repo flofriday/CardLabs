@@ -53,40 +53,44 @@ export default function BotHandsContainer({
 
   return (
     <div className="flex flex-col text-4xl py-2 items-start">
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 w-full">
         <p
-          className={`flex-shrink-0 w-40 truncate pl-2 ${
+          className={`flex-shrink-0 w-56 truncate pl-2 ${
             isActive ? "font-bold [text-shadow:_#FEF9EC_1px_0_10px]" : ""
           }`}
           title={name}
         >
           {name}:
         </p>
-        {cardsToShow.map((card, index) => (
-          <div key={index}>
-            <Card
-              value={toCardType(card.type, card.number)}
-              color={card.color}
-              className={`h-16 w-fit px-2 ${
-                isHighlighted(actions, index, cardsToShow)
-                  ? "border-accent bg-accent border-4 rounded-md shadow-md"
-                  : ""
-              }`}
-            />
+        <div className="flex justify-between w-full">
+          <div className="flex">
+            {cardsToShow.map((card, index) => (
+              <div key={index}>
+                <Card
+                  value={toCardType(card.type, card.number)}
+                  color={card.color}
+                  className={`h-16 w-fit px-2 ${
+                    isHighlighted(actions, index, cardsToShow)
+                      ? "border-accent bg-accent border-4 rounded-md shadow-md"
+                      : ""
+                  }`}
+                />
+              </div>
+            ))}
           </div>
-        ))}
-        {hand.cards.length > 10 && (
-          <div className="flex items-center ml-2">
-            <button
-              className="btn bg-primary p-6 py-2 font-bold rounded-lg shadow-md text-4xl  hover:bg-primary_highlight"
-              onClick={() => {
-                setShowNextSet(!showNextSet);
-              }}
-            >
-              {showNextSet ? "Previous Cards" : "Next Cards"}
-            </button>
-          </div>
-        )}
+          {hand.cards.length > 10 && (
+            <div className="flex items-center ml-2">
+              <button
+                className="btn bg-primary p-6 py-2 font-bold rounded-lg shadow-md text-4xl  hover:bg-primary_highlight"
+                onClick={() => {
+                  setShowNextSet(!showNextSet);
+                }}
+              >
+                {showNextSet ? "Previous Cards" : "Next Cards"}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

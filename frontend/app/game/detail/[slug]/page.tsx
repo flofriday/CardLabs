@@ -115,7 +115,7 @@ export default function GameDetail({
 
             <div className="">
               <div className="flex flex-row text-4xl py-2 items-center font-bold">
-                <p>Draw Pile:</p>
+                <p className="w-56 ml-2">Draw Pile:</p>
                 {game !== undefined
                   ? game.turns[round].drawPile.map(
                       (card: BackendCard, index: Key) => (
