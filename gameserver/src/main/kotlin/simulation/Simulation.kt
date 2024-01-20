@@ -201,6 +201,7 @@ fun execBotTurn(
 fun turnSnapShot(state: GameState): Turn {
     return Turn(
         state.turns.size.toLong(),
+        state.players[state.currentPlayer].bot.botId,
         state.pile.last(),
         state.drawPile.take(5),
         state.players.map { p -> Hand(p.bot.botId, p.hand.toList()) },
