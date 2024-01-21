@@ -1,9 +1,11 @@
 package at.tuwien.ase.cardlabs.management.service.bot
 
+import at.tuwien.ase.cardlabs.management.Helper
 import at.tuwien.ase.cardlabs.management.config.BotConfig
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
+import at.tuwien.ase.cardlabs.management.controller.model.bot.TestBot
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotCodeDAO
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotDAO
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
@@ -21,6 +23,7 @@ import at.tuwien.ase.cardlabs.management.util.Region
 import at.tuwien.ase.cardlabs.management.validation.validator.BotValidator
 import at.tuwien.ase.cardlabs.management.validation.validator.Validator
 import org.slf4j.LoggerFactory
+import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -37,8 +40,12 @@ class BotService(
     private val botNameGenerator: BotNameGenerator,
     private val botCodeRepository: BotCodeRepository,
     private val botConfig: BotConfig,
+    private val rabbitTemplate: RabbitTemplate,
 ) {
+
     private final val logger = LoggerFactory.getLogger(javaClass)
+
+    private var testsBots: List<TestBot>? = null
 
     /**
      * Generate a bot name
@@ -46,6 +53,17 @@ class BotService(
     fun generateBotName(user: CardLabUser): String {
         logger.debug("User ${user.id} attempts to generate a bot name")
         return botNameGenerator.generateBotName()
+    }
+
+    /**
+     * Fetch all test bots
+     */
+    fun fetchAllTestsBots(user: CardLabUser): List<TestBot> {
+        logger.debug("User ${user.id} attempts to fetch all tests bots")
+        if (testsBots == null) {
+            testsBots = Helper.fetchAllTestsBots()
+        }
+        return testsBots!!
     }
 
     /**
@@ -231,13 +249,13 @@ class BotService(
         findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
-        if (region == Region.CONTINENT) {
-            return botRepository.findBotRankPositionContinent(botId)
-        } else if (region == Region.COUNTRY) {
-            return botRepository.findBotRankPositionCountry(botId)
-        } else {
-            return botRepository.findBotRankPosition(botId)
+        val result = when (region) {
+            Region.GLOBAL -> botRepository.findBotRankPosition(botId)
+            Region.CONTINENT -> botRepository.findBotRankPositionContinent(botId)
+            Region.COUNTRY -> botRepository.findBotRankPositionCountry(botId)
+            else -> throw UnsupportedOperationException("The fetch rank position operation is currently not supported for the region $region")
         }
+        return result
     }
 
     /**

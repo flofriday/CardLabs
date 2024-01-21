@@ -3,6 +3,7 @@ package at.tuwien.ase.cardlabs.management.controller
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
+import at.tuwien.ase.cardlabs.management.controller.model.bot.TestBot
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import at.tuwien.ase.cardlabs.management.util.Region
@@ -35,6 +36,15 @@ class BotController(
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(name)
+    }
+
+    @GetMapping("bot/test-bots")
+    fun fetchTestBots(@AuthenticationPrincipal user: CardLabUser): ResponseEntity<List<TestBot>> {
+        logger.info("User ${user.id} attempts to receive all test bots")
+        val testBots = botService.fetchAllTestsBots(user)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(testBots)
     }
 
     @PostMapping("/bot")
