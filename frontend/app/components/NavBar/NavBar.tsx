@@ -1,9 +1,22 @@
+"use client";
+
 import Link from "next/link";
 import SignInUp from "./SignInUp";
 import Profile from "./Profile";
 import { isAuthenticated } from "../../services/AuthenticationService";
+import { useSaveCodeStore } from "@/app/state/savedCodeStore";
 
 export default async function NavBar(): Promise<JSX.Element> {
+  const codeSaved = useSaveCodeStore((state: any) => state.codeSaved);
+
+  const handleNavigation = (e: any) => {
+    console.log("codeSaved" + codeSaved);
+    if (!codeSaved) {
+      e.preventDefault();
+      alert("You have unsaved changes");
+    }
+  };
+
   return (
     <div className="w-full h-14 bg-primary flow-root fixed z-30">
       <div className="h-full flex items-center space-x-6 w-fit float-left">
@@ -29,6 +42,7 @@ export default async function NavBar(): Promise<JSX.Element> {
           href="/leaderboard"
           id="leaderboard_link"
           className="text-base  hover:text-accent max-sm:hidden"
+          onClick={handleNavigation}
         >
           Leaderboard
         </Link>
