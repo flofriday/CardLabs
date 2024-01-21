@@ -15,7 +15,7 @@ export default function MiniLeaderBoardContent({
   regionType,
   entries,
 }: Props): JSX.Element {
-  const [maximalScore, setMaximalScore] = useState<number>(0);
+  const [maximalScore, setMaximalScore] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     getScoreOfGlobalFirstPlace()
@@ -45,10 +45,12 @@ export default function MiniLeaderBoardContent({
             </p>
             <div className="col-span-2 pr-4">
               <div className="bg-background h-4 w-full h-full ml-2flex items-center justify-center p-1">
-                <div
-                  className="bg-primary_highlight h-full"
-                  style={{ width: `${(entry.score / maximalScore) * 100}%` }}
-                />
+                {maximalScore !== undefined && (
+                    <div
+                        className="bg-primary_highlight h-full"
+                        style={{ width: `${(entry.score / maximalScore) * 100}%` }}
+                    />
+                )}
               </div>
             </div>
             <p className="ml-2 col-span-1 pl-1">Score: {entry.score}</p>

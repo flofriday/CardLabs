@@ -26,6 +26,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
+import kotlin.jvm.Throws
 
 @Service
 class BotService(
@@ -36,7 +37,6 @@ class BotService(
     private val botCodeRepository: BotCodeRepository,
     private val botConfig: BotConfig,
 ) {
-
     private final val logger = LoggerFactory.getLogger(javaClass)
 
     /**
@@ -51,10 +51,15 @@ class BotService(
      * Create a bot
      */
     @Transactional
-    fun create(user: CardLabUser, botCreate: BotCreate): Bot {
+    @Throws(AccountDoesNotExistException::class)
+    fun create(
+        user: CardLabUser,
+        botCreate: BotCreate,
+    ): Bot {
         logger.debug("User ${user.id} attempts to create a bot with the name ${botCreate.name}")
-        val owner = accountService.findById(user.id)
-            ?: throw AccountDoesNotExistException("An account with the id ${user.id} doesn't exist")
+        val owner =
+            accountService.findById(user.id)
+                ?: throw AccountDoesNotExistException("An account with the id ${user.id} doesn't exist")
 
         BotValidator.validate(botCreate)
 
@@ -74,10 +79,19 @@ class BotService(
      * Update a bot
      */
     @Transactional
-    fun patch(user: CardLabUser, botId: Long, botPatch: BotPatch): Bot {
+    @Throws(
+        BotDoesNotExistException::class,
+        UnauthorizedException::class
+    )
+    fun patch(
+        user: CardLabUser,
+        botId: Long,
+        botPatch: BotPatch,
+    ): Bot {
         logger.debug("User ${user.id} attempts to patch the bot $botId")
-        val bot = findById(botId)
-            ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+        val bot =
+            findById(botId)
+                ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
         if (bot.owner.id != user.id) {
             throw UnauthorizedException("Can't update a bot not belonging to you")
         }
@@ -94,10 +108,20 @@ class BotService(
      * Create a new version of the current code which is used when a bot is playing a game
      */
     @Transactional
-    fun createCodeVersion(user: CardLabUser, botId: Long) {
+    @Throws(
+        BotDoesNotExistException::class,
+        UnauthorizedException::class,
+        BotStateException::class,
+        ValidationException::class
+    )
+    fun createCodeVersion(
+        user: CardLabUser,
+        botId: Long,
+    ) {
         logger.debug("User ${user.id} attempts to create a code version for the bot $botId")
-        val bot = findById(botId)
-            ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+        val bot =
+            findById(botId)
+                ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
         if (bot.owner.id != user.id) {
             throw UnauthorizedException("Can't rank a bot not belonging to you")
         }
@@ -128,10 +152,18 @@ class BotService(
      * Fetch a bot by its id
      */
     @Transactional
-    fun fetch(user: CardLabUser, botId: Long): Bot {
+    @Throws(
+        BotDoesNotExistException::class,
+        UnauthorizedException::class
+    )
+    fun fetch(
+        user: CardLabUser,
+        botId: Long,
+    ): Bot {
         logger.debug("User ${user.id} attempts to fetch the bot $botId")
-        val bot = findById(botId)
-            ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+        val bot =
+            findById(botId)
+                ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
         if (bot.owner.id != user.id) {
             throw UnauthorizedException("You are not authorized to view the bot $botId")
@@ -144,7 +176,10 @@ class BotService(
      * Fetch all bots by user
      */
     @Transactional
-    fun fetchAll(user: CardLabUser, pageable: Pageable): Page<Bot> {
+    fun fetchAll(
+        user: CardLabUser,
+        pageable: Pageable,
+    ): Page<Bot> {
         logger.debug("User ${user.id} attempts to fetch all its bots (pageNumber=${pageable.pageNumber}, pageSize=${pageable.pageSize})")
         return botRepository.findByOwnerIdAndDeletedIsNull(user.id, pageable)
             .map(botMapper::map)
@@ -154,7 +189,14 @@ class BotService(
      * Delete a bot by its id
      */
     @Transactional
-    fun delete(user: CardLabUser, botId: Long) {
+    @Throws(
+        BotDoesNotExistException::class,
+        UnauthorizedException::class
+    )
+    fun delete(
+        user: CardLabUser,
+        botId: Long,
+    ) {
         logger.debug("User ${user.id} attempts to delete the bot $botId")
         val bot = findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
@@ -170,7 +212,12 @@ class BotService(
      * Fetch the current rank position of a bot
      */
     @Transactional
-    fun fetchRankPosition(user: CardLabUser, botId: Long, region: Region): Long {
+    @Throws(BotDoesNotExistException::class)
+    fun fetchRankPosition(
+        user: CardLabUser,
+        botId: Long,
+        region: Region,
+    ): Long {
         logger.debug("User ${user.id} attempts to fetch global bot rank for bot $botId")
         findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
@@ -199,7 +246,10 @@ class BotService(
      * Update the state of multiple bots to a given state
      */
     @Transactional
-    fun updateMultipleBotState(botIds: List<Long>, newState: BotState): Int {
+    fun updateMultipleBotState(
+        botIds: List<Long>,
+        newState: BotState,
+    ): Int {
         logger.debug("Attempting to update the state for the bots $botIds to $newState")
         return botRepository.updateMultipleBotState(botIds, newState)
     }
@@ -213,6 +263,21 @@ class BotService(
         for (bot in botRepository.findAllByIdInAndDeletedIsNull(botIds)) {
             bot.currentState = bot.defaultState
         }
+    }
+
+    /**
+     * Return if a bot is owned by a user
+     */
+    @Transactional
+    @Throws(BotDoesNotExistException::class)
+    fun isBotOwnedByUser(
+        botId: Long,
+        user: CardLabUser,
+    ): Boolean {
+        val bot = findById(botId)
+            ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+
+        return bot.owner.id == user.id
     }
 
     private fun findById(botId: Long): BotDAO? {
