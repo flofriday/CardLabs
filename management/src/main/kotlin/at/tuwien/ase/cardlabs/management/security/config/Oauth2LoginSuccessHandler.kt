@@ -14,7 +14,8 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import java.io.IOException
 
-class Oauth2LoginSuccessHandler( val accountService: AccountService,  val jwtTokenService: JwtTokenService ) : AuthenticationSuccessHandler {
+class Oauth2LoginSuccessHandler(val accountService: AccountService, val jwtTokenService: JwtTokenService) :
+    AuthenticationSuccessHandler {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @Throws(IOException::class, ServletException::class)
