@@ -25,7 +25,7 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
         SELECT b
             FROM BotDAO b
             WHERE b.owner.id = :ownerId AND b.deleted = NULL
-            ORDER BY b.codeUpdated DESC
+            ORDER BY b.codeUpdated DESC, b.name
         """,
     )
     fun findByOwnerIdAndDeletedIsNull(@Param("ownerId") ownerId: Long, pageable: Pageable): Page<BotDAO>
