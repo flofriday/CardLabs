@@ -80,7 +80,7 @@ class GameServiceTests {
             DebugLogMessage("world", botId),
         )
         gameDAO.turns = listOf(
-            Turn(0, topCard, drawPile, hand, actions, logMessages),
+            Turn(0, 0, topCard, drawPile, hand, actions, logMessages),
         )
         gameDAO.gameState = GameState.CREATED
         gameDAO.participatingBotIds = listOf(botId)
@@ -133,7 +133,7 @@ class GameServiceTests {
             DebugLogMessage("world", botId),
         )
         gameDAO.turns = listOf(
-            Turn(0, topCard, emptyList(), emptyList(), emptyList(), logMessages),
+            Turn(0, 0, topCard, emptyList(), emptyList(), emptyList(), logMessages),
         )
         gameDAO.gameState = GameState.CREATED
         gameDAO.participatingBotIds = listOf(botId)
