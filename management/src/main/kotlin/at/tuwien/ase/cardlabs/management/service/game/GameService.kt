@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.service.game
 
+import at.tuwien.ase.cardlabs.management.amqp.MatchQueue
 import at.tuwien.ase.cardlabs.management.controller.model.game.Game
 import at.tuwien.ase.cardlabs.management.controller.model.game.GameCreate
 import at.tuwien.ase.cardlabs.management.database.model.game.GameDAO
@@ -9,9 +10,13 @@ import at.tuwien.ase.cardlabs.management.database.repository.GameRepository
 import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
 import at.tuwien.ase.cardlabs.management.mapper.GameMapper
+import at.tuwien.ase.cardlabs.management.matchmaker.Bot
+import at.tuwien.ase.cardlabs.management.matchmaker.MatchQueueMessage
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import org.slf4j.LoggerFactory
+import org.springframework.amqp.core.Queue
+import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -24,6 +29,8 @@ class GameService(
     private val gameRepository: GameRepository,
     private val gameMapper: GameMapper,
     private val botService: BotService,
+    private val rabbitTemplate: RabbitTemplate,
+    @MatchQueue private val matchQueue: Queue,
 ) {
     private final val logger = LoggerFactory.getLogger(javaClass)
 
@@ -104,6 +111,43 @@ class GameService(
         return gameRepository.saveAll(gameDaos)
             .map(gameMapper::map)
             .toList()
+    }
+
+    /**
+     * Create a match where a given bot is playing with its current code against a test bot
+     *
+     * @return the match id
+     */
+    @Transactional
+    fun createTestMatch(
+        user: CardLabUser,
+        botId: Long,
+        testBotId: Long
+    ): Long {
+        logger.debug("User ${user.id} attempts to create a test match for the user bot $botId against the test bot $testBotId")
+        val bot = botService.fetch(user, botId)
+        val testBot = botService.fetchTestBotById(testBotId)
+
+        val messageBots = mutableListOf<Bot>()
+        val botLatestCode = bot.getLatestCodeVersion()
+        messageBots.add(
+            Bot(
+                bot.id!!,
+                botLatestCode!!.id!!,
+                botLatestCode.code,
+            )
+        )
+        messageBots.add(
+            Bot(
+                testBot.id,
+                null,
+                testBot.code
+            )
+        )
+        val game = save(listOf(GameCreate(listOf(bot.id, testBot.id))))[0]
+        val message = MatchQueueMessage(game.id!!, messageBots)
+        rabbitTemplate.convertAndSend(matchQueue.name, message)
+        return game.id
     }
 
     @Throws(GameDoesNotExistException::class)

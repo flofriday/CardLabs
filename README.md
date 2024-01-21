@@ -7,9 +7,13 @@
 
 ## Run
 
-1. Start the docker container `docker run -it --rm --name rabbitmq  -p 5672:5672 bitnami/rabbitmq:latest`
+1. Start the docker container `docker run -it --rm --name rabbitmq -p 5672:5672 bitnami/rabbitmq:latest`
 
 # Bot
+
+## IDs
+
+A bot with a negative id is a test bot (maintained by the CardLabs team). A user bot must have a positive id.
 
 ## Bot states
 

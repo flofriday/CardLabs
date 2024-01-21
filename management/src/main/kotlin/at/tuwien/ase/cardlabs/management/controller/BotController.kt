@@ -6,6 +6,7 @@ import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
 import at.tuwien.ase.cardlabs.management.controller.model.bot.TestBot
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
+import at.tuwien.ase.cardlabs.management.service.game.GameService
 import at.tuwien.ase.cardlabs.management.util.Region
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class BotController(
     val botService: BotService,
+    val gameService: GameService,
 ) {
 
     private final val logger = LoggerFactory.getLogger(javaClass)
@@ -133,5 +135,18 @@ class BotController(
         return ResponseEntity
             .status(HttpStatus.OK)
             .build()
+    }
+
+    @GetMapping("/bot/{botId}/test-match/{testBotId}")
+    fun testMatch(
+        @AuthenticationPrincipal user: CardLabUser,
+        @PathVariable botId: Long,
+        @PathVariable testBotId: Long,
+    ): ResponseEntity<Long> {
+        logger.info("User ${user.id} attempts to create a test match for the user bot $botId against the test bot $testBotId")
+        val gameId = gameService.createTestMatch(user, botId, testBotId)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(gameId)
     }
 }

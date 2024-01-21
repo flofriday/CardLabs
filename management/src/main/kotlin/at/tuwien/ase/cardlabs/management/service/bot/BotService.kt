@@ -67,6 +67,22 @@ class BotService(
     }
 
     /**
+     * Test a test bot by its id
+     */
+    @Throws(BotDoesNotExistException::class)
+    fun fetchTestBotById(testBotId: Long): TestBot {
+        if (testsBots == null) {
+            testsBots = Helper.fetchAllTestsBots()
+        }
+        for (bot in testsBots!!) {
+            if (bot.id == testBotId) {
+                return bot
+            }
+        }
+        throw BotDoesNotExistException("The test bot $testBotId does not exist")
+    }
+
+    /**
      * Create a bot
      */
     @Transactional

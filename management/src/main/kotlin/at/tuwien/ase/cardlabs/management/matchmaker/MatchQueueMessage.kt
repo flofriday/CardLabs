@@ -12,6 +12,6 @@ data class MatchQueueMessage(
 
 data class Bot(
     val botId: Long,
-    val botCodeId: Long,
+    val botCodeId: Long?,
     val code: String,
 ) : Serializable
