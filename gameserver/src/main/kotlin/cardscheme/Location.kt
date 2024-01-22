@@ -29,7 +29,7 @@ data class Location(val startline: Int, val endline: Int, val startcol: Int, val
                 endcol = begin.endcol
             }
 
-            return Location(startline, startcol, endline, endcol)
+            return Location(startline, endline, startcol, endcol)
         }
     }
 }

@@ -18,7 +18,6 @@ data class SchemeError(val header: String, val reason: String, val location: Loc
         output.append("\n")
         if (location != null) {
             try {
-
                 if (location.startline == location.endline) {
                     val line = program.lines().get(location.startline - 1)
                     output.append(grey)
@@ -33,7 +32,6 @@ data class SchemeError(val header: String, val reason: String, val location: Loc
                                 ) +
                                 reset + "\n",
                     )
-
                 } else {
                     output.append(grey)
                     output.append(
