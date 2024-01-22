@@ -31,8 +31,9 @@ class Oauth2LoginSuccessHandler(val accountService: AccountService, val jwtToken
 
         val attributes = (authentication.principal as DefaultOAuth2User).attributes
         val email = attributes["email"] as String
-        val username = attributes["login"] as String
-        logger.info("Oauth2 authentication success: ${email}")
+        var username = (attributes["login"] ?: attributes["name"]) as String
+        username = username.replace(" ", "_")
+        logger.info("Oauth2 authentication success: $email")
 
         // Find the user or create it
         var account = accountService.findByEmail(email)
