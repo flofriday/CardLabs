@@ -20,15 +20,6 @@ class AccountController(val accountService: AccountService) {
 
     private final val logger = LoggerFactory.getLogger(javaClass)
 
-    @PostMapping("/account")
-    fun create(@RequestBody account: Account): ResponseEntity<Account> {
-        logger.debug("Attempting to create an account with the username ${account.username}")
-        val result = accountService.create(account)
-        return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(result)
-    }
-
     @DeleteMapping("/account")
     fun delete(
         @AuthenticationPrincipal user: CardLabUser,

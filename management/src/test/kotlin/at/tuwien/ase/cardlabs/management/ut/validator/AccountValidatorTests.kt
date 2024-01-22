@@ -71,19 +71,4 @@ internal class AccountValidatorTests {
             assertEquals(errorMessage, exception.message)
         }
     }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = ["/validator/account/account_validator_rules_password_test_parameter.csv"])
-    fun testPasswordValidator(username: String, success: Boolean, errorMessage: String, description: String) {
-        if (success) {
-            assertDoesNotThrow {
-                Validator.validate(username, AccountValidator.passwordValidationRules())
-            }
-        } else {
-            val exception = assertThrows<ValidationException> {
-                Validator.validate(username, AccountValidator.passwordValidationRules())
-            }
-            assertEquals(errorMessage, exception.message)
-        }
-    }
 }
