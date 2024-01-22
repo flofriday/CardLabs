@@ -1,11 +1,12 @@
 "use client";
+/* eslint-disable @next/next/no-async-client-component */
 
 import React, { useEffect } from "react";
 import Link from "next/link";
 import SignInUp from "./SignInUp";
 import Profile from "./Profile";
-import { isAuthenticated } from "../../services/AuthenticationService";
-import { looseUnsavedChanges } from "../../services/NavigationService";
+import { isAuthenticated } from "@/app/services/AuthenticationService";
+import { looseUnsavedChanges } from "@/app/services/NavigationService";
 import { useSaveCodeStore } from "@/app/state/savedCodeStore";
 import { authenticationStore } from "@/app/state/authenticationStore";
 import { toast } from "react-toastify";

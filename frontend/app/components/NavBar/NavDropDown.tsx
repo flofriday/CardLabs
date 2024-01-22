@@ -27,6 +27,8 @@ function useClickOutside(ref: any, onClickOutside: () => void): void {
 
 function onLogout(router: any): void {
   deleteCookie("auth_token");
+  localStorage.removeItem("auth_token_expire");
+  localStorage.removeItem("refresh_token");
   router.refresh();
   router.replace("/");
 }

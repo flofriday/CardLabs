@@ -2,6 +2,7 @@ package at.tuwien.ase.cardlabs.management.security.token
 
 import at.tuwien.ase.cardlabs.management.error.authentication.InvalidTokenException
 import at.tuwien.ase.cardlabs.management.error.authentication.TokenExpiredException
+import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import org.springframework.security.core.Authentication
 
 /**
@@ -12,7 +13,12 @@ interface TokenService {
     /**
      * Generate a token pair containing a refresh token and access token
      */
-    fun generateRefreshToken(authentication: Authentication): TokenPair
+    fun generateTokenPair(authentication: Authentication): TokenPair
+
+    /**
+     * Generate a token pair containing a refresh token and access token
+     */
+    fun generateTokenPair(cardLabUser: CardLabUser): TokenPair
 
     /**
      * Generate an access token from a refresh token
@@ -33,7 +39,7 @@ interface TokenService {
     fun verifyValidAccessToken(token: String): Unit
 
     /**
-     * Extract the username from a refresh/access token
+     * Extract the email from a refresh/access token
      */
-    fun extractAccountUsername(token: String): String
+    fun extractAccountEmail(token: String): String
 }

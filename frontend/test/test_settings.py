@@ -37,7 +37,7 @@ def test_delete_existing_user(driver_headless):
 
 def test_change_website_notifications_updates_setting(driver_headless):
     driver = driver_headless
-    helper.login(driver, "test1", "pass1")
+    helper.login(driver, 999999999, "test1@email")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
     driver.find_element(By.CSS_SELECTOR, ".shadow").click()
     driver.find_element(By.ID, "settings_button_navbar").click()
@@ -61,7 +61,7 @@ def test_change_website_notifications_updates_setting(driver_headless):
 
 def test_change_score_notifications_updates_setting(driver_headless):
     driver = driver_headless
-    helper.login(driver, "test1", "pass1")
+    helper.login(driver, 999999999, "test1@email")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
     driver.find_element(By.CSS_SELECTOR, ".shadow").click()
     driver.find_element(By.ID, "settings_button_navbar").click()
@@ -83,7 +83,7 @@ def test_change_score_notifications_updates_setting(driver_headless):
 
 def test_change_newletter_setting(driver_headless):
     driver = driver_headless
-    helper.login(driver, "test1", "pass1")
+    helper.login(driver, 999999999, "test1@email")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
     driver.find_element(By.CSS_SELECTOR, ".shadow").click()
     driver.find_element(By.ID, "settings_button_navbar").click()
@@ -106,7 +106,7 @@ def test_change_newletter_setting(driver_headless):
 
 def test_change_location(driver_headless):
     driver = driver_headless
-    helper.login(driver, "test1", "pass1")
+    helper.login(driver, 999999999, "test1@email")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
     driver.find_element(By.CSS_SELECTOR, ".shadow").click()
     driver.find_element(By.ID, "settings_button_navbar").click()

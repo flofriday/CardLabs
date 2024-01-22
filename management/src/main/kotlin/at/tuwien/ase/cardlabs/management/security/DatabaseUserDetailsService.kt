@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 class DatabaseUserDetailsService(private val accountService: AccountService) : UserDetailsService {
 
     override fun loadUserByUsername(username: String?): CardLabUser {
-        val accountDAO: AccountDAO = accountService.findByUsername(username)
-            ?: throw UsernameNotFoundException("No user with the username $username exists")
-        return CardLabUser(accountDAO.id!!, accountDAO.username, accountDAO.email, accountDAO.password)
+        val accountDAO: AccountDAO = accountService.findByEmail(username)
+            ?: throw UsernameNotFoundException("No user with the email $username exists")
+        return CardLabUser(accountDAO.id!!, accountDAO.username, accountDAO.email)
     }
 }
