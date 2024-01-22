@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { Game } from "../types/game";
 import { UnAuthorizedError } from "../exceptions/UnAuthorizedError";
 import { LogLine } from "../types/LogLine";
+import { NotFoundError } from "../exceptions/NotFoundError";
 
 export async function getGames(
   botId: number,
@@ -59,6 +60,10 @@ export async function getGame(gameID: number): Promise<Game> {
 
     if (response.status === 401 || response.status === 403) {
       throw new UnAuthorizedError("Not authorized");
+    }
+
+    if (response.status === 404) {
+      throw new NotFoundError("Game not found");
     }
 
     if (response.status !== 200) {

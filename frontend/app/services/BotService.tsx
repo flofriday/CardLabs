@@ -4,6 +4,7 @@ import { RegionType } from "../types/RegionType";
 import { Page } from "../types/contentPage";
 import { refreshAccessToken } from "./RefreshService";
 import { UnAuthorizedError } from "../exceptions/UnAuthorizedError";
+import { NotFoundError } from "../exceptions/NotFoundError";
 
 export async function getNewBotName(): Promise<string> {
   await refreshAccessToken();
@@ -95,6 +96,10 @@ export async function getBot(id: number): Promise<Bot> {
 
   if (response.status === 401 || response.status === 403) {
     throw new UnAuthorizedError("Not authorized");
+  }
+
+  if (response.status === 404) {
+    throw new NotFoundError("Bot not found");
   }
 
   if (response.status !== 200) {

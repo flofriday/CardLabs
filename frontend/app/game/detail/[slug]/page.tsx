@@ -12,6 +12,8 @@ import { BackendCard } from "@/app/types/backendCard";
 import { Hand } from "@/app/types/hand";
 import { Bot, getBot } from "@/app/services/BotService";
 import { UnAuthorizedError } from "@/app/exceptions/UnAuthorizedError";
+import { NotFoundError } from "@/app/exceptions/NotFoundError";
+import { toast } from "react-toastify";
 
 export default function GameDetail({
   params,
@@ -47,12 +49,20 @@ export default function GameDetail({
               if (ex instanceof UnAuthorizedError) {
                 router.replace("/unauthorized");
               }
+              if (ex instanceof NotFoundError) {
+                router.replace("/dashboard");
+                toast.error("The game you tried to see does not exist!");
+              }
             });
         }
       })
       .catch((ex) => {
         if (ex instanceof UnAuthorizedError) {
           router.replace("/unauthorized");
+        }
+        if (ex instanceof NotFoundError) {
+          router.replace("/dashboard");
+          toast.error("The game you tried to see does not exist!");
         }
       });
   }, [params.slug]);
