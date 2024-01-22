@@ -4,7 +4,9 @@ import at.tuwien.ase.cardlabs.management.TestHelper
 import at.tuwien.ase.cardlabs.management.WebApplicationTest
 import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
+import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.util.Continent
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -30,6 +32,12 @@ class LocationIntegrationTests {
 
     @Autowired
     private lateinit var locationRepository: LocationRepository
+
+    @Autowired
+    private lateinit var accountRepository: AccountRepository
+
+    @Autowired
+    private lateinit var jwtTokenService: JwtTokenService
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -65,7 +73,7 @@ class LocationIntegrationTests {
     @Test
     fun whenGetLocations_withValidJWT_expectSuccess() {
         createAccount("test", "test@test.com", null)
-        val authenticationTokens = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, "test")
+        val authenticationTokens = TestHelper.getInitialAuthenticationTokens(jwtTokenService, accountRepository, "test")
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/locations")

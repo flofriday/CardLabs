@@ -39,7 +39,7 @@ interface TokenService {
     fun verifyValidAccessToken(token: String): Unit
 
     /**
-     * Extract the username from a refresh/access token
+     * Extract the email from a refresh/access token
      */
-    fun extractAccountUsername(token: String): String
+    fun extractAccountEmail(token: String): String
 }

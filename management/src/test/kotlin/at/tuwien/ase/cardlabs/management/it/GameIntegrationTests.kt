@@ -14,7 +14,9 @@ import at.tuwien.ase.cardlabs.management.database.model.game.hand.Hand
 import at.tuwien.ase.cardlabs.management.database.model.game.log.DebugLogMessage
 import at.tuwien.ase.cardlabs.management.database.model.game.log.SystemLogMessage
 import at.tuwien.ase.cardlabs.management.database.model.game.turn.Turn
+import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.GameRepository
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -45,12 +47,22 @@ class GameIntegrationTests {
     private lateinit var accountService: AccountService
 
     @Autowired
+    lateinit var accountRepository: AccountRepository
+
+    @Autowired
+    lateinit var jwtTokenService: JwtTokenService
+
+    @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Test
     fun whenGameFetchAllById_widthNonExistingGame_expectGameDoesNotExistError() {
         val account = TestHelper.createAccount(accountService)
-        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username).accessToken
+        val accessToken = TestHelper.getInitialAuthenticationTokens(
+            jwtTokenService,
+            accountRepository,
+            account.username
+        ).accessToken
         val gameId = 0L
         mockMvc.perform(
             get("/match/$gameId/all")
@@ -63,7 +75,11 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchAllById_withExistingGame_expectSuccess() {
         val account = TestHelper.createAccount(accountService)
-        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username).accessToken
+        val accessToken = TestHelper.getInitialAuthenticationTokens(
+            jwtTokenService,
+            accountRepository,
+            account.username
+        ).accessToken
         val botId = 0L
 
         val gameDAO = GameDAO()
@@ -127,7 +143,11 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchLogById_widthNonExistingGame_expectGameDoesNotExistError() {
         val account = TestHelper.createAccount(accountService)
-        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username).accessToken
+        val accessToken = TestHelper.getInitialAuthenticationTokens(
+            jwtTokenService,
+            accountRepository,
+            account.username
+        ).accessToken
         val gameId = 0L
         mockMvc.perform(
             get("/match/$gameId/all")
@@ -140,7 +160,11 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchLogById_withExistingGame_expectSuccess() {
         val account = TestHelper.createAccount(accountService)
-        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username).accessToken
+        val accessToken = TestHelper.getInitialAuthenticationTokens(
+            jwtTokenService,
+            accountRepository,
+            account.username
+        ).accessToken
         val botId = 0L
 
         val gameDAO = GameDAO()

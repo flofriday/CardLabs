@@ -43,7 +43,7 @@ class Oauth2LoginSuccessHandler(val accountService: AccountService, val jwtToken
             account = accountService.findByEmail(email)!!
         }
 
-        val tokenPair = jwtTokenService.generateTokenPair(CardLabUser(account.id!!, account.email, account.username))
+        val tokenPair = jwtTokenService.generateTokenPair(CardLabUser(account.id!!, account.username, account.email))
         logger.info(tokenPair.refreshToken.token)
         response.sendRedirect("http://localhost:3000/login/success?refresh_token=${tokenPair.refreshToken.token}")
     }

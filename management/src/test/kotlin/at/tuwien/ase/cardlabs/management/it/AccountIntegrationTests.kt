@@ -6,6 +6,7 @@ import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.database.model.LocationDAO
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.util.Continent
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -32,6 +33,9 @@ class AccountIntegrationTests {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
+
+    @Autowired
+    private lateinit var jwtTokenService: JwtTokenService
 
     @Autowired
     private lateinit var accountRepository: AccountRepository
@@ -115,7 +119,7 @@ class AccountIntegrationTests {
     @Test
     fun whenAccountCreate_withValidAccountAndSendUpdate_expectSuccessAndSendUpdatesTrue() {
         val body =
-            TestHelper.createAccountCreateJSON("test", "test@test.com",  "Austria")
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "Austria")
         val result = mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -130,7 +134,7 @@ class AccountIntegrationTests {
     @Test
     fun whenAccountCreate_withInvalidEmail1_expectBadRequest() {
         val body =
-            TestHelper.createAccountCreateJSON("test", "test@test","Austria")
+            TestHelper.createAccountCreateJSON("test", "test@test", "Austria")
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -142,7 +146,7 @@ class AccountIntegrationTests {
     @Test
     fun whenAccountCreate_withInvalidEmail2_expectBadRequest() {
         val body =
-            TestHelper.createAccountCreateJSON("test", "test@test.","Austria")
+            TestHelper.createAccountCreateJSON("test", "test@test.", "Austria")
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -154,7 +158,7 @@ class AccountIntegrationTests {
     @Test
     fun whenAccountCreate_withInvalidEmail3_expectBadRequest() {
         val body =
-            TestHelper.createAccountCreateJSON("test", ".test@test.com","Austria")
+            TestHelper.createAccountCreateJSON("test", ".test@test.com", "Austria")
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -204,7 +208,7 @@ class AccountIntegrationTests {
     @Test
     fun whenAccountCreate_withEmptyUsername_expectBadRequest() {
         val body =
-            TestHelper.createAccountCreateJSON("", "test@test.com","Austria")
+            TestHelper.createAccountCreateJSON("", "test@test.com", "Austria")
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -334,7 +338,7 @@ class AccountIntegrationTests {
     @Test
     fun whenAccountCreate_withInvalidCountry_expectBadRequest() {
         val body =
-            TestHelper.createAccountCreateJSON("test", "test@test.com","Non-Exist")
+            TestHelper.createAccountCreateJSON("test", "test@test.com", "Non-Exist")
         mockMvc.perform(
             post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -385,7 +389,7 @@ class AccountIntegrationTests {
     }
 
     private fun getAuthenticationToken(username: String): String {
-        return TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, username).accessToken.token
+        return TestHelper.getInitialAuthenticationTokens(jwtTokenService, accountRepository, username).accessToken.token
     }
 
     private fun createAccount(

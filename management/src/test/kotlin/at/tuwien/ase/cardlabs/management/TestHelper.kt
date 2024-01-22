@@ -3,9 +3,11 @@ package at.tuwien.ase.cardlabs.management
 import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
+import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.security.authentication.AccessTokenAuthenticationResponse
 import at.tuwien.ase.cardlabs.management.security.authentication.AuthenticationResponse
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -26,19 +28,17 @@ class TestHelper {
 
         @JvmStatic
         fun getInitialAuthenticationTokens(
-            objectMapper: ObjectMapper,
-            mockMvc: MockMvc,
+            jwtTokenService: JwtTokenService,
+            accountRepository: AccountRepository,
             username: String,
         ): AuthenticationResponse {
-            val body = createAccountLoginJSON(username)
-            val result = mockMvc.perform(
-                MockMvcRequestBuilders.post("/authentication/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(body),
-            )
-                .andExpect(MockMvcResultMatchers.status().isOk)
-                .andReturn()
-            return objectMapper.readValue<AuthenticationResponse>(result.response.contentAsString)
+            val userAccount = accountRepository.findByUsernameAndDeletedIsNull(username);
+            if (userAccount?.id == null) {
+                throw Exception()
+            }
+            val cardLabUser = CardLabUser(userAccount.id!!, userAccount.username, userAccount.email)
+            val tokenPair = jwtTokenService.generateTokenPair(cardLabUser)
+            return AuthenticationResponse(tokenPair.refreshToken, tokenPair.accessToken)
         }
 
         @JvmStatic

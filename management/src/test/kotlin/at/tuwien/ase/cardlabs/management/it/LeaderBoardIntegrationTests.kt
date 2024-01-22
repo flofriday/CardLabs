@@ -10,6 +10,7 @@ import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
 import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.BotRepository
 import at.tuwien.ase.cardlabs.management.database.repository.LocationRepository
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import at.tuwien.ase.cardlabs.management.util.Continent
 import at.tuwien.ase.cardlabs.management.util.RestResponsePage
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -43,6 +44,9 @@ class LeaderBoardIntegrationTests {
 
     @Autowired
     private lateinit var botRepository: BotRepository
+
+    @Autowired
+    private lateinit var jwtTokenService: JwtTokenService
 
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
@@ -239,7 +243,7 @@ class LeaderBoardIntegrationTests {
 
     @Test
     fun whenGetPublicLeaderboardGlobalView_withJWT_expectGlobalViewPage() {
-        val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
+        val authenticationToken = getAuthenticationToken("Test1")
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=GLOBAL")
@@ -263,7 +267,7 @@ class LeaderBoardIntegrationTests {
 
     @Test
     fun whenGetPublicLeaderboardContinentView_withJWT_withUserContinentSet_expectUserContinentPage() {
-        val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
+        val authenticationToken = getAuthenticationToken("Test1")
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=CONTINENT&filter=Austria")
@@ -287,7 +291,7 @@ class LeaderBoardIntegrationTests {
 
     @Test
     fun whenGetPublicLeaderboardCountryView_withJWT_withUserCountrySet_expectUserCountryPage() {
-        val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
+        val authenticationToken = getAuthenticationToken("Test1")
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/leaderboard/public?page=0&entriesPerPage=5&region=COUNTRY&filter=Austria")
@@ -311,7 +315,7 @@ class LeaderBoardIntegrationTests {
 
     @Test
     fun whenGetPrivateLeaderboardGlobalView_withJWT_expectGlobalViewPage() {
-        val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
+        val authenticationToken = getAuthenticationToken("Test1")
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&region=GLOBAL")
@@ -335,7 +339,7 @@ class LeaderBoardIntegrationTests {
 
     @Test
     fun whenGetPrivateLeaderboardContinentView_withJWT_withUserContinentSet_expectUserContinentPage() {
-        val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
+        val authenticationToken = getAuthenticationToken("Test1")
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&region=GLOBAL")
@@ -359,7 +363,7 @@ class LeaderBoardIntegrationTests {
 
     @Test
     fun whenGetPrivateLeaderboardCountryView_withJWT_withUserCountrySet_expectUserCountryPage() {
-        val authenticationToken = getAuthenticationToken("Test1", "ThisIsATest1234")
+        val authenticationToken = getAuthenticationToken("Test1")
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/leaderboard/private?page=0&entriesPerPage=5&region=GLOBAL")
@@ -381,7 +385,7 @@ class LeaderBoardIntegrationTests {
         )
     }
 
-    private fun getAuthenticationToken(username: String, password: String): String {
-        return TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, username).accessToken.token
+    private fun getAuthenticationToken(username: String): String {
+        return TestHelper.getInitialAuthenticationTokens(jwtTokenService, accountRepository, username).accessToken.token
     }
 }
