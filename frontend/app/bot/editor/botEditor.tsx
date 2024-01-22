@@ -16,6 +16,8 @@ import {
 } from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { UnAuthorizedError } from "@/app/exceptions/UnAuthorizedError";
+import { NotFoundError } from "@/app/exceptions/NotFoundError";
 
 const CODE_CHARACTER_LIMIT = 32000;
 
@@ -104,7 +106,17 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           setName(b.name);
           setCode(b.currentCode);
         })
-        .catch(() => {});
+        .catch((ex) => {
+          if (ex instanceof UnAuthorizedError) {
+            router.replace("/unauthorized");
+          }
+          if (ex instanceof NotFoundError) {
+            router.replace("/bot");
+            toast.error("The bot you tried to see does not exist!", {
+              toastId: 2432502340,
+            });
+          }
+        });
     }
   }, [_id]);
 
