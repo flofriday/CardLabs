@@ -10,11 +10,11 @@ def test_delete_existing_user(driver):
     helper.login(driver, 999999901, "test5@email")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
     driver.find_element(By.CSS_SELECTOR, ".shadow").click()
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "settings_button_navbar")))
     driver.find_element(By.ID, "settings_button_navbar").click()
 
-    time.sleep(120)
-
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".text-6xl")))
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".bg-accent")))
     assert driver.find_element(By.CSS_SELECTOR, ".text-6xl").text == "Settings"
     assert driver.find_element(By.CSS_SELECTOR, ".bg-accent").text == "Delete Account"
     driver.find_element(By.CSS_SELECTOR, ".bg-accent").click()
@@ -23,11 +23,12 @@ def test_delete_existing_user(driver):
     driver.find_element(By.CSS_SELECTOR, ".flex:nth-child(1) > .bg-accent").click()
 
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "login_button_navbar")))
-    helper.login(driver, 999999901, "test5@email")
-
-    time.sleep(120)
-
-    assert driver.find_element(By.CSS_SELECTOR, ".absolute").text == "Login"
+    try:
+        helper.login(driver, 999999901, "test5@email")
+    except:
+        ...
+    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.XPATH, '//h1[text()="Not authorized :c"]')))
+    assert driver.find_element(By.XPATH, '//h1[text()="Not authorized :c"]').text == "Not authorized :c"
 
 def test_change_location(driver_headless):
     driver = driver_headless
