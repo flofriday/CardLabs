@@ -9,7 +9,7 @@ class DatabaseUserDetailsService(private val accountService: AccountService) : U
 
     override fun loadUserByUsername(username: String?): CardLabUser {
         val accountDAO: AccountDAO = accountService.findByEmail(username)
-            ?: throw UsernameNotFoundException("No user with the with $username exists")
+            ?: throw UsernameNotFoundException("No user with the email $username exists")
         return CardLabUser(accountDAO.id!!, accountDAO.username, accountDAO.email)
     }
 }

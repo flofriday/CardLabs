@@ -3,7 +3,7 @@
 // import { useRouter } from "next/router";
 import LeftPageHeader from "../../components/leftPageHeader";
 import { refreshAccessToken } from "@/app/services/RefreshService";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 async function loginSuccessHandler(token: string): Promise<void> {
@@ -16,33 +16,27 @@ export default function LoginSuccess(): JSX.Element {
 
   const searchParams = useSearchParams();
   const refreshToken = searchParams.get("refresh_token");
+  const router = useRouter();
 
   useEffect(() => {
     if (refreshToken === null) {
       setIsError(true);
     } else {
-      loginSuccessHandler(refreshToken).catch(() => {});
+      loginSuccessHandler(refreshToken)
+        .then(() => {
+          router.replace("/dashboard");
+          router.refresh();
+        })
+        .catch(() => {});
     }
-  }, [refreshToken]);
+  }, [refreshToken, router]);
 
   return (
     <div className="w-full h-full">
       <LeftPageHeader title="Login Success" />
       <div className="h-full flex items-center justify-center">
-        <div className="">
+        <div className="text-6xl">
           {isError ? "Login failed, try again..." : "Loading..."}
-          <button
-            className="btn bg-primary text-text py-2 w-48 rounded-lg shadow-md text-lg"
-            onClick={() => {
-              if (refreshToken === null) {
-                setIsError(true);
-              } else {
-                loginSuccessHandler(refreshToken).catch(() => {});
-              }
-            }}
-          >
-            Set Token
-          </button>
         </div>
       </div>
     </div>
