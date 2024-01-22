@@ -2,6 +2,7 @@ package at.tuwien.ase.cardlabs.management.service.bot
 
 import at.tuwien.ase.cardlabs.management.Helper
 import at.tuwien.ase.cardlabs.management.config.BotConfig
+import at.tuwien.ase.cardlabs.management.config.MatchmakerConfig
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
@@ -16,14 +17,16 @@ import at.tuwien.ase.cardlabs.management.error.ValidationException
 import at.tuwien.ase.cardlabs.management.error.account.AccountDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.bot.BotDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.bot.BotStateException
+import at.tuwien.ase.cardlabs.management.error.matchmaking.InsufficientBotExistsException
 import at.tuwien.ase.cardlabs.management.mapper.BotMapper
+import at.tuwien.ase.cardlabs.management.matchmaker.Matchmaker
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.util.Region
 import at.tuwien.ase.cardlabs.management.validation.validator.BotValidator
 import at.tuwien.ase.cardlabs.management.validation.validator.Validator
 import org.slf4j.LoggerFactory
-import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -40,7 +43,8 @@ class BotService(
     private val botNameGenerator: BotNameGenerator,
     private val botCodeRepository: BotCodeRepository,
     private val botConfig: BotConfig,
-    private val rabbitTemplate: RabbitTemplate,
+    private val matchmakerConfig: MatchmakerConfig,
+    @Lazy private val matchmaker: Matchmaker,
 ) {
 
     private final val logger = LoggerFactory.getLogger(javaClass)
@@ -181,6 +185,34 @@ class BotService(
 
         bot.codeHistory.add(botCodeDAO)
         bot.currentState = BotState.QUEUED
+    }
+
+    @Transactional(noRollbackFor = [InsufficientBotExistsException::class])
+    @Throws(InsufficientBotExistsException::class)
+    fun rank(
+        user: CardLabUser,
+        botId: Long,
+    ) {
+        logger.debug("User ${user.id} attempts to rank the bot $botId")
+        val bot =
+            findById(botId)
+                ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+
+        if (bot.owner.id != user.id) {
+            throw UnauthorizedException("You are not authorized to view the bot $botId")
+        }
+
+        logger.debug("Create new code version for $botId")
+        var botCodeDAO = BotCodeDAO()
+        botCodeDAO.bot = bot
+        botCodeDAO.code = bot.currentCode
+        botCodeDAO = botCodeRepository.save(botCodeDAO)
+        bot.codeHistory.add(botCodeDAO)
+
+        if (matchmakerConfig.matchOnCode.enabled) {
+            logger.debug("Attempting to create ${matchmakerConfig.matchOnCode.generateMatchCount} matches for $botId")
+            matchmaker.createMatches(bot, matchmakerConfig.matchOnCode.generateMatchCount)
+        }
     }
 
     /**

@@ -8,7 +8,31 @@ import java.io.Serializable
 data class MatchQueueMessage(
     val gameId: Long,
     val participatingBots: List<Bot>
-) : Serializable
+) : Serializable {
+
+    override fun toString(): String {
+        val builder = StringBuilder()
+        builder
+            .append("(")
+            .append("gameId=")
+            .append(gameId)
+            .append(",")
+        builder.append("bots=[")
+        for ((index, bot) in participatingBots.withIndex()) {
+            builder
+                .append("id=").append(bot.botId)
+                .append(",")
+                .append("codeId=").append(bot.botCodeId)
+            if (index < participatingBots.size - 1) {
+                builder.append(",")
+            }
+        }
+        builder
+            .append("]")
+            .append(")")
+        return builder.toString()
+    }
+}
 
 data class Bot(
     val botId: Long,

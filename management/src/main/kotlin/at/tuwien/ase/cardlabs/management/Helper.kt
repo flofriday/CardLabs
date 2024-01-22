@@ -27,6 +27,15 @@ class Helper {
         }
 
         @JvmStatic
+        fun <T> splitListInHalf(list: MutableList<T>): Pair<MutableList<T>, MutableList<T>> {
+            val middle = list.size / 2
+            val firstHalf = list.subList(0, middle)
+            val secondHalf = list.subList(middle, list.size)
+
+            return Pair(firstHalf, secondHalf)
+        }
+
+        @JvmStatic
         fun fetchAllTestsBots(): List<TestBot> {
             val result = mutableListOf<TestBot>()
 

@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
 import java.time.Instant
+import kotlin.jvm.Transient
 
 /**
  * A database entry representing a bot. When the deleted field from the parent class AuditedEntity is set, then the
@@ -65,4 +66,8 @@ class BotDAO : AuditedEntity() {
     // The state error message if the current bot state is ERROR
     @Column
     var errorStateMessage: String? = null
+
+    fun getLatestCodeVersion(): BotCodeDAO? {
+        return codeHistory.maxByOrNull { it.id!! }
+    }
 }

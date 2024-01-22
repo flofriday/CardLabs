@@ -79,8 +79,8 @@ class BotController(
         @AuthenticationPrincipal user: CardLabUser,
         @PathVariable botId: Long,
     ): ResponseEntity<Unit> {
-        logger.info("User ${user.id} attempts to rank the bot and create bot version $botId")
-        botService.createCodeVersion(user, botId)
+        logger.info("User ${user.id} attempts to rank the bot $botId")
+        botService.rank(user, botId)
         return ResponseEntity
             .status(HttpStatus.OK)
             .build()

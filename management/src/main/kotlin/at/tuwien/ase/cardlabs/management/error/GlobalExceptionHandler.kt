@@ -8,6 +8,7 @@ import at.tuwien.ase.cardlabs.management.error.authentication.TokenExpiredExcept
 import at.tuwien.ase.cardlabs.management.error.bot.BotDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.bot.BotStateException
 import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
+import at.tuwien.ase.cardlabs.management.error.matchmaking.InsufficientBotExistsException
 import io.jsonwebtoken.ExpiredJwtException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -80,6 +81,14 @@ class GlobalExceptionHandler {
         logger.warn(ex.toString())
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
+            .body(ex.message)
+    }
+
+    // == Match exceptions ==
+    @ExceptionHandler(InsufficientBotExistsException::class)
+    fun handleInsufficientBotExistsException(ex: InsufficientBotExistsException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
             .body(ex.message)
     }
 
