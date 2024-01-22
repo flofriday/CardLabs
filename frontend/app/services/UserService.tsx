@@ -134,19 +134,19 @@ export async function deleteUser(): Promise<boolean> {
 }
 
 export function getUserProfilePicture(jwt: string): string {
-  let username;
+  let email;
   if (jwt === undefined) {
-    username = "Placeholder";
+    email = "Placeholder";
   } else {
     const payload = decodeJwt(jwt);
-    username = payload["account-username"] as string;
+    email = payload["account-email"] as string;
   }
 
   const saturation = 100;
   const lightness = 50;
   const data =
     "data:image/svg+xml;utf8," +
-    encodeURIComponent(minidenticon(username, saturation, lightness));
+    encodeURIComponent(minidenticon(email, saturation, lightness));
 
   return data;
 }
