@@ -12,7 +12,8 @@ import {
   Bot,
   saveBot as _saveBot,
   deleteBot as _deleteBot,
-  rankBot as _rankBot,
+  rankBot,
+  createTestMatch,
 } from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -41,13 +42,22 @@ function saveBot(id: number, code: string): void {
     .catch(() => {});
 }
 
-function rankBot(id: number): void {
-  _rankBot(id)
+function botRankWrapper(id: number): void {
+  rankBot(id)
     .then(() => {
-      toast.success("This bot has been queued for ranking");
+      toast.success("Successfully ranked the bot");
     })
     .catch(() => {
-      toast.error("Bot could not be queued for ranking");
+      toast.error("An error occurred Please try again later");
+    });
+}
+
+function testMatchWrapper(botId: number): void {
+  createTestMatch(botId)
+    .then(() => {
+      toast.success("Successfully created a test match. You can view the match results in the match history.");
+    })
+    .catch(() => {
     });
 }
 
@@ -87,7 +97,6 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   useEffect(() => {
     if (_id == null) {
       // fetch new name
-
       getNewBotName()
         .then((n) => {
           setName(n);
@@ -153,10 +162,10 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
             }
           }}
           rank={() => {
-            if (_id === null || !saved) {
-              toast.error("Bot needs to be saved before it can be ranked");
-              return;
-            }
+            // if (_id === null || !saved) {
+            //   toast.error("Bot needs to be saved before it can be ranked");
+            //   return;
+            // }
             if (code === undefined) {
               toast.error("No code provided");
               return;
@@ -171,8 +180,19 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
               );
               return;
             }
-            rankBot(_id);
-            setRanked(true);
+            if(_id !== null) {
+                botRankWrapper(_id)
+                setRanked(true);
+            } else {
+              toast.error("The bot id must not be null")
+            }
+          }}
+          test={() => {
+            if (_id === null) {
+              toast.error("The bot id must not be null")
+              return
+            }
+            testMatchWrapper(_id)
           }}
           _delete={() => {
             if (_id !== null) {

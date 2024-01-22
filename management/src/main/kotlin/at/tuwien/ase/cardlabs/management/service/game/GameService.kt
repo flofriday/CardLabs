@@ -8,6 +8,7 @@ import at.tuwien.ase.cardlabs.management.database.model.game.GameState
 import at.tuwien.ase.cardlabs.management.database.model.game.log.LogMessage
 import at.tuwien.ase.cardlabs.management.database.repository.GameRepository
 import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
+import at.tuwien.ase.cardlabs.management.error.bot.MissingBotCodeException
 import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
 import at.tuwien.ase.cardlabs.management.mapper.GameMapper
 import at.tuwien.ase.cardlabs.management.matchmaker.Bot
@@ -122,7 +123,8 @@ class GameService(
     fun createTestMatch(
         user: CardLabUser,
         botId: Long,
-        testBotId: Long
+        testBotId: Long,
+        useCurrentCode: Boolean
     ): Long {
         logger.debug("User ${user.id} attempts to create a test match for the user bot $botId against the test bot $testBotId")
         val bot = botService.fetch(user, botId)
@@ -130,13 +132,27 @@ class GameService(
 
         val messageBots = mutableListOf<Bot>()
         val botLatestCode = bot.getLatestCodeVersion()
-        messageBots.add(
-            Bot(
-                bot.id!!,
-                botLatestCode!!.id!!,
-                botLatestCode.code,
+
+        if (useCurrentCode) {
+            messageBots.add(
+                Bot(
+                    bot.id!!,
+                    null,
+                    bot.currentCode,
+                )
             )
-        )
+        } else {
+            if (botLatestCode == null) {
+                throw MissingBotCodeException("No latest code version available")
+            }
+            messageBots.add(
+                Bot(
+                    bot.id!!,
+                    botLatestCode.id!!,
+                    botLatestCode.code,
+                )
+            )
+        }
         messageBots.add(
             Bot(
                 testBot.id,

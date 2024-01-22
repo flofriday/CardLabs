@@ -137,14 +137,15 @@ class BotController(
             .build()
     }
 
-    @GetMapping("/bot/{botId}/test-match/{testBotId}")
+    @PostMapping("/bot/{botId}/test-match/{testBotId}")
     fun testMatch(
         @AuthenticationPrincipal user: CardLabUser,
         @PathVariable botId: Long,
         @PathVariable testBotId: Long,
+        @RequestParam(required = false, defaultValue = "false") useCurrentCode: Boolean
     ): ResponseEntity<Long> {
         logger.info("User ${user.id} attempts to create a test match for the user bot $botId against the test bot $testBotId")
-        val gameId = gameService.createTestMatch(user, botId, testBotId)
+        val gameId = gameService.createTestMatch(user, botId, testBotId, useCurrentCode)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(gameId)

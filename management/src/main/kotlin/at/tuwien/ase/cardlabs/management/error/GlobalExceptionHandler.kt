@@ -7,6 +7,7 @@ import at.tuwien.ase.cardlabs.management.error.authentication.InvalidTokenExcept
 import at.tuwien.ase.cardlabs.management.error.authentication.TokenExpiredException
 import at.tuwien.ase.cardlabs.management.error.bot.BotDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.bot.BotStateException
+import at.tuwien.ase.cardlabs.management.error.bot.MissingBotCodeException
 import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.matchmaking.InsufficientBotExistsException
 import io.jsonwebtoken.ExpiredJwtException
@@ -72,6 +73,13 @@ class GlobalExceptionHandler {
         logger.warn(ex.toString())
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
+            .body(ex.message)
+    }
+
+    @ExceptionHandler(MissingBotCodeException::class)
+    fun handleMissingBotCodeException(ex: MissingBotCodeException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
             .body(ex.message)
     }
 
