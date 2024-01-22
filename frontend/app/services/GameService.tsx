@@ -57,6 +57,10 @@ export async function getGame(gameID: number): Promise<Game> {
       },
     });
 
+    if (response.status === 401 || response.status === 403) {
+      throw new UnAuthorizedError("Not authorized");
+    }
+
     if (response.status !== 200) {
       throw new Error("Failed to fetch match log");
     }

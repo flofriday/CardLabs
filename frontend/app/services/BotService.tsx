@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { RegionType } from "../types/RegionType";
 import { Page } from "../types/contentPage";
 import { refreshAccessToken } from "./RefreshService";
+import { UnAuthorizedError } from "../exceptions/UnAuthorizedError";
 
 export async function getNewBotName(): Promise<string> {
   await refreshAccessToken();
@@ -92,12 +93,15 @@ export async function getBot(id: number): Promise<Bot> {
     },
   });
 
+  if (response.status === 401 || response.status === 403) {
+    throw new UnAuthorizedError("Not authorized");
+  }
+
   if (response.status !== 200) {
     toast.error("An error occurred. Please try again later.");
     throw new Error();
   }
 
-  // TODO add error handling
   const bot = (await response.json()) as Bot;
   bot.created = new Date(bot.created);
   bot.updated = new Date(bot.updated);
