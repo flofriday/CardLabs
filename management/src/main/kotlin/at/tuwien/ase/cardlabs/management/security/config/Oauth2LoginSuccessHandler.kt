@@ -5,7 +5,6 @@ import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import jakarta.servlet.ServletException
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -20,10 +19,11 @@ class Oauth2LoginSuccessHandler(val accountService: AccountService, val jwtToken
 
     @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationSuccess(
-        request: HttpServletRequest?, response: HttpServletResponse,
-        authentication: Authentication
+        request: HttpServletRequest?,
+        response: HttpServletResponse,
+        authentication: Authentication,
     ) {
-        logger.info("Oauth2 authentication success: ${authentication}")
+        logger.info("Oauth2 authentication success: $authentication")
         logger.info("${authentication.principal}")
         logger.info(authentication.details.toString())
         logger.info(authentication.authorities.toString())
