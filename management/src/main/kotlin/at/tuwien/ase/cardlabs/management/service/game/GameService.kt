@@ -36,6 +36,10 @@ class GameService(
     ): Game {
         logger.debug("User ${user.id} attempts to fetch the game $gameId")
         val game = findById(gameId)
+        val botIds = botService.fetchAllBotIds(user)
+        if (!game.participatingBotIds.any { it in botIds }) {
+            throw UnauthorizedException("Not authorized to view this game")
+        }
         return gameMapper.map(game)
     }
 
@@ -49,6 +53,10 @@ class GameService(
     ): List<LogMessage> {
         logger.debug("User ${user.id} attempts to fetch the logs of the game $gameId")
         val game = findById(gameId)
+        val botIds = botService.fetchAllBotIds(user)
+        if (!game.participatingBotIds.any { it in botIds }) {
+            throw UnauthorizedException("Not authorized to view this game")
+        }
         return game.turns.flatMap { it.logMessages }
     }
 
