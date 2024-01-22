@@ -4,8 +4,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 import re
 import jwt
 from datetime import datetime, timedelta
-import time
 import base64
+import time
 
 
 
@@ -29,7 +29,6 @@ def login(driver, id, email):
     }
 
     token = jwt.encode(payload, base64.b64decode(secret), algorithm="HS512", headers={"alg" : "HS512"})
-    print(token)
     driver.add_cookie({"name": "auth_token", "value": token})
 
     script = f"""
@@ -66,9 +65,30 @@ def new_bot(driver, code):
     driver.find_element(By.ID, "button_save_bot").click()
     WebDriverWait(driver, 30).until(lambda driver: re.match("^.*[/]bot[/]editor[/][0-9]+$", driver.current_url)) # wait for url change
     bot_url = driver.current_url
+    driver.find_element(By.ID, "button_save_bot").click()
     driver.find_element(By.ID, "home_authenticated").click()
     driver.get(bot_url)
     WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".cm-content")))
 
 def get_code_template():
-    return "; It's your turn, select a card\n; hand is just a list of cards\n; topCard is a single card\n(define turn (lambda (topCard hand players)\n    (random-choice\n        (matching-cards topCard hand))))\n\n\n; Event: cardPlayed\n; UnoSaid event is not provided as you can just use cardPlayed\n(define cardPlayed (lambda (card player)\n    ))\n\n\n; Event: cardPicked\n; Some other player had to pick a card\n(define cardPicked (lambda (topCard player)\n    ))\n\n\n; Event: reshuffledPile\n; The drawPile got reshuffled\n(define reshuffledPile (lambda ()\n    ))"
+    return """; It's your turn, select a card
+; hand is just a list of cards
+; topCard is a single card
+(define turn (lambda (topCard hand players)
+    (random-choice
+        (matching-cards topCard hand))))
+
+; Event: cardPlayed
+; UnoSaid event is not provided as you can just use cardPlayed
+(define cardPlayed (lambda (card player)
+    ))
+
+; Event: cardPicked
+; Some other player had to pick a card
+(define cardPicked (lambda (topCard player)
+    ))
+
+; Event: reshuffledPile
+; The drawPile got reshuffled
+(define reshuffledPile (lambda ()
+    ))"""
