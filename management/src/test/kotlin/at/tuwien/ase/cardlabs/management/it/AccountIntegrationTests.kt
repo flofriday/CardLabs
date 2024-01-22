@@ -126,7 +126,6 @@ class AccountIntegrationTests {
             .andExpect(status().isBadRequest)
     }
 
-
     @Test
     fun whenAccountDelete_withValidJWT_expectSuccess() {
         createAccount("test", "test@test.com", null)
@@ -151,7 +150,6 @@ class AccountIntegrationTests {
         )
             .andExpect(status().isForbidden)
     }
-
 
     private fun getAuthenticationToken(username: String): String {
         return TestHelper.getInitialAuthenticationTokens(jwtTokenService, accountRepository, username).accessToken.token
