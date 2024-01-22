@@ -32,7 +32,7 @@ class TestHelper {
             accountRepository: AccountRepository,
             username: String,
         ): AuthenticationResponse {
-            val userAccount = accountRepository.findByUsernameAndDeletedIsNull(username);
+            val userAccount = accountRepository.findByUsernameAndDeletedIsNull(username)
             if (userAccount?.id == null) {
                 throw Exception()
             }
