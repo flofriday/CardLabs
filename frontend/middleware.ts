@@ -19,15 +19,28 @@ export default async function middleware(
       return RedirectToForbidden(req);
     }
   }
+  const destination = process.env.MANAGEMENT_HOST ?? "http://localhost:8080";
 
   if (req.nextUrl.pathname.startsWith('/api')) {
-    const destination = process.env.MANAGEMENT_HOST ?? "http://127.0.0.1:8080";
     const path = req.nextUrl.pathname.replace("/api", "")
     const url = new URL(path, destination)
 
     req.nextUrl.searchParams.forEach((value, key) => {
       url.searchParams.set(key, value);
     });
+
+    return NextResponse.rewrite(url.toString());
+  }
+  console.log("Request=" + req.nextUrl.toString())
+  if (req.nextUrl.pathname.startsWith('/login/oauth2/code/')) {
+    const path = req.nextUrl.pathname
+    const url = new URL(path, destination)
+
+    req.nextUrl.searchParams.forEach((value, key) => {
+      url.searchParams.set(key, value);
+    });
+
+    console.log("MAPPED TO=" + url.toString())
 
     return NextResponse.rewrite(url.toString());
   }

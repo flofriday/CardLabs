@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
-import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -50,6 +49,7 @@ class LocalSecurityConfig(
                 authorize
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/oauth2")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/authentication")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/refresh")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
@@ -71,7 +71,9 @@ class LocalSecurityConfig(
                     .successHandler(Oauth2LoginSuccessHandler(accountService, jwtTokenService))
             }
             .exceptionHandling { configurator -> configurator.authenticationEntryPoint(Oauth2AuthenticationEntrypoint()) }
-            .cors(withDefaults())
+            .cors { cors ->
+                cors.disable()
+            }
 
         return http.build()
     }
