@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import java.io.IOException
-import java.util.*
+import java.util.Locale
 
 class Oauth2LoginSuccessHandler(val accountService: AccountService, val jwtTokenService: JwtTokenService) :
     AuthenticationSuccessHandler {
