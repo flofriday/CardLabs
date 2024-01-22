@@ -1,24 +1,25 @@
 ; It's your turn, select a card
-; hand is just a list of cards
-; topCard is a single card
-(define turn (lambda (topCard hand players)
+; hand is a list of cards in your hand
+; top-card is a single card
+; players is a list of tuple with the first element is a unique string for each 
+; bot and the second element is the integer with the number of cards that bot 
+; holds.
+(define turn (lambda (top-card hand players)
     (random-choice
-        (matching-cards topCard hand))))
+        (matching-cards top-card hand))))
 
-; Event: cardPlayed
-; UnoSaid event is not provided as you can just use cardPlayed
-(define cardPlayed (lambda (card player)
+; Some other player played a card
+(define card-played (lambda (card player)
     (display card)
     ))
 
-; Event: cardPicked
-; Some other player had to pick a card
-(define cardPicked (lambda (topCard player)
-    (display topCard)
+; Some other player had to pick a card beacuse they don't have a matching one.
+; This is not called as a result of a draw or draw choose card.
+(define card-picked (lambda (top-card player)
+    (display top-card)
     ))
 
-; Event: reshuffledPile
-; The drawPile got reshuffled
-(define reshuffledPile (lambda ()
+; The pile got reshuffled into the draw pile
+(define pile-reshuffled (lambda ()
     (display "reshuffles")
     ))

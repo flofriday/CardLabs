@@ -56,7 +56,7 @@ fun runSimulation(request: SimulationRequest): SimulationResult {
         val turn = state.turns.last()
         val bot = state.players.first { p -> p.bot.botId == e.botId }.bot
 
-        logSystem(turn, "Bot ${bot.botId} disqualified")
+        logSystem(turn, "Bot ${bot.botId} disqualified!")
         logBot(turn, bot, e.reason)
         if (e.schemeError != null) {
             // FIXME: Disable colors in the error
@@ -86,8 +86,18 @@ fun runTurn(state: GameState) {
 
     // Pick a card if there is no matching one
     if (player.hand.none { card -> state.pile.last().match(card) }) {
-        logSystem(turn, "Player ${player.bot.botId} has no matching card and draws one")
-        pickupCards(state, player, 1)
+        logSystem(turn, "Player ${player.bot.botId} has no matching card and draws one.")
+        val pickedCards = pickupCards(state, player, 1)
+        state.players
+            .filter { p -> p != player }
+            .forEach { p ->
+                execBotEvent(
+                    state,
+                    p,
+                    "card-picked",
+                    listOf(ListValue(listOf(encodePlayer(player)), null), encodeCard(pickedCards.first())),
+                )
+            }
 
         state.currentPlayer += state.direction
         state.currentPlayer %= state.players.size
@@ -97,8 +107,18 @@ fun runTurn(state: GameState) {
 
     // Play a card
     execBotTurn(state, player)
-    logSystem(turn, "Player ${player.bot.botId} played ${state.pile.last()}")
+    logSystem(turn, "Player ${player.bot.botId} played ${state.pile.last().name()}.")
     turn.actions.addLast(Action(player.bot.botId, ActionType.PLAY_CARD, state.pile.last()))
+    state.players
+        .filter { p -> p != player }
+        .forEach { p ->
+            execBotEvent(
+                state,
+                p,
+                "card-played",
+                listOf(ListValue(listOf(encodePlayer(player)), null), encodeCard(state.pile.last())),
+            )
+        }
 
     // Determine the next player
     if (state.pile.last().type == CardType.SWITCH) {
@@ -140,23 +160,12 @@ fun execBotTurn(
         if (func !is CallableValue) {
             throw DisqualificationError(
                 player.bot.botId,
-                "`turn` isn't a function but a `${func.typeName()}`",
+                "`turn` isn't a function but a ${func.typeName()}",
                 null,
             )
         }
 
-        val players =
-            state.players.map { p ->
-                VectorValue(
-                    mutableListOf(
-                        StringValue(p.bot.botId.toString(), null),
-                        IntegerValue(p.hand.size, null),
-                    ),
-                    null,
-                )
-            }
-
-        // FIXME: Add the output to the turn
+        val players = state.players.map { p -> encodePlayer(p) }
         result =
             player.interpreter.run(
                 func,
@@ -168,6 +177,12 @@ fun execBotTurn(
             )
     } catch (e: SchemeError) {
         throw DisqualificationError(player.bot.botId, "The bot crashed while taking a turn.", e)
+    }
+
+    val logOutput = player.output.toString()
+    player.output.clear()
+    if (logOutput.isNotEmpty()) {
+        logBot(state.turns.last(), player.bot, logOutput)
     }
 
     // Verify the played card and remove it from the hand
@@ -198,6 +213,51 @@ fun execBotTurn(
     state.pile.addLast(playedCard)
 }
 
+fun execBotEvent(
+    state: GameState,
+    player: Player,
+    funcName: String,
+    arguments: List<SchemeValue>,
+) {
+    // Event handlers are optional
+    if (!player.interpreter.env.has(funcName)) {
+        return
+    }
+
+    val func = player.interpreter.env.get(funcName)!!
+    if (func !is FuncValue) {
+        throw DisqualificationError(
+            player.bot.botId,
+            "The event handler `$funcName` isn't a function but a ${func.typeName()}",
+            null,
+        )
+    }
+
+    val arity = arguments.size
+    if (func.arity.min != arity || func.arity.max != arity) {
+        throw DisqualificationError(
+            player.bot.botId,
+            "The event handler `$funcName` must accept exactly $arity arguments.",
+            null,
+        )
+    }
+
+    try {
+        player.interpreter.run(
+            func,
+            arguments,
+        )
+    } catch (e: SchemeError) {
+        throw DisqualificationError(player.bot.botId, "The bot crashed while handling the `$funcName` event.", e)
+    }
+
+    val logOutput = player.output.toString()
+    player.output.clear()
+    if (logOutput.isNotEmpty()) {
+        logBot(state.turns.last(), player.bot, logOutput)
+    }
+}
+
 fun turnSnapShot(state: GameState): Turn {
     return Turn(
         state.turns.size.toLong(),
@@ -214,10 +274,10 @@ fun pickupCards(
     state: GameState,
     player: Player,
     number: Int,
-) {
+): List<Card> {
     // Reshuffle the pile if necessary
     if (number > state.drawPile.size) {
-        logSystem(state.turns.last(), "Reshuffle pile into the draw pile")
+        logSystem(state.turns.last(), "Reshuffle pile into the draw pile.")
         var playedCards = state.pile.drop(1)
 
         // If played choose cards have a color, reset it
@@ -231,6 +291,10 @@ fun pickupCards(
             }
         state.pile = state.pile.take(1).toMutableList()
         state.drawPile.addAll(playedCards.shuffled())
+
+        state.players.forEach { p ->
+            execBotEvent(state, p, "pile-reshuffled", listOf())
+        }
     }
 
     // Pick up the cards
@@ -239,6 +303,7 @@ fun pickupCards(
         state.turns.last().actions.addLast(Action(player.bot.botId, ActionType.DRAW_CARD, card))
     }
     player.hand.addAll(cards)
+    return cards
 }
 
 fun initialGameState(
@@ -247,9 +312,10 @@ fun initialGameState(
 ): GameState {
     val players =
         request.participatingBots.map { bot ->
-            val interpreter = SchemeInterpreter()
+            val buffer = StringBuilder()
+            val interpreter = SchemeInterpreter(buffer)
             injectSimulationBuiltin(interpreter.env)
-            Player(bot, deck.removeFirstN(7).toMutableList(), interpreter)
+            Player(bot, deck.removeFirstN(7).toMutableList(), interpreter, buffer)
         }
     return GameState(mutableListOf(deck.removeFirst()), deck, players)
 }
@@ -270,7 +336,22 @@ private fun initializeBots(players: List<Player>) {
             )
         }
 
-        // FIXME: Verify arity of the function
+        val turnFunc = player.interpreter.env.get("turn")!!
+        if (turnFunc !is FuncValue) {
+            throw DisqualificationError(
+                player.bot.botId,
+                "`turn` is not a function but a ${turnFunc.typeName()}",
+                null,
+            )
+        }
+
+        if (turnFunc.arity.min != 3 || turnFunc.arity.max != 3) {
+            throw DisqualificationError(
+                player.bot.botId,
+                "The `turn` function must accept exactly three arguments.",
+                null,
+            )
+        }
     }
 }
 

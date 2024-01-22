@@ -48,4 +48,27 @@ data class Card(
         // All other types of cards can mach only in their types
         return type == next.type
     }
+
+    fun name(): String {
+        var colorName = color.toString().lowercase()
+        val typeName =
+            when (type) {
+                CardType.NUMBER_CARD -> number.toString()
+                CardType.SWITCH -> "switch"
+                CardType.SKIP -> "skip"
+                CardType.DRAW_TWO -> "draw(+2)"
+                CardType.CHOOSE -> "choose"
+                CardType.CHOOSE_DRAW -> "choose-draw(+4)"
+                else -> throw Exception("Invalid case")
+            }
+
+        if (typeName.startsWith("choose")) {
+            if (color == Color.ANY) {
+                colorName = "no specific color)"
+            }
+            return "$typeName card (wishing $colorName)"
+        }
+
+        return "$colorName $typeName card"
+    }
 }
