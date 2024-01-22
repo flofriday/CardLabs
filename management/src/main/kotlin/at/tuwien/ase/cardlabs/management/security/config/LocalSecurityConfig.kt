@@ -1,24 +1,19 @@
 package at.tuwien.ase.cardlabs.management.security.config
 
-import at.tuwien.ase.cardlabs.management.error.authentication.InvalidTokenException
 import at.tuwien.ase.cardlabs.management.security.DatabaseUserDetailsService
 import at.tuwien.ase.cardlabs.management.security.jwt.JwtAuthenticationFilter
 import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import at.tuwien.ase.cardlabs.management.service.AccountService
-import com.nimbusds.oauth2.sdk.token.BearerAccessToken
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.core.annotation.Order
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer.JwtConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -26,7 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
-
 
 @Configuration
 @EnableWebSecurity
@@ -36,7 +30,6 @@ class LocalSecurityConfig(
     private val accountService: AccountService,
     private val jwtTokenService: JwtTokenService,
 ) {
-
     @Bean
     fun securityFilterChain(
         http: HttpSecurity,
@@ -72,17 +65,14 @@ class LocalSecurityConfig(
                 JwtAuthenticationFilter(DatabaseUserDetailsService(accountService), jwtTokenService),
                 UsernamePasswordAuthenticationFilter::class.java,
             )
-
             .oauth2Login { customizer ->
                 customizer
                     .successHandler(Oauth2LoginSuccessHandler(accountService, jwtTokenService))
             }
-
             .exceptionHandling { configurator -> configurator.authenticationEntryPoint(Oauth2AuthenticationEntrypoint()) }
 
         return http.build()
     }
-
 
     @Bean
     fun authenticationManager(

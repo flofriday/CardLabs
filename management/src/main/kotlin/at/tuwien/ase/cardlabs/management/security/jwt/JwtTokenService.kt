@@ -19,9 +19,8 @@ import kotlin.jvm.Throws
 
 @Service
 class JwtTokenService(
-    private val jwtConfig: JwtConfig
+    private val jwtConfig: JwtConfig,
 ) : TokenService {
-
     private val claimAccountIdFieldName: String = "account-id"
     private val claimAccountEmailFieldName: String = "account-email"
     private val claimAccountTokenTypeFieldName: String = "token-type"
@@ -36,7 +35,6 @@ class JwtTokenService(
         val accessToken = createAccessToken(cardLabUser)
         return TokenPair(refreshToken, accessToken)
     }
-
 
     override fun generateAccessToken(refreshToken: String): Token {
         // no need to check for the boolean value as it always throws an exception if invalid
@@ -67,7 +65,7 @@ class JwtTokenService(
         return createToken(
             cardLabUser.email,
             createClaim(cardLabUser.id, cardLabUser.email, TokenType.REFRESH_TOKEN),
-            jwtConfig.getRefreshTokenValidity()
+            jwtConfig.getRefreshTokenValidity(),
         )
     }
 
@@ -78,7 +76,7 @@ class JwtTokenService(
         return createToken(
             accountUsername,
             createClaim(accountId, accountUsername, TokenType.ACCESS_TOKEN),
-            jwtConfig.getAccessTokenValidity()
+            jwtConfig.getAccessTokenValidity(),
         )
     }
 
@@ -86,11 +84,15 @@ class JwtTokenService(
         return createToken(
             cardLabUser.email,
             createClaim(cardLabUser.id, cardLabUser.email, TokenType.ACCESS_TOKEN),
-            jwtConfig.getAccessTokenValidity()
+            jwtConfig.getAccessTokenValidity(),
         )
     }
 
-    private fun createClaim(accountId: Long, accountEmail: String, tokenType: TokenType): Map<String, Any> {
+    private fun createClaim(
+        accountId: Long,
+        accountEmail: String,
+        tokenType: TokenType,
+    ): Map<String, Any> {
         val claims = mutableMapOf<String, Any>()
         claims[claimAccountIdFieldName] = accountId
         claims[claimAccountEmailFieldName] = accountEmail
@@ -98,21 +100,27 @@ class JwtTokenService(
         return claims
     }
 
-    private fun createToken(subject: String, claims: Map<String, Any>, validity: Duration): Token {
+    private fun createToken(
+        subject: String,
+        claims: Map<String, Any>,
+        validity: Duration,
+    ): Token {
         val now = Instant.now()
         val expiry = now.plus(validity)
 
-        val token = Jwts.builder()
-            .setIssuedAt(Date.from(now))
-            .setExpiration(Date.from(expiry))
-            .setSubject(subject)
-            .addClaims(claims)
-            .signWith(SignatureAlgorithm.HS512, jwtConfig.getSecretKey())
-            .compact()
+        val token =
+            Jwts.builder()
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(expiry))
+                .setSubject(subject)
+                .addClaims(claims)
+                .signWith(SignatureAlgorithm.HS512, jwtConfig.getSecretKey())
+                .compact()
         return Token(token, expiry)
     }
 
     // === Token extract information functions ===
+
     /**
      * Check if the token is expired, if the token expiration is null, then an exception is thrown
      */
