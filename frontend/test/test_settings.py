@@ -6,7 +6,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from random import randint
 import time
 
-def test_delete_existing_user(driver):
+def test_delete_existing_user(driver_headless):
+    driver = driver_headless
     helper.login(driver, 999999901, "test5@email")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".shadow")))
     driver.find_element(By.CSS_SELECTOR, ".shadow").click()
