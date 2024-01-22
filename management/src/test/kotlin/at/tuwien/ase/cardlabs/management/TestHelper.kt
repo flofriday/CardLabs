@@ -18,9 +18,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 class TestHelper {
 
     companion object {
-
-        val DEFAULT_PASSWORD: String = "PassWord123?!"
-
         // == Authentication ==
         @JvmStatic
         fun createUserDetails(id: Long, username: String, email: String): CardLabUser {

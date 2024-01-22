@@ -26,9 +26,9 @@ class AuthenticationIntegrationTests {
 
     @Test
     fun whenLogin_expectSuccess() {
-        createAccount("test", "test@test.com", "PassWord?!123", null, true, true, true)
+        createAccount("test", "test@test.com", null)
 
-        val body = TestHelper.createAccountLoginJSON("test", "PassWord?!123")
+        val body = TestHelper.createAccountLoginJSON("test")
         mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -39,9 +39,9 @@ class AuthenticationIntegrationTests {
 
     @Test
     fun whenLogin_withInvalidPassword_expectUnauthorizedError() {
-        createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
+        createAccount("test", "test@test.com", null)
 
-        val body = TestHelper.createAccountLoginJSON("test", "passWord9838932984u73298!!!")
+        val body = TestHelper.createAccountLoginJSON("test")
         mockMvc.perform(
             post("/authentication/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -50,7 +50,7 @@ class AuthenticationIntegrationTests {
             .andExpect(status().isUnauthorized)
     }
 
-    private fun createAccount(username: String, email: String, password: String, location: String?, sendScoreUpdates: Boolean, sendChangeUpdates: Boolean, sendNewsletter: Boolean): Account {
-        return TestHelper.createAccount(accountService, username, email, password, location, sendScoreUpdates, sendChangeUpdates, sendNewsletter)
+    private fun createAccount(username: String, email: String, location: String?): Account {
+        return TestHelper.createAccount(accountService, username, email, location)
     }
 }

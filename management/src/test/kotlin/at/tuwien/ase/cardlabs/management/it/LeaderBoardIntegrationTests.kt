@@ -71,21 +71,13 @@ class LeaderBoardIntegrationTests {
         val account1 = AccountDAO()
         account1.username = "Test1"
         account1.email = "test1@email.com"
-        account1.password = passwordEncoder.encode("ThisIsATest1234")
         account1.location = locations[0]
-        account1.sendChangeUpdates = true
-        account1.sendScoreUpdates = true
-        account1.sendNewsletter = true
         accountRepository.save(account1)
 
         val account2 = AccountDAO()
         account2.username = "Test2"
         account2.email = "test2@email.com"
-        account2.password = passwordEncoder.encode("ThisIsASecondTest1234")
         account2.location = locations[2]
-        account2.sendChangeUpdates = true
-        account2.sendScoreUpdates = true
-        account2.sendNewsletter = true
         accountRepository.save(account2)
 
         val bot1 = BotDAO()
@@ -390,6 +382,6 @@ class LeaderBoardIntegrationTests {
     }
 
     private fun getAuthenticationToken(username: String, password: String): String {
-        return TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, username, password).accessToken.token
+        return TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, username).accessToken.token
     }
 }

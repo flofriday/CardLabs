@@ -50,7 +50,7 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchAllById_widthNonExistingGame_expectGameDoesNotExistError() {
         val account = TestHelper.createAccount(accountService)
-        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username, TestHelper.DEFAULT_PASSWORD).accessToken
+        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username).accessToken
         val gameId = 0L
         mockMvc.perform(
             get("/match/$gameId/all")
@@ -63,7 +63,7 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchAllById_withExistingGame_expectSuccess() {
         val account = TestHelper.createAccount(accountService)
-        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username, TestHelper.DEFAULT_PASSWORD).accessToken
+        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username).accessToken
         val botId = 0L
 
         val gameDAO = GameDAO()
@@ -127,7 +127,7 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchLogById_widthNonExistingGame_expectGameDoesNotExistError() {
         val account = TestHelper.createAccount(accountService)
-        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username, TestHelper.DEFAULT_PASSWORD).accessToken
+        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username).accessToken
         val gameId = 0L
         mockMvc.perform(
             get("/match/$gameId/all")
@@ -140,7 +140,7 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchLogById_withExistingGame_expectSuccess() {
         val account = TestHelper.createAccount(accountService)
-        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username, TestHelper.DEFAULT_PASSWORD).accessToken
+        val accessToken = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, account.username).accessToken
         val botId = 0L
 
         val gameDAO = GameDAO()

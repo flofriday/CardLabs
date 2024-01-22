@@ -64,8 +64,8 @@ class LocationIntegrationTests {
 
     @Test
     fun whenGetLocations_withValidJWT_expectSuccess() {
-        createAccount("test", "test@test.com", "PassWord123!?", null, true, true, true)
-        val authenticationTokens = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, "test", "PassWord123!?")
+        createAccount("test", "test@test.com", null)
+        val authenticationTokens = TestHelper.getInitialAuthenticationTokens(objectMapper, mockMvc, "test")
 
         val result = mockMvc.perform(
             MockMvcRequestBuilders.get("/locations")
@@ -81,21 +81,13 @@ class LocationIntegrationTests {
     private fun createAccount(
         username: String,
         email: String,
-        password: String,
-        location: String?,
-        sendScoreUpdates: Boolean,
-        sendChangeUpdates: Boolean,
-        sendNewsletter: Boolean
+        location: String?
     ): Account {
         return TestHelper.createAccount(
             accountService,
             username,
             email,
-            password,
-            location,
-            sendScoreUpdates,
-            sendChangeUpdates,
-            sendNewsletter
+            location
         )
     }
 }

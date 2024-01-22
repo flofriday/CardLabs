@@ -28,11 +28,7 @@ internal class AccountValidatorTests {
             id = null,
             username = username,
             email = email,
-            password = password,
-            location = null,
-            sendScoreUpdates = false,
-            sendChangeUpdates = false,
-            sendNewsletter = false,
+            location = null
         )
         if (success) {
             assertDoesNotThrow {

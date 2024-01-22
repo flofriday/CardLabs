@@ -84,7 +84,7 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountCreate_withExistingUsername_expectAccountExistUsernameError() {
-        createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
+        createAccount("test", "test@test.com", null)
 
         val account = Account(
             id = null,
@@ -101,7 +101,7 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountCreate_withExistingEmail_expectAccountExistEmailError() {
-        createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
+        createAccount("test", "test@test.com", null)
 
         val account = Account(
             id = null,
@@ -118,7 +118,7 @@ internal class AccountServiceTests {
 
     @Test
     fun whenAccountDelete_expectSuccess() {
-        val account = createAccount("test", "test@test.com", "PassWord123?!", null, true, true, true)
+        val account = createAccount("test", "test@test.com", null)
         val userDetailsAccount =
             TestHelper.createUserDetails(account.id!!, account.username, account.email)
 
@@ -130,21 +130,13 @@ internal class AccountServiceTests {
     private fun createAccount(
         username: String,
         email: String,
-        password: String,
         location: String?,
-        sendScoreUpdates: Boolean,
-        sendChangeUpdates: Boolean,
-        sendNewsletter: Boolean,
     ): Account {
         return TestHelper.createAccount(
             accountService,
             username,
             email,
-            password,
-            location,
-            sendScoreUpdates,
-            sendChangeUpdates,
-            sendNewsletter,
+            location
         )
     }
 }
