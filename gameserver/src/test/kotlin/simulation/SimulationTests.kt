@@ -4,6 +4,7 @@ import cardscheme.SchemeInterpreter
 import org.junit.Assert
 import org.junit.Test
 import simulation.models.*
+import java.lang.StringBuilder
 
 class SimulationTests {
     val randomBotCode =
@@ -18,10 +19,11 @@ class SimulationTests {
         code: String,
         hand: MutableList<Card>,
     ): Player {
-        val interpreter = SchemeInterpreter()
+        val buffer = StringBuilder()
+        val interpreter = SchemeInterpreter(buffer)
         injectSimulationBuiltin(interpreter.env)
         interpreter.run(code)
-        return Player(Bot(id, id, code), hand, interpreter)
+        return Player(Bot(id, id, code), hand, interpreter, buffer)
     }
 
     private fun createTestState(
@@ -402,5 +404,35 @@ class SimulationTests {
         val expectedCard = Card(CardType.CHOOSE_DRAW, Color.GREEN, null)
         Assert.assertEquals(state.pile.last(), expectedCard)
         Assert.assertEquals(state.turns.last().actions.first { a -> a.type == ActionType.PLAY_CARD }.card, expectedCard)
+    }
+
+    @Test
+    fun runTurnBotLogsOutput() {
+        val player1 =
+            createTestPlayer(
+                0,
+                """
+                (define (turn topCard hand players)
+                        (display "I was here")
+                        (random-choice
+                            (matching-cards topCard hand)))
+                """.trimIndent(),
+                mutableListOf(
+                    Card(CardType.SWITCH, Color.CYAN, null),
+                ),
+            )
+        val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
+        val state =
+            createTestState(
+                listOf(player1, player2),
+                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
+                mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+            )
+
+        runTurn(state)
+        println(state.turns.last())
+        val logMessage = state.turns.last().logMessages.first { m -> m is DebugLogMessage } as DebugLogMessage
+        Assert.assertEquals("I was here", logMessage.message)
+        Assert.assertEquals(0, logMessage.botId)
     }
 }

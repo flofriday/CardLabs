@@ -156,7 +156,6 @@ fun execBotTurn(
                 )
             }
 
-        // FIXME: Add the output to the turn
         result =
             player.interpreter.run(
                 func,
@@ -166,6 +165,14 @@ fun execBotTurn(
                     ListValue(players, null),
                 ),
             )
+
+        val logOutput = player.output.toString()
+        println("Log: '$logOutput'")
+        player.output.clear()
+        if (logOutput.isNotEmpty()) {
+            logBot(state.turns.last(), player.bot, logOutput)
+        }
+
     } catch (e: SchemeError) {
         throw DisqualificationError(player.bot.botId, "The bot crashed while taking a turn.", e)
     }
@@ -247,9 +254,11 @@ fun initialGameState(
 ): GameState {
     val players =
         request.participatingBots.map { bot ->
-            val interpreter = SchemeInterpreter()
+            // FIXME: I really don't like that the buffer is not part of the interpreter
+            val buffer = StringBuilder()
+            val interpreter = SchemeInterpreter(buffer)
             injectSimulationBuiltin(interpreter.env)
-            Player(bot, deck.removeFirstN(7).toMutableList(), interpreter)
+            Player(bot, deck.removeFirstN(7).toMutableList(), interpreter, buffer)
         }
     return GameState(mutableListOf(deck.removeFirst()), deck, players)
 }
@@ -270,7 +279,23 @@ private fun initializeBots(players: List<Player>) {
             )
         }
 
-        // FIXME: Verify arity of the function
+        val turnFunc = player.interpreter.env.get("turn")!!
+        if (turnFunc !is FuncValue) {
+            throw DisqualificationError(
+                player.bot.botId,
+                "`turn` is not a function but a ${turnFunc.typeName()}",
+                null,
+            )
+        }
+
+        if (turnFunc.arity.min != 3 || turnFunc.arity.max != 3) {
+            throw DisqualificationError(
+                player.bot.botId,
+                "The `turn` function must accept exactly three arguments.",
+                null,
+            )
+        }
+
     }
 }
 
