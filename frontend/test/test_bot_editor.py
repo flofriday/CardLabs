@@ -8,7 +8,7 @@ import re
 
 def test_create_bot_and_check_template_code(driver_headless):
     driver = driver_headless
-    helper.login(driver, "test1", "pass1")
+    helper.login(driver, 999999999, "test1@email")
     driver.find_element(By.ID, "button_create_new_bot").click()
     WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".cm-content")))
     WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.CSS_SELECTOR, ".cm-content").get_attribute("innerText") == helper.get_code_template())
@@ -16,7 +16,7 @@ def test_create_bot_and_check_template_code(driver_headless):
 
 def test_create_bot_and_save_it(driver_headless):
     driver = driver_headless
-    helper.login(driver, "test1", "pass1")
+    helper.login(driver, 999999999, "test1@email")
     driver.find_element(By.ID, "button_create_new_bot").click()
     WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".cm-content")))
     driver.find_element(By.CSS_SELECTOR, ".cm-content").send_keys(Keys.CONTROL, "a") # mark code template
@@ -34,7 +34,7 @@ def test_create_bot_and_save_it(driver_headless):
 
 def test_create_bot_save_it_open_it_and_change_it_and_save_it(driver_headless):
     driver = driver_headless
-    helper.login(driver, "test1", "pass1")
+    helper.login(driver, 999999999, "test1@email")
     driver.find_element(By.ID, "button_create_new_bot").click()
     WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".cm-content")))
     driver.find_element(By.CSS_SELECTOR, ".cm-content").send_keys(Keys.CONTROL, "a")

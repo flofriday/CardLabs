@@ -1,9 +1,9 @@
 // stackoverflow.com/questions/49819183/react-what-is-the-best-way-to-handle-login-and-authentication
-import { cookies } from "next/headers";
+"use client";
+import Cookies from "js-cookie";
 
 export async function isAuthenticated(): Promise<boolean> {
-  const cookieStore = cookies();
-  const authToken = cookieStore.get("auth_token")?.value;
+  const authToken = Cookies.get("auth_token");
   if (authToken === undefined) {
     return false;
   }
@@ -13,7 +13,7 @@ export async function isAuthenticated(): Promise<boolean> {
 export async function validToken(jwt: string): Promise<boolean> {
   // this needs to change if the backend is located on a different url
   // sadly this can't be "api/authentication", but I dont know why
-  const managementUrl = process.env.MANAGEMENT_HOST ?? "http://127.0.0.1:8080";
+  const managementUrl = process.env.MANAGEMENT_HOST ?? "http://localhost:8080";
 
   const response = await fetch(`${managementUrl}/authentication`, {
     mode: "cors",

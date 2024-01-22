@@ -19,17 +19,20 @@ import kotlin.jvm.Throws
 
 @Service
 class JwtTokenService(
-    private val jwtConfig: JwtConfig
+    private val jwtConfig: JwtConfig,
 ) : TokenService {
-
     private val claimAccountIdFieldName: String = "account-id"
-    private val claimAccountUsernameFieldName: String = "account-username"
+    private val claimAccountEmailFieldName: String = "account-email"
     private val claimAccountTokenTypeFieldName: String = "token-type"
 
-    override fun generateRefreshToken(authentication: Authentication): TokenPair {
+    override fun generateTokenPair(authentication: Authentication): TokenPair {
         val userDetails = authentication.principal as CardLabUser
-        val refreshToken = createRefreshToken(userDetails)
-        val accessToken = createAccessToken(userDetails)
+        return generateTokenPair(userDetails)
+    }
+
+    override fun generateTokenPair(cardLabUser: CardLabUser): TokenPair {
+        val refreshToken = createRefreshToken(cardLabUser)
+        val accessToken = createAccessToken(cardLabUser)
         return TokenPair(refreshToken, accessToken)
     }
 
@@ -60,54 +63,64 @@ class JwtTokenService(
     // === Token creation functions ===
     private fun createRefreshToken(cardLabUser: CardLabUser): Token {
         return createToken(
-            cardLabUser.username,
-            createClaim(cardLabUser.id, cardLabUser.username, TokenType.REFRESH_TOKEN),
-            jwtConfig.getRefreshTokenValidity()
+            cardLabUser.email,
+            createClaim(cardLabUser.id, cardLabUser.email, TokenType.REFRESH_TOKEN),
+            jwtConfig.getRefreshTokenValidity(),
         )
     }
 
     private fun createAccessToken(refreshToken: String): Token {
         val claims = extractAllClaims(refreshToken)
         val accountId = (claims[claimAccountIdFieldName] as Int).toLong()
-        val accountUsername = claims[claimAccountUsernameFieldName] as String
+        val accountUsername = claims[claimAccountEmailFieldName] as String
         return createToken(
             accountUsername,
             createClaim(accountId, accountUsername, TokenType.ACCESS_TOKEN),
-            jwtConfig.getAccessTokenValidity()
+            jwtConfig.getAccessTokenValidity(),
         )
     }
 
     private fun createAccessToken(cardLabUser: CardLabUser): Token {
         return createToken(
-            cardLabUser.username,
-            createClaim(cardLabUser.id, cardLabUser.username, TokenType.ACCESS_TOKEN),
-            jwtConfig.getAccessTokenValidity()
+            cardLabUser.email,
+            createClaim(cardLabUser.id, cardLabUser.email, TokenType.ACCESS_TOKEN),
+            jwtConfig.getAccessTokenValidity(),
         )
     }
 
-    private fun createClaim(accountId: Long, accountUsername: String, tokenType: TokenType): Map<String, Any> {
+    private fun createClaim(
+        accountId: Long,
+        accountEmail: String,
+        tokenType: TokenType,
+    ): Map<String, Any> {
         val claims = mutableMapOf<String, Any>()
         claims[claimAccountIdFieldName] = accountId
-        claims[claimAccountUsernameFieldName] = accountUsername
+        claims[claimAccountEmailFieldName] = accountEmail
         claims[claimAccountTokenTypeFieldName] = tokenType
         return claims
     }
 
-    private fun createToken(subject: String, claims: Map<String, Any>, validity: Duration): Token {
+    private fun createToken(
+        subject: String,
+        claims: Map<String, Any>,
+        validity: Duration,
+    ): Token {
         val now = Instant.now()
         val expiry = now.plus(validity)
 
-        val token = Jwts.builder()
-            .setIssuedAt(Date.from(now))
-            .setExpiration(Date.from(expiry))
-            .setSubject(subject)
-            .addClaims(claims)
-            .signWith(SignatureAlgorithm.HS512, jwtConfig.getSecretKey())
-            .compact()
+        val token =
+            Jwts.builder()
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(expiry))
+                .setSubject(subject)
+                .addClaims(claims)
+                .signWith(SignatureAlgorithm.HS512, jwtConfig.getSecretKey())
+                .compact()
         return Token(token, expiry)
     }
 
     // === Token extract information functions ===
+
     /**
      * Check if the token is expired, if the token expiration is null, then an exception is thrown
      */
@@ -146,8 +159,8 @@ class JwtTokenService(
             .body
     }
 
-    override fun extractAccountUsername(token: String): String {
+    override fun extractAccountEmail(token: String): String {
         val claims = extractAllClaims(token)
-        return claims[claimAccountUsernameFieldName] as String
+        return claims[claimAccountEmailFieldName] as String
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
+import kotlin.jvm.Throws
 
 @Service
 class AccountService(
@@ -31,7 +32,14 @@ class AccountService(
 
     private final val logger = LoggerFactory.getLogger(javaClass)
 
+    /**
+     * Create an account
+     */
     @Transactional
+    @Throws(
+        AccountExistsException::class,
+        LocationNotFoundException::class
+    )
     fun create(account: Account): Account {
         logger.debug("Attempting to create an account with the username ${account.username}")
         Helper.requireNull(account.id, "The id must not be set")
@@ -53,15 +61,18 @@ class AccountService(
         val acc = AccountDAO()
         acc.username = account.username
         acc.email = account.email
-        acc.password = passwordEncoder.encode(account.password)
         acc.location = location
-        acc.sendChangeUpdates = account.sendChangeUpdates
-        acc.sendScoreUpdates = account.sendScoreUpdates
-        acc.sendNewsletter = account.sendNewsletter
         return accountMapper.map(accountRepository.save(acc))
     }
 
+    /**
+     * Update an account
+     */
     @Transactional
+    @Throws(
+        AccountNotFoundException::class,
+        LocationNotFoundException::class
+    )
     fun update(user: CardLabUser, accountUpdate: AccountUpdate): Account {
         logger.debug("User ${user.id} attempts to update its account")
         Helper.requireNonNull(user, "No authentication provided")
@@ -72,14 +83,15 @@ class AccountService(
             throw LocationNotFoundException("Location with name ${accountUpdate.location} does not exist")
         }
         account.location = location
-        account.sendNewsletter = accountUpdate.sendNewsletter
-        account.sendScoreUpdates = accountUpdate.sendScoreUpdates
-        account.sendChangeUpdates = accountUpdate.sendChangeUpdates
 
         return accountMapper.map(accountRepository.save(account))
     }
 
+    /**
+     * Delete an account
+     */
     @Transactional
+    @Throws(UnauthorizedException::class)
     fun delete(user: CardLabUser, accountId: Long) {
         logger.debug("User ${user.id} attempts to delete the account $accountId")
         Helper.requireNonNull(user, "No authentication provided")
@@ -94,20 +106,37 @@ class AccountService(
         }
     }
 
-    fun getUser(user: CardLabUser): Account {
+    /**
+     * Fetch an account from a CardLabUser
+     */
+    @Transactional
+    fun fetchUser(user: CardLabUser): Account {
         logger.debug("User ${user.id} attempts to fetch its account information")
-        return getUser(user.username)
+        return fetchUser(user.username)
     }
 
-    fun getUser(username: String): Account {
+    /**
+     * Fetch an account by its username
+     */
+    @Transactional
+    @Throws(AccountNotFoundException::class)
+    fun fetchUser(username: String): Account {
         val account = findByUsername(username) ?: throw AccountNotFoundException("Account could not be found")
         return accountMapper.map(account)
     }
 
+    /**
+     * Fetch an account by its id
+     */
+    @Transactional
     fun findById(id: Long): AccountDAO? {
         return accountRepository.findByIdAndDeletedIsNull(id)
     }
 
+    /**
+     * Fetch an account by its username
+     */
+    @Transactional
     fun findByUsername(username: String?): AccountDAO? {
         if (username == null) {
             return null
@@ -115,11 +144,11 @@ class AccountService(
         return accountRepository.findByUsernameAndDeletedIsNull(username)
     }
 
-    fun findLocation(name: String): LocationDAO? {
+    private fun findLocation(name: String): LocationDAO? {
         return locationRepository.findByName(name)
     }
 
-    fun findByEmail(email: String?): AccountDAO? {
+    private fun findByEmail(email: String?): AccountDAO? {
         if (email == null) {
             return null
         }

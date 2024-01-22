@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -30,9 +31,12 @@ class LocalSecurityConfig(
     private val accountService: AccountService,
     private val jwtTokenService: JwtTokenService,
 ) {
-
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun securityFilterChain(
+        http: HttpSecurity,
+        accountService: AccountService,
+        jwtTokenService: JwtTokenService,
+    ): SecurityFilterChain {
         http
             .csrf { csrf ->
                 csrf.disable()
@@ -45,12 +49,14 @@ class LocalSecurityConfig(
             .authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/oauth2")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/refresh")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/leaderboard/public")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/leaderboard/firstPlace")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/account", "POST")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/open", "GET")).permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement { sessionManagement ->
@@ -60,6 +66,12 @@ class LocalSecurityConfig(
                 JwtAuthenticationFilter(DatabaseUserDetailsService(accountService), jwtTokenService),
                 UsernamePasswordAuthenticationFilter::class.java,
             )
+            .oauth2Login { customizer ->
+                customizer
+                    .successHandler(Oauth2LoginSuccessHandler(accountService, jwtTokenService))
+            }
+            .exceptionHandling { configurator -> configurator.authenticationEntryPoint(Oauth2AuthenticationEntrypoint()) }
+            .cors(withDefaults())
 
         return http.build()
     }

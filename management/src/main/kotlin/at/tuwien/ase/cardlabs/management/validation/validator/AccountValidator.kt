@@ -33,10 +33,6 @@ class AccountValidator {
                 account.email,
                 emailValidationRules()
             )
-            Validator.validate(
-                account.password,
-                passwordValidationRules()
-            )
         }
 
         /**

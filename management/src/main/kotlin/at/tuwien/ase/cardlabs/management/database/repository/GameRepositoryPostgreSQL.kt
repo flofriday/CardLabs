@@ -17,8 +17,9 @@ interface GameRepositoryPostgreSQL : GameRepository {
             SELECT *
                 FROM game
                 WHERE :botId = ANY(participating_bot_ids)
+                ORDER BY start_time
         """,
-        nativeQuery = true
+        nativeQuery = true,
     )
     override fun findAllGamesWithBot(@Param("botId") botId: Long, pageable: Pageable): Page<GameDAO>
 }

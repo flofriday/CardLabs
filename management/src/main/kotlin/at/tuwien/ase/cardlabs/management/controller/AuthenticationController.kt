@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,26 +23,30 @@ class AuthenticationController(
     private val authenticationManager: AuthenticationManager,
     private val jwtTokenService: JwtTokenService,
 ) {
-
     private final val logger = LoggerFactory.getLogger(javaClass)
 
     @PostMapping("/authentication/login")
-    fun authRequest(@RequestBody authRequest: AuthRequest): ResponseEntity<AuthenticationResponse> {
+    fun authRequest(
+        @RequestBody authRequest: AuthRequest,
+    ): ResponseEntity<AuthenticationResponse> {
         logger.info("User ${authRequest.username} attempts to login")
-        val authentication = authenticationManager.authenticate(
-            UsernamePasswordAuthenticationToken.unauthenticated(
-                authRequest.username,
-                authRequest.password,
-            ),
-        )
+        val authentication =
+            authenticationManager.authenticate(
+                UsernamePasswordAuthenticationToken.unauthenticated(
+                    authRequest.username,
+                    authRequest.password,
+                ),
+            )
 
-        val refreshToken = jwtTokenService.generateRefreshToken(authentication)
+        val tokenPair = jwtTokenService.generateTokenPair(authentication)
         return ResponseEntity.status(HttpStatus.OK)
-            .body(AuthenticationResponse(refreshToken.refreshToken, refreshToken.accessToken))
+            .body(AuthenticationResponse(tokenPair.refreshToken, tokenPair.accessToken))
     }
 
     @PostMapping("/authentication/refresh")
-    fun refreshToken(@RequestBody refreshTokenRequest: RefreshTokenRequest): ResponseEntity<AccessTokenAuthenticationResponse> {
+    fun refreshToken(
+        @RequestBody refreshTokenRequest: RefreshTokenRequest,
+    ): ResponseEntity<AccessTokenAuthenticationResponse> {
         logger.info("User attempts to generate a new access token")
         val accessToken = jwtTokenService.generateAccessToken(refreshTokenRequest.refreshToken)
         return ResponseEntity.status(HttpStatus.OK)
@@ -49,7 +54,10 @@ class AuthenticationController(
     }
 
     @GetMapping("/authentication")
-    fun verify(@AuthenticationPrincipal user: CardLabUser): ResponseEntity<Unit> {
+    @CrossOrigin(origins = ["http://localhost:3000"], allowCredentials = "true")
+    fun verify(
+        @AuthenticationPrincipal user: CardLabUser,
+    ): ResponseEntity<Unit> {
         logger.info("User ${user.id} verifies that the JWT token is still valid")
         return ResponseEntity
             .status(HttpStatus.OK)
