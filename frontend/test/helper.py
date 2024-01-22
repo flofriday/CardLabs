@@ -16,7 +16,7 @@ def login(driver, id, email):
     jwt.api_jws.PyJWS.header_typ = False
     secret = "2e0377d9c56d8a51ed8cfc10a68bda5b3cdc7453a6c7b6ac4728d93e052618051bba4534b146e3cff10bed31224793cb46f78a628b8d6dc08b1b5496a05cf488"
 
-    current_time = datetime.utcnow()
+    current_time = datetime.now()
     expiration_time = current_time + timedelta(minutes=15)
 
     payload = {
@@ -40,19 +40,7 @@ def login(driver, id, email):
 
     driver.get("http://127.0.0.1:3000/dashboard")
 
-    time.sleep(500)
-
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "profile_pic_in_navbar")))
-
-
-    #WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "login_button_navbar")))
-    #driver.find_element(By.ID, "login_button_navbar").click()
-    #WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "username")))
-    #driver.find_element(By.ID, "username").click()
-    #driver.find_element(By.ID, "username").send_keys(username)
-    #driver.find_element(By.ID, "password").click()
-    #driver.find_element(By.ID, "password").send_keys(password)
-    #driver.find_element(By.ID, "login_button").click()
 
 
 def register(driver, username, email, password, location):
