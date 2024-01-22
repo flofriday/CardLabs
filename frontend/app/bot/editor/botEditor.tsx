@@ -12,11 +12,10 @@ import {
   Bot,
   saveBot as _saveBot,
   deleteBot as _deleteBot,
-  getBotRank,
+  rankBot as _rankBot,
 } from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { RegionType } from "@/app/types/RegionType";
 
 const CODE_CHARACTER_LIMIT = 32000;
 
@@ -40,8 +39,8 @@ function saveBot(id: number, code: string): void {
     .catch(() => {});
 }
 
-function rankBot(id: number, region: RegionType): void {
-  getBotRank(id, RegionType.GLOBAL)
+function rankBot(id: number): void {
+  _rankBot(id)
     .then(() => {
       toast.success("This bot has been queued for ranking");
     })
@@ -160,7 +159,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
               );
               return;
             }
-            rankBot(_id, RegionType.GLOBAL);
+            rankBot(_id);
             setRanked(true);
           }}
           _delete={() => {

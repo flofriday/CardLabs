@@ -8,14 +8,17 @@
 ; Event: cardPlayed
 ; UnoSaid event is not provided as you can just use cardPlayed
 (define cardPlayed (lambda (card player)
+    (display card)
     ))
 
 ; Event: cardPicked
 ; Some other player had to pick a card
 (define cardPicked (lambda (topCard player)
+    (display topCard)
     ))
 
 ; Event: reshuffledPile
 ; The drawPile got reshuffled
 (define reshuffledPile (lambda ()
+    (display "reshuffles")
     ))
