@@ -68,7 +68,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   const [code, setCode] = useState<string | undefined>(undefined);
   const [ranked, setRanked] = useState(false);
   const router = useRouter();
-  const codeSaved = useSaveCodeStore((state: any) => state.codeSaved);
+  const codeSaved: boolean = useSaveCodeStore((state: any) => state.codeSaved);
   const setCodeSaved = useSaveCodeStore((state: any) => state.setCodeSaved);
 
   const setupBotCodeTemplate = async (): Promise<string> => {

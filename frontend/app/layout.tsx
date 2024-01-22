@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/NavBar/NavBar";
 import Notifications from "./components/Notifications";
-import NoSsr from "@/app/components/NoSsr";
+import { NoSSR } from "next-dynamic-no-ssr";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,11 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <NoSsr>
+        <NoSSR>
           <NavBar />
           <div className="h-full pt-14">{children}</div>
           <Notifications />
-        </NoSsr>
+        </NoSSR>
       </body>
     </html>
   );
