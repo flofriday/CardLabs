@@ -2,19 +2,57 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 import re
+import jwt
+from datetime import datetime, timedelta
+import time
+import base64
 
-def login(driver, username, password):
+
+
+def login(driver, id, email):
     driver.get("http://127.0.0.1:3000/")
     driver.set_window_size(1900, 1020)
-    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "login_button_navbar")))
-    driver.find_element(By.ID, "login_button_navbar").click()
-    WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "username")))
-    driver.find_element(By.ID, "username").click()
-    driver.find_element(By.ID, "username").send_keys(username)
-    driver.find_element(By.ID, "password").click()
-    driver.find_element(By.ID, "password").send_keys(password)
-    driver.find_element(By.ID, "login_button").click()
+
+    jwt.api_jws.PyJWS.header_typ = False
+    secret = "2e0377d9c56d8a51ed8cfc10a68bda5b3cdc7453a6c7b6ac4728d93e052618051bba4534b146e3cff10bed31224793cb46f78a628b8d6dc08b1b5496a05cf488"
+
+    current_time = datetime.utcnow()
+    expiration_time = current_time + timedelta(minutes=15)
+
+    payload = {
+        "iat": int(current_time.timestamp()),
+        "exp": int(expiration_time.timestamp()),
+        "sub": email,
+        "account-id": id,
+        "account-email": email,
+        "token-type": "ACCESS_TOKEN"
+    }
+
+    token = jwt.encode(payload, base64.b64decode(secret), algorithm="HS512", headers={"alg" : "HS512"})
+    print(token)
+    driver.add_cookie({"name": "auth_token", "value": token})
+
+    script = f"""
+    localStorage.setItem('auth_token_expire', '{expiration_time.strftime("%Y-%m-%dT%H:%M:%SZ")}');
+    localStorage.setItem('refresh_token', 'test_token');
+    """
+    driver.execute_script(script)
+
+    driver.get("http://127.0.0.1:3000/dashboard")
+
+    time.sleep(500)
+
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "profile_pic_in_navbar")))
+
+
+    #WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "login_button_navbar")))
+    #driver.find_element(By.ID, "login_button_navbar").click()
+    #WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "username")))
+    #driver.find_element(By.ID, "username").click()
+    #driver.find_element(By.ID, "username").send_keys(username)
+    #driver.find_element(By.ID, "password").click()
+    #driver.find_element(By.ID, "password").send_keys(password)
+    #driver.find_element(By.ID, "login_button").click()
 
 
 def register(driver, username, email, password, location):

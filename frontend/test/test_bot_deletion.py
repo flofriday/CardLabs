@@ -4,8 +4,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
 
-def test_delete_bot_from_editor_abort_with_go_back_button(driver_headless):
-    driver = driver_headless
+def test_delete_bot_from_editor_abort_with_go_back_button(driver):
+    #driver = driver_headless
     helper.login(driver, "test1", "pass1")
     helper.new_bot(driver, "test code")
 
