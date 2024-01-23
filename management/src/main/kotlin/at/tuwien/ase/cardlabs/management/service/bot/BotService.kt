@@ -174,6 +174,17 @@ class BotService(
     }
 
     /**
+     * Fetch all bots by id
+     */
+    @Transactional
+    fun fetch(botIds: List<Long>): List<Bot> {
+        logger.debug("Attempting to fetch the following bots $botIds")
+        return botRepository.findByIdIn(botIds)
+            .map(botMapper::map)
+            .toList()
+    }
+
+    /**
      * Fetch all bots by user
      */
     @Transactional
@@ -189,8 +200,13 @@ class BotService(
     /**
      * Fetches all the bot IDs of a user
      */
-    fun fetchAllBotIds(user: CardLabUser): List<Long> {
-        return botRepository.findBotIdsByOwnerIdAndDeletedIsNull(user.id).toList()
+    @Transactional
+    fun fetchAllBotIds(
+        user: CardLabUser
+    ): List<Long> {
+        logger.debug("User ${user.id} is attempting to fetch all its bots ids")
+        return botRepository.findBotIdsByOwnerIdAndDeletedIsNull(user.id)
+            .toList()
     }
 
     /**
@@ -261,6 +277,18 @@ class BotService(
     ): Int {
         logger.debug("Attempting to update the state for the bots $botIds to $newState")
         return botRepository.updateMultipleBotState(botIds, newState)
+    }
+
+    /**
+     * Update the elo score of a bot
+     */
+    @Transactional
+    fun updateEloScore(
+        botId: Long,
+        eloScore: Int,
+    ) {
+        logger.debug("Attempting to update the elo score for the bot $botId to $eloScore")
+        botRepository.updateEloScore(botId, eloScore)
     }
 
     /**
