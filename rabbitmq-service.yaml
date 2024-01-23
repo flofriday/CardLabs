@@ -40,7 +40,7 @@ spec:
             limits:
               memory: "2000Mi"
               cpu: "200m"
-              ephemeral-storage: "200Mi"
+              ephemeral-storage: "400Mi"
           ports:
             - containerPort: 5672
             - containerPort: 15672
