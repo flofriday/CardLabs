@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import LeftPageHeader from "../components/leftPageHeader";
 import BotCard from "./botCard";
 import { Bot, getAllBots } from "../services/BotService";
 import Pagination from "../components/Pagination";
