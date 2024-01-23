@@ -4,6 +4,7 @@ import java.io.Serializable
 
 data class Turn(
     val turnId: Long,
+    val activeBotId: Long,
     val topCard: Card,
     val drawPile: List<Card>,
     val hands: List<Hand>,

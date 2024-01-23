@@ -1,5 +1,6 @@
 import IconButton, { ButtonIcon } from "@/app/components/iconButton";
 import { Game } from "@/app/types/game";
+import { useRouter } from "next/navigation";
 
 interface Props {
   game: Game;
@@ -7,6 +8,8 @@ interface Props {
 }
 
 export default function GameEntry({ game, botId }: Props): JSX.Element {
+  const router = useRouter();
+
   return (
     <div className="flex items-center justify-between p-4 bg-secondary rounded-md text-4xl font-bold w-full">
       <div className="flex w-full justify-between">
@@ -20,7 +23,7 @@ export default function GameEntry({ game, botId }: Props): JSX.Element {
           text="View"
           type={ButtonIcon.INFO}
           onClick={() => {
-            // TODO: implement forward button
+            router.push(`/game/detail/${game.id}`);
           }}
         />
       </div>
