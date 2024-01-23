@@ -18,7 +18,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { UnAuthorizedError } from "@/app/exceptions/UnAuthorizedError";
 import { NotFoundError } from "@/app/exceptions/NotFoundError";
-import { RegionType } from "@/app/types/RegionType";
 import { useSaveCodeStore } from "@/app/state/savedCodeStore";
 
 const CODE_CHARACTER_LIMIT = 32000;
