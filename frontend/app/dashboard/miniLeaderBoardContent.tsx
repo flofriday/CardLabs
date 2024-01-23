@@ -42,7 +42,7 @@ export default function MiniLeaderBoardContent({
       {entries.length > 0 ? (
         <div className="flex flex-col space-y-4">
           {entries.map((entry, index) => (
-            <div key={index} className="grid grid-cols-5">
+            <div key={index} className="grid grid-cols-6">
               <p className="font-bold col-span-2 truncate pr-2">
                 {entry.place + ". " + entry.botName}
               </p>
@@ -58,7 +58,7 @@ export default function MiniLeaderBoardContent({
                   )}
                 </div>
               </div>
-              <p className="ml-2 col-span-1 pl-1">Score: {entry.score}</p>
+              <p className="ml-2 col-span-2 pl-1">Score: {entry.score}</p>
             </div>
           ))}
         </div>
