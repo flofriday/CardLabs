@@ -2,10 +2,6 @@ package cardscheme
 
 class SchemeInterpreter(
     private val outputBuffer: StringBuilder = StringBuilder(),
-    /* private val timeLimitInSeconds: Long = 2,
-    private val memoryLimit: Long = 1024 * 1024 * 1024,
-    private val timeoutBetweenChecks: Long = 100,
-     */
     private val instructionLimit: Long = 100000,
     private val memoryLimit: Long = 1024 * 1024,
 ) {
@@ -30,7 +26,16 @@ class SchemeInterpreter(
     fun run(tokens: List<Token>): SchemeValue? {
         val ast = Parser().parse(tokens)
         Resolver().resolve(ast)
-        return Executor(env, outputBuffer, schemeSecurityMonitor).execute(ast)
+        try {
+            return Executor(env, outputBuffer, schemeSecurityMonitor).execute(ast)
+        } catch (e: StackOverflowError) {
+            throw SchemeError(
+                "Stackoverflow",
+                "You exceeded the stack limit, probably due to endless recursion. Look at the tip below for more.",
+                null,
+                "Look at the reason above for a tip."
+            )
+        }
     }
 
     /**
@@ -39,51 +44,16 @@ class SchemeInterpreter(
     fun run(
         func: CallableValue,
         args: List<SchemeValue>,
-    ): SchemeValue? {
-        return Executor(env, outputBuffer, schemeSecurityMonitor).execute(func, args)
-    }
-
-    /*
-    private fun runWithTimeoutAndMemoryLimit(function: () -> SchemeValue?): SchemeValue? {
-        val executor: ExecutorService = Executors.newSingleThreadExecutor()
-        val memoryMonitorThread = Thread(MemoryMonitor(Thread.currentThread(), memoryLimit, timeoutBetweenChecks))
-
+    ): SchemeValue {
         try {
-            val future: Future<SchemeValue?> =
-                executor.submit(
-                    Callable {
-                        function()
-                    },
-                )
-
-            memoryMonitorThread.start()
-
-            val result = future.get(timeLimitInSeconds, TimeUnit.SECONDS)
-            memoryMonitorThread.interrupt()
-            return result
-        } catch (e: TimeoutException) {
-            memoryMonitorThread.interrupt()
+            return Executor(env, outputBuffer, schemeSecurityMonitor).execute(func, args)
+        } catch (e: StackOverflowError) {
             throw SchemeError(
-                "Function exceeded timeout",
-                "The execution of the Interpreter was cancelled because it exceeded the timeout of $timeLimitInSeconds seconds",
+                "Stackoverflow",
+                "You exceeded the stack limit, probably due to endless recursion. Look at the tip below for more.",
                 null,
-                null,
+                "Look at the reason above for a tip."
             )
-        } catch (e: InterruptedException) {
-            throw SchemeError(
-                "Function exceeded memory limit",
-                "The execution of the Interpreter was cancelled because it exceeded the memory limit of $memoryLimit",
-                null,
-                null,
-            )
-        } catch (e: ExecutionException) {
-            if (e.cause is SchemeError) {
-                throw e.cause as SchemeError
-            }
-            throw e
-        } finally {
-            executor.shutdownNow()
         }
     }
-     */
 }

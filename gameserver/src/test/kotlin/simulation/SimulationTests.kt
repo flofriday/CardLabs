@@ -18,25 +18,11 @@ class SimulationTests {
         code: String,
         hand: MutableList<Card>,
     ): Player {
-        val interpreter = SchemeInterpreter()
+        val buffer = StringBuilder()
+        val interpreter = SchemeInterpreter(buffer)
         injectSimulationBuiltin(interpreter.env)
         interpreter.run(code)
-        return Player(Bot(id, id, code), hand, interpreter)
-    }
-
-    private fun createTestState(
-        players: List<Player>,
-        topCard: Card,
-        drawPile: MutableList<Card>,
-    ): GameState {
-        return GameState(
-            mutableListOf(topCard),
-            drawPile,
-            players,
-            currentPlayer = 0,
-            direction = 1,
-            turns = mutableListOf(),
-        )
+        return Player(Bot(id, id, code), hand, interpreter, buffer)
     }
 
     @Test
@@ -45,7 +31,11 @@ class SimulationTests {
         val player1 = createTestPlayer(0, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 1)))
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(listOf(player1, player2), Card(CardType.NUMBER_CARD, Color.CYAN, 5), mutableListOf())
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
+                mutableListOf(),
+                listOf(player1, player2),
+            )
 
         runTurn(state)
         assert(player1.hand.isEmpty())
@@ -70,7 +60,11 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(listOf(player1, player2), Card(CardType.NUMBER_CARD, Color.CYAN, 5), mutableListOf())
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
+                mutableListOf(),
+                listOf(player1, player2),
+            )
 
         runTurn(state)
 
@@ -95,10 +89,10 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(
-                listOf(player1, player2),
-                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
                 mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
             )
 
         runTurn(state)
@@ -130,10 +124,10 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(
-                listOf(player1, player2),
-                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
                 mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
             )
 
         Assert.assertThrows(DisqualificationError::class.java) { runTurn(state) }
@@ -159,10 +153,10 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(
-                listOf(player1, player2),
-                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
                 mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
             )
 
         Assert.assertThrows(DisqualificationError::class.java) { runTurn(state) }
@@ -188,10 +182,10 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(
-                listOf(player1, player2),
-                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
                 mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
             )
 
         Assert.assertThrows(DisqualificationError::class.java) { runTurn(state) }
@@ -209,10 +203,10 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(
-                listOf(player1, player2),
-                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
                 mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
             )
 
         runTurn(state)
@@ -234,10 +228,10 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(
-                listOf(player1, player2),
-                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
                 mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
             )
 
         runTurn(state)
@@ -259,13 +253,10 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
+                mutableListOf(Card(CardType.SKIP, Color.PURPLE, null), Card(CardType.CHOOSE, Color.ANY, null)),
                 listOf(player1, player2),
-                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
-                mutableListOf(
-                    Card(CardType.SKIP, Color.PURPLE, null),
-                    Card(CardType.CHOOSE, Color.ANY, null),
-                ),
             )
 
         runTurn(state)
@@ -288,13 +279,10 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
+                mutableListOf(Card(CardType.SKIP, Color.PURPLE, null), Card(CardType.CHOOSE, Color.ANY, null)),
                 listOf(player1, player2),
-                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
-                mutableListOf(
-                    Card(CardType.SKIP, Color.PURPLE, null),
-                    Card(CardType.CHOOSE, Color.ANY, null),
-                ),
             )
 
         runTurn(state)
@@ -316,15 +304,15 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(
-                listOf(player1, player2),
-                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
                 mutableListOf(
                     Card(CardType.SKIP, Color.PURPLE, null),
                     Card(CardType.CHOOSE, Color.ANY, null),
                     Card(CardType.NUMBER_CARD, Color.PURPLE, 4),
                     Card(CardType.NUMBER_CARD, Color.ORANGE, 0),
                 ),
+                listOf(player1, player2),
             )
 
         runTurn(state)
@@ -352,13 +340,10 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
+                mutableListOf(Card(CardType.SKIP, Color.PURPLE, null), Card(CardType.CHOOSE, Color.ANY, null)),
                 listOf(player1, player2),
-                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
-                mutableListOf(
-                    Card(CardType.SKIP, Color.PURPLE, null),
-                    Card(CardType.CHOOSE, Color.ANY, null),
-                ),
             )
 
         runTurn(state)
@@ -385,15 +370,15 @@ class SimulationTests {
             )
         val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
         val state =
-            createTestState(
-                listOf(player1, player2),
-                Card(CardType.NUMBER_CARD, Color.CYAN, 5),
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
                 mutableListOf(
                     Card(CardType.SKIP, Color.PURPLE, null),
                     Card(CardType.CHOOSE, Color.ANY, null),
                     Card(CardType.NUMBER_CARD, Color.PURPLE, 4),
                     Card(CardType.NUMBER_CARD, Color.ORANGE, 0),
                 ),
+                listOf(player1, player2),
             )
 
         runTurn(state)
@@ -402,5 +387,148 @@ class SimulationTests {
         val expectedCard = Card(CardType.CHOOSE_DRAW, Color.GREEN, null)
         Assert.assertEquals(state.pile.last(), expectedCard)
         Assert.assertEquals(state.turns.last().actions.first { a -> a.type == ActionType.PLAY_CARD }.card, expectedCard)
+    }
+
+    @Test
+    fun runTurnBotLogsOutput() {
+        val player1 =
+            createTestPlayer(
+                0,
+                """
+                (define (turn topCard hand players)
+                        (display "I was here")
+                        (random-choice
+                            (matching-cards topCard hand)))
+                """.trimIndent(),
+                mutableListOf(
+                    Card(CardType.SWITCH, Color.CYAN, null),
+                ),
+            )
+        val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
+        val state =
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
+                mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
+            )
+
+        runTurn(state)
+        val logMessage = state.turns.last().logMessages.first { m -> m is DebugLogMessage } as DebugLogMessage
+        Assert.assertEquals("I was here", logMessage.message)
+        Assert.assertEquals(0, logMessage.botId)
+    }
+
+    @Test
+    fun runTurnBotDoesnotLog() {
+        val player1 =
+            createTestPlayer(
+                0,
+                randomBotCode,
+                mutableListOf(
+                    Card(CardType.SWITCH, Color.CYAN, null),
+                ),
+            )
+        val player2 = createTestPlayer(1, randomBotCode, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
+        val state =
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
+                mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
+            )
+
+        runTurn(state)
+        Assert.assertEquals(true, state.turns.last().logMessages.none { m -> m is DebugLogMessage })
+    }
+
+    @Test
+    fun runTurnOtherBotListensToPlayed() {
+        val code =
+            """
+            (define (turn topCard hand players)
+                    (random-choice
+                        (matching-cards topCard hand)))
+                        
+            (define (card-played card player)
+                    (display "A new card was dropped")
+            )
+            """.trimIndent()
+        val player1 = createTestPlayer(0, code, mutableListOf(Card(CardType.SWITCH, Color.CYAN, null)))
+        val player2 = createTestPlayer(1, code, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
+        val state =
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
+                mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
+            )
+
+        runTurn(state)
+        Assert.assertEquals(1, state.turns.last().logMessages.filter { m -> m is DebugLogMessage }.size)
+        val logMessage = state.turns.last().logMessages.first { m -> m is DebugLogMessage } as DebugLogMessage
+        Assert.assertEquals("A new card was dropped", logMessage.message)
+        Assert.assertEquals(1, logMessage.botId)
+    }
+
+    @Test
+    fun runBotsListenToReshuffleEvent() {
+        val code =
+            """
+            (define (turn topCard hand players)
+                    (random-choice
+                        (matching-cards topCard hand)))
+                        
+            (define (pile-reshuffled)
+                    (display "Shake it")) 
+            """.trimIndent()
+
+        val player1 = createTestPlayer(0, code, mutableListOf(Card(CardType.DRAW_TWO, Color.CYAN, null)))
+        val player2 = createTestPlayer(1, code, mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)))
+        val state =
+            GameState(
+                mutableListOf(
+                    Card(CardType.NUMBER_CARD, Color.CYAN, 5),
+                    Card(CardType.NUMBER_CARD, Color.PURPLE, 0),
+                    Card(CardType.NUMBER_CARD, Color.ORANGE, 8),
+                    Card(CardType.NUMBER_CARD, Color.GREEN, 3),
+                    Card(CardType.NUMBER_CARD, Color.PURPLE, 2),
+                ),
+                mutableListOf(),
+                listOf(player1, player2),
+            )
+
+        runTurn(state)
+        Assert.assertEquals(2, state.turns.last().logMessages.filter { m -> m is DebugLogMessage }.size)
+    }
+
+    @Test
+    fun runTurnOtherBotListensToPicked() {
+        val code =
+            """
+            (define (turn topCard hand players)
+                    (random-choice
+                        (matching-cards topCard hand)))
+                        
+            (define (card-picked top-card player)
+                    (display "Get those cards!")
+            )
+            """.trimIndent()
+        val player1 = createTestPlayer(0, code, mutableListOf(Card(CardType.SWITCH, Color.ORANGE, null)))
+        val player2 =
+            createTestPlayer(
+                1,
+                code,
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 1)),
+            )
+        val state =
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.CYAN, 5)),
+                mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
+            )
+
+        runTurn(state)
+        Assert.assertEquals(1, state.turns.last().logMessages.filter { m -> m is DebugLogMessage }.size)
+        val logMessage = state.turns.last().logMessages.first { m -> m is DebugLogMessage } as DebugLogMessage
+        Assert.assertEquals("Get those cards!", logMessage.message)
+        Assert.assertEquals(1, logMessage.botId)
     }
 }
