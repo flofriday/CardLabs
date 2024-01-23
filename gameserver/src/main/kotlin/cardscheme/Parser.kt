@@ -343,6 +343,19 @@ class Parser {
                 ApplicationNode(expressionNodes, false, Location.merge(lparen.location, rparen.location))
             }
 
+            is PoundToken -> {
+                val poundToken = consume()
+                val lparen = must<LParenToken>("I expected a left opening parenthesis after a pound.")
+                val expressionNodes = mutableListOf<ExpressionNode>()
+                while (peek() !is RParenToken) {
+                    expressionNodes.addLast(parseQuotedExpression())
+                }
+                val rparen = consume()
+
+                expressionNodes.addFirst(IdentifierNode("vector", lparen.location))
+                ApplicationNode(expressionNodes, false, Location.merge(poundToken.location, rparen.location))
+            }
+
             is IdentifierToken -> {
                 consume()
                 SymbolNode(token.value, token.location)
@@ -479,14 +492,8 @@ class Parser {
      * NOTE: This function intentionally deviates from the spec which would only create immutable vectors here but
      * in Cardscheme we won't have the concept of immutable vector values.
      */
-    private fun parseVector(): ApplicationNode {
-        val pound = consume()
-        consume()
-        val expressionNodes = parseExpressions()
-        val rparen = must<RParenToken>("Expected a right parenthesis here")
-
-        expressionNodes.addFirst(IdentifierNode("vector", pound.location))
-        return ApplicationNode(expressionNodes, false, Location.merge(pound.location, rparen.location))
+    private fun parseVector(): ExpressionNode {
+        return parseQuotedExpression()
     }
 
     /**
