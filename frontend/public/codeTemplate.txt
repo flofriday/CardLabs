@@ -1,7 +1,7 @@
 ; It's your turn, select a card
 ; hand is a list of cards in your hand
 ; top-card is a single card
-; players is a list of tuple with the first element is a unique string for each 
+; players is a list of tuple where the first element is a unique string for each
 ; bot and the second element is the integer with the number of cards that bot 
 ; holds.
 (define turn (lambda (top-card hand players)
@@ -13,7 +13,7 @@
     (display card)
     ))
 
-; Some other player had to pick a card beacuse they don't have a matching one.
+; Some other player had to pick a card because they didn't have a matching one.
 ; This is not called as a result of a draw or draw choose card.
 (define card-picked (lambda (top-card player)
     (display top-card)
