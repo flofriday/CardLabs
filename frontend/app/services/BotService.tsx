@@ -163,6 +163,20 @@ export async function getAllBots(
   await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
+  // return an empty page if the pageNumber is negative as then there are not bots yet
+  if (pageNumber < 0) {
+    return {
+      first: true,
+      empty: true,
+      last: true,
+      number: 0,
+      numberOfElements: 0,
+      size: 0,
+      totalElements: 0,
+      totalPages: 0,
+      content: [],
+    };
+  }
   const response = await fetch(
     "/api/bot?" +
       new URLSearchParams({
