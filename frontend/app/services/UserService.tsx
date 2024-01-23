@@ -151,12 +151,7 @@ export function getUserProfilePicture(jwt: string): string {
   return data;
 }
 
-export async function updateUser(
-  location: string | null,
-  sendScoreUpdates: boolean,
-  sendChangeUpdates: boolean,
-  sendNewsletter: boolean
-): Promise<boolean> {
+export async function updateUser(location: string | null): Promise<boolean> {
   await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
@@ -170,9 +165,6 @@ export async function updateUser(
     },
     body: JSON.stringify({
       location,
-      sendScoreUpdates,
-      sendChangeUpdates,
-      sendNewsletter,
     }),
   });
 

@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import java.io.IOException
+import java.util.Locale
 
 class Oauth2LoginSuccessHandler(val accountService: AccountService, val jwtTokenService: JwtTokenService) :
     AuthenticationSuccessHandler {
@@ -30,9 +31,11 @@ class Oauth2LoginSuccessHandler(val accountService: AccountService, val jwtToken
         logger.info(authentication.credentials.toString())
 
         val attributes = (authentication.principal as DefaultOAuth2User).attributes
-        val email = attributes["email"] as String
+
         var username = (attributes["login"] ?: attributes["name"]) as String
         username = username.replace(" ", "_")
+        var email = (attributes["email"] ?: "$username@cardlabs.local".lowercase(Locale.getDefault())) as String
+
         logger.info("Oauth2 authentication success: $email")
 
         // Find the user or create it

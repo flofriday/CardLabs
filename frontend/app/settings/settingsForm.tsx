@@ -7,17 +7,7 @@ import { getLocations } from "../services/LocationService";
 function saveSettings(e: React.SyntheticEvent): void {
   e.preventDefault();
 
-  const target = e.target as typeof e.target & {
-    sendScoreUpdate: { checked: boolean };
-    sendWebsiteUpdate: { checked: boolean };
-    sendNewsletter: { checked: boolean };
-  };
-
-  const sendScoreUpdate = target.sendScoreUpdate.checked;
-  const sendWebsiteUpdate = target.sendWebsiteUpdate.checked;
-  const sendNewsletter = target.sendNewsletter.checked;
-
-  updateUser(location, sendScoreUpdate, sendWebsiteUpdate, sendNewsletter)
+  updateUser(location)
     .then(() => {})
     .catch(() => {});
 }
@@ -37,9 +27,6 @@ export default function SettingsForm(): JSX.Element {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [location_, setLocation_] = useState("");
-  const [sendChangeUpdates, setSendChangeUpdates] = useState(false);
-  const [sendNewsletter, setSendNewsletter] = useState(false);
-  const [sendScoreUpdates, setSendScoreUpdates] = useState(false);
 
   const [locations, setLocations] = useState<string[]>([]);
   useEffect(() => {
@@ -49,9 +36,6 @@ export default function SettingsForm(): JSX.Element {
         setLocation_(location ?? locationNotSet);
         setUsername(u.username);
         setEmail(u.email);
-        setSendChangeUpdates(u.sendChangeUpdates);
-        setSendNewsletter(u.sendNewsletter);
-        setSendScoreUpdates(u.sendScoreUpdates);
       })
       .catch(() => {});
     getLocations()
@@ -108,48 +92,6 @@ export default function SettingsForm(): JSX.Element {
                 setLocation_(l);
               }}
             />
-          </div>
-        </div>
-        <div className="ml-10 xl:ml-24 text-xl xl:text-2xl pt-3">
-          <div className="flex space-x-3 align-middle">
-            <input
-              type="checkbox"
-              id="sendScoreUpdate"
-              name="sendScoreUpdate"
-              checked={sendScoreUpdates}
-              onChange={() => {
-                setSendScoreUpdates(!sendScoreUpdates);
-              }}
-            />
-            <label htmlFor="sendScoreUpdate">
-              Send score update notifications
-            </label>
-          </div>
-          <div className="flex space-x-3 align-middle">
-            <input
-              type="checkbox"
-              id="sendWebsiteUpdate"
-              name="sendWebsiteUpdate"
-              checked={sendChangeUpdates}
-              onChange={() => {
-                setSendChangeUpdates(!sendChangeUpdates);
-              }}
-            />
-            <label htmlFor="sendWebsiteUpdate">
-              Send website update and changelog notifications
-            </label>
-          </div>
-          <div className="flex space-x-3 align-middle">
-            <input
-              type="checkbox"
-              id="sendNewsletter"
-              name="sendNewsletter"
-              checked={sendNewsletter}
-              onChange={() => {
-                setSendNewsletter(!sendNewsletter);
-              }}
-            />
-            <label htmlFor="sendNewsletter">Send newsletter</label>
           </div>
         </div>
         <div className="flex justify-around pt-4">
