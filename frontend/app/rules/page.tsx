@@ -49,18 +49,17 @@ export default function Rules(): JSX.Element {
                   can be played at any time.
                 </li>
                 <li>
-                  If the top card is a &apos;Choose&apos; card or a &apos;Choose
-                  and Draw&apos; card and the to-be-played card has the color
-                  that was requested while the &apos;Choose&apos; / &apos;Choose
-                  Draw&apos; card was played.
+                  The card matches the color that was previously requested by
+                  the preceding &apos;Choose&apos; or &apos;Choose and
+                  Draw&apos; card.
                 </li>
               </ul>
             </TextItem>
             <TextItem title="Picking up cards">
               If the player doesn&apos;t have any matching cards they can play,
               a card will automatically picked up for them. Cards will also
-              picked up automatically if the previous player plays a card with
-              such an effect.
+              picked up automatically if the previous player plays a card with a
+              draw cards effect.
               <br />
               <br />
               Some similar card games have rules that players have to announce
