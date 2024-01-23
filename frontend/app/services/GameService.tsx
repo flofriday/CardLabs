@@ -4,6 +4,8 @@ import { refreshAccessToken } from "./RefreshService";
 import { toast } from "react-toastify";
 import { Game } from "../types/game";
 import { UnAuthorizedError } from "../exceptions/UnAuthorizedError";
+import { LogLine } from "../types/LogLine";
+import { NotFoundError } from "../exceptions/NotFoundError";
 
 export async function getGames(
   botId: number,
@@ -40,4 +42,66 @@ export async function getGames(
 
   toast.error("An error occurred. Please try again later.");
   throw Error();
+}
+
+export async function getGame(gameID: number): Promise<Game> {
+  await refreshAccessToken();
+  const jwt = getCookie("auth_token");
+
+  try {
+    const response = await fetch(`/api/match/${gameID}/all`, {
+      mode: "cors",
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + jwt,
+      },
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      throw new UnAuthorizedError("Not authorized");
+    }
+
+    if (response.status === 404) {
+      throw new NotFoundError("Game not found");
+    }
+
+    if (response.status !== 200) {
+      throw new Error("Failed to fetch match log");
+    }
+
+    const data = (await response.json()) as Game;
+    data.startTime = new Date(data.startTime);
+    data.endTime = new Date(data.endTime);
+    return data;
+  } catch (error: any) {
+    console.error("Error fetching match log:", error.message);
+    throw error;
+  }
+}
+
+export async function getLogLinesForGame(gameID: number): Promise<LogLine[]> {
+  await refreshAccessToken();
+  const jwt = getCookie("auth_token");
+
+  try {
+    const response = await fetch(`/api/match/${gameID}/log`, {
+      mode: "cors",
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + jwt,
+      },
+    });
+
+    if (response.status !== 200) {
+      throw new Error("Failed to fetch match log");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error("Error fetching match log:", error.message);
+    throw error;
+  }
 }

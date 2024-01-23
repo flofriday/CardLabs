@@ -1,10 +1,12 @@
+import { Turn } from "./turn";
+
 interface Game {
   id: number;
   startTime: Date;
   endTime: Date;
   winningBotId: number;
   disqualifiedBotId: number;
-  turns: any;
+  turns: Turn[];
   gameState: string;
 }
 

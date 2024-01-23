@@ -62,12 +62,12 @@ class BotController(
             .body(result)
     }
 
-    @PatchMapping("/bot/{botId}/code-version")
+    @PostMapping("/bot/{botId}/rank")
     fun rank(
         @AuthenticationPrincipal user: CardLabUser,
         @PathVariable botId: Long,
     ): ResponseEntity<Unit> {
-        logger.info("User ${user.id} attempts to create a code version for the bot $botId")
+        logger.info("User ${user.id} attempts to rank the bot and create bot version $botId")
         botService.createCodeVersion(user, botId)
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -80,7 +80,7 @@ class BotController(
         @PathVariable botId: Long,
         @RequestParam(required = true) region: Region,
     ): ResponseEntity<Long> {
-        logger.info("User ${user.id} attempts to create a code version for the bot $botId")
+        logger.info("User ${user.id} attempts to fetch bot rank of $botId")
         val rank = botService.fetchRankPosition(user, botId, region)
         return ResponseEntity
             .status(HttpStatus.OK)
