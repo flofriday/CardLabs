@@ -161,28 +161,23 @@ export const CardValue = {
 } as const;
 
 export function toCardType(type: string, number?: number): CardValue_ {
-  if (type === "NUMBER_CARD") {
-    if (number === 0) {
-      return CardValue.ZERO;
-    } else if (number === 1) {
-      return CardValue.ONE;
-    } else if (number === 2) {
-      return CardValue.TWO;
-    } else if (number === 3) {
-      return CardValue.THREE;
-    } else if (number === 4) {
-      return CardValue.FOUR;
-    } else if (number === 5) {
-      return CardValue.FIVE;
-    } else if (number === 6) {
-      return CardValue.SIX;
-    } else if (number === 7) {
-      return CardValue.SEVEN;
-    } else if (number === 8) {
-      return CardValue.EIGHT;
-    } else if (number === 9) {
-      return CardValue.NINE;
+  if (type === "NUMBER_CARD" && number !== undefined) {
+    const value = [
+      CardValue.ZERO,
+      CardValue.ONE,
+      CardValue.TWO,
+      CardValue.THREE,
+      CardValue.FOUR,
+      CardValue.FIVE,
+      CardValue.SIX,
+      CardValue.SEVEN,
+      CardValue.EIGHT,
+      CardValue.NINE,
+    ].at(number);
+    if (value === undefined) {
+      throw Error(`Could not convert number: ${number}`);
     }
+    return value;
   } else if (type === "DRAW_TWO") {
     return CardValue.DRAW_TWO;
   } else if (type === "CHOOSE") {
@@ -195,8 +190,8 @@ export function toCardType(type: string, number?: number): CardValue_ {
     return CardValue.SWITCH;
   }
 
-  console.log(`Type. ${type}   number: ${number} convertion to card failed`);
-  throw Error();
+  console.error(`Type. ${type}   number: ${number} convertion to card failed`);
+  throw Error(`Type. ${type}   number: ${number} convertion to card failed`);
 }
 
 export type CardValue_ = (typeof CardValue)[keyof typeof CardValue];

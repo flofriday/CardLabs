@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import kotlin.jvm.Throws
+import kotlin.streams.toList
 
 @Service
 class BotService(
@@ -186,6 +187,13 @@ class BotService(
     }
 
     /**
+     * Fetches all the bot IDs of a user
+     */
+    fun fetchAllBotIds(user: CardLabUser): List<Long> {
+        return botRepository.findBotIdsByOwnerIdAndDeletedIsNull(user.id).toList()
+    }
+
+    /**
      * Delete a bot by its id
      */
     @Transactional
@@ -198,8 +206,9 @@ class BotService(
         botId: Long,
     ) {
         logger.debug("User ${user.id} attempts to delete the bot $botId")
-        val bot = findById(botId)
-            ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+        val bot =
+            findById(botId)
+                ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
         if (bot.owner.id != user.id) {
             throw UnauthorizedException("Can't delete a bot not belonging to you")
@@ -274,8 +283,9 @@ class BotService(
         botId: Long,
         user: CardLabUser,
     ): Boolean {
-        val bot = findById(botId)
-            ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+        val bot =
+            findById(botId)
+                ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
         return bot.owner.id == user.id
     }

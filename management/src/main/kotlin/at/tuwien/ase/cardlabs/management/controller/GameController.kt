@@ -26,7 +26,7 @@ class GameController(
         @AuthenticationPrincipal user: CardLabUser,
         @PathVariable gameId: Long,
     ): ResponseEntity<Game> {
-        logger.info("User $user attempts to fetch the game $gameId")
+        logger.info("User $user to fetches the game with id $gameId")
         val game = gameService.fetchById(user, gameId)
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -38,7 +38,7 @@ class GameController(
         @AuthenticationPrincipal user: CardLabUser,
         @PathVariable gameId: Long,
     ): ResponseEntity<List<LogMessage>> {
-        logger.info("User ${user.id} attempts to fetch the logs of the game $gameId")
+        logger.info("User ${user.id}  fetches the logs of the game with id $gameId")
         val logMessages = gameService.fetchLogById(user, gameId)
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -52,7 +52,7 @@ class GameController(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "10") pageSize: Int,
     ): ResponseEntity<Page<Game>> {
-        logger.info("User ${user.id} attempts to fetch all the matches from bot $botId (pageNumber=$pageNumber, pageSize=$pageSize)")
+        logger.info("User ${user.id}  fetches all the matches from bot with id $botId (pageNumber=$pageNumber, pageSize=$pageSize)")
         val pageable = PageRequest.of(pageNumber, pageSize)
         val result = gameService.fetchAllGamesWithBot(user, botId, pageable)
         return ResponseEntity
