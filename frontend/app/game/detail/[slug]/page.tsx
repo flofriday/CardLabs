@@ -3,7 +3,7 @@ import Slider from "../Slider";
 import RoundLogContainer from "../roundLogContainer";
 import BotHandsContainer from "../botHandsContainer";
 import { Key, useEffect, useState } from "react";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { LogLine } from "@/app/types/LogLine";
 import { getLogLinesForGame, getGame } from "@/app/services/GameService";
 import Card, { toCardType } from "@/app/components/card";
@@ -11,6 +11,9 @@ import { Game } from "@/app/types/game";
 import { BackendCard } from "@/app/types/backendCard";
 import { Hand } from "@/app/types/hand";
 import { Bot, getBot } from "@/app/services/BotService";
+import { UnAuthorizedError } from "@/app/exceptions/UnAuthorizedError";
+import { NotFoundError } from "@/app/exceptions/NotFoundError";
+import { toast } from "react-toastify";
 
 export default function GameDetail({
   params,
@@ -21,6 +24,7 @@ export default function GameDetail({
   const [game, setGame] = useState<Game>();
   const [round, setRound] = useState(0);
   const [bots, setBots] = useState<Bot[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     getLogLinesForGame(Number(params.slug))
@@ -41,10 +45,26 @@ export default function GameDetail({
             .then((b) => {
               setBots(b);
             })
-            .catch(() => {});
+            .catch((ex) => {
+              if (ex instanceof UnAuthorizedError) {
+                router.replace("/unauthorized");
+              }
+              if (ex instanceof NotFoundError) {
+                router.replace("/dashboard");
+                toast.error("The game you tried to see does not exist!");
+              }
+            });
         }
       })
-      .catch(() => {});
+      .catch((ex) => {
+        if (ex instanceof UnAuthorizedError) {
+          router.replace("/unauthorized");
+        }
+        if (ex instanceof NotFoundError) {
+          router.replace("/dashboard");
+          toast.error("The game you tried to see does not exist!");
+        }
+      });
   }, [params.slug]);
 
   if (isNaN(Number(params.slug))) {

@@ -15,7 +15,9 @@ import at.tuwien.ase.cardlabs.management.database.model.game.log.SystemLogMessag
 import at.tuwien.ase.cardlabs.management.database.model.game.turn.Turn
 import at.tuwien.ase.cardlabs.management.database.repository.GameRepository
 import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
+import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
+import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import at.tuwien.ase.cardlabs.management.service.game.GameService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -28,7 +30,6 @@ import java.time.ZoneOffset
 @ApplicationTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class GameServiceTests {
-
     @Autowired
     private lateinit var accountService: AccountService
 
@@ -38,15 +39,19 @@ class GameServiceTests {
     @Autowired
     private lateinit var gameService: GameService
 
+    @Autowired
+    private lateinit var botService: BotService
+
     @Test
     fun whenGameFetchAllById_widthNonExistingGame_expectGameDoesNotExistError() {
         val account = TestHelper.createAccount(accountService)
         val user = TestHelper.createUserDetails(account)
         val gameId = 0L
 
-        val exception = assertThrows<GameDoesNotExistException> {
-            gameService.fetchById(user, gameId)
-        }
+        val exception =
+            assertThrows<GameDoesNotExistException> {
+                gameService.fetchById(user, gameId)
+            }
         assertEquals("A game with the id $gameId doesn't exist", exception.message)
     }
 
@@ -54,34 +59,46 @@ class GameServiceTests {
     fun whenGameFetchAllById_withExistingGame_expectSuccess() {
         val account = TestHelper.createAccount(accountService)
         val user = TestHelper.createUserDetails(account)
-        val botId = 0L
+        val bot =
+            TestHelper.createBot(
+                botService,
+                CardLabUser(account.id!!, "test123", "test@local"),
+                "Neozoros",
+                "asdf",
+            )
 
+        val botId = bot.id!!
         val gameDAO = GameDAO()
         gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0).toInstant(ZoneOffset.UTC)
         gameDAO.endTime = LocalDateTime.of(2023, 12, 11, 16, 0).toInstant(ZoneOffset.UTC)
         gameDAO.winningBotId = botId
         val topCard = Card(CardType.DRAW_TWO, Color.CYAN, null)
-        val drawPile = listOf(
-            Card(CardType.DRAW_TWO, Color.CYAN, null),
-            Card(CardType.NUMBER_CARD, Color.ORANGE, 5),
-        )
-        val hand = listOf(
-            Hand(botId, emptyList())
-        )
-        val actions = listOf(
-            Action(
-                botId,
-                ActionType.PLAY_CARD,
-                Card(CardType.DRAW_TWO, Color.ORANGE, null),
+        val drawPile =
+            listOf(
+                Card(CardType.DRAW_TWO, Color.CYAN, null),
+                Card(CardType.NUMBER_CARD, Color.ORANGE, 5),
             )
-        )
-        val logMessages = listOf(
-            SystemLogMessage("hello"),
-            DebugLogMessage("world", botId),
-        )
-        gameDAO.turns = listOf(
-            Turn(0, 0, topCard, drawPile, hand, actions, logMessages),
-        )
+        val hand =
+            listOf(
+                Hand(botId, emptyList()),
+            )
+        val actions =
+            listOf(
+                Action(
+                    botId,
+                    ActionType.PLAY_CARD,
+                    Card(CardType.DRAW_TWO, Color.ORANGE, null),
+                ),
+            )
+        val logMessages =
+            listOf(
+                SystemLogMessage("hello"),
+                DebugLogMessage("world", botId),
+            )
+        gameDAO.turns =
+            listOf(
+                Turn(0, 0, topCard, drawPile, hand, actions, logMessages),
+            )
         gameDAO.gameState = GameState.CREATED
         gameDAO.participatingBotIds = listOf(botId)
         val gameId = gameRepository.save(gameDAO).id!!
@@ -111,9 +128,10 @@ class GameServiceTests {
         val user = TestHelper.createUserDetails(account)
         val gameId = 0L
 
-        val exception = assertThrows<GameDoesNotExistException> {
-            gameService.fetchLogById(user, gameId)
-        }
+        val exception =
+            assertThrows<GameDoesNotExistException> {
+                gameService.fetchLogById(user, gameId)
+            }
         assertEquals("A game with the id $gameId doesn't exist", exception.message)
     }
 
@@ -121,20 +139,31 @@ class GameServiceTests {
     fun whenGameFetchLogById_withExistingGame_expectSuccess() {
         val account = TestHelper.createAccount(accountService)
         val user = TestHelper.createUserDetails(account)
-        val botId = 0L
+
+        val bot =
+            TestHelper.createBot(
+                botService,
+                CardLabUser(account.id!!, "test123", "test@local"),
+                "Neozoros",
+                "asdf",
+            )
+
+        val botId = bot.id!!
 
         val gameDAO = GameDAO()
         gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0).toInstant(ZoneOffset.UTC)
         gameDAO.endTime = LocalDateTime.of(2023, 12, 11, 16, 0).toInstant(ZoneOffset.UTC)
         gameDAO.winningBotId = botId
         val topCard = Card(CardType.DRAW_TWO, Color.CYAN, null)
-        val logMessages = listOf(
-            SystemLogMessage("hello"),
-            DebugLogMessage("world", botId),
-        )
-        gameDAO.turns = listOf(
-            Turn(0, 0, topCard, emptyList(), emptyList(), emptyList(), logMessages),
-        )
+        val logMessages =
+            listOf(
+                SystemLogMessage("hello"),
+                DebugLogMessage("world", botId),
+            )
+        gameDAO.turns =
+            listOf(
+                Turn(0, 0, topCard, emptyList(), emptyList(), emptyList(), logMessages),
+            )
         gameDAO.gameState = GameState.CREATED
         gameDAO.participatingBotIds = listOf(botId)
         val gameId = gameRepository.save(gameDAO).id!!

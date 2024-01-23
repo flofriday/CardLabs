@@ -5,8 +5,6 @@ interface Props {
 }
 
 export default function RoundLogContainer({ logLines }: Props): JSX.Element {
-  let nonDebugIndex = 0;
-
   return (
     <div className="bg-secondary p-4 text-text rounded-lg overflow-y-auto max-h-[74vh]">
       <h2 className="text-4xl font-bold mb-4">Log: </h2>
@@ -17,8 +15,7 @@ export default function RoundLogContainer({ logLines }: Props): JSX.Element {
             log.type !== "system" ? "text-yellow" : ""
           } p-2 rounded-md`}
         >
-          {log.type !== "system" && "[DBG] "}{" "}
-          {log.type === "system" && `${++nonDebugIndex}.`} {log.message}
+          {log.type !== "system" && "[DBG] "} {log.message}
         </div>
       ))}
     </div>
