@@ -2,8 +2,8 @@ package at.tuwien.ase.cardlabs.management.amqp
 
 import at.tuwien.ase.cardlabs.management.database.model.game.GameState
 import at.tuwien.ase.cardlabs.management.mapper.GameMapper
-import at.tuwien.ase.cardlabs.management.matchmaker.EloScoreHelper
 import at.tuwien.ase.cardlabs.management.matchmaker.MatchResultQueueMessage
+import at.tuwien.ase.cardlabs.management.matchmaker.calculateScore
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import at.tuwien.ase.cardlabs.management.service.game.GameService
 import com.fasterxml.jackson.core.type.TypeReference
@@ -35,20 +35,20 @@ open class MatchResultQueueListener(
         // Update bot states
         botService.setBotStateToDefaultState(msg.participatingBotIds)
 
-        val containsTestBot = msg.participatingBotIds.any { it < 0 }
+        val containsNoTestBots = msg.participatingBotIds.any { it >= 0 }
         // If a test bot is in a match then no score or ban state should be updated
-        if (!containsTestBot) {
+        if (containsNoTestBots) {
             // Ban bot if disqualified
             if (msg.disqualifiedBotId != null) {
                 botService.updateBanState(msg.disqualifiedBotId, true)
             }
 
             // Update bot elo
-            val bots = botService.fetch(msg.participatingBotIds)
+            val bots = botService.fetchBotsByIds(msg.participatingBotIds)
             val winningBot = bots.find { it.id!! == msg.winningBotId }
             bots.forEach { bot ->
                 run {
-                    val newEloScore = EloScoreHelper.calculateScore(
+                    val newEloScore = calculateScore(
                         bot,
                         if (winningBot == null) false else bot.id!! == winningBot.id!!,
                         bots,

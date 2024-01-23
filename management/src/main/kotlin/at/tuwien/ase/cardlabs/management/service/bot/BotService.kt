@@ -177,7 +177,7 @@ class BotService(
      * Fetch all bots by id
      */
     @Transactional
-    fun fetch(botIds: List<Long>): List<Bot> {
+    fun fetchBotsByIds(botIds: List<Long>): List<Bot> {
         logger.debug("Attempting to fetch the following bots $botIds")
         return botRepository.findByIdInAndDeletedIsNull(botIds)
             .map(botMapper::map)
