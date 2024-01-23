@@ -45,13 +45,22 @@ export default function BotOverview(): JSX.Element {
               return <BotCard key={idx} bot={b} refetch={fetch} />;
             })}
           </div>
-          <Pagination
-            onPageChange={(p) => {
-              setPage(p);
-            }}
-            totalNumberOfPages={numPages}
-            initalPage={page}
-          />
+          <div className="flex items-center">
+            <Pagination
+              onPageChange={(p) => {
+                setPage(p);
+              }}
+              totalNumberOfPages={numPages}
+              initalPage={page}
+            />
+            <Link
+              href="/bot/editor"
+              className="btn bg-primary_highlight p-2 font-bold rounded-lg shadow-md text-4xl hover:bg-primary ml-4 mt-4 flex items-center"
+              id="button_create_new_bot_default"
+            >
+              New bot
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="flex items-center justify-center h-screen">
