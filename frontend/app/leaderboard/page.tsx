@@ -10,6 +10,7 @@ import { leaderBoardEntry } from "../types/leaderBoardEntry";
 import { getLeaderBoardPage } from "../services/LeaderBoardService";
 import { RegionType } from "../types/RegionType";
 import { LeaderBoardType } from "../types/LeaderBoardType";
+import Link from "next/link";
 
 export default function Leaderboard(): JSX.Element {
   const entriesPerPage = 5;
@@ -50,18 +51,33 @@ export default function Leaderboard(): JSX.Element {
         </div>
 
         <div className="w-1/2 px-12 pt-16">
-          <div className="flex flex-col items-center justify-center space-y-10">
-            {leaderBoardEntries.map((entry, index) => (
-              <LeaderBoardEntry key={index} entry={entry} />
-            ))}
-            <Pagination
-              totalNumberOfPages={totalPages}
-              initalPage={pageNumber}
-              onPageChange={(e) => {
-                setPageNumber(e);
-              }}
-            />
-          </div>
+          {leaderBoardEntries.length > 0 ? (
+            <div className="flex flex-col items-center justify-center space-y-10">
+              {leaderBoardEntries.map((entry, index) => (
+                <LeaderBoardEntry key={index} entry={entry} />
+              ))}
+              <Pagination
+                totalNumberOfPages={totalPages}
+                initalPage={pageNumber}
+                onPageChange={(e) => {
+                  setPageNumber(e);
+                }}
+              />
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center">
+              <h2 className="text-8xl font-extrabold text-center mb-6">
+                No scored bots here yet :)
+              </h2>
+              <Link
+                href="/bot/editor"
+                className="btn bg-primary p-4 font-bold rounded-lg shadow-md text-4xl  hover:bg-primary_highlight"
+                id="button_create_new_bot"
+              >
+                Add a bot now
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="w-1/4 p-12">
