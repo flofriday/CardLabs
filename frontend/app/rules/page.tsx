@@ -17,30 +17,66 @@ export default function Rules(): JSX.Element {
             <TextItem title="Game description">
               The goal of the game is to play all the cards a player is given at
               the beginning as fast as possible. In order to play a card the
-              players must follow the &quot;Place a Card&quot;-rules.
-              Furthermore, it is possible that players have to pick up new cards
-              during the game. This happens if the player of the previous round
-              plays certain action cards or if the player does not have any
-              playable cards in their hand. <br />
+              players must follow the &quot;Card Matching&quot;-rules which are
+              further described below.
               <br />
-              There are different kinds of cards: Normal cards and action cards.
-              Normal cards are colored in one of the four colors cyan, orange,
-              green and purple and depict one of the numbers from 0-9. Action
-              cards can also have one of the colors (&apos;Switch&apos;-,
-              &apos;Draw 2&apos;-, and &apos;Skip&apos;-Card) or no color at all
-              (&apos;Choose Color&apos;- and &apos;Choose and Draw&apos;-Card).
-              The cards without a color can be played any time. The actions that
-              are to-be-performed for the action cards are described in more
-              detail below.
               <br />
-              <br />A player has won the game if they have played all their
-              cards. The finishing order of all the players determines the
-              placement in the game. (e.g. The player that finishes first gets
-              first place. Player that finishes second gets seconds place and so
-              on)
+              The game starts with each player holding 7 random cards. Another
+              random card from the draw pile is moved to the pile as the
+              starting card. Now the players in clockwise order take turn until
+              one wins or gets disqualified.
+              <br />
+              <br />A player wins the game by playing all their cards. Only the
+              first player wins and all other players are losers and the game
+              ends.
+            </TextItem>
+            <TextItem title="Playing a card" center>
+              All cards are colored in one of the following colors orange,
+              green, cyan or purple.
+              <br />
+              <br />
+              If a player has any matching cards they must play a card in their
+              turn. The placed card has to fulfil at least one of the following
+              properties in order to be considered a match:
+              <ul className="list-disc ml-10">
+                <li>
+                  The card has the same color as the top card of the playing
+                  pile.
+                </li>
+                <li>The card has the same face as the top card</li>
+                <li>
+                  The &apos;Choose&apos; and &apos;Choose and Draw&apos; cards
+                  can be played at any time.
+                </li>
+                <li>
+                  The card matches the color that was previously requested by
+                  the preceding &apos;Choose&apos; or &apos;Choose and
+                  Draw&apos; card.
+                </li>
+              </ul>
+            </TextItem>
+            <TextItem title="Picking up cards">
+              If the player doesn&apos;t have any matching cards they can play,
+              a card will automatically picked up for them. Cards will also
+              picked up automatically if the previous player plays a card with a
+              draw cards effect.
+              <br />
+              <br />
+              Some similar card games have rules that players have to announce
+              the number of cards they hold if this number is small enough.
+              Since that isn&apos;t algorithmically interesting, no such rule
+              exists for this game.
+            </TextItem>
+            <TextItem title="Disqualification">
+              If a player tries to play an invalid card, they will be
+              disqualified and the game ends in an instance. Players are also
+              disqualified if they play cards they don&apos;t currently hold or
+              if their code crashes. The bot is then blocked from playing any
+              future games. For all other players in the game this doesn&apos;t
+              have any impact on their scores.
             </TextItem>
             <TextItem
-              title="Playing a card"
+              title="'Number' Card"
               customImgElement={
                 <Card
                   value={CardValue.FOUR}
@@ -50,34 +86,8 @@ export default function Rules(): JSX.Element {
               }
               center
             >
-              A player can play up to one card during their turn. The placed
-              card has to fulfil at least one of the following properties in
-              order to be playable:
-              <ul className="list-disc ml-10">
-                <li>
-                  The card has the same color as the card on top of the playing
-                  pile.
-                </li>
-                <li>The card has the same face value as the top card</li>
-                <li>
-                  The card is a &apos;Choose&apos; card or &apos;Choose and
-                  Draw&apos; card
-                </li>
-                <li>
-                  If the top card is a &apos;Choose&apos; card or a &apos;Choose
-                  and Draw&apos; card and the to-be-played card has the color
-                  that was requested while the &apos;Choose&apos; / &apos;Choose
-                  Draw&apos; card was played.
-                </li>
-              </ul>
-              If a player has no valid card to play they need to draw one card.
-            </TextItem>
-            <TextItem title="Playing an invalid card">
-              If a player tries to play an invalid card, then this card will not
-              be played. Instead, the player has to draw 2 cards as a punishment
-              for trying to cheat. If the player performs too many illegal
-              actions the player will be disqualified from the game and will not
-              receive a score for this game.
+              This is the basic card of the game which consists of a color and a
+              number between 0 and 9 (inclusive).
             </TextItem>
             <TextItem
               title="'Switch' Card"
@@ -96,25 +106,10 @@ export default function Rules(): JSX.Element {
               That means the previous player is next in turn. The game direction
               will stay that way until another reverse card is played and the
               direction is changed back to clockwise.
-            </TextItem>
-            <TextItem
-              title="'Draw 2' Card"
-              customImgElement={
-                <Card
-                  value={CardValue.DRAW_TWO}
-                  color={CardColor.ORANGE}
-                  className="h-48 w-fit"
-                />
-              }
-              center
-            >
-              If a player plays a &apos;Draw 2&apos; card the next player needs
-              to draw two cards from the draw pile. However, the next player can
-              avoid drawing two cards if they can play a &apos;Draw 2&apos; card
-              themselves. The next player thereafter has to draw 4 cards if they
-              cannot play a &apos;Draw 2&apos; card. This can go on until no
-              player can play another &apos;Draw 2&apos; card. This player then
-              needs to draw the accumulated value of cards from the draw pile.
+              <br />
+              <br />
+              If only two players are playing the card behaves like a
+              &apos;Skip&apos; Card.
             </TextItem>
             <TextItem
               title="'Skip' Card"
@@ -131,6 +126,23 @@ export default function Rules(): JSX.Element {
               turn will be skipped.
             </TextItem>
             <TextItem
+              title="'Draw 2' Card"
+              customImgElement={
+                <Card
+                  value={CardValue.DRAW_TWO}
+                  color={CardColor.ORANGE}
+                  className="h-48 w-fit"
+                />
+              }
+              center
+            >
+              If a player plays a &apos;Draw 2&apos; card the next player needs
+              to unconditionally draw two cards from the draw pile. This cannot
+              be avoided by the next player playing another &apos;Draw 2&apos;
+              card.
+            </TextItem>
+
+            <TextItem
               title="'Choose Color' Card"
               customImgElement={
                 <Card
@@ -143,9 +155,12 @@ export default function Rules(): JSX.Element {
             >
               The &apos;Choose Color&apos; card allows the player to choose one
               of the four colors. The next player then needs to play a card of
-              this choosen color. It is also possible to play another
-              &apos;Choose Color&apos; card or a &apos;Choose and Draw&apos;
-              card instead.
+              this choosen color.
+              <br />
+              <br />
+              Even though not advantageous to the player, they can choose not to
+              wish a color by selecting the special &apos;Any&apos; color, which
+              allows the next player to play any card.
             </TextItem>
             <TextItem
               title="'Choose and Draw' Card"
@@ -160,27 +175,15 @@ export default function Rules(): JSX.Element {
             >
               This card works the same as the &apos;Choose Color&apos; card but
               it has the additional effect that the next player needs to
-              &apos;Draw 4&apos; cards. The player that needs to draw the 4
-              cards can also play another &apos;Choose and Draw&apos; card to
-              avoid drawing them. Similar as with the &apos;Draw 2&apos; cards
-              the next player then has to draw 8 cards. This can be repeated
-              until a player cannot play a &apos;Choose and Draw&apos; card.
-              This player then needs to draw the accumulated amount of cards
-              from the draw pile. It is not allowed to play a &apos;Draw 2&apos;
-              card instead of a &apos;Draw 4&apos; card to avoid drawing. <br />
-              E.g. If the player plays a &apos;Draw 2&apos; card on top of a
-              &apos;Choose and Draw&apos; card then the player needs to draw the
-              accumulated number of cards due to the &apos;Choose and Draw&apos;
-              cards from the discard pile. The next player then needs to draw 2
-              cards due to the &apos;Draw 2&apos; card.
+              &apos;Draw 4&apos; cards. This cannot be avoided by the next
+              player playing another &apos;Choose And Draw&apos; card.
             </TextItem>
 
             <TextItem title="Limitations of turn time and resources">
-              The players have a fixed amount of time for their turn as well as
-              a maximum amount of resources that can be used for calculations.
-              If this time / resource limit is exceeded then the player needs to
-              draw a punishment card instead of playing a card. If this happens
-              too often the player may be disqualified from the game.
+              The players have a fixed amount of computation time for each turn
+              as well as a maximum amount of resources that can be used for
+              calculations. If this time / resource limit is exceeded the player
+              get&apos;s disqualified.
             </TextItem>
           </div>
         </div>

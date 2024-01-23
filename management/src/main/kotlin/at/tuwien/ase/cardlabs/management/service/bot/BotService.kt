@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 import kotlin.jvm.Throws
+import kotlin.streams.toList
 
 @Service
 class BotService(
@@ -81,7 +82,7 @@ class BotService(
     @Transactional
     @Throws(
         BotDoesNotExistException::class,
-        UnauthorizedException::class
+        UnauthorizedException::class,
     )
     fun patch(
         user: CardLabUser,
@@ -112,13 +113,13 @@ class BotService(
         BotDoesNotExistException::class,
         UnauthorizedException::class,
         BotStateException::class,
-        ValidationException::class
+        ValidationException::class,
     )
     fun createCodeVersion(
         user: CardLabUser,
         botId: Long,
     ) {
-        logger.debug("User ${user.id} attempts to create a code version for the bot $botId")
+        logger.debug("User ${user.id} attempts create code version for bot $botId")
         val bot =
             findById(botId)
                 ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
@@ -144,8 +145,8 @@ class BotService(
         botCodeDAO.code = bot.currentCode
         botCodeDAO = botCodeRepository.save(botCodeDAO)
 
-        bot.currentState = BotState.READY
         bot.codeHistory.add(botCodeDAO)
+        bot.currentState = BotState.QUEUED
     }
 
     /**
@@ -154,7 +155,7 @@ class BotService(
     @Transactional
     @Throws(
         BotDoesNotExistException::class,
-        UnauthorizedException::class
+        UnauthorizedException::class,
     )
     fun fetch(
         user: CardLabUser,
@@ -186,20 +187,28 @@ class BotService(
     }
 
     /**
+     * Fetches all the bot IDs of a user
+     */
+    fun fetchAllBotIds(user: CardLabUser): List<Long> {
+        return botRepository.findBotIdsByOwnerIdAndDeletedIsNull(user.id).toList()
+    }
+
+    /**
      * Delete a bot by its id
      */
     @Transactional
     @Throws(
         BotDoesNotExistException::class,
-        UnauthorizedException::class
+        UnauthorizedException::class,
     )
     fun delete(
         user: CardLabUser,
         botId: Long,
     ) {
         logger.debug("User ${user.id} attempts to delete the bot $botId")
-        val bot = findById(botId)
-            ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+        val bot =
+            findById(botId)
+                ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
         if (bot.owner.id != user.id) {
             throw UnauthorizedException("Can't delete a bot not belonging to you")
@@ -274,8 +283,9 @@ class BotService(
         botId: Long,
         user: CardLabUser,
     ): Boolean {
-        val bot = findById(botId)
-            ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+        val bot =
+            findById(botId)
+                ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
         return bot.owner.id == user.id
     }
