@@ -1,7 +1,8 @@
+/* eslint-disable @next/next/no-async-client-component */
 import Link from "next/link";
 import SignInUp from "./SignInUp";
 import Profile from "./Profile";
-import { isAuthenticated } from "../../services/AuthenticationService";
+import { isAuthenticated } from "@/app/services/AuthenticationService";
 
 export default async function NavBar(): Promise<JSX.Element> {
   return (

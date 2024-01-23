@@ -6,13 +6,13 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 def test_redirect_to_dashboard_page_after_login(driver_headless):
     driver = driver_headless
-    helper.login(driver, "test1", "pass1")
+    helper.login(driver, 999999999, "test1@email")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "profile_pic_in_navbar")))
     assert driver.find_element(By.ID, "leftHeading").text == "Dashboard"
 
 def test_redirect_to_dashboard_when_clicking_on_card_labs(driver_headless):
     driver = driver_headless
-    helper.login(driver, "test1", "pass1")
+    helper.login(driver, 999999999, "test1@email")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "profile_pic_in_navbar")))
     driver.find_element(By.ID, "home_authenticated")
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.ID, "leftHeading")))

@@ -29,21 +29,22 @@ class SecurityConfig(
     private val accountService: AccountService,
     private val jwtTokenService: JwtTokenService,
 ) {
-
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http
+        return http
             .csrf { csrf ->
                 csrf.disable()
             }
             .authorizeHttpRequests { authorize ->
                 authorize
+                    .requestMatchers(AntPathRequestMatcher("/oauth2")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/refresh")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/leaderboard/public")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/leaderboard/firstPlace")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/account", "POST")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/account/open", "GET")).permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement { sessionManagement ->
@@ -53,8 +54,7 @@ class SecurityConfig(
                 JwtAuthenticationFilter(DatabaseUserDetailsService(accountService), jwtTokenService),
                 UsernamePasswordAuthenticationFilter::class.java,
             )
-
-        return http.build()
+            .build()
     }
 
     @Bean

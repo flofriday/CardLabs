@@ -17,8 +17,9 @@ interface GameRepositoryH2 : GameRepository {
             SELECT *
                 FROM game 
                 WHERE ARRAY_CONTAINS(participating_bot_ids, :botId)
+                ORDER BY start_time
         """,
-        nativeQuery = true
+        nativeQuery = true,
     )
     override fun findAllGamesWithBot(@Param("botId") botId: Long, pageable: Pageable): Page<GameDAO>
 }

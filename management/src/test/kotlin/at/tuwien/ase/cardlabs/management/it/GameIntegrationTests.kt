@@ -14,8 +14,10 @@ import at.tuwien.ase.cardlabs.management.database.model.game.hand.Hand
 import at.tuwien.ase.cardlabs.management.database.model.game.log.DebugLogMessage
 import at.tuwien.ase.cardlabs.management.database.model.game.log.SystemLogMessage
 import at.tuwien.ase.cardlabs.management.database.model.game.turn.Turn
+import at.tuwien.ase.cardlabs.management.database.repository.AccountRepository
 import at.tuwien.ase.cardlabs.management.database.repository.GameRepository
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
+import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -49,6 +51,12 @@ class GameIntegrationTests {
     private lateinit var botService: BotService
 
     @Autowired
+    lateinit var accountRepository: AccountRepository
+
+    @Autowired
+    lateinit var jwtTokenService: JwtTokenService
+
+    @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Test
@@ -56,10 +64,9 @@ class GameIntegrationTests {
         val account = TestHelper.createAccount(accountService)
         val accessToken =
             TestHelper.getInitialAuthenticationTokens(
-                objectMapper,
-                mockMvc,
+                jwtTokenService,
+                accountRepository,
                 account.username,
-                TestHelper.DEFAULT_PASSWORD,
             ).accessToken
         val gameId = 0L
         mockMvc.perform(
@@ -73,20 +80,21 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchAllById_withExistingGame_expectSuccess() {
         val account = TestHelper.createAccount(accountService)
-        val accessToken =
-            TestHelper.getInitialAuthenticationTokens(
-                objectMapper,
-                mockMvc,
-                account.username,
-                TestHelper.DEFAULT_PASSWORD,
-            ).accessToken
+
         val bot =
             TestHelper.createBot(
                 botService,
-                CardLabUser(account.id!!, "test123", "test@local", "12345"),
+                CardLabUser(account.id!!, "test123", "test@local"),
                 "Neozoros",
                 "asdf",
             )
+        val accessToken =
+            TestHelper.getInitialAuthenticationTokens(
+                jwtTokenService,
+                accountRepository,
+                account.username,
+            ).accessToken
+        val botId = 0L
 
         val gameDAO = GameDAO()
         gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0).toInstant(ZoneOffset.UTC)
@@ -157,10 +165,9 @@ class GameIntegrationTests {
         val account = TestHelper.createAccount(accountService)
         val accessToken =
             TestHelper.getInitialAuthenticationTokens(
-                objectMapper,
-                mockMvc,
+                jwtTokenService,
+                accountRepository,
                 account.username,
-                TestHelper.DEFAULT_PASSWORD,
             ).accessToken
         val gameId = 0L
         mockMvc.perform(
@@ -174,20 +181,20 @@ class GameIntegrationTests {
     @Test
     fun whenGameFetchLogById_withExistingGame_expectSuccess() {
         val account = TestHelper.createAccount(accountService)
-        val accessToken =
-            TestHelper.getInitialAuthenticationTokens(
-                objectMapper,
-                mockMvc,
-                account.username,
-                TestHelper.DEFAULT_PASSWORD,
-            ).accessToken
         val bot =
             TestHelper.createBot(
                 botService,
-                CardLabUser(account.id!!, "test123", "test@local", "12345"),
+                CardLabUser(account.id!!, "test123", "test@local"),
                 "Neozoros",
                 "asdf",
             )
+        val accessToken =
+            TestHelper.getInitialAuthenticationTokens(
+                jwtTokenService,
+                accountRepository,
+                account.username,
+            ).accessToken
+        val botId = 0L
 
         val gameDAO = GameDAO()
         gameDAO.startTime = LocalDateTime.of(2023, 12, 11, 15, 0).toInstant(ZoneOffset.UTC)

@@ -62,7 +62,7 @@ class GameServiceTests {
         val bot =
             TestHelper.createBot(
                 botService,
-                CardLabUser(account.id!!, "test123", "test@local", "12345"),
+                CardLabUser(account.id!!, "test123", "test@local"),
                 "Neozoros",
                 "asdf",
             )
@@ -143,7 +143,7 @@ class GameServiceTests {
         val bot =
             TestHelper.createBot(
                 botService,
-                CardLabUser(account.id!!, "test123", "test@local", "12345"),
+                CardLabUser(account.id!!, "test123", "test@local"),
                 "Neozoros",
                 "asdf",
             )

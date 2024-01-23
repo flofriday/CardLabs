@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
+import kotlin.jvm.Throws
 
 @Service
 class GameService(
@@ -61,6 +62,7 @@ class GameService(
     }
 
     @Transactional
+    @Throws(UnauthorizedException::class)
     fun fetchAllGamesWithBot(
         user: CardLabUser,
         botId: Long,
@@ -104,6 +106,7 @@ class GameService(
             .toList()
     }
 
+    @Throws(GameDoesNotExistException::class)
     private fun findById(gameId: Long): GameDAO {
         return gameRepository.findByIdAndDeletedIsNull(gameId)
             ?: throw GameDoesNotExistException("A game with the id $gameId doesn't exist")
