@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Profile
 @Configuration
 @Profile("!test")
 class RabbitMQBeanConfig {
-
     @Value("\${spring.rabbitmq.host}")
     private val host: String? = null
 
@@ -48,7 +47,10 @@ class RabbitMQBeanConfig {
         connectionFactory.port = port
         connectionFactory.username = username!!
         connectionFactory.setPassword(password!!)
-        connectionFactory.virtualHost = virtualHost!!
+
+        if (virtualHost != null) {
+            connectionFactory.virtualHost = virtualHost
+        }
 
         connectionFactory.setRequestedHeartBeat(30)
         connectionFactory.setConnectionTimeout(30000)
@@ -59,7 +61,7 @@ class RabbitMQBeanConfig {
     @Bean
     fun rabbitTemplate(
         connectionFactory: ConnectionFactory,
-        jackson2JsonMessageConverter: Jackson2JsonMessageConverter
+        jackson2JsonMessageConverter: Jackson2JsonMessageConverter,
     ): RabbitTemplate {
         val rabbitTemplate = RabbitTemplate(connectionFactory)
         rabbitTemplate.messageConverter = jackson2JsonMessageConverter
@@ -96,7 +98,7 @@ class RabbitMQBeanConfig {
                 gameService,
                 gameMapper,
                 botService,
-            )
+            ),
         )
         return container
     }

@@ -1,5 +1,6 @@
 package at.tuwien.ase.cardlabs.management.security.config
 
+import at.tuwien.ase.cardlabs.management.ApplicationContextProvider
 import at.tuwien.ase.cardlabs.management.controller.model.account.Account
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
@@ -14,8 +15,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import java.io.IOException
 import java.util.Locale
 
-class Oauth2LoginSuccessHandler(val accountService: AccountService, val jwtTokenService: JwtTokenService) :
-    AuthenticationSuccessHandler {
+class Oauth2LoginSuccessHandler(val accountService: AccountService, val jwtTokenService: JwtTokenService) : AuthenticationSuccessHandler {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @Throws(IOException::class, ServletException::class)
@@ -48,6 +48,10 @@ class Oauth2LoginSuccessHandler(val accountService: AccountService, val jwtToken
 
         val tokenPair = jwtTokenService.generateTokenPair(CardLabUser(account.id!!, account.username, account.email))
         logger.info(tokenPair.refreshToken.token)
-        response.sendRedirect("http://localhost:3000/login/success?refresh_token=${tokenPair.refreshToken.token}")
+
+        val oauthConfig = ApplicationContextProvider.getBean(OauthConfig::class.java)
+        val frontendURL = oauthConfig.frontend
+        logger.info("REDIRECT URL=$frontendURL/login/success?refresh_token=${tokenPair.refreshToken.token}")
+        response.sendRedirect("$frontendURL/login/success?refresh_token=${tokenPair.refreshToken.token}")
     }
 }

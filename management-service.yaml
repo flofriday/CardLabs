@@ -40,13 +40,13 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: RABBITMQ_HOST
-              value: "rabbitmq"
-            - name: RABBITMQ_PORT
+            - name: RMQ_HOST
+              value: "rabbitmq-service"
+            - name: RMQ_PORT
               value: "5672"
-            - name: RABBITMQ_DEFAULT_USER
+            - name: RMQ_USER
               value: "guest"
-            - name: RABBITMQ_DEFAULT_PASS
+            - name: RMQ_PASSWORD
               value: "guest"
       imagePullSecrets:
         - name: secret-dockercfg
