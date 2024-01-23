@@ -36,17 +36,21 @@ open class MatchResultQueueListener(
         botService.setBotStateToDefaultState(msg.participatingBotIds)
 
         // Update bot elo
-        val bots = botService.fetch(msg.participatingBotIds)
-        val winningBot = bots.find { it.id!! == msg.winningBotId }
-        bots.forEach { bot ->
-            run {
-                val newEloScore = EloScoreHelper.calculateScore(
-                    bot,
-                    if (winningBot == null) false else bot.id!! == winningBot.id!!,
-                    bots,
-                )
-                logger.debug("Updating the elo score for bot ${bot.id} from ${bot.eloScore} to $newEloScore")
-                botService.updateEloScore(bot.id!!, newEloScore)
+        val containsTestBot = msg.participatingBotIds.any { it < 0 }
+        // If a test bot is in a match then no score should be updated
+        if (!containsTestBot) {
+            val bots = botService.fetch(msg.participatingBotIds)
+            val winningBot = bots.find { it.id!! == msg.winningBotId }
+            bots.forEach { bot ->
+                run {
+                    val newEloScore = EloScoreHelper.calculateScore(
+                        bot,
+                        if (winningBot == null) false else bot.id!! == winningBot.id!!,
+                        bots,
+                    )
+                    logger.debug("Updating the elo score for bot ${bot.id} from ${bot.eloScore} to $newEloScore")
+                    botService.updateEloScore(bot.id!!, newEloScore)
+                }
             }
         }
     }
