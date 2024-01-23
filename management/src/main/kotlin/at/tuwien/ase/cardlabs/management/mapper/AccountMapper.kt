@@ -12,7 +12,6 @@ class AccountMapper {
         accountDAO.id = account.id
         accountDAO.username = account.username
         accountDAO.email = account.email
-        accountDAO.password = account.password
         return accountDAO
     }
 
@@ -24,11 +23,7 @@ class AccountMapper {
             id = accountDAO.id,
             username = accountDAO.username,
             email = accountDAO.email,
-            password = "REDACTED",
             location = accountDAO.location?.name,
-            sendChangeUpdates = accountDAO.sendChangeUpdates,
-            sendNewsletter = accountDAO.sendNewsletter,
-            sendScoreUpdates = accountDAO.sendScoreUpdates,
         )
     }
 }

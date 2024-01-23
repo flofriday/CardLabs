@@ -10,7 +10,6 @@ import java.util.Collections.emptyList
 
 @JsonIgnoreProperties("empty")
 class RestResponsePage<T> : PageImpl<T> {
-
     constructor(
         @JsonProperty("content") content: List<T>,
         @JsonProperty("number") number: Int,

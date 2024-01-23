@@ -25,7 +25,6 @@ import org.springframework.test.annotation.DirtiesContext
 @ApplicationTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 internal class BotServiceTests {
-
     @Autowired
     private lateinit var accountService: AccountService
 
@@ -34,19 +33,27 @@ internal class BotServiceTests {
 
     @ParameterizedTest
     @CsvFileSource(resources = ["/service/bot/bot_service_create_test_parameter.csv"])
-    fun testBotCreate(name: String, currentCode: String?, success: Boolean, errorMessage: String, description: String) {
+    fun testBotCreate(
+        name: String,
+        currentCode: String?,
+        success: Boolean,
+        errorMessage: String,
+        description: String,
+    ) {
         val account = TestHelper.createAccount(accountService)
         val user = TestHelper.createUserDetails(account)
 
-        val botCreate = BotCreate(
-            name = "Tytartron",
-            currentCode = currentCode.takeUnless { it.equals(TestConfig.CSV_NULL_VALUE) },
-        )
+        val botCreate =
+            BotCreate(
+                name = "Tytartron",
+                currentCode = currentCode.takeUnless { it.equals(TestConfig.CSV_NULL_VALUE) },
+            )
 
         if (success) {
-            val result = assertDoesNotThrow {
-                botService.create(user, botCreate)
-            }
+            val result =
+                assertDoesNotThrow {
+                    botService.create(user, botCreate)
+                }
 
             assertNotNull(result)
             assertNotNull(result.id)
@@ -58,28 +65,36 @@ internal class BotServiceTests {
             assertEquals(BotState.CREATED, result.currentState)
             assertEquals(BotState.READY, result.defaultState)
         } else {
-            val exception = assertThrows<Exception> {
-                botService.create(user, botCreate)
-            }
+            val exception =
+                assertThrows<Exception> {
+                    botService.create(user, botCreate)
+                }
             assertEquals(errorMessage, exception.message)
         }
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = ["/service/bot/bot_service_patch_test_parameter.csv"])
-    fun testBotPatch(currentCode: String?, success: Boolean, errorMessage: String, description: String) {
+    fun testBotPatch(
+        currentCode: String?,
+        success: Boolean,
+        errorMessage: String,
+        description: String,
+    ) {
         val account = TestHelper.createAccount(accountService)
         val user = TestHelper.createUserDetails(account)
         val bot = createBot(user, "Tytartron", null)
 
-        val botFetch = BotPatch(
-            currentCode = currentCode.takeUnless { it.equals(TestConfig.CSV_NULL_VALUE) },
-        )
+        val botFetch =
+            BotPatch(
+                currentCode = currentCode.takeUnless { it.equals(TestConfig.CSV_NULL_VALUE) },
+            )
 
         if (success) {
-            val result = assertDoesNotThrow {
-                botService.patch(user, bot.id!!, botFetch)
-            }
+            val result =
+                assertDoesNotThrow {
+                    botService.patch(user, bot.id!!, botFetch)
+                }
             assertEquals(bot.id, result.id)
             assertEquals(bot.name, result.name)
             assertEquals(bot.ownerId, result.ownerId)
@@ -90,9 +105,10 @@ internal class BotServiceTests {
             assertEquals(bot.defaultState, result.defaultState)
             assertEquals(bot.errorStateMessage, result.errorStateMessage)
         } else {
-            val exception = assertThrows<Exception> {
-                botService.patch(user, bot.id!!, botFetch)
-            }
+            val exception =
+                assertThrows<Exception> {
+                    botService.patch(user, bot.id!!, botFetch)
+                }
             assertEquals(errorMessage, exception.message)
         }
     }
@@ -103,9 +119,10 @@ internal class BotServiceTests {
         val user = TestHelper.createUserDetails(account)
         val bot = createBot(user, "Tytartron", "x = 5")
 
-        val result = assertDoesNotThrow {
-            botService.createCodeVersion(user, bot.id!!)
-        }
+        val result =
+            assertDoesNotThrow {
+                botService.createCodeVersion(user, bot.id!!)
+            }
     }
 
     @Test
@@ -146,9 +163,10 @@ internal class BotServiceTests {
         val userDetails = TestHelper.createUserDetails(account)
         val bot = createBot(userDetails, "Tytartron", null)
 
-        val result = assertDoesNotThrow {
-            botService.delete(userDetails, bot.id!!)
-        }
+        val result =
+            assertDoesNotThrow {
+                botService.delete(userDetails, bot.id!!)
+            }
     }
 
     @Test
@@ -157,9 +175,10 @@ internal class BotServiceTests {
         val userDetails = TestHelper.createUserDetails(account)
         val bot = createBot(userDetails, "Tytartron", null)
 
-        val result = assertDoesNotThrow {
-            botService.fetchRankPosition(userDetails, bot.id!!, Region.GLOBAL)
-        }
+        val result =
+            assertDoesNotThrow {
+                botService.fetchRankPosition(userDetails, bot.id!!, Region.GLOBAL)
+            }
         assertEquals(1, result)
     }
 
@@ -170,17 +189,23 @@ internal class BotServiceTests {
         val bot1 = createBot(userDetails, "Tytartron", null)
         val bot2 = createBot(userDetails, "Neophotron", null)
 
-        val result1 = assertDoesNotThrow {
-            botService.fetchRankPosition(userDetails, bot1.id!!, Region.GLOBAL)
-        }
+        val result1 =
+            assertDoesNotThrow {
+                botService.fetchRankPosition(userDetails, bot1.id!!, Region.GLOBAL)
+            }
         assertEquals(1, result1)
-        val result2 = assertDoesNotThrow {
-            botService.fetchRankPosition(userDetails, bot2.id!!, Region.GLOBAL)
-        }
+        val result2 =
+            assertDoesNotThrow {
+                botService.fetchRankPosition(userDetails, bot2.id!!, Region.GLOBAL)
+            }
         assertEquals(1, result2)
     }
 
-    private fun createBot(user: CardLabUser, name: String, code: String?): Bot {
+    private fun createBot(
+        user: CardLabUser,
+        name: String,
+        code: String?,
+    ): Bot {
         return TestHelper.createBot(botService, user, name, code)
     }
 }

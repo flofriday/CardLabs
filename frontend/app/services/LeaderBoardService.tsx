@@ -24,7 +24,7 @@ export async function getGlobalTop5LeaderBoardEntries(
     let filter = null;
     const user = await getUserInfo();
     filter = user.location;
-    if (filter !== null) {
+    if (filter !== null && filter !== undefined) {
       url = `${url}&filter=${filter}`;
     } else {
       regionType = RegionType.GLOBAL;
@@ -68,7 +68,7 @@ export async function getMyTop5LeaderBoardEntries(
   if (regionType !== RegionType.GLOBAL) {
     let filter = null;
     filter = user.location;
-    if (filter !== null) {
+    if (filter !== null && filter !== undefined) {
       url = `${url}&filter=${filter}`;
     } else {
       regionType = RegionType.GLOBAL;
@@ -115,7 +115,7 @@ export async function getLeaderBoardPage(
       let filter = null;
       const user = await getUserInfo();
       filter = user.location;
-      if (filter !== null) {
+      if (filter !== null && filter !== undefined) {
         url = `${url}&filter=${filter}`;
       } else {
         regionType = RegionType.GLOBAL;
@@ -152,7 +152,7 @@ export async function getLeaderBoardPage(
       let filter = null;
       const user = await getUserInfo();
       filter = user.location;
-      if (filter !== null) {
+      if (filter !== null && filter !== undefined) {
         url = `${url}&filter=${filter}`;
       } else {
         regionType = RegionType.GLOBAL;
@@ -179,7 +179,9 @@ export async function getLeaderBoardPage(
   }
 }
 
-export async function getScoreOfGlobalFirstPlace(): Promise<number | undefined> {
+export async function getScoreOfGlobalFirstPlace(): Promise<
+  number | undefined
+> {
   const response = await fetch("api/leaderboard/firstPlace", {
     mode: "cors",
     method: "GET",
@@ -189,7 +191,7 @@ export async function getScoreOfGlobalFirstPlace(): Promise<number | undefined> 
   });
   if (response.status === 404) {
     // No need to show an error message as this is the case where not bot exists
-    return undefined
+    return undefined;
   }
   if (response.status !== 200) {
     toast.error(
