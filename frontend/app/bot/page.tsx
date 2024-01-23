@@ -37,15 +37,27 @@ export default function BotOverview(): JSX.Element {
 
   return (
     <>
-      <LeftPageHeader title="My Bots" />
+      <h1
+        id="leftHeading"
+        className="absolute text-5xl md:text-7xl mt-6 md:mt-12 ml-10 md:ml-16 font-medium tracking-wider inline-block w-fit"
+      >
+        My Bots
+      </h1>
       {bots.length > 0 ? (
         <div className=" w-full flex items-center justify-center flex-col mt-28">
-          <div className="mt-14 w-9/12 grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8">
+          <Link
+            href="/bot/editor"
+            className="btn bg-primary p-2 font-bold rounded-lg shadow-md text-3xl hover:bg-primary_highlight ml-4 flex items-center"
+            id="button_create_new_bot_default"
+          >
+            Add new bot
+          </Link>
+          <div className="mt-4 w-9/12 grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8">
             {bots.map((b, idx) => {
               return <BotCard key={idx} bot={b} refetch={fetch} />;
             })}
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center mb-4">
             <Pagination
               onPageChange={(p) => {
                 setPage(p);
@@ -53,13 +65,6 @@ export default function BotOverview(): JSX.Element {
               totalNumberOfPages={numPages}
               initalPage={page}
             />
-            <Link
-              href="/bot/editor"
-              className="btn bg-primary_highlight p-2 font-bold rounded-lg shadow-md text-4xl hover:bg-primary ml-4 mt-4 flex items-center"
-              id="button_create_new_bot_default"
-            >
-              New bot
-            </Link>
           </div>
         </div>
       ) : (
