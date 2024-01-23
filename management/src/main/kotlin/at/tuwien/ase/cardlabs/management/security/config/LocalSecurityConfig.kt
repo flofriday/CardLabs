@@ -49,8 +49,6 @@ class LocalSecurityConfig(
                 authorize
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/oauth2")).permitAll()
-                    .requestMatchers(AntPathRequestMatcher("/authentication")).permitAll()
-                    .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/refresh")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/leaderboard/public")).permitAll()
@@ -71,9 +69,6 @@ class LocalSecurityConfig(
                     .successHandler(Oauth2LoginSuccessHandler(accountService, jwtTokenService))
             }
             .exceptionHandling { configurator -> configurator.authenticationEntryPoint(Oauth2AuthenticationEntrypoint()) }
-            .cors { cors ->
-                cors.disable()
-            }
 
         return http.build()
     }
