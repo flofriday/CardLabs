@@ -11,15 +11,15 @@ class EloScoreHelper {
     companion object {
 
         /**
-         * Calculate the new elo score for a bot
+         * Calculate the new elo score for a bot based on the result of match
          * <p>
          * Note: it does not update the bot value in the database
          */
         @JvmStatic
-        fun calculateScore(bot: Bot, wonGame: Boolean, allBots: List<Bot>): Int {
+        fun calculateScore(bot: Bot, wonGame: Boolean, allBotsInMatch: List<Bot>): Int {
             val powOperation: (Int) -> Int = { score -> 10.0.pow(score / 400.0).toInt() }
             var denominator = 0
-            allBots.forEach { botDAO -> denominator += powOperation(botDAO.eloScore) }
+            allBotsInMatch.forEach { botDAO -> denominator += powOperation(botDAO.eloScore) }
             val numerator = powOperation(bot.eloScore)
             val expected = numerator.toDouble() / denominator.toDouble()
             val modification = 32 * ((if (wonGame) 1 else 0) - expected)
