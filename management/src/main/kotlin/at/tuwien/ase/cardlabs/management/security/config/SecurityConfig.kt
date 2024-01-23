@@ -24,7 +24,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@Profile("!local")
+@Profile("!production")
 class SecurityConfig(
     private val accountService: AccountService,
     private val jwtTokenService: JwtTokenService,
