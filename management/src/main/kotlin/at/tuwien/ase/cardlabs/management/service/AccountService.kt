@@ -29,7 +29,6 @@ class AccountService(
     private val accountMapper: AccountMapper,
     @Lazy private val passwordEncoder: PasswordEncoder,
 ) {
-
     private final val logger = LoggerFactory.getLogger(javaClass)
 
     /**
@@ -38,7 +37,7 @@ class AccountService(
     @Transactional
     @Throws(
         AccountExistsException::class,
-        LocationNotFoundException::class
+        LocationNotFoundException::class,
     )
     fun create(account: Account): Account {
         logger.debug("Attempting to create an account with the username ${account.username}")
@@ -71,9 +70,12 @@ class AccountService(
     @Transactional
     @Throws(
         AccountNotFoundException::class,
-        LocationNotFoundException::class
+        LocationNotFoundException::class,
     )
-    fun update(user: CardLabUser, accountUpdate: AccountUpdate): Account {
+    fun update(
+        user: CardLabUser,
+        accountUpdate: AccountUpdate,
+    ): Account {
         logger.debug("User ${user.id} attempts to update its account")
         Helper.requireNonNull(user, "No authentication provided")
         val account = findByUsername(user.username) ?: throw AccountNotFoundException("Account could not be found")
@@ -92,7 +94,10 @@ class AccountService(
      */
     @Transactional
     @Throws(UnauthorizedException::class)
-    fun delete(user: CardLabUser, accountId: Long) {
+    fun delete(
+        user: CardLabUser,
+        accountId: Long,
+    ) {
         logger.debug("User ${user.id} attempts to delete the account $accountId")
         Helper.requireNonNull(user, "No authentication provided")
         Helper.requireNonNull(accountId, "Cannot delete an account with the id null")
@@ -144,11 +149,11 @@ class AccountService(
         return accountRepository.findByUsernameAndDeletedIsNull(username)
     }
 
-    private fun findLocation(name: String): LocationDAO? {
+    fun findLocation(name: String): LocationDAO? {
         return locationRepository.findByName(name)
     }
 
-    private fun findByEmail(email: String?): AccountDAO? {
+    fun findByEmail(email: String?): AccountDAO? {
         if (email == null) {
             return null
         }
