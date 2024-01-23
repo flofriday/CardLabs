@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 export async function isAuthenticated(): Promise<boolean> {
   const cookieStore = cookies();
   const authToken = cookieStore.get("auth_token")?.value;
+
   if (authToken === undefined) {
     return false;
   }

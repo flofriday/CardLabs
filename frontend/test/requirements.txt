@@ -1,3 +1,4 @@
 pytest
 selenium
 selenium_driver_updater
+PyJWT
