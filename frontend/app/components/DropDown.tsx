@@ -70,7 +70,6 @@ export default function DropDown({
       }
     });
     setCurrentItems(newItems);
-    console.log(currentItems);
   };
 
   return (

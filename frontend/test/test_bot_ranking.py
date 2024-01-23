@@ -10,7 +10,7 @@ import time
 
 def test_create_bot_and_try_to_rank(driver_headless):
     driver = driver_headless
-    helper.login(driver, "test1", "pass1")
+    helper.login(driver, 999999999, "test1@email")
     driver.find_element(By.ID, "button_create_new_bot").click()
     WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".cm-content")))
     WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "button_rank_bot")))
@@ -21,7 +21,7 @@ def test_create_bot_and_try_to_rank(driver_headless):
 
 def test_code_editor_save_and_rank(driver_headless):
     driver = driver_headless
-    helper.login(driver, "test1", "pass1")
+    helper.login(driver, 999999999, "test1@email")
     driver.find_element(By.ID, "button_create_new_bot").click()
     WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".cm-content")))
     driver.find_element(By.CSS_SELECTOR, ".cm-content").send_keys("my bot")
@@ -36,5 +36,3 @@ def test_code_editor_save_and_rank(driver_headless):
     driver.find_element(By.ID, "button_rank_bot").click()
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".text-sm > div:nth-child(2)")))
     assert driver.find_element(By.CSS_SELECTOR, ".text-sm > div:nth-child(2)").get_attribute("innerText") == "This bot has been queued for ranking"
-
-    

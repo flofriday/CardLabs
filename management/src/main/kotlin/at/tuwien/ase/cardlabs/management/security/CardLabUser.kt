@@ -8,7 +8,6 @@ class CardLabUser(
     val id: Long,
     private val username: String,
     val email: String,
-    private val password: String,
 ) : UserDetails {
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
