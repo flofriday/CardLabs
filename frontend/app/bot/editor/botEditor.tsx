@@ -70,6 +70,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   const [codeHistory, setCodeHistory] = useState<CodeHistory[]>([]);
   const [saved, setSaved] = useState(true);
   const [ranked, setRanked] = useState(false);
+  const [isHistoryMode, setHistoryMode] = useState(false);
   const router = useRouter();
 
   const setupBotCodeTemplate = async (): Promise<string> => {
@@ -144,10 +145,14 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
       <div className="h-full w-11/12">
         <EditorButtons
           codeHistory={codeHistory}
-          onCodeChange={(e) => {
-            setCode(e);
-            codeHistory[0].code = code + "";
-            setCodeHistory(codeHistory);
+          onCodeChange={(c, histMode) => {
+            setHistoryMode(histMode);
+            setCode(c);
+            if (!histMode) {
+              codeHistory[0].code = c;
+              console.log(isHistoryMode);
+              setCodeHistory(codeHistory);
+            }
           }}
           save={() => {
             if (code !== undefined && code?.length >= CODE_CHARACTER_LIMIT) {
@@ -198,12 +203,17 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
         />
         <CodeEditor
           code={code ?? null}
+          readOnly={isHistoryMode}
           onChange={(c) => {
             if (c !== code) {
               setSaved(false);
               setRanked(false);
             }
             setCode(c ?? "");
+            if (!isHistoryMode && codeHistory[0] !== undefined) {
+              codeHistory[0].code = c ?? "";
+              setCodeHistory(codeHistory);
+            }
           }}
         />
       </div>
