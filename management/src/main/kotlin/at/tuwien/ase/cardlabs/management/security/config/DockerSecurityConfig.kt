@@ -4,6 +4,7 @@ import at.tuwien.ase.cardlabs.management.security.DatabaseUserDetailsService
 import at.tuwien.ase.cardlabs.management.security.jwt.JwtAuthenticationFilter
 import at.tuwien.ase.cardlabs.management.security.jwt.JwtTokenService
 import at.tuwien.ase.cardlabs.management.service.AccountService
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -24,26 +25,36 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@Profile("!local & !docker & !production")
-class SecurityConfig(
+@Profile("docker")
+class DockerSecurityConfig(
     private val accountService: AccountService,
     private val jwtTokenService: JwtTokenService,
 ) {
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        return http
+    fun securityFilterChain(
+        http: HttpSecurity,
+        accountService: AccountService,
+        jwtTokenService: JwtTokenService,
+    ): SecurityFilterChain {
+        http
             .csrf { csrf ->
                 csrf.disable()
             }
+            .headers { h ->
+                h.frameOptions { fo ->
+                    fo.sameOrigin()
+                }
+            }
             .authorizeHttpRequests { authorize ->
                 authorize
+                    .requestMatchers(PathRequest.toH2Console()).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/oauth2")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/refresh")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/leaderboard/public")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/leaderboard/firstPlace")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/account", "POST")).permitAll()
-                    .requestMatchers(AntPathRequestMatcher("/account/open", "GET")).permitAll()
+                    .requestMatchers(AntPathRequestMatcher("/open", "GET")).permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement { sessionManagement ->
@@ -53,7 +64,13 @@ class SecurityConfig(
                 JwtAuthenticationFilter(DatabaseUserDetailsService(accountService), jwtTokenService),
                 UsernamePasswordAuthenticationFilter::class.java,
             )
-            .build()
+            .oauth2Login { customizer ->
+                customizer
+                    .successHandler(Oauth2LoginSuccessHandler(accountService, jwtTokenService))
+            }
+            .exceptionHandling { configurator -> configurator.authenticationEntryPoint(Oauth2AuthenticationEntrypoint()) }
+
+        return http.build()
     }
 
     @Bean
