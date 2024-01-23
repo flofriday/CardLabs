@@ -4,6 +4,7 @@ export enum CardColor {
   GREEN = "#68f200",
   PURPLE = "#9819cb",
   GRAY = "#3a4142",
+  ANY = "#3a4142",
 }
 
 export const CardValue = {
@@ -159,7 +160,41 @@ export const CardValue = {
   },
 } as const;
 
-type CardValue_ = (typeof CardValue)[keyof typeof CardValue];
+export function toCardType(type: string, number?: number): CardValue_ {
+  if (type === "NUMBER_CARD" && number !== undefined) {
+    const value = [
+      CardValue.ZERO,
+      CardValue.ONE,
+      CardValue.TWO,
+      CardValue.THREE,
+      CardValue.FOUR,
+      CardValue.FIVE,
+      CardValue.SIX,
+      CardValue.SEVEN,
+      CardValue.EIGHT,
+      CardValue.NINE,
+    ].at(number);
+    if (value === undefined) {
+      throw Error(`Could not convert number: ${number}`);
+    }
+    return value;
+  } else if (type === "DRAW_TWO") {
+    return CardValue.DRAW_TWO;
+  } else if (type === "CHOOSE") {
+    return CardValue.CHOOSE_COLOR;
+  } else if (type === "CHOOSE_DRAW") {
+    return CardValue.CHOOSE_COLOR_4;
+  } else if (type === "SKIP") {
+    return CardValue.SKIP;
+  } else if (type === "SWITCH") {
+    return CardValue.SWITCH;
+  }
+
+  console.error(`Type. ${type}   number: ${number} convertion to card failed`);
+  throw Error(`Type. ${type}   number: ${number} convertion to card failed`);
+}
+
+export type CardValue_ = (typeof CardValue)[keyof typeof CardValue];
 
 interface Props {
   value: CardValue_;
@@ -172,8 +207,8 @@ export default function Card({ value, color, className }: Props): JSX.Element {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       xmlSpace="preserve"
-      width="auto"
-      height="auto"
+      width="100%"
+      height="100%"
       viewBox="0 0 58 91"
       className={className + " "}
     >

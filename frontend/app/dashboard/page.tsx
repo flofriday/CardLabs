@@ -47,7 +47,7 @@ export default function Dashboard(): JSX.Element {
           </Link>
         </div>
 
-        <div className="w-2/6 pl-12">
+        <div className="w-2/6 px-12">
           <div className="space-y-5 flex flex-col justify-center items-center w-full w-1/4 mr-12">
             <MiniLeaderBoard
               leaderboardType={LeaderBoardType.MY_BOTS}

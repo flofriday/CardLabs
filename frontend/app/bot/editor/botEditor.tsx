@@ -12,11 +12,12 @@ import {
   Bot,
   saveBot as _saveBot,
   deleteBot as _deleteBot,
-  getBotRank,
+  rankBot as _rankBot,
 } from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { RegionType } from "@/app/types/RegionType";
+import { UnAuthorizedError } from "@/app/exceptions/UnAuthorizedError";
+import { NotFoundError } from "@/app/exceptions/NotFoundError";
 
 const CODE_CHARACTER_LIMIT = 32000;
 
@@ -40,8 +41,8 @@ function saveBot(id: number, code: string): void {
     .catch(() => {});
 }
 
-function rankBot(id: number, region: RegionType): void {
-  getBotRank(id, RegionType.GLOBAL)
+function rankBot(id: number): void {
+  _rankBot(id)
     .then(() => {
       toast.success("This bot has been queued for ranking");
     })
@@ -105,7 +106,17 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           setName(b.name);
           setCode(b.currentCode);
         })
-        .catch(() => {});
+        .catch((ex) => {
+          if (ex instanceof UnAuthorizedError) {
+            router.replace("/unauthorized");
+          }
+          if (ex instanceof NotFoundError) {
+            router.replace("/bot");
+            toast.error("The bot you tried to see does not exist!", {
+              toastId: 2432502340,
+            });
+          }
+        });
     }
   }, [_id]);
 
@@ -160,7 +171,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
               );
               return;
             }
-            rankBot(_id, RegionType.GLOBAL);
+            rankBot(_id);
             setRanked(true);
           }}
           _delete={() => {

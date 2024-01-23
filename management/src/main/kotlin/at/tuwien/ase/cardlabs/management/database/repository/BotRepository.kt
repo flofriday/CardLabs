@@ -17,7 +17,6 @@ import java.util.stream.Stream
  */
 @Repository
 interface BotRepository : CrudRepository<BotDAO?, Long?> {
-
     fun findByIdAndDeletedIsNull(id: Long): BotDAO?
 
     @Query(
@@ -28,7 +27,21 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
             ORDER BY b.codeUpdated DESC, b.name
         """,
     )
-    fun findByOwnerIdAndDeletedIsNull(@Param("ownerId") ownerId: Long, pageable: Pageable): Page<BotDAO>
+    fun findByOwnerIdAndDeletedIsNull(
+        @Param("ownerId") ownerId: Long,
+        pageable: Pageable,
+    ): Page<BotDAO>
+
+    @Query(
+        """
+        SELECT b.id
+            FROM BotDAO b
+            WHERE b.owner.id = :ownerId AND b.deleted = NULL
+        """,
+    )
+    fun findBotIdsByOwnerIdAndDeletedIsNull(
+        @Param("ownerId") ownerId: Long,
+    ): Stream<Long>
 
     fun findAllByIdInAndDeletedIsNull(botsIds: List<Long>): Stream<BotDAO>
 
@@ -39,7 +52,9 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
             WHERE b.eloScore > (SELECT b2.eloScore FROM BotDAO b2 WHERE b2.id = :botId)
         """,
     )
-    fun findBotRankPosition(@Param("botId") botId: Long): Long
+    fun findBotRankPosition(
+        @Param("botId") botId: Long,
+    ): Long
 
     @Query(
         """
@@ -48,7 +63,9 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
             WHERE b.eloScore > (SELECT b2.eloScore FROM BotDAO b2 WHERE b2.id = :botId) AND a.location = (SELECT a3.location FROM BotDAO b3 LEFT JOIN b3.owner a3 WHERE b3.id = :botId)
         """,
     )
-    fun findBotRankPositionCountry(@Param("botId") botId: Long): Long
+    fun findBotRankPositionCountry(
+        @Param("botId") botId: Long,
+    ): Long
 
     @Query(
         """
@@ -57,7 +74,9 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
             WHERE b.eloScore > (SELECT b2.eloScore FROM BotDAO b2 WHERE b2.id = :botId) AND l.continent = (SELECT l3.continent FROM BotDAO b3 LEFT JOIN b3.owner a3 LEFT JOIN a3.location l3 WHERE b3.id = :botId)
         """,
     )
-    fun findBotRankPositionContinent(@Param("botId") botId: Long): Long
+    fun findBotRankPositionContinent(
+        @Param("botId") botId: Long,
+    ): Long
 
     fun findByCurrentStateAndDeletedIsNull(botState: BotState): Stream<BotDAO>
 
@@ -70,5 +89,8 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
                 WHERE b.id IN :botIds
         """,
     )
-    fun updateMultipleBotState(botIds: List<Long>, newState: BotState): Int
+    fun updateMultipleBotState(
+        botIds: List<Long>,
+        newState: BotState,
+    ): Int
 }
