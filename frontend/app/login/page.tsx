@@ -1,4 +1,3 @@
-import Link from "next/link";
 import LeftPageHeader from "../components/leftPageHeader";
 export default function Login(): JSX.Element {
   return (
