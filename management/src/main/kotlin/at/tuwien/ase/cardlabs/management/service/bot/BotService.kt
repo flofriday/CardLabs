@@ -179,7 +179,7 @@ class BotService(
     @Transactional
     fun fetch(botIds: List<Long>): List<Bot> {
         logger.debug("Attempting to fetch the following bots $botIds")
-        return botRepository.findByIdIn(botIds)
+        return botRepository.findByIdInAndDeletedIsNull(botIds)
             .map(botMapper::map)
             .toList()
     }
@@ -257,12 +257,12 @@ class BotService(
     }
 
     /**
-     * Fetch all bots by a given state
+     * Fetch all bots by a given state that are not banned
      */
     @Transactional
     fun fetchByState(botState: BotState): List<Bot> {
         logger.debug("Attempting to fetch all bots with the state $botState")
-        return botRepository.findByCurrentStateAndDeletedIsNull(botState)
+        return botRepository.findByCurrentStateAndDeletedIsNullAndBannedIsFalse(botState)
             .map(botMapper::map)
             .toList()
     }
@@ -289,6 +289,15 @@ class BotService(
     ) {
         logger.debug("Attempting to update the elo score for the bot $botId to $eloScore")
         botRepository.updateEloScore(botId, eloScore)
+    }
+
+    @Transactional
+    fun updateBanState(
+        botId: Long,
+        isBanned: Boolean
+    ) {
+        logger.debug("Attempting to update the banned state for the bot $botId to $isBanned")
+        botRepository.updateBotBannedStatus(botId, isBanned)
     }
 
     /**

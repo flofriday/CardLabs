@@ -15,6 +15,7 @@ class BotMapper(private val botCodeMapper: BotCodeMapper) {
         botDAO.ownerId = bot.ownerId
         botDAO.currentCode = bot.currentCode
         botDAO.eloScore = bot.eloScore
+        botDAO.banned = bot.banned
         botDAO.currentState = bot.currentState
         botDAO.defaultState = bot.currentState
         return botDAO
@@ -35,6 +36,7 @@ class BotMapper(private val botCodeMapper: BotCodeMapper) {
             currentCode = botDAO.currentCode,
             codeHistory = codeHistory,
             eloScore = botDAO.eloScore,
+            banned = botDAO.banned,
             currentState = botDAO.currentState,
             defaultState = botDAO.defaultState,
             created = botDAO.created,

@@ -35,10 +35,15 @@ open class MatchResultQueueListener(
         // Update bot states
         botService.setBotStateToDefaultState(msg.participatingBotIds)
 
-        // Update bot elo
         val containsTestBot = msg.participatingBotIds.any { it < 0 }
-        // If a test bot is in a match then no score should be updated
+        // If a test bot is in a match then no score or ban state should be updated
         if (!containsTestBot) {
+            // Ban bot if disqualified
+            if (msg.disqualifiedBotId != null) {
+                botService.updateBanState(msg.disqualifiedBotId, true)
+            }
+
+            // Update bot elo
             val bots = botService.fetch(msg.participatingBotIds)
             val winningBot = bots.find { it.id!! == msg.winningBotId }
             bots.forEach { bot ->

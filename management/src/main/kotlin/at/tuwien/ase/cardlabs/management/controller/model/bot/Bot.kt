@@ -13,6 +13,7 @@ data class Bot(
     val currentCode: String,
     val codeHistory: MutableList<BotCode>,
     val eloScore: Int,
+    val banned: Boolean,
     val currentState: BotState,
     val defaultState: BotState,
     val created: Instant?,
