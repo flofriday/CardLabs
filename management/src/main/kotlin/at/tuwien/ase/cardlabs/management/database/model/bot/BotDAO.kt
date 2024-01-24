@@ -12,6 +12,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
 import java.time.Instant
@@ -23,7 +24,6 @@ import java.time.Instant
 @Entity
 @Table(name = "bot")
 class BotDAO : AuditedEntity() {
-
     @Id
     @GeneratedValue
     var id: Long? = null
@@ -33,6 +33,7 @@ class BotDAO : AuditedEntity() {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ownerId", nullable = false)
+    @OrderBy("created")
     lateinit var owner: AccountDAO
 
     @Transient
