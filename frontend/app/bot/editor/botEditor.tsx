@@ -45,7 +45,7 @@ function saveBot(id: number, code: string): void {
 function botRankWrapper(id: number): void {
   rankBot(id)
     .then(() => {
-      toast.success("Successfully ranked the bot");
+      toast.success("Successfully queued the bot for ranking");
     })
     .catch(() => {
       toast.error("An error occurred Please try again later");
@@ -55,10 +55,11 @@ function botRankWrapper(id: number): void {
 function testMatchWrapper(botId: number): void {
   createTestMatch(botId)
     .then(() => {
-      toast.success("Successfully created a test match. You can view the match results in the match history.");
+      toast.success(
+        "Successfully queued a test match. You can view the match results in the match history."
+      );
     })
-    .catch(() => {
-    });
+    .catch(() => {});
 }
 
 function deleteBot(id: number, router: any): void {
@@ -77,7 +78,6 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   const [name, setName] = useState("");
   const [code, setCode] = useState<string | undefined>(undefined);
   const [saved, setSaved] = useState(true);
-  const [ranked, setRanked] = useState(false);
   const router = useRouter();
 
   const setupBotCodeTemplate = async (): Promise<string> => {
@@ -162,16 +162,8 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
             }
           }}
           rank={() => {
-            // if (_id === null || !saved) {
-            //   toast.error("Bot needs to be saved before it can be ranked");
-            //   return;
-            // }
             if (code === undefined) {
               toast.error("No code provided");
-              return;
-            }
-            if (ranked) {
-              toast.error("This bot has already been queued for ranking");
               return;
             }
             if (code?.length >= CODE_CHARACTER_LIMIT) {
@@ -180,19 +172,53 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
               );
               return;
             }
-            if(_id !== null) {
-                botRankWrapper(_id)
-                setRanked(true);
+            if (_id !== null) {
+              _saveBot(_id, code)
+                .then(() => {
+                  botRankWrapper(_id);
+                })
+                .catch(() => {});
             } else {
-              toast.error("The bot id must not be null")
+              createBot(name, code)
+                .then(() => {
+                  if (_id !== null) {
+                    botRankWrapper(_id);
+                  } else {
+                    toast.error("The bot needs to be saved before ranking");
+                  }
+                })
+                .catch(() => {});
             }
           }}
           test={() => {
-            if (_id === null) {
-              toast.error("The bot id must not be null")
-              return
+            if (code === undefined) {
+              toast.error("No code provided");
+              return;
             }
-            testMatchWrapper(_id)
+            if (code?.length >= CODE_CHARACTER_LIMIT) {
+              toast.error(
+                `This bot exceeds the character limit of ${CODE_CHARACTER_LIMIT}`
+              );
+              return;
+            }
+
+            if (_id !== null) {
+              _saveBot(_id, code)
+                .then(() => {
+                  testMatchWrapper(_id);
+                })
+                .catch(() => {});
+            } else {
+              createBot(name, code)
+                .then(() => {
+                  if (_id !== null) {
+                    testMatchWrapper(_id);
+                  } else {
+                    toast.error("The bot needs to be saved before testing");
+                  }
+                })
+                .catch(() => {});
+            }
           }}
           _delete={() => {
             if (_id !== null) {
@@ -208,7 +234,6 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           onChange={(c) => {
             if (c !== code) {
               setSaved(false);
-              setRanked(false);
             }
             setCode(c ?? "");
           }}

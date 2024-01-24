@@ -5,7 +5,7 @@ import { Page } from "../types/contentPage";
 import { refreshAccessToken } from "./RefreshService";
 import { UnAuthorizedError } from "../exceptions/UnAuthorizedError";
 import { NotFoundError } from "../exceptions/NotFoundError";
-import {RestAPIError} from "@/app/exceptions/RestAPIError";
+import { RestAPIError } from "@/app/exceptions/RestAPIError";
 
 export async function getNewBotName(): Promise<string> {
   await refreshAccessToken();
@@ -42,7 +42,9 @@ export async function getTestBots(): Promise<string> {
   });
 
   if (response.status !== 200) {
-    toast.error("An error occurred fetching the test bots. Please try again later.");
+    toast.error(
+      "An error occurred fetching the test bots. Please try again later."
+    );
     throw new EvalError(); // TODO change this
   }
 
@@ -52,24 +54,29 @@ export async function getTestBots(): Promise<string> {
 export async function createTestMatch(id: number): Promise<number> {
   await refreshAccessToken();
   const jwt = getCookie("auth_token");
-  const testBotId:number = -1
+  const testBotId: number = -1;
 
-  const response = await fetch("/api/bot/" + id + "/test-match/" + testBotId + "?useCurrentCode=true", {
-    mode: "cors",
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      Authorization: "Bearer " + jwt,
-    },
-  });
+  const response = await fetch(
+    "/api/bot/" + id + "/test-match/" + testBotId + "?useCurrentCode=true",
+    {
+      mode: "cors",
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + jwt,
+      },
+    }
+  );
 
   if (response.status !== 200) {
-    console.log(response)
-    toast.error("An error occurred creating a test match. Please try again later.");
+    console.log(response);
+    toast.error(
+      "An error occurred creating a test match. Please try again later."
+    );
     throw new EvalError(); // TODO change this
   }
 
-  return await response.text().then(str => Number(str));
+  return await response.text().then((str) => Number(str));
 }
 
 export async function rankBot(id: number): Promise<void> {
@@ -86,11 +93,13 @@ export async function rankBot(id: number): Promise<void> {
   });
 
   if (response.status !== 200) {
-    if(response.status === 409) {
-      toast.success("Successfully ranked the bot");
+    if (response.status === 409) {
+      toast.success("Successfully queued the bot for ranking");
     } else {
       toast.error("An error occurred ranking the bot. Please try again later.");
-      throw new RestAPIError(`HTTP REST API error with code ${response.status} occurred`);
+      throw new RestAPIError(
+        `HTTP REST API error with code ${response.status} occurred`
+      );
     }
   }
 }
