@@ -235,6 +235,17 @@ class BotService(
     }
 
     /**
+     * Fetch all bots by id
+     */
+    @Transactional
+    fun fetchBotsByIds(botIds: List<Long>): List<Bot> {
+        logger.debug("Attempting to fetch the following bots $botIds")
+        return botRepository.findByIdInAndDeletedIsNull(botIds)
+            .map(botMapper::map)
+            .toList()
+    }
+
+    /**
      * Fetch all bots by user
      */
     @Transactional
@@ -250,8 +261,13 @@ class BotService(
     /**
      * Fetches all the bot IDs of a user
      */
-    fun fetchAllBotIds(user: CardLabUser): List<Long> {
-        return botRepository.findBotIdsByOwnerIdAndDeletedIsNull(user.id).toList()
+    @Transactional
+    fun fetchAllBotIds(
+        user: CardLabUser
+    ): List<Long> {
+        logger.debug("User ${user.id} is attempting to fetch all its bots ids")
+        return botRepository.findBotIdsByOwnerIdAndDeletedIsNull(user.id)
+            .toList()
     }
 
     /**
@@ -305,12 +321,12 @@ class BotService(
     }
 
     /**
-     * Fetch all bots by a given state
+     * Fetch all bots by a given state that are not banned
      */
     @Transactional
     fun fetchByState(botState: BotState): List<Bot> {
         logger.debug("Attempting to fetch all bots with the state $botState")
-        return botRepository.findByCurrentStateAndDeletedIsNull(botState)
+        return botRepository.findByCurrentStateAndDeletedIsNullAndBannedIsFalse(botState)
             .map(botMapper::map)
             .toList()
     }
@@ -325,6 +341,27 @@ class BotService(
     ): Int {
         logger.debug("Attempting to update the state for the bots $botIds to $newState")
         return botRepository.updateMultipleBotState(botIds, newState)
+    }
+
+    /**
+     * Update the elo score of a bot
+     */
+    @Transactional
+    fun updateEloScore(
+        botId: Long,
+        eloScore: Int,
+    ) {
+        logger.debug("Attempting to update the elo score for the bot $botId to $eloScore")
+        botRepository.updateEloScore(botId, eloScore)
+    }
+
+    @Transactional
+    fun updateBanState(
+        botId: Long,
+        isBanned: Boolean
+    ) {
+        logger.debug("Attempting to update the banned state for the bot $botId to $isBanned")
+        botRepository.updateBotBannedStatus(botId, isBanned)
     }
 
     /**

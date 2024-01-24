@@ -1,6 +1,9 @@
+"use client";
+
 import IconButton, { ButtonIcon } from "../../components/iconButton";
 import DropDown from "@/app/components/DropDown";
 import Modal from "@/app/components/modal";
+import { CodeHistory } from "@/app/services/BotService";
 import { useState } from "react";
 
 interface Props {
@@ -8,6 +11,8 @@ interface Props {
   rank: () => void;
   test: () => void;
   _delete: () => void;
+  codeHistory: CodeHistory[];
+  onCodeChange: (code: string, historyMode: boolean) => void;
 }
 
 export default function EditorButtons({
@@ -15,6 +20,8 @@ export default function EditorButtons({
   rank,
   test,
   _delete,
+  codeHistory,
+  onCodeChange,
 }: Props): JSX.Element {
   const [deleteModalVisability, setDeleteModalVisability] = useState(false);
 
@@ -71,9 +78,21 @@ export default function EditorButtons({
       />
       <DropDown
         defaultValue="Current"
-        className="w-36"
+        className="w-44"
         customButtonClass="text-text p-2 w-full h-full rounded-full shadow-md text-lg rounded-full outline outline-1  hover:bg-primary"
-        values={[]}
+        values={codeHistory
+          .reverse()
+          .map((entry, idx) =>
+            entry.id === -1
+              ? "Current"
+              : `Version: ${codeHistory.length - idx}.0`
+          )}
+        onChange={(e) => {
+          const idx = e.startsWith("Version")
+            ? parseInt(e.substring("Version: ".length))
+            : 0;
+          onCodeChange(codeHistory[idx].code, idx !== 0);
+        }}
       />
       <IconButton
         onClick={() => {

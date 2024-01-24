@@ -148,13 +148,19 @@ export interface Bot {
   name: string;
   ownerId: number;
   currentCode: string;
-  codeHistory: any; // todo fix this type
+  codeHistory: CodeHistory[];
   eloScore: number;
   currentState: BotState;
   defaultState: BotState;
   errorStateMessage: string;
   updated: Date;
   created: Date;
+}
+
+export interface CodeHistory {
+  botId: number;
+  code: string;
+  id: number;
 }
 
 export async function getBotName(

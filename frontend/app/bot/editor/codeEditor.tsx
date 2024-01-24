@@ -8,6 +8,7 @@ import rainbowBrackets from "rainbowbrackets";
 interface Props {
   onChange?: (code: string | undefined | null) => void;
   code: string | null;
+  readOnly: boolean;
 }
 
 const Colors = {
@@ -69,12 +70,15 @@ const cardLabsTheme = createTheme({
 export default function CodeEditor({
   onChange = (c) => {},
   code = "",
+  readOnly,
 }: Props): JSX.Element {
   const [_code, setCode] = useState(code);
+  const [isReadOnly, setReadOnly] = useState(false);
   useEffect(() => {
     setCode(code);
     onChange(code);
-  }, [code, onChange]);
+    setReadOnly(readOnly);
+  }, [code, readOnly, onChange]);
 
   return (
     <div className="w-full h-[calc(100%_-_4rem_-_11rem)] bg-secondary text-lg">
@@ -91,6 +95,7 @@ export default function CodeEditor({
         theme={cardLabsTheme}
         value={_code ?? undefined}
         onChange={onChange}
+        readOnly={isReadOnly}
       />
     </div>
   );
