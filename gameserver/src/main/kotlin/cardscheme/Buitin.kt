@@ -78,7 +78,7 @@ inline fun <reified T : SchemeValue> verifyType(
 ): T {
     if (arg.value !is T) {
         throw SchemeError(
-            "Unsupported Type",
+            "Type Mismatch",
             "$expectedMsg, but this argument is a ${arg.value.typeName()}",
             arg.location,
             null,

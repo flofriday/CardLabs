@@ -57,11 +57,11 @@ fun runSimulation(request: SimulationRequest): SimulationResult {
         val bot = state.players.first { p -> p.bot.botId == e.botId }.bot
 
         logSystem(turn, "Bot ${bot.botId} disqualified!")
-        logBot(turn, bot, e.reason)
+        var crashMessage = e.reason
         if (e.schemeError != null) {
-            // FIXME: Disable colors in the error
-            logBot(turn, bot, e.schemeError.format(bot.code))
+            crashMessage += "\n\n" + e.schemeError.format(bot.code, color = false)
         }
+        logBot(turn, bot, crashMessage)
         return SimulationResult(
             gameId = request.gameId,
             startTime = startTime,
