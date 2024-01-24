@@ -53,6 +53,9 @@ class BotDAO : AuditedEntity() {
     @Column(nullable = false)
     var eloScore: Int = -1
 
+    @Column(nullable = false)
+    var banned: Boolean = false
+
     // == States ==
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)

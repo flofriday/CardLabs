@@ -17,6 +17,7 @@ import java.util.stream.Stream
  */
 @Repository
 interface BotRepository : CrudRepository<BotDAO?, Long?> {
+
     fun findByIdAndDeletedIsNull(id: Long): BotDAO?
 
     @Query(
@@ -78,7 +79,7 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
         @Param("botId") botId: Long,
     ): Long
 
-    fun findByCurrentStateAndDeletedIsNull(botState: BotState): Stream<BotDAO>
+    fun findByCurrentStateAndDeletedIsNullAndBannedIsFalse(botState: BotState): Stream<BotDAO>
 
     @Modifying
     @Transactional
@@ -92,5 +93,38 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
     fun updateMultipleBotState(
         botIds: List<Long>,
         newState: BotState,
+    ): Int
+
+    @Transactional
+    fun findByIdInAndDeletedIsNull(
+        botIds: List<Long>
+    ): Stream<BotDAO>
+
+    @Modifying
+    @Transactional
+    @Query(
+        """
+            UPDATE BotDAO b 
+                SET b.eloScore = :eloScore 
+                WHERE b.id = :id
+        """,
+    )
+    fun updateEloScore(
+        id: Long,
+        eloScore: Int
+    ): Int
+
+    @Modifying
+    @Transactional
+    @Query(
+        """
+            UPDATE BotDAO b 
+                SET b.banned = :banned 
+                WHERE b.id = :id
+        """,
+    )
+    fun updateBotBannedStatus(
+        id: Long,
+        banned: Boolean
     ): Int
 }
