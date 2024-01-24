@@ -169,10 +169,6 @@ export async function getBotName(
   await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
-  if (id < 0) {
-    return { id: id, name: "TestBot " + Math.abs(id) };
-  }
-
   const response = await fetch(`/api/bot/${id}/name`, {
     mode: "cors",
     method: "GET",
