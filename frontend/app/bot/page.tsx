@@ -70,7 +70,7 @@ export default function BotOverview(): JSX.Element {
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col items-center">
             <h2 className="text-8xl font-extrabold text-center mb-4">
-              No scored bots here yet :)
+              No bots here yet :)
             </h2>
             <Link
               href="/bot/editor"
