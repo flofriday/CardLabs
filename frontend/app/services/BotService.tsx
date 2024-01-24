@@ -69,7 +69,6 @@ export async function createTestMatch(id: number): Promise<number> {
   );
 
   if (response.status !== 200) {
-    console.log(response);
     toast.error(
       "An error occurred creating a test match. Please try again later."
     );
@@ -156,6 +155,37 @@ export interface Bot {
   errorStateMessage: string;
   updated: Date;
   created: Date;
+}
+
+export async function getBotName(
+  id: number
+): Promise<{ id: number; name: string }> {
+  await refreshAccessToken();
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch(`/api/bot/${id}/name`, {
+    mode: "cors",
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+    },
+  });
+
+  if (response.status === 401 || response.status === 403) {
+    throw new UnAuthorizedError("Not authorized");
+  }
+
+  if (response.status === 404) {
+    throw new NotFoundError("Bot not found");
+  }
+
+  if (response.status !== 200) {
+    toast.error("An error occurred. Please try again later.");
+    throw new Error();
+  }
+  const name = await response.text();
+  return { id, name };
 }
 
 export async function getBot(id: number): Promise<Bot> {

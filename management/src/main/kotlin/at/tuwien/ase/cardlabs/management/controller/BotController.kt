@@ -4,6 +4,7 @@ import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
 import at.tuwien.ase.cardlabs.management.controller.model.bot.TestBot
+import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.bot.BotService
 import at.tuwien.ase.cardlabs.management.service.game.GameService
@@ -28,11 +29,12 @@ class BotController(
     val botService: BotService,
     val gameService: GameService,
 ) {
-
     private final val logger = LoggerFactory.getLogger(javaClass)
 
     @GetMapping("/bot/name")
-    fun getName(@AuthenticationPrincipal user: CardLabUser): ResponseEntity<String> {
+    fun getName(
+        @AuthenticationPrincipal user: CardLabUser,
+    ): ResponseEntity<String> {
         logger.info("User ${user.id} attempts to generate a bot name")
         val name = botService.generateBotName(user)
         return ResponseEntity
@@ -40,8 +42,10 @@ class BotController(
             .body(name)
     }
 
-    @GetMapping("bot/test-bots")
-    fun fetchTestBots(@AuthenticationPrincipal user: CardLabUser): ResponseEntity<List<TestBot>> {
+    @GetMapping("/bot/test-bots")
+    fun fetchTestBots(
+        @AuthenticationPrincipal user: CardLabUser,
+    ): ResponseEntity<List<TestBot>> {
         logger.info("User ${user.id} attempts to receive all test bots")
         val testBots = botService.fetchAllTestsBots(user)
         return ResponseEntity
@@ -105,10 +109,27 @@ class BotController(
         @PathVariable botId: Long,
     ): ResponseEntity<Bot> {
         logger.info("User ${user.id} attempts to fetch the bot $botId")
+        val bot = botService.fetch(user, botId)
+
+        if (bot.ownerId != user.id) {
+            throw UnauthorizedException("You are not authorized to view the bot $botId")
+        }
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(bot)
+    }
+
+    @GetMapping("/bot/{botId}/name")
+    fun getBotName(
+        @AuthenticationPrincipal user: CardLabUser,
+        @PathVariable botId: Long,
+    ): ResponseEntity<String> {
+        logger.info("User ${user.id} fetches the bot name for bot with id $botId")
         val result = botService.fetch(user, botId)
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(result)
+            .body(result.name)
     }
 
     @GetMapping("/bot")
@@ -142,7 +163,7 @@ class BotController(
         @AuthenticationPrincipal user: CardLabUser,
         @PathVariable botId: Long,
         @PathVariable testBotId: Long,
-        @RequestParam(required = false, defaultValue = "false") useCurrentCode: Boolean
+        @RequestParam(required = false, defaultValue = "false") useCurrentCode: Boolean,
     ): ResponseEntity<Long> {
         logger.info("User ${user.id} attempts to create a test match for the user bot $botId against the test bot $testBotId")
         val gameId = gameService.createTestMatch(user, botId, testBotId, useCurrentCode)

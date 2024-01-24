@@ -46,7 +46,6 @@ class BotService(
     private val matchmakerConfig: MatchmakerConfig,
     @Lazy private val matchmaker: Matchmaker,
 ) {
-
     private final val logger = LoggerFactory.getLogger(javaClass)
 
     private var testsBots: List<TestBot>? = null
@@ -232,10 +231,6 @@ class BotService(
             findById(botId)
                 ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
-        if (bot.owner.id != user.id) {
-            throw UnauthorizedException("You are not authorized to view the bot $botId")
-        }
-
         return botMapper.map(bot)
     }
 
@@ -297,12 +292,15 @@ class BotService(
         findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
-        val result = when (region) {
-            Region.GLOBAL -> botRepository.findBotRankPosition(botId)
-            Region.CONTINENT -> botRepository.findBotRankPositionContinent(botId)
-            Region.COUNTRY -> botRepository.findBotRankPositionCountry(botId)
-            else -> throw UnsupportedOperationException("The fetch rank position operation is currently not supported for the region $region")
-        }
+        val result =
+            when (region) {
+                Region.GLOBAL -> botRepository.findBotRankPosition(botId)
+                Region.CONTINENT -> botRepository.findBotRankPositionContinent(botId)
+                Region.COUNTRY -> botRepository.findBotRankPositionCountry(botId)
+                else -> throw UnsupportedOperationException(
+                    "The fetch rank position operation is currently not supported for the region $region",
+                )
+            }
         return result
     }
 
