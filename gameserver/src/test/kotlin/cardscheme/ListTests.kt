@@ -201,6 +201,17 @@ lst""",
     }
 
     @Test
+    fun quoteVectorInList() {
+        val program =
+            """
+            (vector? (car (cdr '(1 #(2 3)))))
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is BooleanValue)
+        assertEquals(true, (result as BooleanValue).value)
+    }
+
+    @Test
     fun isNullOnEmptyList() {
         val program = "(null? '())"
         val result = SchemeInterpreter().run(program)
@@ -447,4 +458,6 @@ lst""",
             (result as ListValue),
         )
     }
+
+
 }
