@@ -81,9 +81,10 @@ export default function CodeEditor({
   }, [code, readOnly, onChange]);
 
   return (
-    <div className="w-full h-[calc(100%_-_4rem_-_11rem)] bg-secondary text-lg">
+    <div className="w-full h-[calc(100%_-_4rem_-_11rem)] bg-secondary text-lg  flex">
       <CodeMirror
         height={"100%"}
+        className="grow"
         basicSetup={{
           lineNumbers: true,
           bracketMatching: true,

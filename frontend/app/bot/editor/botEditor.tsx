@@ -54,16 +54,6 @@ function botRankWrapper(id: number): void {
     });
 }
 
-function testMatchWrapper(botId: number): void {
-  createTestMatch(botId)
-    .then(() => {
-      toast.success(
-        "Successfully queued a test match. You can view the match results in the match history."
-      );
-    })
-    .catch(() => {});
-}
-
 function deleteBot(id: number, router: any): void {
   _deleteBot(id)
     .then(() => {
@@ -84,6 +74,9 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   const router = useRouter();
   const codeSaved: boolean = useSaveCodeStore((state: any) => state.codeSaved);
   const setCodeSaved = useSaveCodeStore((state: any) => state.setCodeSaved);
+  const [lastTestGame, setLastTestGame] = useState<number | undefined>(
+    undefined
+  );
 
   const setupBotCodeTemplate = async (): Promise<string> => {
     try {
@@ -214,14 +207,28 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
             if (_id !== null) {
               _saveBot(_id, code)
                 .then(() => {
-                  testMatchWrapper(_id);
+                  createTestMatch(_id)
+                    .then((gid) => {
+                      toast.success(
+                        "Successfully queued a test match. You can view the match results in the match history."
+                      );
+                      setLastTestGame(gid);
+                    })
+                    .catch(() => {});
                 })
                 .catch(() => {});
             } else {
               createBot(name, code)
                 .then(() => {
                   if (_id !== null) {
-                    testMatchWrapper(_id);
+                    createTestMatch(_id)
+                      .then((gid) => {
+                        toast.success(
+                          "Successfully queued a test match. You can view the match results in the match history."
+                        );
+                        setLastTestGame(gid);
+                      })
+                      .catch(() => {});
                   } else {
                     toast.error("The bot needs to be saved before testing");
                   }
@@ -253,7 +260,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           }}
         />
       </div>
-      <LoggingElement />
+      <LoggingElement gameId={lastTestGame} />
     </div>
   );
 }

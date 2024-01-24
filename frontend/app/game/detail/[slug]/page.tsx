@@ -26,6 +26,7 @@ export default function GameDetail({
   const [botNames, setBotNames] = useState<Array<{ id: number; name: string }>>(
     []
   );
+
   const router = useRouter();
 
   useEffect(() => {
