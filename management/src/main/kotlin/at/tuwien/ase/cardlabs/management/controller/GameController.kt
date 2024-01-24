@@ -33,13 +33,14 @@ class GameController(
             .body(game)
     }
 
-    @GetMapping("/match/{gameId}/log")
+    @GetMapping("/match/{gameId}/log/{botId}")
     fun fetchLogById(
         @AuthenticationPrincipal user: CardLabUser,
         @PathVariable gameId: Long,
+        @PathVariable botId: Long,
     ): ResponseEntity<List<LogMessage>> {
-        logger.info("User ${user.id}  fetches the logs of the game with id $gameId")
-        val logMessages = gameService.fetchLogById(user, gameId)
+        logger.info("User ${user.id}  fetches the logs of the game with id $gameId for the bot with id $botId")
+        val logMessages = gameService.fetchLogById(user, gameId, botId)
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(logMessages)

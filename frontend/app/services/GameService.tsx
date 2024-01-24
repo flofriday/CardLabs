@@ -88,7 +88,7 @@ export async function getLogLinesForGame(
   const jwt = getCookie("auth_token");
 
   try {
-    const response = await fetch(`/api/match/${gameID}/log`, {
+    const response = await fetch(`/api/match/${gameID}/log/${botId}`, {
       mode: "cors",
       method: "GET",
       headers: {
