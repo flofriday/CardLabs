@@ -61,7 +61,18 @@ export default function NavBar(): JSX.Element {
             Card Labs
           </Link>
         )}
-
+        {authenticated && (
+          <Link
+            href="/bot"
+            id="mybots_link"
+            className="text-base  hover:text-accent max-sm:hidden"
+            onClick={(e) => {
+              looseUnsavedChanges(e, codeSaved, setCodeSaved);
+            }}
+          >
+            My Bots
+          </Link>
+        )}
         <Link
           href="/leaderboard"
           id="leaderboard_link"
