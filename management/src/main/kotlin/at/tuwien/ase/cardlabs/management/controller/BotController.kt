@@ -127,7 +127,7 @@ class BotController(
     ): ResponseEntity<String> {
         logger.info("User ${user.id} fetches the bot name for bot with id $botId")
         if (botId < 0) {
-            val result =  botService.fetchTestBotById(botId)
+            val result = botService.fetchTestBotById(botId)
             return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(result.name)
