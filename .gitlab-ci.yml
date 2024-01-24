@@ -150,7 +150,7 @@ deploy:
   image: bitnami/kubectl
   script:
     - sed -i 's/:latest/:'$CI_PIPELINE_ID'/g' kubernetes.yaml frontend-service.yaml management-service.yaml gameserver-service.yaml
-    - kubectl run rabbitmq --image=rabbitmq:3.12-alpine --replicas=1 --expose --port=5672 --env="RABBITMQ_DEFAULT_USER=guest" --env="RABBITMQ_DEFAULT_PASS=guest" --limits="cpu=200m,memory=2000Mi,ephemeral-storage=400Mi"--restart=Never --dry-run -o yaml > rabbitmq-service.yml
+    - kubectl run rabbitmq --image=rabbitmq:3.12-alpine --env="RABBITMQ_DEFAULT_USER=guest" --env="RABBITMQ_DEFAULT_PASS=guest" --limits="cpu=200m,memory=2000Mi,ephemeral-storage=400Mi"--restart=Never --dry-run -o yaml > rabbitmq-service.yml
     - cat kubernetes.yaml
     - cat rabbitmq-service.yaml
     - cat frontend-service.yaml
