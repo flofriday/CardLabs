@@ -80,7 +80,6 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   const [name, setName] = useState("");
   const [code, setCode] = useState<string | undefined>(undefined);
   const [codeHistory, setCodeHistory] = useState<CodeHistory[]>([]);
-  const [ranked, setRanked] = useState(false);
   const [isHistoryMode, setHistoryMode] = useState(false);
   const router = useRouter();
   const codeSaved: boolean = useSaveCodeStore((state: any) => state.codeSaved);
@@ -254,7 +253,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           readOnly={isHistoryMode}
           onChange={(c) => {
             if (c !== code) {
-              setSaved(false);
+              setCodeSaved(false);
             }
             setCode(c ?? "");
             if (!isHistoryMode && codeHistory[0] !== undefined) {
