@@ -5,6 +5,7 @@ import { Page } from "../types/contentPage";
 import { refreshAccessToken } from "./RefreshService";
 import { UnAuthorizedError } from "../exceptions/UnAuthorizedError";
 import { NotFoundError } from "../exceptions/NotFoundError";
+import { RestAPIError } from "@/app/exceptions/RestAPIError";
 
 export async function getNewBotName(): Promise<string> {
   await refreshAccessToken();
@@ -25,6 +26,81 @@ export async function getNewBotName(): Promise<string> {
   }
 
   return await response.text();
+}
+
+export async function getTestBots(): Promise<string> {
+  await refreshAccessToken();
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch("/api/bot/test-bots", {
+    mode: "cors",
+    method: "GET",
+    headers: {
+      Accept: "text/plain",
+      Authorization: "Bearer " + jwt,
+    },
+  });
+
+  if (response.status !== 200) {
+    toast.error(
+      "An error occurred fetching the test bots. Please try again later."
+    );
+    throw new EvalError(); // TODO change this
+  }
+
+  return await response.text();
+}
+
+export async function createTestMatch(id: number): Promise<number> {
+  await refreshAccessToken();
+  const jwt = getCookie("auth_token");
+  const testBotId: number = -1;
+
+  const response = await fetch(
+    "/api/bot/" + id + "/test-match/" + testBotId + "?useCurrentCode=true",
+    {
+      mode: "cors",
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + jwt,
+      },
+    }
+  );
+
+  if (response.status !== 200) {
+    toast.error(
+      "An error occurred creating a test match. Please try again later."
+    );
+    throw new EvalError(); // TODO change this
+  }
+
+  return await response.text().then((str) => Number(str));
+}
+
+export async function rankBot(id: number): Promise<void> {
+  await refreshAccessToken();
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch(`/api/bot/${id}/rank`, {
+    mode: "cors",
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+    },
+  });
+
+  if (response.status !== 200) {
+    if (response.status === 409) {
+      toast.success("Successfully queued the bot for ranking");
+    } else {
+      toast.error("An error occurred ranking the bot. Please try again later.");
+      throw new RestAPIError(
+        `HTTP REST API error with code ${response.status} occurred`
+      );
+    }
+  }
 }
 
 export async function createBot(
@@ -85,6 +161,37 @@ export interface CodeHistory {
   botId: number;
   code: string;
   id: number;
+}
+
+export async function getBotName(
+  id: number
+): Promise<{ id: number; name: string }> {
+  await refreshAccessToken();
+  const jwt = getCookie("auth_token");
+
+  const response = await fetch(`/api/bot/${id}/name`, {
+    mode: "cors",
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + jwt,
+    },
+  });
+
+  if (response.status === 401 || response.status === 403) {
+    throw new UnAuthorizedError("Not authorized");
+  }
+
+  if (response.status === 404) {
+    throw new NotFoundError("Bot not found");
+  }
+
+  if (response.status !== 200) {
+    toast.error("An error occurred. Please try again later.");
+    throw new Error();
+  }
+  const name = await response.text();
+  return { id, name };
 }
 
 export async function getBot(id: number): Promise<Bot> {
@@ -223,29 +330,6 @@ export async function getAllBots(
   }
 
   return page;
-}
-
-export async function rankBot(botId: number): Promise<boolean> {
-  await refreshAccessToken();
-  const jwt = getCookie("auth_token");
-
-  const response = await fetch(`/api/bot/${botId}/rank`, {
-    mode: "cors",
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      Authorization: "Bearer " + jwt,
-    },
-  });
-
-  if (response.status !== 200) {
-    toast.error(
-      "An error occurred. Please try again later. If the error persists, please contact the support."
-    );
-    throw new Error();
-  }
-
-  return true;
 }
 
 export async function getBotRank(

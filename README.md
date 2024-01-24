@@ -16,6 +16,14 @@ to start rabbitmq
 docker run -d -p 5672:5672 --name rabbitMQ -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest rabbitmq:3.12-alpine
 ```
 
+# Bot
+
+## IDs
+
+A bot with a negative id is a test bot (maintained by the CardLabs team). A user bot must have a positive id.
+
+## Bot states
+
 ## Continuous deployment
 
 http://23ws-ase-pr-inso-04.apps.student.inso-w.at

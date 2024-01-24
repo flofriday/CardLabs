@@ -1,6 +1,8 @@
 import Modal from "../components/modal";
 import { deleteUser } from "../services/UserService";
 import { useRouter } from "next/navigation";
+import { authenticationStore } from "@/app/state/authenticationStore";
+
 interface Props {
   onClose: () => void;
 }
@@ -8,7 +10,12 @@ interface Props {
 export default function DeleteAccountModal({ onClose }: Props): JSX.Element {
   const router = useRouter();
 
+  const setAuthenticated = authenticationStore(
+    (state: any) => state.setAuthenticated
+  );
+
   const deleteUserHandler = (): void => {
+    setAuthenticated(false);
     deleteUser()
       .then((res) => {
         if (res) {
