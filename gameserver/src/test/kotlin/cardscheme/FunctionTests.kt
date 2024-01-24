@@ -356,4 +356,28 @@ class FunctionTests {
         assert(result is IntegerValue)
         Assert.assertEquals(IntegerValue(43, null), result as IntegerValue)
     }
+
+    @Test
+    fun todoFunction() {
+        val program = "(todo)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is VoidValue)
+        Assert.assertEquals(VoidValue(null), result as VoidValue)
+    }
+
+    @Test
+    fun todoFunctionVararg() {
+        val program = """(todo "implement something")"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is VoidValue)
+        Assert.assertEquals(VoidValue(null), result as VoidValue)
+    }
+
+    @Test
+    fun todoFunctionManyVararg() {
+        val program = """(todo "implement something" "implement something" "implement something" "implement something" "implement something")"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is VoidValue)
+        Assert.assertEquals(VoidValue(null), result as VoidValue)
+    }
 }

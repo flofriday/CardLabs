@@ -40,6 +40,14 @@ class VoidValue(val schemeSecurityMonitor: SchemeSecurityMonitor?) : SchemeValue
     override fun typeName(): String {
         return "<#void>"
     }
+
+    override fun equals(other: Any?): Boolean {
+        return (this === other || javaClass == other?.javaClass)
+    }
+
+    override fun hashCode(): Int {
+        return 0
+    }
 }
 
 data class BooleanValue(val value: Boolean, val schemeSecurityMonitor: SchemeSecurityMonitor?) : SchemeValue() {

@@ -8,18 +8,17 @@
     (random-choice
         (matching-cards top-card hand)))
 
-; Some other player played a card
-(define (card-played card player)
-    ; Code goes here
-    )
+; Some other bot played a card
+(define (card-played card bot)
+    (todo)
 
-; Some other player had to pick a card because they didn't have a matching one.
+; Some other bot had to pick a card because they didn't have a matching one.
 ; This is not called as a result of a draw or draw choose card.
-(define (card-picked top-card player)
-    ; Code goes here
+(define (card-picked top-card bot)
+    (todo)
     )
 
 ; The pile got reshuffled into the draw pile
 (define (pile-reshuffled) 
-    ; Code goes here
+    (todo)
     )
