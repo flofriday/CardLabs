@@ -150,7 +150,6 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
             setCode(c);
             if (!histMode) {
               codeHistory[0].code = c;
-              console.log(isHistoryMode);
               setCodeHistory(codeHistory);
             }
           }}
