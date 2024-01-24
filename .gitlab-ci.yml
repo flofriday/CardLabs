@@ -149,7 +149,7 @@ deploy:
   stage: deploy
   image: bitnami/kubectl
   script:
-    - sed -i 's/:latest/:'$CI_PIPELINE_ID'/g' kubernetes.yaml rabbitmq-service.yaml frontend-service.yaml management-service.yaml gameserver-service.yaml
+    - sed -i 's/:latest/:'$CI_PIPELINE_ID'/g' kubernetes.yaml frontend-service.yaml management-service.yaml gameserver-service.yaml
     - cat kubernetes.yaml
     - cat rabbitmq-service.yaml
     - cat frontend-service.yaml
