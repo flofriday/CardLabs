@@ -260,7 +260,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           }}
         />
       </div>
-      <LoggingElement gameId={lastTestGame} />
+      <LoggingElement gameId={lastTestGame} botId={_id ?? -1} />
     </div>
   );
 }

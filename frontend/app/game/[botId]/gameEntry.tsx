@@ -23,7 +23,7 @@ export default function GameEntry({ game, botId }: Props): JSX.Element {
           text="View"
           type={ButtonIcon.INFO}
           onClick={() => {
-            router.push(`/game/detail/${game.id}`);
+            router.push(`/game/${botId}/detail/${game.id}`);
           }}
         />
       </div>

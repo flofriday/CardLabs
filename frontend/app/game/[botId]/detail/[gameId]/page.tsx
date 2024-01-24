@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 export default function GameDetail({
   params,
 }: {
-  params: { slug: string };
+  params: { gameId: string; botId: string };
 }): JSX.Element {
   const [logLines, setLogLines] = useState<LogLine[]>([]);
   const [game, setGame] = useState<Game>();
@@ -30,12 +30,12 @@ export default function GameDetail({
   const router = useRouter();
 
   useEffect(() => {
-    getLogLinesForGame(Number(params.slug))
+    getLogLinesForGame(Number(params.gameId), Number(params.botId))
       .then((lines) => {
         setLogLines(lines);
       })
       .catch(() => {});
-    getGame(Number(params.slug))
+    getGame(Number(params.gameId))
       .then((g) => {
         setGame(g);
         if (g.turns[0] !== undefined) {
@@ -68,9 +68,9 @@ export default function GameDetail({
           toast.error("The game you tried to see does not exist!");
         }
       });
-  }, [params.slug]);
+  }, [params.gameId, params.botId]);
 
-  if (isNaN(Number(params.slug))) {
+  if (isNaN(Number(params.gameId)) || isNaN(Number(params.botId))) {
     return notFound();
   }
 

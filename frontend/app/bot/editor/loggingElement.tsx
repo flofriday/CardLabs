@@ -6,13 +6,14 @@ import { useEffect, useState } from "react";
 
 interface Props {
   gameId: number | undefined;
+  botId: number;
 }
 
-async function getLogLines(gameId: number): Promise<LogLine[]> {
+async function getLogLines(gameId: number, botId: number): Promise<LogLine[]> {
   let logLines: LogLine[] = [];
   let counter = 0;
   do {
-    logLines = await getLogLinesForGame(gameId);
+    logLines = await getLogLinesForGame(gameId, botId);
     if (logLines.length !== 0) {
       break;
     }
@@ -23,14 +24,14 @@ async function getLogLines(gameId: number): Promise<LogLine[]> {
   return logLines;
 }
 
-export default function LoggingElement({ gameId }: Props): JSX.Element {
+export default function LoggingElement({ gameId, botId }: Props): JSX.Element {
   const [logLines, setLogLines] = useState<LogLine[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (gameId !== undefined) {
       setIsLoading(true);
-      getLogLines(gameId)
+      getLogLines(gameId, botId)
         .then((lines) => {
           setIsLoading(false);
           setLogLines(lines);

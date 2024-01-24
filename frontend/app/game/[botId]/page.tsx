@@ -13,17 +13,17 @@ import { UnAuthorizedError } from "@/app/exceptions/UnAuthorizedError";
 export default function GameOverview({
   params,
 }: {
-  params: { slug: string };
+  params: { botId: string };
 }): JSX.Element {
   const [gameEntries, setGameEntries] = useState<Game[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const router = useRouter();
   useEffect(() => {
-    if (isNaN(Number(params.slug))) {
+    if (isNaN(Number(params.botId))) {
       return;
     }
-    getGames(Number(params.slug), 6, pageNumber)
+    getGames(Number(params.botId), 6, pageNumber)
       .then((page) => {
         setGameEntries(page.content);
         setTotalPages(page.totalPages);
@@ -33,13 +33,13 @@ export default function GameOverview({
           router.replace("/unauthorized");
         }
       });
-  }, [pageNumber, params.slug]);
+  }, [pageNumber, params.botId]);
 
-  if (isNaN(Number(params.slug))) {
+  if (isNaN(Number(params.botId))) {
     return notFound();
   }
 
-  const botId = Number(params.slug);
+  const botId = Number(params.botId);
 
   const handlePageChange = (page: number): void => {
     setPageNumber(page);
