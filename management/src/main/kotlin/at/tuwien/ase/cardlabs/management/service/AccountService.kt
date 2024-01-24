@@ -14,6 +14,7 @@ import at.tuwien.ase.cardlabs.management.error.account.LocationNotFoundException
 import at.tuwien.ase.cardlabs.management.mapper.AccountMapper
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.validation.validator.AccountValidator
+import org.apache.commons.codec.digest.DigestUtils
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Lazy
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -107,6 +108,8 @@ class AccountService(
 
         val accountDao = findById(accountId)
         if (accountDao != null) {
+            accountDao.username = "[deleted]"
+            accountDao.email = DigestUtils.sha256Hex(accountDao.email + Math.random()) + "@cardlabs.local"
             accountDao.deleted = Instant.now()
         }
     }

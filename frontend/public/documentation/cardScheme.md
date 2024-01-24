@@ -1,12 +1,13 @@
 # CardScheme
 
-CardScheme is a Scheme based language. CardScheme is a Scheme based language that provides you with some (but not all) Scheme language features. We only provide you with the necessary features to allow you to write competitive card game bots in order to make it easy to get started and to enable you to focus on what is important. Note, that some implementations may also be different or behave in different ways than the official Scheme standard. You can see the documentation of CardScheme below.
+CardScheme is the programming lanuage of CardLabs and a Scheme dialect which implements a reduced subset.
+Note, that some implementations may also be different or behave in different ways than the official Scheme standard. You can see the documentation of CardScheme below.
 
 ## Types
 
 ### Booleans
 
-`#f`... False  
+`#f`... False
 `#t`... True
 
 ### Integers
@@ -33,22 +34,26 @@ CardScheme is a Scheme based language. CardScheme is a Scheme based language tha
 
 `#(obj)`, e.g. `#(0 "CardScheme" #t)` defines a vector with 3 elements
 
+### Symbols
+
+`'red` defines the symbol red
+
 ## Variable definitions
 
 ### Define
 
-Syntax: `(define <variable> <expression>)`  
+Syntax: `(define <variable> <expression>)`
 Example: `(define x 3)` defines a variable `x` which is set to the initial value 3.
 
 ### Let
 
-Syntax: `(let ((<variable1> <init1>)...) <body>)`  
-Example: `(let ((x 3)) (display x))` defines a variable `x` which is set to the initial value 3 and that can be used inside the body.  
+Syntax: `(let ((<variable1> <init1>)...) <body>)`
+Example: `(let ((x 3)) (display x))` defines a variable `x` which is set to the initial value 3 and that can be used inside the body.
 Any expression outside of the body can not access the corresponding variable definition (or will access an outside one if it exists). So for example, calling `(display x)` outside of our `let` body would not work in this example since `x` is only defined inside.
 
 ### Let\*
 
-Syntax: `(let* ((<variable1> <init1>)...) <body>)"`  
+Syntax: `(let* ((<variable1> <init1>)...) <body>)"`
 The `let*` construct is similar to `let` but the bindings are performed left to right which means that the first binding is accessible in the second binding and so on.
 Example:
 
@@ -61,7 +66,7 @@ Example:
 
 ### Letrec
 
-Syntax: `(letrec ((<variable1> <init1>)...) <body>)"`  
+Syntax: `(letrec ((<variable1> <init1>)...) <body>)"`
 In `letrec` the variable(s) are bound to a fresh location. They are then set to the evaluated init(s). Each variable is assigned in some unspecified order. This allows to define mutually recursive procedures.
 Example:
 
@@ -80,7 +85,7 @@ Example:
 
 ### Letrec\*
 
-Syntax: `(letrec* ((<variable1> <init1>)...) <body>)"`  
+Syntax: `(letrec* ((<variable1> <init1>)...) <body>)"`
 In `letrec*` the variable(s) are bound to a fresh location. They are then set to the evaluated init(s). Each variable is assigned in left-to-right order.
 Example:
 
@@ -111,46 +116,59 @@ The syntax for procedure calls is identical to Scheme:
 The syntax for lambdas is the following:
 `(lambda <parameter-list> <body>)`
 
+### Define shorthand
+
+There is syntactic sugar for defining functions and binding them to a name:
+
+```scheme
+; Instead of
+(define add1 (lambda (a b) (+ a b)))
+
+; You can write
+(define (add2 a b) (+ a b))
+```
+
 ### Arithmetic operations
 
 #### Addition
 
-Syntax: `(+ <argument1> <argument2> ...)`  
+Syntax: `(+ <argument1> <argument2> ...)`
 Example: `(+ 5 3)`
 
 #### Subtraction
 
-Syntax: `(- <argument1> <argument2> ...)`  
+Syntax: `(- <argument1> <argument2> ...)`
 Example: `(+- 5 3)`
 
 #### Multiplication
 
-Syntax: `(* <argument1> <argument2> ...)`  
+Syntax: `(* <argument1> <argument2> ...)`
 Example: `(* 5 3)`
 
 #### Division
 
-Syntax: `(/ <argument1> <argument2> ...)`  
+Syntax: `(/ <argument1> <argument2> ...)`
 Example: `(/ 5 3)`
 
 ## Predefined functions
 
-### Arithmetic functions
+All the functions below are standard procedures of scheme and are best described on [this website](https://inst.eecs.berkeley.edu/~cs61a/sp19/articles/scheme-builtins.html).
 
-#### modulo
+Math functions: `floor-remainder modulo abs sqrt max min`
 
-Syntax: `(modulo <argument1> <argument2>)`  
-Example: `(modulo  5 3)`
+Comparison functions: `zero? positive? negative? odd? even? equal?`
 
-#### abs
+Logic functions: `and or not`
 
-Syntax: `(abs <argument1>)`  
-Example: `(abs -10)`
+List function: `pair? null? list car cdr set-car! set-cdr! cons append length reverse assoc`
 
-#### sqrt
+Vector functions: `vector vector? make-vector vector-length vector-ref vector-set!`
 
-Syntax: `(sqrt <argument1>)`  
-Example: `(sqrt 16)`
+String functions: `string->number number->string symbol->string string->symbol string-length make-string`
+
+Symbol functions: `symbol? symbol=?`
+
+Higher order functions: `apply map`
 
 ## IO capabilities
 
@@ -164,6 +182,6 @@ This prints a message to a buffer that is safely captured and that can be printe
 
 ## Sources
 
-This guide was built with the help of the following sources:  
-[1] TryScheme (https://try.scheme.org/), accessed on 13.12.2023  
-[2] R7RS Small Edition (https://standards.scheme.org/), accessed on 13.12.2023
+This guide was built with the help of the following sources:
+[1] [TryScheme](https://try.scheme.org/), accessed on 24.01.2024 \
+[2] [R7RS Small Edition](https://standards.scheme.org/official/r7rs.pdf), accessed on 24.01.2024

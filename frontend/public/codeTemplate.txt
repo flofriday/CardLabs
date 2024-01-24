@@ -4,22 +4,22 @@
 ; players is a list of tuple where the first element is a unique string for each
 ; bot and the second element is the integer with the number of cards that bot 
 ; holds.
-(define turn (lambda (top-card hand players)
+(define (turn top-card hand players)
     (random-choice
-        (matching-cards top-card hand))))
+        (matching-cards top-card hand)))
 
 ; Some other player played a card
-(define card-played (lambda (card player)
+(define (card-played card player)
     ; Code goes here
-    ))
+    )
 
 ; Some other player had to pick a card because they didn't have a matching one.
 ; This is not called as a result of a draw or draw choose card.
-(define card-picked (lambda (top-card player)
+(define (card-picked top-card player)
     ; Code goes here
-    ))
+    )
 
 ; The pile got reshuffled into the draw pile
-(define pile-reshuffled (lambda ()
+(define (pile-reshuffled) 
     ; Code goes here
-    ))
+    )
