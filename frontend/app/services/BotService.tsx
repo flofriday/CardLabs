@@ -5,6 +5,7 @@ import { Page } from "../types/contentPage";
 import { refreshAccessToken } from "./RefreshService";
 import { UnAuthorizedError } from "../exceptions/UnAuthorizedError";
 import { NotFoundError } from "../exceptions/NotFoundError";
+import {RestAPIError} from "@/app/exceptions/RestAPIError";
 
 export async function getNewBotName(): Promise<string> {
   await refreshAccessToken();
@@ -89,7 +90,7 @@ export async function rankBot(id: number): Promise<void> {
       toast.success("Successfully ranked the bot");
     } else {
       toast.error("An error occurred ranking the bot. Please try again later.");
-      throw new EvalError(); // TODO change this
+      throw new RestAPIError(`HTTP REST API error with code ${response.status} occurred`);
     }
   }
 }
