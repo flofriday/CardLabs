@@ -39,8 +39,8 @@ export default function LoggingElement({ gameId }: Props): JSX.Element {
   }, [gameId]);
 
   return (
-    <div className="h-full w-4/12 bg-secondary border-8 border-text rounded-lg">
-      <h1 className="text-4xl ml-4 mt-4 font-bold">Log</h1>
+    <div className="h-full w-4/12 bg-secondary border-8 border-text rounded-lg flex flex-col">
+      <h1 className="text-4xl m-4 font-bold">Log</h1>
       {logLines.length === 0 ? (
         <div className=" w-full flex justify-center mt-32 text-xl text-center">
           <h2>
@@ -50,16 +50,19 @@ export default function LoggingElement({ gameId }: Props): JSX.Element {
           </h2>
         </div>
       ) : (
-        logLines.map((log, index) => (
-          <div
-            key={index}
-            className={`mb-2 ${
-              log.type !== "system" ? "text-yellow" : ""
-            } p-2 rounded-md`}
-          >
-            {log.type !== "system" && "[DBG] "} {log.message}
-          </div>
-        ))
+        <div className="overflow-auto w-full">
+          {logLines.map((log, index) => (
+            <pre
+              key={index}
+              className={`mb-2 ${
+                log.type !== "system" ? "text-yellow" : ""
+              } p-2 rounded-md`}
+            >
+              {log.type !== "system" && "[DBG] "}
+              {log.message.trim()}
+            </pre>
+          ))}
+        </div>
       )}
     </div>
   );
