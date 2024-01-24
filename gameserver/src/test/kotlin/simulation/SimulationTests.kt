@@ -531,4 +531,61 @@ class SimulationTests {
         Assert.assertEquals("Get those cards!", logMessage.message)
         Assert.assertEquals(1, logMessage.botId)
     }
+
+    @Test
+    fun runTemplateBot() {
+        val code =
+            """
+            ; It's your turn, select a card
+            ; hand is a list of cards in your hand
+            ; top-card is a single card
+            ; players is a list of tuple where the first element is a unique string for each
+            ; bot and the second element is the integer with the number of cards that bot 
+            ; holds.
+            (define (turn top-card hand players)
+                (random-choice
+                    (matching-cards top-card hand)))
+
+            ; Some other bot played a card
+            (define (card-played card bot)
+                (todo)
+                )
+
+            ; Some other bot had to pick a card because they didn't have a matching one.
+            ; This is not called as a result of a draw or draw choose card.
+            (define (card-picked top-card bot)
+                (todo)
+                )
+
+            ; The pile got reshuffled into the draw pile
+            (define (pile-reshuffled) 
+                (todo)
+                )
+            """.trimIndent()
+        val player1 =
+            createTestPlayer(
+                0,
+                code,
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.ORANGE, 1)),
+            )
+        val player2 =
+            createTestPlayer(
+                1,
+                code,
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 2)),
+            )
+        val state =
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.ORANGE, 5)),
+                mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
+            )
+
+        runTurn(state)
+        assert(player1.hand.isEmpty())
+        val expectedCard = (Card(CardType.NUMBER_CARD, Color.ORANGE, 1))
+        Assert.assertEquals(state.pile.last(), expectedCard)
+        Assert.assertEquals(state.turns.last().actions.first { a -> a.type == ActionType.PLAY_CARD }.card, expectedCard)
+        Assert.assertTrue(state.turns.last().actions.none { a -> a.type == ActionType.DRAW_CARD })
+    }
 }

@@ -117,6 +117,16 @@ analysis:gameserver:
     - ./mvnw ktlint:check
   allow_failure: false
 
+build:gameserver:
+  image: amazoncorretto:21-alpine
+  stage: build
+  script:
+    - cd ${GAMESERVER_DIR}
+    - ./mvnw compile
+  dependencies:
+    - analysis:gameserver
+  allow_failure: false
+
 test:gameserver:
   image: amazoncorretto:21-alpine
   stage: test
@@ -124,7 +134,7 @@ test:gameserver:
     - cd ${GAMESERVER_DIR}
     - ./mvnw clean test
   dependencies:
-    - analysis:gameserver
+    - build:gameserver
   allow_failure: false
 
 push:gameserver:

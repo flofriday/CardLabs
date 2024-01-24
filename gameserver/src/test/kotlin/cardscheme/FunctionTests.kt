@@ -358,6 +358,34 @@ class FunctionTests {
     }
 
     @Test
+    fun todoFunction() {
+        val program = "(todo)"
+        val result = SchemeInterpreter().run(program)
+        assert(result is VoidValue)
+        Assert.assertEquals(VoidValue(null), result as VoidValue)
+    }
+
+    @Test
+    fun todoFunctionVararg() {
+        val program = """(todo "implement something")"""
+        val result = SchemeInterpreter().run(program)
+        assert(result is VoidValue)
+        Assert.assertEquals(VoidValue(null), result as VoidValue)
+    }
+
+    @Test
+    fun todoFunctionManyVararg() {
+        val program =
+            """
+            (todo "implement something" "implement something" "implement something" "implement something" 
+            "implement something")
+            """.trimIndent()
+        val result = SchemeInterpreter().run(program)
+        assert(result is VoidValue)
+        Assert.assertEquals(VoidValue(null), result as VoidValue)
+    }
+
+    @Test
     fun badIllformedEmptyCall() {
         val program = "()"
         Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
