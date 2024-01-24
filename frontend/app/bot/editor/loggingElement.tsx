@@ -8,15 +8,29 @@ interface Props {
   gameId: number | undefined;
 }
 
+async function getLogLines(gameId: number): Promise<LogLine[]> {
+  let logLines: LogLine[] = [];
+  let counter = 0;
+  do {
+    logLines = await getLogLinesForGame(gameId);
+    if (logLines.length !== 0) {
+      break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    counter += 1;
+  } while (logLines.length === 0 && counter < 20);
+
+  return logLines;
+}
+
 export default function LoggingElement({ gameId }: Props): JSX.Element {
   const [logLines, setLogLines] = useState<LogLine[]>([]);
 
   useEffect(() => {
     if (gameId !== undefined) {
-      getLogLinesForGame(gameId)
+      getLogLines(gameId)
         .then((lines) => {
           setLogLines(lines);
-          console.log(lines);
         })
         .catch(() => {});
     } else {

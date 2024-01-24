@@ -203,18 +203,18 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
               );
               return;
             }
+            if (_id == null || !codeSaved) {
+              toast.error("The bot needs to be saved before testing");
+              return;
+            }
 
             if (_id !== null) {
-              _saveBot(_id, code)
-                .then(() => {
-                  createTestMatch(_id)
-                    .then((gid) => {
-                      toast.success(
-                        "Successfully queued a test match. You can view the match results in the match history."
-                      );
-                      setLastTestGame(gid);
-                    })
-                    .catch(() => {});
+              createTestMatch(_id)
+                .then((gid) => {
+                  toast.success(
+                    "Successfully queued a test match. You can view the match results in the match history."
+                  );
+                  setLastTestGame(gid);
                 })
                 .catch(() => {});
             } else {
