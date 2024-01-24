@@ -380,4 +380,11 @@ class FunctionTests {
         assert(result is VoidValue)
         Assert.assertEquals(VoidValue(null), result as VoidValue)
     }
+
+    @Test
+    fun badIllformedEmptyCall() {
+        val program = "()"
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
+
 }
