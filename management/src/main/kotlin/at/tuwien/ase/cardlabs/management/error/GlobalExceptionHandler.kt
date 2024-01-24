@@ -78,6 +78,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingBotCodeException::class)
     fun handleMissingBotCodeException(ex: MissingBotCodeException): ResponseEntity<String> {
+        logger.warn(ex.toString())
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(ex.message)
@@ -95,6 +96,7 @@ class GlobalExceptionHandler {
     // == Match exceptions ==
     @ExceptionHandler(InsufficientBotExistsException::class)
     fun handleInsufficientBotExistsException(ex: InsufficientBotExistsException): ResponseEntity<String> {
+        logger.warn(ex.toString())
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
             .body(ex.message)
@@ -119,6 +121,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(TokenExpiredException::class)
     fun handleTokenExpired(ex: TokenExpiredException): ResponseEntity<String> {
+        logger.warn(ex.toString())
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(ex.message)
@@ -126,6 +129,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidTokenException::class)
     fun handleInvalidToken(ex: InvalidTokenException): ResponseEntity<String> {
+        logger.warn(ex.toString())
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(ex.message)
@@ -133,6 +137,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(ExpiredJwtException::class)
     fun handleExpiredJwtException(ex: ExpiredJwtException): ResponseEntity<Unit> {
+        logger.warn(ex.toString())
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .build()
