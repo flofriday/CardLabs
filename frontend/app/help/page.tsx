@@ -9,13 +9,14 @@ import { toast } from "react-toastify";
 
 export default function Help(): JSX.Element {
   const markdownUrlMap = new Map<string, string>([
-    ["./documentation/codeTemplate.md", "Code Template"],
-    ["./documentation/convenienceFunctions.md", "Convenience functions"],
-    ["./documentation/debugging.md", "Debugging"],
-    ["./documentation/botTesting.md", "Testing your bot"],
+    ["./documentation/botApi.md", "Bot API"],
     ["./documentation/createBot.md", "Creating a new bot"],
     ["./documentation/editBot.md", "Editing a bot"],
+    ["./documentation/botTesting.md", "Testing your bot"],
+    ["./documentation/scoring.md", "Scoring"],
+    ["./documentation/debugging.md", "Debugging"],
     ["./documentation/cardScheme.md", "Programming Language"],
+    ["./documentation/convenienceFunctions.md", "Convenience functions"],
   ]);
 
   const [markdownContent, setMarkdownContent] = useState(new Map());

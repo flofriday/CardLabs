@@ -79,6 +79,7 @@ class Matchmaker(
                     Bot(
                         b.id!!,
                         latestCode!!.id!!,
+                        b.name,
                         latestCode.code,
                     ),
                 )

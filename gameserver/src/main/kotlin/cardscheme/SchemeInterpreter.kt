@@ -33,7 +33,7 @@ class SchemeInterpreter(
                 "Stackoverflow",
                 "You exceeded the stack limit, probably due to endless recursion. Look at the tip below for more.",
                 null,
-                "Look at the reason above for a tip."
+                "Look at the reason above for a tip.",
             )
         }
     }
@@ -52,7 +52,7 @@ class SchemeInterpreter(
                 "Stackoverflow",
                 "You exceeded the stack limit, probably due to endless recursion. Look at the tip below for more.",
                 null,
-                "Look at the reason above for a tip."
+                "Look at the reason above for a tip.",
             )
         }
     }

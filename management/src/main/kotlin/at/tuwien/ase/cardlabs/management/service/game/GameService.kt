@@ -138,6 +138,7 @@ class GameService(
                 Bot(
                     bot.id!!,
                     null,
+                    bot.name,
                     bot.currentCode,
                 )
             )
@@ -149,6 +150,7 @@ class GameService(
                 Bot(
                     bot.id!!,
                     botLatestCode.id!!,
+                    bot.name,
                     botLatestCode.code,
                 )
             )
@@ -157,6 +159,7 @@ class GameService(
             Bot(
                 testBot.id,
                 null,
+                bot.name,
                 testBot.code
             )
         )

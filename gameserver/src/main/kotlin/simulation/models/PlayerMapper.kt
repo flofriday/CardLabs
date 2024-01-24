@@ -8,8 +8,7 @@ import cardscheme.VectorValue
 fun encodePlayer(player: Player): SchemeValue {
     return VectorValue(
         mutableListOf(
-            // FIXME: this should probably be the bot name
-            StringValue(player.bot.botId.toString(), null),
+            StringValue(player.bot.name, null),
             IntegerValue(player.hand.size, null),
         ),
         null,
