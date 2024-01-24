@@ -56,7 +56,7 @@ export default function MyLeaderboard(): JSX.Element {
         </div>
 
         <div className="w-1/2 px-12 pt-16">
-          {leaderBoardEntries.length > 0 ? (
+          {leaderBoardEntries !== undefined && leaderBoardEntries.length > 0 ? (
             <div className="flex flex-col items-center justify-center space-y-10">
               {leaderBoardEntries.map((entry, index) => (
                 <LeaderBoardEntry key={index} entry={entry} />
