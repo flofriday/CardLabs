@@ -65,10 +65,10 @@ export default function EditorButtons({
         id="button_save_bot"
       />
       <IconButton
-          text="Test Bot"
-          type={ButtonIcon.TEST}
-          id="button_test_bot"
-          onClick={test}
+        text="Test Bot"
+        type={ButtonIcon.TEST}
+        id="button_test_bot"
+        onClick={test}
       />
       <IconButton
         text="Rank Bot"
