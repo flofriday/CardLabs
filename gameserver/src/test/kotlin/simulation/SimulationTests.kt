@@ -1,6 +1,6 @@
 package simulation
 
-import cardscheme.SchemeInterpreter
+import cardscheme.*
 import org.junit.Assert
 import org.junit.Test
 import simulation.models.*
@@ -448,7 +448,11 @@ class SimulationTests {
                     (random-choice
                         (matching-cards topCard hand)))
                         
+            (define c '())
+            (define p '())
             (define (card-played card player)
+                    (set! c card)
+                    (set! p player)
                     (display "A new card was dropped")
             )
             """.trimIndent()
@@ -466,6 +470,17 @@ class SimulationTests {
         val logMessage = state.turns.last().logMessages.first { m -> m is DebugLogMessage } as DebugLogMessage
         Assert.assertEquals("A new card was dropped", logMessage.message)
         Assert.assertEquals(1, logMessage.botId)
+
+        val receivedCard = player2.interpreter.env.get("c")
+        val receivedPlayer = player2.interpreter.env.get("p")
+        Assert.assertEquals(
+            VectorValue(mutableListOf(SymbolValue("cyan", null), SymbolValue("switch", null)), null),
+            receivedCard,
+        )
+        Assert.assertEquals(
+            VectorValue(mutableListOf(StringValue("Bot0", null), IntegerValue(0, null)), null),
+            receivedPlayer,
+        )
     }
 
     @Test
@@ -506,9 +521,13 @@ class SimulationTests {
             (define (turn topCard hand players)
                     (random-choice
                         (matching-cards topCard hand)))
-                        
+            
+            (define c '())
+            (define p '())
             (define (card-picked top-card player)
                     (display "Get those cards!")
+                    (set! c top-card)
+                    (set! p player)
             )
             """.trimIndent()
         val player1 = createTestPlayer(0, code, mutableListOf(Card(CardType.SWITCH, Color.ORANGE, null)))
@@ -530,6 +549,17 @@ class SimulationTests {
         val logMessage = state.turns.last().logMessages.first { m -> m is DebugLogMessage } as DebugLogMessage
         Assert.assertEquals("Get those cards!", logMessage.message)
         Assert.assertEquals(1, logMessage.botId)
+
+        val receivedCard = player2.interpreter.env.get("c")
+        val receivedPlayer = player2.interpreter.env.get("p")
+        Assert.assertEquals(
+            VectorValue(mutableListOf(SymbolValue("cyan", null), IntegerValue(5, null)), null),
+            receivedCard,
+        )
+        Assert.assertEquals(
+            VectorValue(mutableListOf(StringValue("Bot0", null), IntegerValue(2, null)), null),
+            receivedPlayer,
+        )
     }
 
     @Test

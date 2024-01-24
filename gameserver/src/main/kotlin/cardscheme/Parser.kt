@@ -686,7 +686,7 @@ class Parser {
                 "Invalid Function Call",
                 "A function call needs a function to be called, you cannot call nothing.",
                 Location.merge(lparen.location, rparen.location),
-                "If you wanted to create an empty list you need a quote like: '()"
+                "If you wanted to create an empty list you need a quote like: '()",
             )
         }
 
