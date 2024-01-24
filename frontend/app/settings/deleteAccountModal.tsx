@@ -1,4 +1,5 @@
 import Modal from "../components/modal";
+import { deleteCookie } from "cookies-next";
 import { deleteUser } from "../services/UserService";
 import { useRouter } from "next/navigation";
 import { authenticationStore } from "@/app/state/authenticationStore";
@@ -19,6 +20,9 @@ export default function DeleteAccountModal({ onClose }: Props): JSX.Element {
     deleteUser()
       .then((res) => {
         if (res) {
+          deleteCookie("auth_token");
+          localStorage.removeItem("auth_token_expire");
+          localStorage.removeItem("refresh_token");
           router.refresh();
           router.replace("/");
         }
