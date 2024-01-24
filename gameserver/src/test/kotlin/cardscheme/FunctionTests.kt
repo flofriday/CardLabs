@@ -375,7 +375,11 @@ class FunctionTests {
 
     @Test
     fun todoFunctionManyVararg() {
-        val program = """(todo "implement something" "implement something" "implement something" "implement something" "implement something")"""
+        val program =
+            """
+            (todo "implement something" "implement something" "implement something" "implement something" 
+            "implement something")
+            """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is VoidValue)
         Assert.assertEquals(VoidValue(null), result as VoidValue)
@@ -386,5 +390,4 @@ class FunctionTests {
         val program = "()"
         Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
     }
-
 }
