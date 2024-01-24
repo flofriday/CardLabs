@@ -95,7 +95,7 @@ fun runTurn(state: GameState) {
                     state,
                     p,
                     "card-picked",
-                    listOf(ListValue(listOf(encodePlayer(player)), null), encodeCard(pickedCards.first())),
+                    listOf(encodeCard(state.pile.last()), encodePlayer(player)),
                 )
             }
 
@@ -116,7 +116,7 @@ fun runTurn(state: GameState) {
                 state,
                 p,
                 "card-played",
-                listOf(ListValue(listOf(encodePlayer(player)), null), encodeCard(state.pile.last())),
+                listOf(encodeCard(state.pile.last()), encodePlayer(player)),
             )
         }
 
