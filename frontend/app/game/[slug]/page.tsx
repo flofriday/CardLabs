@@ -27,7 +27,6 @@ export default function GameOverview({
       .then((page) => {
         setGameEntries(page.content);
         setTotalPages(page.totalPages);
-        console.log(page.content);
       })
       .catch((ex) => {
         if (ex instanceof UnAuthorizedError) {

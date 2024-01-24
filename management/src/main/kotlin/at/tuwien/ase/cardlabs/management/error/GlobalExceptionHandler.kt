@@ -7,7 +7,9 @@ import at.tuwien.ase.cardlabs.management.error.authentication.InvalidTokenExcept
 import at.tuwien.ase.cardlabs.management.error.authentication.TokenExpiredException
 import at.tuwien.ase.cardlabs.management.error.bot.BotDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.bot.BotStateException
+import at.tuwien.ase.cardlabs.management.error.bot.MissingBotCodeException
 import at.tuwien.ase.cardlabs.management.error.game.GameDoesNotExistException
+import at.tuwien.ase.cardlabs.management.error.matchmaking.InsufficientBotExistsException
 import io.jsonwebtoken.ExpiredJwtException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -74,12 +76,29 @@ class GlobalExceptionHandler {
             .body(ex.message)
     }
 
+    @ExceptionHandler(MissingBotCodeException::class)
+    fun handleMissingBotCodeException(ex: MissingBotCodeException): ResponseEntity<String> {
+        logger.warn(ex.toString())
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ex.message)
+    }
+
     // == Game exceptions ==
     @ExceptionHandler(GameDoesNotExistException::class)
     fun handleGameDoesNotExitException(ex: GameDoesNotExistException): ResponseEntity<String> {
         logger.warn(ex.toString())
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
+            .body(ex.message)
+    }
+
+    // == Match exceptions ==
+    @ExceptionHandler(InsufficientBotExistsException::class)
+    fun handleInsufficientBotExistsException(ex: InsufficientBotExistsException): ResponseEntity<String> {
+        logger.warn(ex.toString())
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
             .body(ex.message)
     }
 
@@ -102,6 +121,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(TokenExpiredException::class)
     fun handleTokenExpired(ex: TokenExpiredException): ResponseEntity<String> {
+        logger.warn(ex.toString())
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(ex.message)
@@ -109,6 +129,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidTokenException::class)
     fun handleInvalidToken(ex: InvalidTokenException): ResponseEntity<String> {
+        logger.warn(ex.toString())
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(ex.message)
@@ -116,6 +137,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(ExpiredJwtException::class)
     fun handleExpiredJwtException(ex: ExpiredJwtException): ResponseEntity<Unit> {
+        logger.warn(ex.toString())
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .build()

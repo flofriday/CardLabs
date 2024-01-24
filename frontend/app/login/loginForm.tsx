@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { login } from "../services/UserService";
 
 function loginSuccess(router: any): void {
-  console.log("redirect?");
   router.refresh();
   router.replace("/dashboard");
 }

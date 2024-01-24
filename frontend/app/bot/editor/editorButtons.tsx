@@ -9,6 +9,7 @@ import { useState } from "react";
 interface Props {
   save: () => void;
   rank: () => void;
+  test: () => void;
   _delete: () => void;
   codeHistory: CodeHistory[];
   onCodeChange: (code: string, historyMode: boolean) => void;
@@ -17,6 +18,7 @@ interface Props {
 export default function EditorButtons({
   save,
   rank,
+  test,
   _delete,
   codeHistory,
   onCodeChange,
@@ -62,7 +64,12 @@ export default function EditorButtons({
         type={ButtonIcon.SAVE}
         id="button_save_bot"
       />
-      <IconButton text="Test Bot" type={ButtonIcon.TEST} id="button_test_bot" />
+      <IconButton
+          text="Test Bot"
+          type={ButtonIcon.TEST}
+          id="button_test_bot"
+          onClick={test}
+      />
       <IconButton
         text="Rank Bot"
         type={ButtonIcon.RANK}

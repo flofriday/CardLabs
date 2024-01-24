@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { getLocations } from "../services/LocationService";
 
 function loginSuccess(router: any): void {
-  console.log("redirect?");
   router.refresh();
   router.replace("/"); // change this to /dashboard
   toast.success("Registration was successful");
