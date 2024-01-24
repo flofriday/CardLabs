@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export const useSaveCodeStore = create((set) => ({
-  codeSaved: true,
+  codeSaved: false,
   setCodeSaved: (isCodeSaved: boolean) => {
     set({ codeSaved: isCodeSaved });
   },

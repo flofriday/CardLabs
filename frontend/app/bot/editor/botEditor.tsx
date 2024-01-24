@@ -122,6 +122,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           const history = b.codeHistory;
           history.unshift({ botId: b.id, code: b.currentCode, id: -1 });
           setCodeHistory(history);
+          setCodeSaved(true);
         })
         .catch((ex) => {
           if (ex instanceof UnAuthorizedError) {
@@ -191,23 +192,11 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
               );
               return;
             }
-            if (_id !== null) {
-              _saveBot(_id, code)
-                .then(() => {
-                  botRankWrapper(_id);
-                })
-                .catch(() => {});
-            } else {
-              createBot(name, code)
-                .then(() => {
-                  if (_id !== null) {
-                    botRankWrapper(_id);
-                  } else {
-                    toast.error("The bot needs to be saved before ranking");
-                  }
-                })
-                .catch(() => {});
+            if (_id == null || !codeSaved) {
+              toast.error("The bot needs to be saved before ranking");
+              return;
             }
+            botRankWrapper(_id);
           }}
           test={() => {
             if (code === undefined) {
