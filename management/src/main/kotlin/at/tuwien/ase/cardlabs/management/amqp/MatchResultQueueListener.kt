@@ -35,27 +35,28 @@ open class MatchResultQueueListener(
         // Update bot states
         botService.setBotStateToDefaultState(msg.participatingBotIds)
 
-        val containsNoTestBots = msg.participatingBotIds.any { it >= 0 }
+        val containsTestBot = msg.participatingBotIds.any { it < 0 }
         // If a test bot is in a match then no score or ban state should be updated
-        if (containsNoTestBots) {
-            // Ban bot if disqualified
-            if (msg.disqualifiedBotId != null) {
-                botService.updateBanState(msg.disqualifiedBotId, true)
-            }
+        if (containsTestBot) {
+            return
+        }
+        // Ban bot if disqualified
+        if (msg.disqualifiedBotId != null) {
+            botService.updateBanState(msg.disqualifiedBotId, true)
+        }
 
-            // Update bot elo
-            val bots = botService.fetchBotsByIds(msg.participatingBotIds)
-            val winningBot = bots.find { it.id!! == msg.winningBotId }
-            bots.forEach { bot ->
-                run {
-                    val newEloScore = calculateScore(
-                        bot,
-                        if (winningBot == null) false else bot.id!! == winningBot.id!!,
-                        bots,
-                    )
-                    logger.debug("Updating the elo score for bot ${bot.id} from ${bot.eloScore} to $newEloScore")
-                    botService.updateEloScore(bot.id!!, newEloScore)
-                }
+        // Update bot elo
+        val bots = botService.fetchBotsByIds(msg.participatingBotIds)
+        val winningBot = bots.find { it.id!! == msg.winningBotId }
+        bots.forEach { bot ->
+            run {
+                val newEloScore = calculateScore(
+                    bot,
+                    if (winningBot == null) false else bot.id!! == winningBot.id!!,
+                    bots,
+                )
+                logger.debug("Updating the elo score for bot ${bot.id} from ${bot.eloScore} to $newEloScore")
+                botService.updateEloScore(bot.id!!, newEloScore)
             }
         }
     }
