@@ -1,6 +1,7 @@
 # CardScheme
 
-CardScheme is a Scheme based language. CardScheme is a Scheme based language that provides you with some (but not all) Scheme language features. We only provide you with the necessary features to allow you to write competitive card game bots in order to make it easy to get started and to enable you to focus on what is important. Note, that some implementations may also be different or behave in different ways than the official Scheme standard. You can see the documentation of CardScheme below.
+CardScheme is the programming lanuage of CardLabs and a Scheme dialect which implements a reduced subset. 
+Note, that some implementations may also be different or behave in different ways than the official Scheme standard. You can see the documentation of CardScheme below.
 
 ## Types
 
@@ -32,6 +33,9 @@ CardScheme is a Scheme based language. CardScheme is a Scheme based language tha
 ### Vectors
 
 `#(obj)`, e.g. `#(0 "CardScheme" #t)` defines a vector with 3 elements
+
+### Symbols
+`'red` defines the symbol red
 
 ## Variable definitions
 
@@ -111,6 +115,18 @@ The syntax for procedure calls is identical to Scheme:
 The syntax for lambdas is the following:
 `(lambda <parameter-list> <body>)`
 
+
+### Define shorthand
+There is syntactic sugar for defining functions and binding them to a name:
+
+```scheme
+; Instead of
+(define add1 (lambda (a b) (+ a b)))
+
+; You can write
+(define (add2 a b) (+ a b))
+```
+
 ### Arithmetic operations
 
 #### Addition
@@ -135,22 +151,25 @@ Example: `(/ 5 3)`
 
 ## Predefined functions
 
-### Arithmetic functions
+All the functions below are standard procedures of scheme and are best described on [this website](https://inst.eecs.berkeley.edu/~cs61a/sp19/articles/scheme-builtins.html).
 
-#### modulo
+Math functions: `floor-remainder modulo abs sqrt max min`
 
-Syntax: `(modulo <argument1> <argument2>)`  
-Example: `(modulo  5 3)`
+Comparison functions: `zero? positive? negative? odd? even? equal?`
 
-#### abs
+Logic functions: `and or not`
 
-Syntax: `(abs <argument1>)`  
-Example: `(abs -10)`
+List function: `pair? null? list car cdr set-car! set-cdr! cons append length reverse assoc`
 
-#### sqrt
+Vector functions: `vector vector? make-vector vector-length vector-ref vector-set!`
 
-Syntax: `(sqrt <argument1>)`  
-Example: `(sqrt 16)`
+String functions: `string->number number->string symbol->string string->symbol string-length make-string`
+
+Symbol functions: `symbol? symbol=?`
+
+Higher order functions: `apply map`
+
+
 
 ## IO capabilities
 
@@ -165,5 +184,5 @@ This prints a message to a buffer that is safely captured and that can be printe
 ## Sources
 
 This guide was built with the help of the following sources:  
-[1] TryScheme (https://try.scheme.org/), accessed on 13.12.2023  
-[2] R7RS Small Edition (https://standards.scheme.org/), accessed on 13.12.2023
+[1] [TryScheme](https://try.scheme.org/), accessed on 24.01.2024 \
+[2] [R7RS Small Edition](https://standards.scheme.org/official/r7rs.pdf), accessed on 24.01.2024
