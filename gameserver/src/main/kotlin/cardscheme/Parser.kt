@@ -679,8 +679,17 @@ class Parser {
         while (peek() !is RParenToken) {
             expressions.addLast(parseExpression())
         }
-
         val rparen = must<RParenToken>("Expected a right parenthesis here")
+
+        if (expressions.isEmpty()) {
+            throw SchemeError(
+                "Invalid Function Call",
+                "A function call needs a function to be called, you cannot call nothing.",
+                Location.merge(lparen.location, rparen.location),
+                "If you wanted to create an empty list you need a quote like: '()"
+            )
+        }
+
         return ApplicationNode(expressions, false, Location.merge(lparen.location, rparen.location))
     }
 
