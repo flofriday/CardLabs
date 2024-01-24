@@ -112,6 +112,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
             .catch(() => {
               toast.error("Error loading code template");
             });
+          setCodeSaved(false);
         })
         .catch(() => {});
     } else {
