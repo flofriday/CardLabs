@@ -8,8 +8,29 @@ import {
   getMyTop5LeaderBoardEntries,
 } from "../services/LeaderBoardService";
 import { LeaderBoardType } from "../types/LeaderBoardType";
+import React, { useEffect } from "react";
+import { authenticationStore } from "@/app/state/authenticationStore";
+import { isAuthenticated } from "../services/AuthenticationService";
+import { toast } from "react-toastify";
 
 export default function Dashboard(): JSX.Element {
+  const authenticated: boolean = authenticationStore(
+    (state: any) => state.authenticated
+  );
+  const setAuthenticated = authenticationStore(
+    (state: any) => state.setAuthenticated
+  );
+
+  useEffect(() => {
+    isAuthenticated()
+      .then((auth) => {
+        setAuthenticated(auth);
+      })
+      .catch(() => {
+        toast.error("Error loading authentication status");
+      });
+  }, [authenticated]);
+
   return (
     <div className="flex flex-col h-full">
       <LeftPageHeader title="Dashboard" />

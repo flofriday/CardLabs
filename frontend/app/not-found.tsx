@@ -1,5 +1,6 @@
+"use client";
 import Link from "next/link";
-import { isAuthenticated } from "./services/AuthenticationService";
+import { isAuthenticated } from "@/app/services/AuthenticationService";
 
 export default async function NotFoundPage(): Promise<JSX.Element> {
   return (

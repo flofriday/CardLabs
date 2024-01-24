@@ -49,7 +49,6 @@ class LocalSecurityConfig(
                 authorize
                     .requestMatchers(PathRequest.toH2Console()).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/oauth2")).permitAll()
-                    .requestMatchers(AntPathRequestMatcher("/authentication/login")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/authentication/refresh")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/locations")).permitAll()
                     .requestMatchers(AntPathRequestMatcher("/leaderboard/public")).permitAll()

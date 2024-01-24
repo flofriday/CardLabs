@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { UnAuthorizedError } from "@/app/exceptions/UnAuthorizedError";
 import { NotFoundError } from "@/app/exceptions/NotFoundError";
+import { useSaveCodeStore } from "@/app/state/savedCodeStore";
 
 const CODE_CHARACTER_LIMIT = 32000;
 
@@ -68,10 +69,11 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   const [name, setName] = useState("");
   const [code, setCode] = useState<string | undefined>(undefined);
   const [codeHistory, setCodeHistory] = useState<CodeHistory[]>([]);
-  const [saved, setSaved] = useState(true);
   const [ranked, setRanked] = useState(false);
   const [isHistoryMode, setHistoryMode] = useState(false);
   const router = useRouter();
+  const codeSaved: boolean = useSaveCodeStore((state: any) => state.codeSaved);
+  const setCodeSaved = useSaveCodeStore((state: any) => state.setCodeSaved);
 
   const setupBotCodeTemplate = async (): Promise<string> => {
     try {
@@ -128,7 +130,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent): void => {
-      if (!saved) {
+      if (!codeSaved) {
         event.preventDefault();
         event.returnValue = "";
       }
@@ -137,7 +139,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [saved]);
+  }, [codeSaved]);
 
   return (
     <div className="w-full h-full flex">
@@ -160,7 +162,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
               );
               return;
             }
-            setSaved(true);
+            setCodeSaved(true);
             if (_id === null) {
               saveNewBot(name, code ?? "", setId, router);
             } else {
@@ -170,7 +172,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
             }
           }}
           rank={() => {
-            if (_id === null || !saved) {
+            if (_id === null || !codeSaved) {
               toast.error("Bot needs to be saved before it can be ranked");
               return;
             }
@@ -205,7 +207,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           readOnly={isHistoryMode}
           onChange={(c) => {
             if (c !== code) {
-              setSaved(false);
+              setCodeSaved(false);
               setRanked(false);
             }
             setCode(c ?? "");

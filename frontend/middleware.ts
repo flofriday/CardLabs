@@ -22,12 +22,30 @@ export default async function middleware(
 ): Promise<NextResponse<unknown> | undefined> {
   if (startsWithProtectedRoute(req.nextUrl.pathname)) {
     const token = req.cookies.get("auth_token")?.value;
-    if (token !== undefined) {
-      if (!(await validToken(token))) {
-        return RedirectToForbidden(req);
-      }
-    } else {
+    if (token === undefined || !(await validToken(token))) {
       return RedirectToForbidden(req);
     }
+  }
+  const destination = process.env.MANAGEMENT_HOST ?? "http://localhost:8080";
+
+  if (req.nextUrl.pathname.startsWith('/api')) {
+    const path = req.nextUrl.pathname.replace("/api", "")
+    const url = new URL(path, destination)
+
+    req.nextUrl.searchParams.forEach((value, key) => {
+      url.searchParams.set(key, value);
+    });
+
+    return NextResponse.rewrite(url.toString());
+  }
+  if (req.nextUrl.pathname.startsWith('/login/oauth2/code')) {
+    const path = req.nextUrl.pathname
+    const url = new URL(path, destination)
+
+    req.nextUrl.searchParams.forEach((value, key) => {
+      url.searchParams.set(key, value);
+    });
+
+    return NextResponse.rewrite(url.toString());
   }
 }

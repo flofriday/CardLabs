@@ -2,12 +2,14 @@ stages:
   - analysis
   - build
   - test
+  - push
   - deploy
 
 variables:
   FRONTEND_DIR: "frontend"
   MANAGEMENT_DIR: "management"
   GAMESERVER_DIR: "gameserver"
+  DOCKER_IMAGE_REGISTRY: "registry.reset.inso-w.at/2023ws-ase-pr-group/23ws-ase-pr-inso-04"
 
 cache:
   paths:
@@ -39,7 +41,21 @@ build:frontend:
   dependencies:
     - analysis:frontend
   allow_failure: false
-# TODO: deploy stage
+
+push:frontend:
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  stage: push
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/frontend"
+      --dockerfile "${CI_PROJECT_DIR}/frontend/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/frontend:${CI_PIPELINE_ID}"
+  dependencies:
+    - build:frontend
+  only:
+    - master
 
 ###########################
 ### Management pipeline ###
@@ -73,7 +89,21 @@ test:management:
   dependencies:
     - build:management
   allow_failure: false
-  # TODO: deploy stage
+
+push:management:
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  stage: push
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/management"
+      --dockerfile "${CI_PROJECT_DIR}/management/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/management:${CI_PIPELINE_ID}"
+  dependencies:
+    - test:management
+  only:
+    - master
 
 ###########################
 ### GameServer pipeline ###
@@ -96,3 +126,42 @@ test:gameserver:
   dependencies:
     - analysis:gameserver
   allow_failure: false
+
+push:gameserver:
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  stage: push
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/gameserver"
+      --dockerfile "${CI_PROJECT_DIR}/gameserver/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/gameserver:${CI_PIPELINE_ID}"
+  dependencies:
+    - test:gameserver
+  only:
+    - master
+
+############################
+### Continous deployment ###
+############################
+deploy:
+  stage: deploy
+  image: bitnami/kubectl
+  script:
+    - sed -i 's/:latest/:'$CI_PIPELINE_ID'/g' kubernetes.yaml rabbitmq-service.yaml frontend-service.yaml management-service.yaml gameserver-service.yaml
+    - cat kubernetes.yaml
+    - cat rabbitmq-service.yaml
+    - cat frontend-service.yaml
+    - cat management-service.yaml
+    - cat gameserver-service.yaml
+    - kubectl apply -f kubernetes.yaml,rabbitmq-service.yaml,frontend-service.yaml,management-service.yaml,gameserver-service.yaml
+    - sleep 30
+    - kubectl get services
+    - kubectl get pods
+  dependencies:
+    - push:frontend
+    - push:management
+    - push:gameserver
+  only:
+    - master
