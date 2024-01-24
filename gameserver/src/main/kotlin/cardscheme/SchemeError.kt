@@ -2,7 +2,10 @@ package cardscheme
 
 data class SchemeError(val header: String, val reason: String, val location: Location?, val tip: String?) :
     Throwable() {
-    fun format(program: String, color: Boolean = true): String {
+    fun format(
+        program: String,
+        color: Boolean = true,
+    ): String {
         val output = StringBuilder()
         val reset = if (color) "\u001b[0m" else ""
         val red = if (color) "\u001b[31m" else ""
@@ -25,12 +28,12 @@ data class SchemeError(val header: String, val reason: String, val location: Loc
                     output.append(reset + "\n")
                     output.append(
                         " ".repeat(5 + location.startcol - 1) + red +
-                                "^".repeat(
-                                    location.endcol + 1 -
-                                            location
-                                                .startcol,
-                                ) +
-                                reset + "\n",
+                            "^".repeat(
+                                location.endcol + 1 -
+                                    location
+                                        .startcol,
+                            ) +
+                            reset + "\n",
                     )
                 } else {
                     output.append(grey)

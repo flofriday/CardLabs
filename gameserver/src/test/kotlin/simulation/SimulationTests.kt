@@ -22,7 +22,7 @@ class SimulationTests {
         val interpreter = SchemeInterpreter(buffer)
         injectSimulationBuiltin(interpreter.env)
         interpreter.run(code)
-        return Player(Bot(id, id, code), hand, interpreter, buffer)
+        return Player(Bot(id, id, "Bot$id", code), hand, interpreter, buffer)
     }
 
     @Test
