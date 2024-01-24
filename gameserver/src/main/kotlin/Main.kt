@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import simulation.Config
 import simulation.models.SimulationRequest
 import simulation.runSimulation
+import java.io.IOException
 import java.net.ConnectException
 import java.text.SimpleDateFormat
 
@@ -25,8 +26,9 @@ fun main(args: Array<String>) {
     logger.info("Connecting to RabbitMQ")
     val factory = ConnectionFactory()
     factory.host = config.rmqHost
-    factory.setRequestedHeartbeat(60)
+    factory.setRequestedHeartbeat(10)
     factory.isAutomaticRecoveryEnabled = true
+    factory.setNetworkRecoveryInterval(5)
     if (config.rmqPort != null) {
         factory.port = config.rmqPort!!
     }
@@ -47,6 +49,9 @@ fun main(args: Array<String>) {
             connection = factory.newConnection()
             break
         } catch (e: ConnectException) {
+            logger.warn("Unable to connect to RabbitMQ")
+            Thread.sleep(5000)
+        } catch (e: IOException) {
             logger.warn("Unable to connect to RabbitMQ")
             Thread.sleep(5000)
         }
