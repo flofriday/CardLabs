@@ -3,14 +3,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.rabbitmq.client.ConnectionFactory
-import com.rabbitmq.client.DeliverCallback
-import com.rabbitmq.client.Delivery
+import com.rabbitmq.client.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import simulation.Config
 import simulation.models.SimulationRequest
 import simulation.runSimulation
+import java.net.ConnectException
 import java.text.SimpleDateFormat
 
 val REQUEST_QUEUE = "match-queue"
@@ -26,6 +25,11 @@ fun main(args: Array<String>) {
     logger.info("Connecting to RabbitMQ")
     val factory = ConnectionFactory()
     factory.host = config.rmqHost
+    factory.setRequestedHeartbeat(60)
+    factory.isAutomaticRecoveryEnabled = true
+    if (config.rmqPort != null) {
+        factory.port = config.rmqPort!!
+    }
     if (config.rmqUser != null) {
         factory.username = config.rmqUser
     }
@@ -36,8 +40,19 @@ fun main(args: Array<String>) {
         factory.virtualHost = config.rmqVirtualHost
     }
 
-    val connection = factory.newConnection()
-    val channel = connection.createChannel()
+    // Try connecting till rabbitMQ is reachable
+    var connection: Connection? = null
+    while (true) {
+        try {
+            connection = factory.newConnection()
+            break
+        } catch (e: ConnectException) {
+            logger.warn("Unable to connect to RabbitMQ")
+            Thread.sleep(5000)
+        }
+    }
+
+    val channel = connection!!.createChannel()
     channel.queueDeclare(REQUEST_QUEUE, true, false, false, null)
     channel.queueDeclare(RESULT_QUEUE, true, false, false, null)
 

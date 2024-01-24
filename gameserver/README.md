@@ -25,6 +25,7 @@ By default the game server connects to a RabbitMQ instance on localhost with the
 However, you can change that by setting some environment variables.
 
 - `RMQ_HOST`:  RabbitMQ Host
+- `RMQ_PORT`:  RabbitMQ Host
 - `RMQ_USER`: RabbitMQ User
 - `RMQ_PASSWORD`: RabbitMQ Password
 - `RMQ_VIRTUALHOST`: RabbitMQ Virtual Host

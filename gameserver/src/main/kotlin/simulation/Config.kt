@@ -5,6 +5,7 @@ package simulation
  */
 class Config {
     var rmqHost = "localhost"
+    var rmqPort: Int? = null
     var rmqUser: String? = null
     var rmqPassword: String? = null
     var rmqVirtualHost: String? = null
@@ -12,6 +13,9 @@ class Config {
     fun load() {
         if (System.getenv("RMQ_HOST") != null) {
             rmqHost = System.getenv("RMQ_HOST")
+        }
+        if (System.getenv("RMQ_PORT") != null) {
+            rmqPort = System.getenv("RMQ_POER").toInt()
         }
         if (System.getenv("RMQ_USER") != null) {
             rmqUser = System.getenv("RMQ_USER")
