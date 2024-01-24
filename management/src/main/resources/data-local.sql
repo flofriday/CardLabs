@@ -94,23 +94,23 @@ VALUES
 INSERT INTO BOT_CODE
     (id, bot_id, code, created, updated)
 VALUES
-    (10000, 10000, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10001, 10000, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10002, 10002, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10003, 10007, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10004, 10008, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10005, 10009, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10006, 10010, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10007, 10011, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10008, 10012, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10009, 10013, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10010, 10014, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10011, 10015, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10012, 10016, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10013, 10017, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10014, 10018, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10015, 10019, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (10016, 10020, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (10000, 10000, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10001, 10000, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10002, 10002, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10003, 10007, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10004, 10008, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10005, 10009, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10006, 10010, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10007, 10011, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10008, 10012, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10009, 10013, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10010, 10014, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10011, 10015, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10012, 10016, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10013, 10017, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10014, 10018, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10015, 10019, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (10016, 10020, '(define turn (lambda (topCard hand players) (random-choice (matching-cards topCard hand))))', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Create a few default games
 INSERT INTO GAME

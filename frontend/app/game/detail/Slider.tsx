@@ -64,7 +64,7 @@ export default function Slider({
           htmlFor="slider-input"
           className="mr-2 text-text text-4xl font-bold"
         >
-          Round:
+          Turn:
         </label>
         <input
           id="slider-input"

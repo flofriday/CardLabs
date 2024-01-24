@@ -36,7 +36,7 @@ fun runSimulation(request: SimulationRequest): SimulationResult {
             val player = state.players[state.currentPlayer]
             runTurn(state)
             if (player.hand.isEmpty()) {
-                logSystem(state.turns.last(), "Player ${player.bot.botId} won!")
+                logSystem(state.turns.last(), "Bot ${player.bot.name} won!")
                 break
             }
         }
@@ -56,12 +56,12 @@ fun runSimulation(request: SimulationRequest): SimulationResult {
         val turn = state.turns.last()
         val bot = state.players.first { p -> p.bot.botId == e.botId }.bot
 
-        logSystem(turn, "Bot ${bot.botId} disqualified!")
-        logBot(turn, bot, e.reason)
+        logSystem(turn, "Bot ${bot.name} disqualified!")
+        var crashMessage = e.reason
         if (e.schemeError != null) {
-            // FIXME: Disable colors in the error
-            logBot(turn, bot, e.schemeError.format(bot.code))
+            crashMessage += "\n\n" + e.schemeError.format(bot.code, color = false)
         }
+        logBot(turn, bot, crashMessage)
         return SimulationResult(
             gameId = request.gameId,
             startTime = startTime,
@@ -86,7 +86,7 @@ fun runTurn(state: GameState) {
 
     // Pick a card if there is no matching one
     if (player.hand.none { card -> state.pile.last().match(card) }) {
-        logSystem(turn, "Player ${player.bot.botId} has no matching card and draws one.")
+        logSystem(turn, "Bot ${player.bot.name} has no matching card and draws one.")
         val pickedCards = pickupCards(state, player, 1)
         state.players
             .filter { p -> p != player }
@@ -107,7 +107,7 @@ fun runTurn(state: GameState) {
 
     // Play a card
     execBotTurn(state, player)
-    logSystem(turn, "Player ${player.bot.botId} played ${state.pile.last().name()}.")
+    logSystem(turn, "Bot ${player.bot.name} played ${state.pile.last().name()}.")
     turn.actions.addLast(Action(player.bot.botId, ActionType.PLAY_CARD, state.pile.last()))
     state.players
         .filter { p -> p != player }
@@ -138,10 +138,10 @@ fun runTurn(state: GameState) {
     // Next player picks cards if necessary
     val nextPlayer = state.players[state.currentPlayer]
     if (state.pile.last().type == CardType.DRAW_TWO) {
-        logSystem(turn, "Player ${nextPlayer.bot.botId} draws 2 cards.")
+        logSystem(turn, "Bot ${nextPlayer.bot.name} draws 2 cards.")
         pickupCards(state, nextPlayer, 2)
     } else if (state.pile.last().type == CardType.CHOOSE_DRAW) {
-        logSystem(turn, "Player ${nextPlayer.bot.botId} draws 4 cards.")
+        logSystem(turn, "Bot ${nextPlayer.bot.name} draws 4 cards.")
         pickupCards(state, nextPlayer, 4)
     }
 }
@@ -358,8 +358,10 @@ private fun logSystem(
     turn: Turn,
     message: String,
 ) {
-    logger.debug(message)
-    turn.logMessages.addLast(SystemLogMessage(message))
+    val turnText = "%02d".format(turn.turnId + 1)
+    val fullMessage = "[$turnText] " + message
+    logger.debug(fullMessage)
+    turn.logMessages.addLast(SystemLogMessage(fullMessage))
 }
 
 private fun logBot(
@@ -367,6 +369,6 @@ private fun logBot(
     bot: Bot,
     message: String,
 ) {
-    logger.debug("Bot ${bot.botId} prints: $message")
+    logger.debug("Bot ${bot.name} prints: $message")
     turn.logMessages.addLast(DebugLogMessage(bot.botId, message))
 }

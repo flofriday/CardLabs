@@ -11,7 +11,7 @@ class VectorTests {
         assert(result is VectorValue)
         assertEquals(
             listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)),
-            (result as VectorValue).values
+            (result as VectorValue).values,
         )
     }
 
@@ -22,7 +22,7 @@ class VectorTests {
         assert(result is VectorValue)
         assertEquals(
             listOf(IntegerValue(1, null), IntegerValue(2, null), IntegerValue(3, null)),
-            (result as VectorValue).values
+            (result as VectorValue).values,
         )
     }
 
@@ -30,11 +30,12 @@ class VectorTests {
     fun poundVectorWithSymbol() {
         // Pounded vectors kinda behave like quoted environments, therfore identifier will be mapped to symbols and not
         // resolved.
-        val program = """
+        val program =
+            """
             (define flo 3)
             (define v #(flo 4))
             (vector-ref v 0)
-        """.trimIndent()
+            """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is SymbolValue)
         assertEquals("flo", (result as SymbolValue).value)
@@ -44,14 +45,14 @@ class VectorTests {
     fun poundVectorWithList() {
         // Pounded vectors kinda behave like quoted environments, therfore identifier will be mapped to symbols and not
         // resolved.
-        val program = """
+        val program =
+            """
             (pair? (vector-ref #(234 (1 2 "flo")) 1))
-        """.trimIndent()
+            """.trimIndent()
         val result = SchemeInterpreter().run(program)
         assert(result is BooleanValue)
         assertEquals(true, (result as BooleanValue).value)
     }
-
 
     @Test
     fun isVectorOnVector() {
@@ -84,7 +85,7 @@ class VectorTests {
         assert(result is VectorValue)
         assertEquals(
             listOf(IntegerValue(42, null), IntegerValue(42, null), IntegerValue(42, null)),
-            (result as VectorValue).values
+            (result as VectorValue).values,
         )
     }
 
