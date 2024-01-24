@@ -10,7 +10,9 @@ import {
   deleteBot as _deleteBot,
   Bot,
   getBotRank,
+  rankBot,
 } from "@/app/services/BotService";
+import { toast } from "react-toastify";
 
 interface Props {
   bot: Bot;
@@ -129,13 +131,23 @@ export default function BotCard({ bot, refetch }: Props): JSX.Element {
               hover="hover:bg-primary_highlight"
             />
           </Link>
-          <Link href={"/"}>
+          <button
+            onClick={() => {
+              rankBot(bot.id)
+                .then(() => {
+                  toast.success("Successfully queued the bot for ranking");
+                })
+                .catch(() => {
+                  toast.error("An error occurred Please try again later");
+                });
+            }}
+          >
             <IconButton
               text="Rank Bot"
               type={ButtonIcon.RANK}
               hover="hover:bg-primary_highlight"
             />
-          </Link>
+          </button>
           <Link href={"/bot/editor/" + bot.id}>
             <IconButton
               text="Edit"
