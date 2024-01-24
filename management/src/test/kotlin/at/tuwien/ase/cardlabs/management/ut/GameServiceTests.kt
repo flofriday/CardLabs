@@ -130,7 +130,7 @@ class GameServiceTests {
 
         val exception =
             assertThrows<GameDoesNotExistException> {
-                gameService.fetchLogById(user, gameId)
+                gameService.fetchLogById(user, gameId, 0)
             }
         assertEquals("A game with the id $gameId doesn't exist", exception.message)
     }
@@ -167,7 +167,7 @@ class GameServiceTests {
         gameDAO.gameState = GameState.CREATED
         gameDAO.participatingBotIds = listOf(botId)
         val gameId = gameRepository.save(gameDAO).id!!
-        val result = gameService.fetchLogById(user, gameId)
+        val result = gameService.fetchLogById(user, gameId, bot.id!!)
 
         assertEquals(gameDAO.turns[0].logMessages.size, result.size)
         assertEquals(gameDAO.turns[0].logMessages[0], result[0])
