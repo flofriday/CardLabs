@@ -1,6 +1,5 @@
 package at.tuwien.ase.cardlabs.management.matchmaker
 
-import at.tuwien.ase.cardlabs.management.Helper
 import at.tuwien.ase.cardlabs.management.amqp.MatchQueue
 import at.tuwien.ase.cardlabs.management.config.MatchmakerConfig
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
@@ -28,26 +27,30 @@ class Matchmaker(
     private val rabbitTemplate: RabbitTemplate,
     @MatchQueue private val matchQueue: Queue,
 ) {
-
     private final val logger = LoggerFactory.getLogger(javaClass)
 
     @Transactional
     @Throws(InsufficientBotExistsException::class)
-    fun createMatches(bot: BotDAO, maxMatches: Int) {
-        val bots = botRepository.findAllBotsWithAtLeastOneBotCode()
-            .filter { it.id != bot.id }
-            .toList()
+    fun createMatches(
+        bot: BotDAO,
+        maxMatches: Int,
+    ) {
+        val bots =
+            botRepository.findAllBotsWithAtLeastOneBotCode()
+                .filter { it.id != bot.id }
+                .toList()
 
         if (bots.isEmpty()) {
             throw InsufficientBotExistsException("Not enough bot exists to create a match")
         }
 
         // Create clusters
-        var clusters = distributeElementsIntoClusters(
-            elements = bots,
-            minSize = matchmakerConfig.matchSize.min,
-            maxSize = matchmakerConfig.matchSize.max - 1
-        )
+        var clusters =
+            distributeElementsIntoClusters(
+                elements = bots,
+                minSize = matchmakerConfig.matchSize.min,
+                maxSize = matchmakerConfig.matchSize.max - 1,
+            )
         for (cluster in clusters) {
             cluster.add(bot)
         }
@@ -77,7 +80,7 @@ class Matchmaker(
                         b.id!!,
                         latestCode!!.id!!,
                         latestCode.code,
-                    )
+                    ),
                 )
             }
             val message = MatchQueueMessage(game.id!!, messageBots)
@@ -144,27 +147,18 @@ class Matchmaker(
     private fun distributeElementsIntoClusters(
         elements: List<BotDAO>,
         minSize: Int,
-        maxSize: Int
+        maxSize: Int,
     ): List<MutableList<BotDAO>> {
         val clusters = mutableListOf<MutableList<BotDAO>>()
         var startIndex = 0
+        var remainingElements = elements.size
 
-        while (startIndex < elements.size) {
-            val remainingElements = elements.size - startIndex
+        while (remainingElements > minSize) {
             val clusterSize = if (remainingElements >= maxSize) maxSize else remainingElements
 
             clusters.add(elements.subList(startIndex, startIndex + clusterSize).toMutableList())
             startIndex += clusterSize
-        }
-
-        // Adjust the last two clusters if the last one is smaller than the minimum size
-        if (clusters.size > 1 && clusters.last().size < minSize) {
-            val lastCluster = clusters.removeLast()
-            val secondLastCluster = clusters.removeLast()
-            val combinedList = lastCluster + secondLastCluster
-            val splitList = Helper.splitListInHalf(combinedList.toMutableList())
-            clusters.add(splitList.first)
-            clusters.add(splitList.second)
+            remainingElements = elements.size - startIndex
         }
 
         return clusters
