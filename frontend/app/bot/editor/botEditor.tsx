@@ -190,6 +190,9 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
               toast.error("The bot needs to be saved before ranking");
               return;
             }
+            const hist = [...codeHistory];
+            hist.push({ botId: -1, code, id: -99999 });
+            setCodeHistory(hist);
             botRankWrapper(_id);
           }}
           test={() => {
