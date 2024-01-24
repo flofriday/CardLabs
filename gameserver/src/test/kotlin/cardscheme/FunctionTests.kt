@@ -356,4 +356,10 @@ class FunctionTests {
         assert(result is IntegerValue)
         Assert.assertEquals(IntegerValue(43, null), result as IntegerValue)
     }
+
+    @Test
+    fun badIllformedEmptyCall() {
+        val program = "()"
+        Assert.assertThrows(SchemeError::class.java) { SchemeInterpreter().run(program) }
+    }
 }
