@@ -13,6 +13,7 @@ import {
   saveBot as _saveBot,
   deleteBot as _deleteBot,
   rankBot as _rankBot,
+  CodeHistory,
 } from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -66,8 +67,10 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   const [_id, setId] = useState<number | null>(id);
   const [name, setName] = useState("");
   const [code, setCode] = useState<string | undefined>(undefined);
+  const [codeHistory, setCodeHistory] = useState<CodeHistory[]>([]);
   const [saved, setSaved] = useState(true);
   const [ranked, setRanked] = useState(false);
+  const [isHistoryMode, setHistoryMode] = useState(false);
   const router = useRouter();
 
   const setupBotCodeTemplate = async (): Promise<string> => {
@@ -105,6 +108,9 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
         .then((b: Bot) => {
           setName(b.name);
           setCode(b.currentCode);
+          const history = b.codeHistory;
+          history.unshift({ botId: b.id, code: b.currentCode, id: -1 });
+          setCodeHistory(history);
         })
         .catch((ex) => {
           if (ex instanceof UnAuthorizedError) {
@@ -118,7 +124,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           }
         });
     }
-  }, [_id]);
+  }, [_id, router]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent): void => {
@@ -138,6 +144,15 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
       <LeftPageHeader title={name} subTitle="Bot-Name" />
       <div className="h-full w-11/12">
         <EditorButtons
+          codeHistory={codeHistory}
+          onCodeChange={(c, histMode) => {
+            setHistoryMode(histMode);
+            setCode(c);
+            if (!histMode) {
+              codeHistory[0].code = c;
+              setCodeHistory(codeHistory);
+            }
+          }}
           save={() => {
             if (code !== undefined && code?.length >= CODE_CHARACTER_LIMIT) {
               toast.error(
@@ -150,6 +165,8 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
               saveNewBot(name, code ?? "", setId, router);
             } else {
               saveBot(_id, code ?? "");
+              codeHistory[0].code = code + "";
+              setCodeHistory(codeHistory);
             }
           }}
           rank={() => {
@@ -185,12 +202,17 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
         />
         <CodeEditor
           code={code ?? null}
+          readOnly={isHistoryMode}
           onChange={(c) => {
             if (c !== code) {
               setSaved(false);
               setRanked(false);
             }
             setCode(c ?? "");
+            if (!isHistoryMode && codeHistory[0] !== undefined) {
+              codeHistory[0].code = c ?? "";
+              setCodeHistory(codeHistory);
+            }
           }}
         />
       </div>
