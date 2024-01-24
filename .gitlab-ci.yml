@@ -55,7 +55,7 @@ push:frontend:
   dependencies:
     - build:frontend
   only:
-    - 72-improve-deployment
+    - master
 
 ###########################
 ### Management pipeline ###
@@ -103,7 +103,7 @@ push:management:
   dependencies:
     - test:management
   only:
-    - 72-improve-deployment
+    - master
 
 ###########################
 ### GameServer pipeline ###
@@ -140,7 +140,7 @@ push:gameserver:
   dependencies:
     - test:gameserver
   only:
-    - 72-improve-deployment
+    - master
 
 ############################
 ### Continous deployment ###
@@ -164,4 +164,4 @@ deploy:
     - push:management
     - push:gameserver
   only:
-    - 72-improve-deployment
+    - master
