@@ -124,7 +124,7 @@ class GameService(
         user: CardLabUser,
         botId: Long,
         testBotId: Long,
-        useCurrentCode: Boolean
+        useCurrentCode: Boolean,
     ): Long {
         logger.debug("User ${user.id} attempts to create a test match for the user bot $botId against the test bot $testBotId")
         val bot = botService.fetch(user, botId)
@@ -140,7 +140,7 @@ class GameService(
                     null,
                     bot.name,
                     bot.currentCode,
-                )
+                ),
             )
         } else {
             if (botLatestCode == null) {
@@ -152,16 +152,16 @@ class GameService(
                     botLatestCode.id!!,
                     bot.name,
                     botLatestCode.code,
-                )
+                ),
             )
         }
         messageBots.add(
             Bot(
                 testBot.id,
                 null,
-                bot.name,
-                testBot.code
-            )
+                testBot.name,
+                testBot.code,
+            ),
         )
         val game = save(listOf(GameCreate(listOf(bot.id, testBot.id))))[0]
         val message = MatchQueueMessage(game.id!!, messageBots)
