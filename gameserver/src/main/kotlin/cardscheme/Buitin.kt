@@ -69,7 +69,7 @@ fun injectBuiltin(environment: Environment) {
 
     environment.put("display", NativeFuncValue("display", Arity(1, 1), ::builtinDisplay))
     environment.put("newline", NativeFuncValue("newline", Arity(0, 0), ::builtinNewline))
-    environment.put("todo", NativeFuncValue("todo", Arity(0, 0, true), ::builtinTodo))
+    environment.put("todo", NativeFuncValue("todo", Arity(0, Int.MAX_VALUE, true), ::builtinTodo))
     environment.put("cool", NativeFuncValue("cool", Arity(0, 0), ::builtinCool))
 }
 
