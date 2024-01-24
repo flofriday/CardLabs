@@ -1,9 +1,12 @@
 package at.tuwien.ase.cardlabs.management.service.bot
 
+import at.tuwien.ase.cardlabs.management.Helper
 import at.tuwien.ase.cardlabs.management.config.BotConfig
+import at.tuwien.ase.cardlabs.management.config.MatchmakerConfig
 import at.tuwien.ase.cardlabs.management.controller.model.bot.Bot
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotCreate
 import at.tuwien.ase.cardlabs.management.controller.model.bot.BotPatch
+import at.tuwien.ase.cardlabs.management.controller.model.bot.TestBot
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotCodeDAO
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotDAO
 import at.tuwien.ase.cardlabs.management.database.model.bot.BotState
@@ -14,13 +17,16 @@ import at.tuwien.ase.cardlabs.management.error.ValidationException
 import at.tuwien.ase.cardlabs.management.error.account.AccountDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.bot.BotDoesNotExistException
 import at.tuwien.ase.cardlabs.management.error.bot.BotStateException
+import at.tuwien.ase.cardlabs.management.error.matchmaking.InsufficientBotExistsException
 import at.tuwien.ase.cardlabs.management.mapper.BotMapper
+import at.tuwien.ase.cardlabs.management.matchmaker.Matchmaker
 import at.tuwien.ase.cardlabs.management.security.CardLabUser
 import at.tuwien.ase.cardlabs.management.service.AccountService
 import at.tuwien.ase.cardlabs.management.util.Region
 import at.tuwien.ase.cardlabs.management.validation.validator.BotValidator
 import at.tuwien.ase.cardlabs.management.validation.validator.Validator
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -37,8 +43,12 @@ class BotService(
     private val botNameGenerator: BotNameGenerator,
     private val botCodeRepository: BotCodeRepository,
     private val botConfig: BotConfig,
+    private val matchmakerConfig: MatchmakerConfig,
+    @Lazy private val matchmaker: Matchmaker,
 ) {
     private final val logger = LoggerFactory.getLogger(javaClass)
+
+    private var testsBots: List<TestBot>? = null
 
     /**
      * Generate a bot name
@@ -46,6 +56,33 @@ class BotService(
     fun generateBotName(user: CardLabUser): String {
         logger.debug("User ${user.id} attempts to generate a bot name")
         return botNameGenerator.generateBotName()
+    }
+
+    /**
+     * Fetch all test bots
+     */
+    fun fetchAllTestsBots(user: CardLabUser): List<TestBot> {
+        logger.debug("User ${user.id} attempts to fetch all tests bots")
+        if (testsBots == null) {
+            testsBots = Helper.fetchAllTestsBots()
+        }
+        return testsBots!!
+    }
+
+    /**
+     * Test a test bot by its id
+     */
+    @Throws(BotDoesNotExistException::class)
+    fun fetchTestBotById(testBotId: Long): TestBot {
+        if (testsBots == null) {
+            testsBots = Helper.fetchAllTestsBots()
+        }
+        for (bot in testsBots!!) {
+            if (bot.id == testBotId) {
+                return bot
+            }
+        }
+        throw BotDoesNotExistException("The test bot $testBotId does not exist")
     }
 
     /**
@@ -149,6 +186,34 @@ class BotService(
         bot.currentState = BotState.QUEUED
     }
 
+    @Transactional(noRollbackFor = [InsufficientBotExistsException::class])
+    @Throws(InsufficientBotExistsException::class)
+    fun rank(
+        user: CardLabUser,
+        botId: Long,
+    ) {
+        logger.debug("User ${user.id} attempts to rank the bot $botId")
+        val bot =
+            findById(botId)
+                ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
+
+        if (bot.owner.id != user.id) {
+            throw UnauthorizedException("You are not authorized to view the bot $botId")
+        }
+
+        logger.debug("Create new code version for $botId")
+        var botCodeDAO = BotCodeDAO()
+        botCodeDAO.bot = bot
+        botCodeDAO.code = bot.currentCode
+        botCodeDAO = botCodeRepository.save(botCodeDAO)
+        bot.codeHistory.add(botCodeDAO)
+
+        if (matchmakerConfig.matchOnCode.enabled) {
+            logger.debug("Attempting to create ${matchmakerConfig.matchOnCode.generateMatchCount} matches for $botId")
+            matchmaker.createMatches(bot, matchmakerConfig.matchOnCode.generateMatchCount)
+        }
+    }
+
     /**
      * Fetch a bot by its id
      */
@@ -165,10 +230,6 @@ class BotService(
         val bot =
             findById(botId)
                 ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
-
-        if (bot.owner.id != user.id) {
-            throw UnauthorizedException("You are not authorized to view the bot $botId")
-        }
 
         return botMapper.map(bot)
     }
@@ -247,13 +308,16 @@ class BotService(
         findById(botId)
             ?: throw BotDoesNotExistException("A bot with the id $botId doesn't exist")
 
-        if (region == Region.CONTINENT) {
-            return botRepository.findBotRankPositionContinent(botId)
-        } else if (region == Region.COUNTRY) {
-            return botRepository.findBotRankPositionCountry(botId)
-        } else {
-            return botRepository.findBotRankPosition(botId)
-        }
+        val result =
+            when (region) {
+                Region.GLOBAL -> botRepository.findBotRankPosition(botId)
+                Region.CONTINENT -> botRepository.findBotRankPositionContinent(botId)
+                Region.COUNTRY -> botRepository.findBotRankPositionCountry(botId)
+                else -> throw UnsupportedOperationException(
+                    "The fetch rank position operation is currently not supported for the region $region",
+                )
+            }
+        return result
     }
 
     /**

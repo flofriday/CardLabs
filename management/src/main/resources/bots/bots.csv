@@ -1,0 +1,2 @@
+﻿id;name;description;code
+-1;Primitive;This is a primitive bot;/test/primitive_bot.scm

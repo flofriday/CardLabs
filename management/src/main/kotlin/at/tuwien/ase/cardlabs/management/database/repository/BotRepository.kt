@@ -17,7 +17,6 @@ import java.util.stream.Stream
  */
 @Repository
 interface BotRepository : CrudRepository<BotDAO?, Long?> {
-
     fun findByIdAndDeletedIsNull(id: Long): BotDAO?
 
     @Query(
@@ -95,10 +94,20 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
         newState: BotState,
     ): Int
 
+    @Query(
+        """
+            SELECT bot
+                FROM BotDAO bot
+                    JOIN BotCodeDAO botCode ON bot.id = botCode.bot.id
+                WHERE bot.deleted IS NULL AND botCode.deleted IS NULL
+                GROUP BY bot.id
+                HAVING COUNT(botCode.id) >= 1
+        """,
+    )
+    fun findAllBotsWithAtLeastOneBotCode(): Stream<BotDAO>
+
     @Transactional
-    fun findByIdInAndDeletedIsNull(
-        botIds: List<Long>
-    ): Stream<BotDAO>
+    fun findByIdInAndDeletedIsNull(botIds: List<Long>): Stream<BotDAO>
 
     @Modifying
     @Transactional
@@ -111,7 +120,7 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
     )
     fun updateEloScore(
         id: Long,
-        eloScore: Int
+        eloScore: Int,
     ): Int
 
     @Modifying
@@ -125,6 +134,6 @@ interface BotRepository : CrudRepository<BotDAO?, Long?> {
     )
     fun updateBotBannedStatus(
         id: Long,
-        banned: Boolean
+        banned: Boolean,
     ): Int
 }

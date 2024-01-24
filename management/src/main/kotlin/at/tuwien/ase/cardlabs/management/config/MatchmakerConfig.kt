@@ -4,8 +4,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "cardlabs.matchmaker")
 data class MatchmakerConfig(
+    val matchOnCode: MatchOnCode,
     val matchSize: MatchSize,
     val matchSkillDifference: MatchSkillDifference,
+)
+
+data class MatchOnCode(
+    val enabled: Boolean,
+    val generateMatchCount: Int
 )
 
 data class MatchSize(

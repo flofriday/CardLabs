@@ -12,7 +12,8 @@ import {
   Bot,
   saveBot as _saveBot,
   deleteBot as _deleteBot,
-  rankBot as _rankBot,
+  rankBot,
+  createTestMatch,
   CodeHistory,
 } from "@/app/services/BotService";
 import { useRouter } from "next/navigation";
@@ -43,14 +44,24 @@ function saveBot(id: number, code: string): void {
     .catch(() => {});
 }
 
-function rankBot(id: number): void {
-  _rankBot(id)
+function botRankWrapper(id: number): void {
+  rankBot(id)
     .then(() => {
-      toast.success("This bot has been queued for ranking");
+      toast.success("Successfully queued the bot for ranking");
     })
     .catch(() => {
-      toast.error("Bot could not be queued for ranking");
+      toast.error("An error occurred Please try again later");
     });
+}
+
+function testMatchWrapper(botId: number): void {
+  createTestMatch(botId)
+    .then(() => {
+      toast.success(
+        "Successfully queued a test match. You can view the match results in the match history."
+      );
+    })
+    .catch(() => {});
 }
 
 function deleteBot(id: number, router: any): void {
@@ -69,7 +80,6 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   const [name, setName] = useState("");
   const [code, setCode] = useState<string | undefined>(undefined);
   const [codeHistory, setCodeHistory] = useState<CodeHistory[]>([]);
-  const [ranked, setRanked] = useState(false);
   const [isHistoryMode, setHistoryMode] = useState(false);
   const router = useRouter();
   const codeSaved: boolean = useSaveCodeStore((state: any) => state.codeSaved);
@@ -92,7 +102,6 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
   useEffect(() => {
     if (_id == null) {
       // fetch new name
-
       getNewBotName()
         .then((n) => {
           setName(n);
@@ -103,6 +112,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
             .catch(() => {
               toast.error("Error loading code template");
             });
+          setCodeSaved(false);
         })
         .catch(() => {});
     } else {
@@ -113,6 +123,7 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           const history = b.codeHistory;
           history.unshift({ botId: b.id, code: b.currentCode, id: -1 });
           setCodeHistory(history);
+          setCodeSaved(true);
         })
         .catch((ex) => {
           if (ex instanceof UnAuthorizedError) {
@@ -172,16 +183,8 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
             }
           }}
           rank={() => {
-            if (_id === null || !codeSaved) {
-              toast.error("Bot needs to be saved before it can be ranked");
-              return;
-            }
             if (code === undefined) {
               toast.error("No code provided");
-              return;
-            }
-            if (ranked) {
-              toast.error("This bot has already been queued for ranking");
               return;
             }
             if (code?.length >= CODE_CHARACTER_LIMIT) {
@@ -190,8 +193,41 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
               );
               return;
             }
-            rankBot(_id);
-            setRanked(true);
+            if (_id == null || !codeSaved) {
+              toast.error("The bot needs to be saved before ranking");
+              return;
+            }
+            botRankWrapper(_id);
+          }}
+          test={() => {
+            if (code === undefined) {
+              toast.error("No code provided");
+              return;
+            }
+            if (code?.length >= CODE_CHARACTER_LIMIT) {
+              toast.error(
+                `This bot exceeds the character limit of ${CODE_CHARACTER_LIMIT}`
+              );
+              return;
+            }
+
+            if (_id !== null) {
+              _saveBot(_id, code)
+                .then(() => {
+                  testMatchWrapper(_id);
+                })
+                .catch(() => {});
+            } else {
+              createBot(name, code)
+                .then(() => {
+                  if (_id !== null) {
+                    testMatchWrapper(_id);
+                  } else {
+                    toast.error("The bot needs to be saved before testing");
+                  }
+                })
+                .catch(() => {});
+            }
           }}
           _delete={() => {
             if (_id !== null) {
@@ -208,7 +244,6 @@ export default function BotEditor({ id = null }: Props): JSX.Element {
           onChange={(c) => {
             if (c !== code) {
               setCodeSaved(false);
-              setRanked(false);
             }
             setCode(c ?? "");
             if (!isHistoryMode && codeHistory[0] !== undefined) {
