@@ -5,6 +5,7 @@ import at.tuwien.ase.cardlabs.management.controller.model.game.Game
 import at.tuwien.ase.cardlabs.management.controller.model.game.GameCreate
 import at.tuwien.ase.cardlabs.management.database.model.game.GameDAO
 import at.tuwien.ase.cardlabs.management.database.model.game.GameState
+import at.tuwien.ase.cardlabs.management.database.model.game.log.DebugLogMessage
 import at.tuwien.ase.cardlabs.management.database.model.game.log.LogMessage
 import at.tuwien.ase.cardlabs.management.database.repository.GameRepository
 import at.tuwien.ase.cardlabs.management.error.UnauthorizedException
@@ -59,6 +60,7 @@ class GameService(
     fun fetchLogById(
         user: CardLabUser,
         gameId: Long,
+        botId: Long,
     ): List<LogMessage> {
         logger.debug("User ${user.id} attempts to fetch the logs of the game $gameId")
         val game = findById(gameId)
@@ -66,7 +68,19 @@ class GameService(
         if (!game.participatingBotIds.any { it in botIds }) {
             throw UnauthorizedException("Not authorized to view this game")
         }
-        return game.turns.flatMap { it.logMessages }
+        val logMessages = game.turns.flatMap { it.logMessages }
+        val newLogMessage = ArrayList<LogMessage>()
+        for (logMessage in logMessages) {
+            if (logMessage is DebugLogMessage) {
+                if (logMessage.botId == botId) {
+                    newLogMessage.add(logMessage)
+                }
+            } else {
+                newLogMessage.add(logMessage)
+            }
+        }
+
+        return newLogMessage
     }
 
     @Transactional

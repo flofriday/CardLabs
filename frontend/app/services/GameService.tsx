@@ -80,12 +80,15 @@ export async function getGame(gameID: number): Promise<Game> {
   }
 }
 
-export async function getLogLinesForGame(gameID: number): Promise<LogLine[]> {
+export async function getLogLinesForGame(
+  gameID: number,
+  botId: number
+): Promise<LogLine[]> {
   await refreshAccessToken();
   const jwt = getCookie("auth_token");
 
   try {
-    const response = await fetch(`/api/match/${gameID}/log`, {
+    const response = await fetch(`/api/match/${gameID}/log/${botId}`, {
       mode: "cors",
       method: "GET",
       headers: {
@@ -98,8 +101,18 @@ export async function getLogLinesForGame(gameID: number): Promise<LogLine[]> {
       throw new Error("Failed to fetch match log");
     }
 
-    const data = await response.json();
-    return data;
+    const data = (await response.json()) as LogLine[];
+    const res: LogLine[] = [];
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].type.toLowerCase() === "debug" && data[i].botId === botId) {
+        res.push(data[i]);
+      } else if (data[i].type.toLowerCase() === "system") {
+        res.push(data[i]);
+      }
+    }
+
+    return res;
   } catch (error: any) {
     console.error("Error fetching match log:", error.message);
     throw error;
