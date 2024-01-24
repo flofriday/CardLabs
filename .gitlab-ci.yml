@@ -150,14 +150,12 @@ deploy:
   image: bitnami/kubectl
   script:
     - sed -i 's/:latest/:'$CI_PIPELINE_ID'/g' kubernetes.yaml frontend-service.yaml management-service.yaml gameserver-service.yaml
-    - kubectl run rabbitmq --image=rabbitmq:3.12-alpine --env="RABBITMQ_DEFAULT_USER=guest" --env="RABBITMQ_DEFAULT_PASS=guest" --limits="cpu=200m,memory=2000Mi,ephemeral-storage=400Mi"--restart=Never --dry-run -o yaml > rabbitmq-service.yml
     - cat kubernetes.yaml
     - cat rabbitmq-service.yaml
     - cat frontend-service.yaml
     - cat management-service.yaml
     - cat gameserver-service.yaml
-    - kubectl create -f rabbitmq-service.yml
-    - kubectl apply -f kubernetes.yaml,frontend-service.yaml,management-service.yaml,gameserver-service.yaml
+    - kubectl apply -f kubernetes.yaml,rabbitmq-service.yml,frontend-service.yaml,management-service.yaml,gameserver-service.yaml
     - sleep 30
     - kubectl get services
     - kubectl get pods
