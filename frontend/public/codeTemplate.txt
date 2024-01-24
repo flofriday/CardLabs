@@ -10,16 +10,16 @@
 
 ; Some other player played a card
 (define card-played (lambda (card player)
-    (display card)
+    ; Code goes here
     ))
 
 ; Some other player had to pick a card because they didn't have a matching one.
 ; This is not called as a result of a draw or draw choose card.
 (define card-picked (lambda (top-card player)
-    (display top-card)
+    ; Code goes here
     ))
 
 ; The pile got reshuffled into the draw pile
 (define pile-reshuffled (lambda ()
-    (display "reshuffles")
+    ; Code goes here
     ))

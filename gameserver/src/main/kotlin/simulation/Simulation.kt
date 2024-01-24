@@ -358,8 +358,10 @@ private fun logSystem(
     turn: Turn,
     message: String,
 ) {
-    logger.debug(message)
-    turn.logMessages.addLast(SystemLogMessage(message))
+    val turnText = "%02d".format(turn.turnId + 1)
+    val fullMessage = "[$turnText] " + message
+    logger.debug(fullMessage)
+    turn.logMessages.addLast(SystemLogMessage(fullMessage))
 }
 
 private fun logBot(
