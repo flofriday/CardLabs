@@ -23,7 +23,7 @@ export default function GameOverview({
     if (isNaN(Number(params.slug))) {
       return;
     }
-    getGames(Number(params.slug), 6, pageNumber)
+    getGames(Number(params.slug), 5, pageNumber)
       .then((page) => {
         setGameEntries(page.content);
         setTotalPages(page.totalPages);
@@ -43,17 +43,6 @@ export default function GameOverview({
 
   const handlePageChange = (page: number): void => {
     setPageNumber(page);
-
-    getGames(botId, 6, pageNumber)
-      .then((page) => {
-        setGameEntries(page.content);
-        setTotalPages(page.totalPages);
-      })
-      .catch((ex) => {
-        if (ex instanceof UnAuthorizedError) {
-          router.replace("/unauthorized");
-        }
-      });
   };
 
   return (
