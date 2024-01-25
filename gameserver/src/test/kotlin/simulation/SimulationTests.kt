@@ -618,4 +618,34 @@ class SimulationTests {
         Assert.assertEquals(state.turns.last().actions.first { a -> a.type == ActionType.PLAY_CARD }.card, expectedCard)
         Assert.assertTrue(state.turns.last().actions.none { a -> a.type == ActionType.DRAW_CARD })
     }
+
+    @Test
+    fun badRunTurnDoesnotReturnCard() {
+        // In some cases ths did crash the simulation in the past.
+        val code =
+            """
+            (define (turn top-card hand players)
+                42)
+            """.trimIndent()
+        val player1 =
+            createTestPlayer(
+                0,
+                code,
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.ORANGE, 1)),
+            )
+        val player2 =
+            createTestPlayer(
+                1,
+                code,
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.GREEN, 2)),
+            )
+        val state =
+            GameState(
+                mutableListOf(Card(CardType.NUMBER_CARD, Color.ORANGE, 5)),
+                mutableListOf(Card(CardType.SKIP, Color.PURPLE, null)),
+                listOf(player1, player2),
+            )
+
+        Assert.assertThrows(SchemeError::class.java) { runTurn(state) }
+    }
 }

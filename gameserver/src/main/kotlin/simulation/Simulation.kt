@@ -185,7 +185,17 @@ fun execBotTurn(
     }
 
     // Verify the played card and remove it from the hand
-    val playedCard = decodeCard(result!!)
+    var playedCard: Card? = null
+    try {
+        playedCard = decodeCard(result!!)
+    } catch (e: DecodeError) {
+        throw SchemeError(
+            "Card Decode Error",
+            e.reason,
+            null,
+            null
+        )
+    }
 
     if (playedCard.type == CardType.CHOOSE_DRAW || playedCard.type == CardType.CHOOSE) {
         if (!player.hand.remove(Card(playedCard.type, Color.ANY, null))) {
