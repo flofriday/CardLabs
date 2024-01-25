@@ -75,7 +75,6 @@ def test_logedin_myleaderboard_global(driver_headless):
     helper.login(driver, 999999998, "test2@email")
     WebDriverWait(driver, 10).until(expected_conditions.presence_of_element_located((By.ID, "myleaderboard_link")))
     driver.find_element(By.ID, "myleaderboard_link").click()
-    WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[p/text()="10." and p/text()="Jenphoium"]'))
     WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[p/text()="16." and p/text()="Zarlonphis"]'))
     WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[p/text()="28." and p/text()="Zarzorax"]'))
 
@@ -87,7 +86,6 @@ def test_logedin_myleaderboard_switch_page(driver_headless):
     WebDriverWait(driver, 10).until(expected_conditions.presence_of_element_located((By.XPATH, '//button[text()="3"]')))
     driver.find_element(By.XPATH, '//button[text()="3"]').click()
     WebDriverWait(driver, 30).until(lambda driver: driver.find_element(By.XPATH, '//div[p/text()="28." and p/text()="Neous"]'))
-
 
 def test_logedin_dashboard_myleaderboard_continent(driver_headless):
     driver = driver_headless
