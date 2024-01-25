@@ -19,9 +19,9 @@ def test_create_bot_and_try_to_rank(driver_headless):
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".text-sm > div:nth-child(2)")))
     assert driver.find_element(By.CSS_SELECTOR, ".text-sm > div:nth-child(2)").get_attribute("innerText") == "The bot needs to be saved before ranking"
     time.sleep(1)
-    actions = ActionChains(driver) 
-    actions.move_to_element(driver.find_element(By.CSS_SELECTOR, ".text-sm > div:nth-child(2)")) 
-    actions.click() 
+    actions = ActionChains(driver)
+    actions.move_to_element(driver.find_element(By.CSS_SELECTOR, ".text-sm > div:nth-child(2)"))
+    actions.click()
     actions.perform()
     time.sleep(2)
 
@@ -31,9 +31,9 @@ def test_create_bot_and_try_to_rank(driver_headless):
     WebDriverWait(driver, 5).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, ".text-sm > div:nth-child(2)")))
     assert driver.find_element(By.CSS_SELECTOR, ".text-sm > div:nth-child(2)").get_attribute("innerText") == "Bot created and saved!"
     time.sleep(1)
-    actions = ActionChains(driver) 
-    actions.move_to_element(driver.find_element(By.CSS_SELECTOR, ".text-sm > div:nth-child(2)")) 
-    actions.click() 
+    actions = ActionChains(driver)
+    actions.move_to_element(driver.find_element(By.CSS_SELECTOR, ".text-sm > div:nth-child(2)"))
+    actions.click()
     actions.perform()
     time.sleep(2)
 
