@@ -10,21 +10,35 @@ docker compose up --build
 
 The frontend will start on localhost:3000.
 
-to start rabbitmq
+## Run locally 
+
+If you want to run the services locally you will need a local rabbitmq instance.
+The easiest way to get one up running is with:
 
 ```
-docker run -d -p 5672:5672 --name rabbitMQ -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest rabbitmq:3.12-alpine
+docker run -it --rm --hostname my-rabbit --name some-rabbit -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
-# Bot
+Next you can start all the servers, each in their own terminal session:
+```bash
+# Start the management
+cd management
+gradle bootRun --args='--spring.profiles.active=local'
 
-## IDs
+# Start the gameserver
+cd gameserver
+./mvnw compile exec:java
 
-A bot with a negative id is a test bot (maintained by the CardLabs team). A user bot must have a positive id.
+# Start the frontend
+cd frontend
+npm run dev
+```
 
-## Bot states
+The frontend will start on localhost:3000.
 
 ## Continuous deployment
+
+The 
 
 http://23ws-ase-pr-inso-04.apps.student.inso-w.at
 
