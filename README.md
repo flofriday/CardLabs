@@ -15,7 +15,7 @@ The frontend will start on localhost:3000.
 If you want to run the services locally you will need a local rabbitmq instance.
 The easiest way to get one up running is with:
 
-```
+```bash
 docker run -it --rm --hostname my-rabbit --name some-rabbit -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
@@ -38,7 +38,8 @@ The frontend will start on localhost:3000.
 
 ## Continuous deployment
 
-The 
+The application is also deployed on the kubernetes cluster provided by the 
+lecture at:
 
 http://23ws-ase-pr-inso-04.apps.student.inso-w.at
 
