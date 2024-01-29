@@ -153,7 +153,7 @@ fun execBotTurn(
     val topCard = state.pile.last()
 
     // Call the bot
-    val result: SchemeValue?
+    val result: SchemeValue
     try {
         val func = player.interpreter.env.get("turn")!!
         if (func !is CallableValue) {
@@ -187,7 +187,7 @@ fun execBotTurn(
     // Verify the played card and remove it from the hand
     var playedCard: Card? = null
     try {
-        playedCard = decodeCard(result!!)
+        playedCard = decodeCard(result)
     } catch (e: DecodeError) {
         throw SchemeError(
             "Card Decode Error",
@@ -228,12 +228,13 @@ fun execBotEvent(
     funcName: String,
     arguments: List<SchemeValue>,
 ) {
+    val func = player.interpreter.env.get(funcName)
+
     // Event handlers are optional
-    if (!player.interpreter.env.has(funcName)) {
+    if (func == null) {
         return
     }
 
-    val func = player.interpreter.env.get(funcName)!!
     if (func !is FuncValue) {
         throw DisqualificationError(
             player.bot.botId,
@@ -337,7 +338,9 @@ private fun initializeBots(players: List<Player>) {
             throw DisqualificationError(player.bot.botId, "The bot crashed during the initialization.", e)
         }
 
-        if (!player.interpreter.env.has("turn")) {
+        val turnFunc = player.interpreter.env.get("turn")
+
+        if (turnFunc == null) {
             throw DisqualificationError(
                 player.bot.botId,
                 "The bot doesn't implement the required turn function.",
@@ -345,7 +348,6 @@ private fun initializeBots(players: List<Player>) {
             )
         }
 
-        val turnFunc = player.interpreter.env.get("turn")!!
         if (turnFunc !is FuncValue) {
             throw DisqualificationError(
                 player.bot.botId,
