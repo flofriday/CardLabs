@@ -1,6 +1,8 @@
-# CardScheme
+# CardLabs
 
-Write the best card playing bots.
+![Screenshot](screenshot.png)
+
+A platform to write the best card playing bots.
 
 ## Run with docker compose
 
@@ -8,7 +10,7 @@ Write the best card playing bots.
 docker compose up --build
 ```
 
-The frontend will start on localhost:3000.
+The frontend will start on http://localhost:3000.
 
 ## Run locally 
 
@@ -34,13 +36,11 @@ cd frontend
 npm run dev
 ```
 
-The frontend will start on localhost:3000.
+The frontend will start on http://localhost:3000.
 
 ## Continuous deployment
 
-The application is also deployed on the kubernetes cluster provided by the 
-lecture at:
-
-http://23ws-ase-pr-inso-04.apps.student.inso-w.at
-
-Note that you need to be connected to the TU VPN for it to work.
+The lecture provided us with an GitLab instance and resources on a kubernetes
+cluster. Both are no longer available but if you want to check out the CI 
+pipeline for GitLab and the deployment config, you can find them in 
+`.gitlab-ci.yml` and `kubernetes.yaml` respectively.
