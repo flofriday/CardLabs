@@ -3,6 +3,7 @@
 ![Screenshot](screenshot.png)
 
 A platform to write the best card playing bots.
+Bots are written in CardScheme, a self written scheme interpreter.
 
 ## Run with docker compose
 
